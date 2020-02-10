@@ -1,7 +1,7 @@
 // config
 const config = {
   tcp: {
-    port: 5044
+    port: process.env.PORT || 5044
   },
   io: {
     port: 4200
