@@ -1,0 +1,47 @@
+// DONE: back scroll to top if selected report is at index zero
+// CANCEL: add remove (all, single) for reports, responses, units
+// DONE: handle socketIO connection
+// DONE: add global settings menu, clear localStorage
+// DONE: add minimum q-scroll for landscape mobile desktop
+// DONE: fix user management dynamic button, recalculate the height
+// DONE: add simple report to faker
+// DONE: give send icon on command field
+// DONE: add command list reference
+// DONE: add modal chart history when sub-report log is clicked
+// DONE: unit management minimum height
+// CANCEL: de-structure config import
+// DONE: use _.cloneDeep, to decouple data binding
+// DONE: change frame to frameID, frameType to frameID
+// DONE: just the autofetch disable for github
+// DONE: add total report next to unit index
+// DONE: add index number next to report log
+// DONE: do not re-zoom map on error postition, use last valid postition instead
+// DONE: add auto scroll for report log
+// DONE: change watcher to string
+// DONE: add simcom module restarted event
+// DONE: fix config.js
+// DONE: fix data not structurized
+// DONE: change xmin by drag range
+// DONE: save config to store
+// DONE: change default import to object {}
+// CANCEL: change bus event to using store and watch
+// DONE: show full frame on simple frame (if has)
+// DONE: fix bugs in error min value, when not in rangeMax (on null value), then enable again to rangeMax
+// DONE: add faker push with unique unitID on global settings
+// DONE: change y-axes based on rangeValue max
+// DONE: change chart height based on screen size
+// TODO: add event reference and the reader
+// TODO: add user name to the report log (if any)
+// DONE: call software developer
+// DONE: call amber goldentek
+// DONE: change $lodash to $_
+// DONE: set immediate to true on watcher, so remove created() events
+// DONE: add black color on report being read by chart
+// DONE: remove parseInt() for chart input, instead change the frame formatter
+// DONE: move config import as plugin
+// TODO: simulate reports every 5 second for faker
+// TODO: move faker to server
+// TODO: change axes range unit (K, M, G)
+// DONE: add response.log for app.js
+// CANCLE: use channel for log manager on app.js
+// DONE: sample value is 1 when chart is not opened until data > sample.min
