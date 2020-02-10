@@ -1,57 +1,55 @@
 // config
 const config = {
   tcp: {
-    port: process.env.PORT || 5044
+    port: 5044,
   },
   io: {
-    port: 4200
-  }
-}
+    port: process.env.PORT || 4200,
+  },
+};
 
 // create a stdout and file logger
-const fs = require('fs')
+const fs = require('fs');
 const log = require('simple-node-logger').createSimpleLogger('server.log');
-const io = require("socket.io")(config.io.port);
-const net = require("net");
+const io = require('socket.io')(config.io.port);
+const net = require('net');
 
 // empty log file
-fs.unlinkSync('server.log')
+fs.unlinkSync('server.log');
 
 // ================== TCP SERVER ======================
-let tcpClients = [];
+const sockets = [];
 
-const server = net.createServer(socket => {
-  log.info("[TCP] New IOT-client connected.");
-  // Identify this client
-  socket.name = `${socket.remoteAddress}:${socket.remotePort}`;
+const server = net.createServer((socket) => {
+  log.info('[TCP] New IOT-client connected.');
   // Put this new client in the list
-  tcpClients.push(socket);
-  
+  sockets.push(socket);
+
   // Callback for incomming message
-  socket.on("data", data => {
-    let hexData = data.toString('hex').toUpperCase()
-    log.info(`[TCP] New data from ${socket.name}`);
+  socket.on('data', (data) => {
+    const hexData = data.toString('hex').toUpperCase();
+    log.info(`[TCP] New data from ${socket.remoteAddress}:${socket.remotePort}`);
     log.info(`      ${hexData}`);
-    // emit command response to all IO tcpClients
-    io.emit("frameReceived", {
+    // emit command response to all IO sockets
+    io.emit('frameReceived', {
       client: {
         address: socket.remoteAddress,
-        port: socket.remotePort
+        port: socket.remotePort,
       },
-      hexData
+      hexData,
     });
   });
-  
+
   // Callback on client leaves
   // Remove the client from the list when it leaves
-  socket.on("end", () => {
-    tcpClients.splice(tcpClients.indexOf(socket), 1);
-    log.info(`[TCP] Client of ${socket.name} disconnected.`);
+  socket.on('end', () => {
+    sockets.splice(sockets.indexOf(socket), 1);
+    log.info(`[TCP] Client of ${socket.remoteAddress}:${socket.remotePort} disconnected.`);
   });
-  
+
   // Callback on error
-  socket.on("error", error => {
-    console.error(`[TCP] Error: ${error}`);
+  socket.on('error', (error) => {
+    log.info(`[TCP] Error: ${error}`);
   });
 });
 
@@ -63,23 +61,21 @@ server.listen(config.tcp.port, () => {
 // ================== SOCKET.IO SERVER ======================
 log.info(`[WEB] Server listening on ${config.io.port}`);
 // callback when there is new connection
-io.on("connection", ioClient => {
-  log.info("[WEB] New web-client connected.");
-  ioClient.emit("connected");
+io.on('connection', (ioClient) => {
+  log.info('[WEB] New web-client connected.');
+  ioClient.emit('connected');
 
   // callback when new command from Apps
-  ioClient.on("command", req => {
+  ioClient.on('command', (req) => {
     // send command to device
-    let tcpClient = tcpClients.find(
-      tcpClient => tcpClient.name === `${req.client.address}:${req.client.port}`
-    );
+    const socket = sockets.find((el) => el.remoteAddress === req.client.address && el.remotePort === req.client.port);
     // send command to specified client
-    if (tcpClient) {
+    if (socket) {
       // send command
-      tcpClient.write(Buffer.from(req.hexCommand, 'hex'));
+      socket.write(Buffer.from(req.hexCommand, 'hex'));
       // command sent (Apps waitting command response)
       log.info(`[WEB] New Command : ${req.hexCommand}`);
-      log.info(`[TCP] Command sent to ${tcpClient.name}`);
+      log.info(`[TCP] Command sent to ${socket.remoteAddress}:${socket.remotePort}`);
     }
   });
 });
