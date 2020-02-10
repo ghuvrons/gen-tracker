@@ -25,14 +25,14 @@
           v-for="data in requiredReport"
           :link="selectedReports.length > 1 && data.chartable"
           :key="data.field"
-          :class="{'bg-dark text-white': markField(data)}"
+          :class="{'bg-dark text-white': activeField(data)}"
           @click.native="openReportStatistics(data)"
         >
           <q-item-main>
             <q-item-tile label>{{ data.title }}</q-item-tile>
             <q-item-tile
               sublabel
-              :text-color="markField(data) ? 'yellow': null"
+              :text-color="activeField(data) ? 'yellow': null"
             >{{ data.output }}</q-item-tile>
           </q-item-main>
           <q-item-side
@@ -46,7 +46,7 @@
           v-for="data in optionalReport"
           :link="selectedReports.length > 1 && data.chartable"
           :key="data.field"
-          :class="{'bg-dark text-white': markField(data) }"
+          :class="{'bg-dark text-white': activeField(data) }"
           @click.native="openReportStatistics(data)"
         >
           <q-item-main>
@@ -84,6 +84,8 @@
 import ReportStatistics from 'components/ReportStatistics'
 import { Report } from 'components/js/frame'
 import { mapState, mapGetters } from 'vuex'
+const moment = require('moment-timezone')
+const tzlookup = require('tz-lookup')
 
 export default {
   // name: 'ComponentName',
@@ -128,13 +130,31 @@ export default {
     closeReportStatistics () {
       this.statisticsData = null
     },
-    markField (data) {
-      let marked = false
+    calibrateDeviceTime (report) {
+      let lat = report.data.find(el => el.field === 'gpsLatitude').value
+      let lng = report.data.find(el => el.field === 'gpsLongitude').value
+      let sendTime = report.data.find(el => el.field === 'rtcSendDatetime').value
+
+      // correct timestamp if not sync with server
+      let timezone = tzlookup(lat, lng)
+      let serverTime = moment(new Date())
+      let deviceTime = moment(sendTime, 'YYMMDDHHmmssE')
+      let difference = moment.duration(serverTime.diff(deviceTime)).as('minutes')
+      //  (at least more 2 minutes different)
+      if (difference > 2) {
+        let validTime = serverTime.tz(timezone).format('YYMMDDHHmmssE')
+        // send command to fix the RTC time
+        let payload = `REPORT_RTC=${validTime}`
+        this.$root.$emit('executeCommand', { payload })
+      }
+    },
+    activeField (data) {
+      let active = false
       if (this.statisticsData) {
-        marked = data.field === this.statisticsData.field
+        active = data.field === this.statisticsData.field
       }
 
-      return marked
+      return active
     },
     parseReport ({ hexData, frameID }) {
       let data = []
@@ -165,7 +185,13 @@ export default {
       }
     },
     handleReport (prop) {
-      this.$store.commit('database/ADD_REPORTS', this.parseReport(prop))
+      let report = this.parseReport(prop)
+      this.$store.commit('database/ADD_REPORTS', report)
+
+      // check device time, calibrate if error
+      if (report.frameID === this.config.frame.id.FULL) {
+        this.calibrateDeviceTime(report)
+      }
     }
   }
 }
