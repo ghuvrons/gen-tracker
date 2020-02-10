@@ -64,7 +64,7 @@ const generateReports = (total, unitID) => {
           case 'sequentialID':
             value = i
             break
-          case 'rtcDatetime':
+          case 'rtcLogDatetime':
             value = moment().format('YYMMDDHHmmssE')
             break
           case 'driverID':

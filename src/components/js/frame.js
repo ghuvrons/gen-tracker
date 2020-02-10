@@ -68,8 +68,19 @@ const Report = [
     display: (valFormat) => Dot(valFormat)
   },
   {
-    field: 'rtcDatetime',
-    title: 'RTC Datetime',
+    field: 'rtcLogDatetime',
+    title: 'RTC Log Datetime',
+    required: true,
+    size: 8,
+    format: (val) => HexToInt(ChangeEndian(val)).toString(),
+    display: (valFormat) => {
+      // datetime string to timestamp
+      return moment(valFormat, 'YYMMDDHHmmssE').format('ddd, DD MMM YYYY, HH:mm:ss')
+    }
+  },
+  {
+    field: 'rtcSendDatetime',
+    title: 'RTC Send Datetime',
     required: true,
     size: 8,
     format: (val) => HexToInt(ChangeEndian(val)).toString(),
