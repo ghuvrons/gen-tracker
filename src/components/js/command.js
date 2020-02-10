@@ -104,7 +104,6 @@ const Command = [
     field: 'value',
     title: 'Value',
     size: 8,
-    // FIXME: for RTC value
     format: (val) => ChangeEndian(IntToHex(parseInt(val), 8 * 2))
   }
 ]

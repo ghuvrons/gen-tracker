@@ -21,7 +21,7 @@ const config = {
   },
   command: {
     prefix: '@T',
-    timeoutMS: 5000
+    timeoutMS: 10000
   },
   map: {
     zoom: 3,
