@@ -4,7 +4,7 @@ const config = {
     port: 5044,
   },
   io: {
-    port: process.env.PORT || 4200,
+    port: 4200,
   },
 };
 
@@ -62,7 +62,7 @@ server.listen(config.tcp.port, () => {
 log.info(`[WEB] Server listening on ${config.io.port}`);
 // callback when there is new connection
 io.on('connection', (ioClient) => {
-  log.info('[WEB] New web-client connected.');
+  log.info('[WEB] New WEB-client connected.');
   ioClient.emit('connected');
 
   // callback when new command from Apps
@@ -74,8 +74,8 @@ io.on('connection', (ioClient) => {
       // send command
       socket.write(Buffer.from(req.hexCommand, 'hex'));
       // command sent (Apps waitting command response)
-      log.info(`[WEB] New Command : ${req.hexCommand}`);
-      log.info(`[TCP] Command sent to ${socket.remoteAddress}:${socket.remotePort}`);
+      log.info(`[TCP] New Command to ${socket.remoteAddress}:${socket.remotePort}`);
+      log.info(`      ${req.hexCommand}`);
     }
   });
 });
