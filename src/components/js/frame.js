@@ -68,8 +68,8 @@ const Report = [
     display: (valFormat) => Dot(valFormat)
   },
   {
-    field: 'rtcLogDatetime',
-    title: 'RTC Log Datetime',
+    field: 'rtcSendDatetime',
+    title: 'RTC Send Datetime',
     required: true,
     size: 8,
     format: (val) => HexToInt(ChangeEndian(val)).toString(),
@@ -79,8 +79,8 @@ const Report = [
     }
   },
   {
-    field: 'rtcSendDatetime',
-    title: 'RTC Send Datetime',
+    field: 'rtcLogDatetime',
+    title: 'RTC Log Datetime',
     required: true,
     size: 8,
     format: (val) => HexToInt(ChangeEndian(val)).toString(),
