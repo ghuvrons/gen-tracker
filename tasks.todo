@@ -45,5 +45,5 @@
 // DONE: add response.log for app.js
 // CANCLE: use channel for log manager on app.js
 // DONE: sample value is 1 when chart is not opened until data > sample.min
-// TODO: change server log format
+// DONE: change server log format
 // TODO: make auto focus on command reference search bar

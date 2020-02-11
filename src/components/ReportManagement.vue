@@ -103,7 +103,8 @@ export default {
   },
   data () {
     return {
-      statisticsData: null
+      statisticsData: null,
+      notifPosition: this.$q.platform.is.desktop ? 'bottom-right' : 'top-right'
     }
   },
   computed: {
@@ -146,6 +147,12 @@ export default {
         // send command to fix the RTC time
         let payload = `REPORT_RTC=${validTime}`
         this.$root.$emit('executeCommand', { payload })
+        // give notification
+        this.$q.notify({
+          message: 'Calibrating device time',
+          type: 'info',
+          position: this.notifPosition
+        })
       }
     },
     activeField (data) {
