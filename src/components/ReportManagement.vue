@@ -83,6 +83,7 @@
 <script>
 import ReportStatistics from 'components/ReportStatistics'
 import { Report } from 'components/js/frame'
+import { config } from 'components/js/config'
 import { mapState, mapGetters } from 'vuex'
 const moment = require('moment-timezone')
 const tzlookup = require('tz-lookup')
@@ -141,8 +142,9 @@ export default {
       let serverTime = moment(new Date())
       let deviceTime = moment(sendTime, 'YYMMDDHHmmssE')
       let difference = moment.duration(serverTime.diff(deviceTime)).as('minutes')
-      //  (at least more 2 minutes different)
-      if (difference > 2) {
+
+      //  (at least more n minutes different)
+      if (Math.abs(difference) > config.frame.calibratedMinutes) {
         let validTime = serverTime.tz(timezone).format('YYMMDDHHmmssE')
         // send command to fix the RTC time
         let payload = `REPORT_RTC=${validTime}`
