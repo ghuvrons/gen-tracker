@@ -7,6 +7,10 @@ export const CLEAR_ALL = (state) => {
   state.fingers = []
 }
 
+export const TOGGLE_TIME_CALIBRATION = (state) => {
+  state.settings.timeCalibration = !state.settings.timeCalibration
+}
+
 export const SET_LOADING = (state, payload) => {
   state.loading = payload
 }

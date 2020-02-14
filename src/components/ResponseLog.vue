@@ -24,14 +24,10 @@
           v-for="(response, index) in selectedResponses"
           :key="index"
           @click.native="setCommand(response)"
-          :class="{'bg-dark text-white': isTheResponse(response) }"
         >
           <q-item-main>
             <q-item-tile label>{{ response.command }}</q-item-tile>
-            <q-item-tile
-              sublabel
-              :text-color="isTheResponse(response) ? 'yellow' : null"
-            >
+            <q-item-tile sublabel>
               <q-chip
                 :color="response.code.color"
                 dense
@@ -71,12 +67,6 @@ export default {
     ...mapGetters('database', ['selectedResponses'])
   },
   methods: {
-    isTheResponse (response) {
-      if (this.theResponse) {
-        return response.hexData === this.theResponse.hexData && response.hexData
-      }
-      return false
-    },
     setCommand (response) {
       if (!this.loading) {
         this.theResponse = response

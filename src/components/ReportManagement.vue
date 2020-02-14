@@ -111,6 +111,9 @@ export default {
   computed: {
     ...mapState('database', ['theReport', 'config']),
     ...mapGetters('database', ['selectedReports']),
+    timeCalibrationState () {
+      return this.$store.state.database.settings.timeCalibration
+    },
     requiredReport () {
       return this.theReport.data.filter(el => el.required)
     },
@@ -146,6 +149,7 @@ export default {
       //  (at least more n minutes different)
       if (Math.abs(difference) > config.frame.calibratedMinutes) {
         let validTime = serverTime.tz(timezone).format('YYMMDDHHmmssE')
+
         // send command to fix the RTC time
         let payload = `REPORT_RTC=${validTime}`
         this.$root.$emit('executeCommand', { payload })
@@ -198,8 +202,10 @@ export default {
       this.$store.commit('database/ADD_REPORTS', report)
 
       // check device time, calibrate if error
-      if (report.frameID === this.config.frame.id.FULL) {
-        this.calibrateDeviceTime(report)
+      if (this.timeCalibrationState) {
+        if (report.frameID === this.config.frame.id.FULL) {
+          this.calibrateDeviceTime(report)
+        }
       }
     }
   }

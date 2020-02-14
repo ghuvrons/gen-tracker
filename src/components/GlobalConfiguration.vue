@@ -1,20 +1,34 @@
 <template>
-  <div class="row justify-around">
-    <q-btn
-      class="q-ma-xs"
-      icon="delete"
-      color="negative"
-      label="Clear all data"
-      :disable="!units.length"
-      @click="clearStore()"
-    />
-    <q-btn
-      class="q-ma-xs"
-      icon="add"
-      color="positive"
-      label="Generate fake unit"
-      @click="generateFaker()"
-    />
+  <div
+    class="row justify-between content-center items-center"
+    style="height:150px"
+  >
+    <div class="col-auto">
+      <q-toggle
+        v-model="timeCalibrationState"
+        label="Time Calibration"
+        class="q-ma-xs"
+      />
+    </div>
+    <div class="col-auto">
+      <q-btn
+        class="q-ma-xs"
+        icon="delete"
+        color="negative"
+        label="Clear all data"
+        :disable="!units.length"
+        @click="clearStore()"
+      />
+    </div>
+    <div class="col-auto">
+      <q-btn
+        class="q-ma-xs"
+        icon="add"
+        color="positive"
+        label="Generate fake unit"
+        @click="generateFaker()"
+      />
+    </div>
   </div>
 </template>
 
@@ -26,7 +40,15 @@ import { mapState } from 'vuex'
 export default {
   // name: 'ComponentName',
   computed: {
-    ...mapState('database', ['units'])
+    ...mapState('database', ['units']),
+    timeCalibrationState: {
+      get () {
+        return this.$store.state.database.settings.timeCalibration
+      },
+      set (value) {
+        this.$store.commit('database/TOGGLE_TIME_CALIBRATION')
+      }
+    }
   },
   methods: {
     generateFaker () {
