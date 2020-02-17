@@ -1,15 +1,8 @@
 <template>
   <div
-    class="row justify-between content-center items-center"
+    class="row justify-between items-center"
     style="height:150px"
   >
-    <div class="col-auto">
-      <q-toggle
-        v-model="timeCalibrationState"
-        label="Time Calibration"
-        class="q-ma-xs"
-      />
-    </div>
     <div class="col-auto">
       <q-btn
         class="q-ma-xs"
@@ -27,6 +20,13 @@
         color="positive"
         label="Generate fake unit"
         @click="generateFaker()"
+      />
+    </div>
+    <div class="col-auto">
+      <q-toggle
+        v-model="timeCalibrationState"
+        label="Time Calibration"
+        class="q-ma-xs"
       />
     </div>
   </div>
