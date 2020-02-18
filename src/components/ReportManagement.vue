@@ -144,10 +144,10 @@ export default {
       let timezone = tzlookup(lat, lng)
       let serverTime = moment(new Date())
       let deviceTime = moment(sendTime, 'YYMMDDHHmmssE')
-      let difference = moment.duration(serverTime.diff(deviceTime)).as('minutes')
+      let difference = moment.duration(serverTime.diff(deviceTime)).as('seconds')
 
       //  (at least more n minutes different)
-      if (Math.abs(difference) > config.frame.calibratedMinutes) {
+      if (Math.abs(difference) > config.frame.calibratedSeconds) {
         let validTime = serverTime.tz(timezone).format('YYMMDDHHmmssE')
 
         // send command to fix the RTC time

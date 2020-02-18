@@ -18,7 +18,7 @@ const config = {
       SIMPLE: 1,
       FULL: 2
     },
-    calibratedMinutes: 2
+    calibratedSeconds: 60
   },
   command: {
     prefix: '@T',
