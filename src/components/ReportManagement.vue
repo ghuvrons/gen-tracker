@@ -147,7 +147,7 @@ export default {
       let difference = moment.duration(serverTime.diff(deviceTime)).as('seconds')
 
       //  (at least more n minutes different)
-      if (Math.abs(difference) > config.frame.calibratedSeconds) {
+      if (!deviceTime.isValid() || Math.abs(difference) > config.frame.calibratedSeconds) {
         let validTime = serverTime.tz(timezone).format('YYMMDDHHmmssE')
 
         // send command to fix the RTC time
@@ -178,7 +178,8 @@ export default {
           (frameID === this.config.frame.id.SIMPLE && el.required) ||
           frameID === this.config.frame.id.FULL
         ) {
-          let valFormat = el.format(hexData.substr(elCursor, el.size * 2))
+          let rawHex = hexData.substr(elCursor, el.size * 2)
+          let valFormat = el.format(rawHex)
           // update cursor position
           elCursor += (el.size * 2)
           // fill data
