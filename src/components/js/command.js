@@ -212,6 +212,16 @@ const CommandList = [
     subCode: 2,
     type: null,
     range: null
+  },
+  {
+    command: 'HMI2_SHUTDOWN',
+    desc: 'Request HMI-2 to shutdown',
+    code: 4,
+    subCode: 0,
+    type: 'Bool',
+    range: '{ 0, 1 }',
+    exCommand: 'HMI2_SHUTDOWN=1',
+    exDesc: 'Request HMI-2 to shutdown'
   }
 ]
 
