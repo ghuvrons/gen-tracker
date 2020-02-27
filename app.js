@@ -68,7 +68,9 @@ io.on('connection', (ioClient) => {
   // callback when new command from Apps
   ioClient.on('command', (req) => {
     // send command to device
-    const socket = sockets.find((el) => el.remoteAddress === req.client.address && el.remotePort === req.client.port);
+    const socket = sockets.find(
+      (el) => el.remoteAddress === req.client.address && el.remotePort === req.client.port,
+    );
     // send command to specified client
     if (socket) {
       // send command
@@ -82,7 +84,9 @@ io.on('connection', (ioClient) => {
   // callback for ACK from Apps
   ioClient.on('ack', (req) => {
     // send ack to device
-    const socket = sockets.find((el) => el.remoteAddress === req.client.address && el.remotePort === req.client.port);
+    const socket = sockets.find(
+      (el) => el.remoteAddress === req.client.address && el.remotePort === req.client.port,
+    );
     // send ack to specified client
     if (socket) {
       // send ack
