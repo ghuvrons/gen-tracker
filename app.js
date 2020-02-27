@@ -86,19 +86,19 @@ io.on('connection', (ioClient) => {
     );
     // send ack to specified client
     if (socket) {
-      let hex = req.hexACK;
       // combine command (if any)
       if (req.hexCommand) {
-        hex += req.hexCommand;
+        socket.write(Buffer.from(req.hexACK, 'hex') + Buffer.from(req.hexCommand, 'hex'));
         // command sent (Apps waitting command response)
         log.info(`[TCP] Command to ${socket.remoteAddress}:${socket.remotePort}`);
         log.info(`      ${req.hexCommand}`);
+      } else {
+        // send ack (and command)
+        socket.write(Buffer.from(req.hexACK, 'hex'));
       }
       // ack (and command) sent
       log.info(`[TCP] ACK to ${socket.remoteAddress}:${socket.remotePort}`);
       log.info(`      ${req.hexACK}`);
-      // send ack (and command)
-      socket.write(Buffer.from(hex, 'hex'));
     }
   });
 });
