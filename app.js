@@ -28,7 +28,7 @@ const server = net.createServer((socket) => {
   // Callback for incomming message
   socket.on('data', (data) => {
     const hexData = data.toString('hex').toUpperCase();
-    log.info(`[TCP] New data from ${socket.remoteAddress}:${socket.remotePort}`);
+    log.info(`[TCP] Data from ${socket.remoteAddress}:${socket.remotePort}`);
     log.info(`      ${hexData}`);
     // emit command response to all IO sockets
     io.emit('frameReceived', {
@@ -44,7 +44,7 @@ const server = net.createServer((socket) => {
   // Remove the client from the list when it leaves
   socket.on('end', () => {
     sockets.splice(sockets.indexOf(socket), 1);
-    log.info(`[TCP] Client of ${socket.remoteAddress}:${socket.remotePort} disconnected.`);
+    log.info(`[TCP] Client ${socket.remoteAddress}:${socket.remotePort} disconnected.`);
   });
 
   // Callback on error
@@ -74,8 +74,22 @@ io.on('connection', (ioClient) => {
       // send command
       socket.write(Buffer.from(req.hexCommand, 'hex'));
       // command sent (Apps waitting command response)
-      log.info(`[TCP] New Command to ${socket.remoteAddress}:${socket.remotePort}`);
+      log.info(`[TCP] Command to ${socket.remoteAddress}:${socket.remotePort}`);
       log.info(`      ${req.hexCommand}`);
+    }
+  });
+
+  // callback for ACK from Apps
+  ioClient.on('ack', (req) => {
+    // send ack to device
+    const socket = sockets.find((el) => el.remoteAddress === req.client.address && el.remotePort === req.client.port);
+    // send ack to specified client
+    if (socket) {
+      // send ack
+      socket.write(Buffer.from(req.hexACK, 'hex'));
+      // ack sent
+      log.info(`[TCP] ACK to ${socket.remoteAddress}:${socket.remotePort}`);
+      log.info(`      ${req.hexACK}`);
     }
   });
 });
