@@ -355,50 +355,46 @@ export default {
       // split response message
       let cmd = this.splitCommand(response.command)
       // process the cmd response
-      if (cmd) {
-        let result = response.code.title
-        // check response
-        if (result === 'OK') {
-          // check property
-          if (cmd.prop === 'FINGER_ADD') {
-            this.$q
-              .dialog({
-                title: 'Add user',
-                message: 'Name of fingerprint user.',
-                preventClose: true,
-                cancel: false,
-                color: 'secondary',
-                prompt: {
-                  model: '',
-                  type: 'text'
-                }
-              })
-              .then(data => {
-                this.$store.commit('database/ADD_FINGERS', {
-                  unitID: this.theUnit.unitID,
-                  fingerID: cmd.val,
-                  name: data
-                })
-              })
-          } else if (cmd.prop === 'FINGER_DEL') {
-            this.$store.commit('database/DELETE_FINGERS', {
-              unitID: this.theUnit.unitID,
-              fingerID: cmd.val
+      let result = response.code.title
+      // check response
+      if (result === 'OK') {
+        // check property
+        if (cmd.prop === 'FINGER_ADD') {
+          this.$q
+            .dialog({
+              title: 'Add user',
+              message: 'Name of fingerprint user.',
+              preventClose: true,
+              cancel: false,
+              color: 'secondary',
+              prompt: {
+                model: '',
+                type: 'text'
+              }
             })
-          } else if (cmd.prop === 'FINGER_RST') {
-            this.$store.commit('database/RESET_FINGERS', {
-              unitID: this.theUnit.unitID
+            .then(data => {
+              this.$store.commit('database/ADD_FINGERS', {
+                unitID: this.theUnit.unitID,
+                fingerID: cmd.val,
+                name: data
+              })
             })
-          }
-        } else {
-          this.$q.notify({
-            message: `Command is ${result}`,
-            type: 'negative',
-            position: this.notifPosition
+        } else if (cmd.prop === 'FINGER_DEL') {
+          this.$store.commit('database/DELETE_FINGERS', {
+            unitID: this.theUnit.unitID,
+            fingerID: cmd.val
+          })
+        } else if (cmd.prop === 'FINGER_RST') {
+          this.$store.commit('database/RESET_FINGERS', {
+            unitID: this.theUnit.unitID
           })
         }
       } else {
-        // no command echo, ex: AT$INFO
+        this.$q.notify({
+          message: `Command is ${result}`,
+          type: 'negative',
+          position: this.notifPosition
+        })
       }
     }
   },
