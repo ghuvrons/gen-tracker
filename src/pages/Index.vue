@@ -60,6 +60,7 @@ import ReportLog from 'components/ReportLog'
 import UserManagement from 'components/UserManagement'
 import GlobalConfiguration from 'components/GlobalConfiguration'
 import { CRC32 } from 'components/js/helper'
+import { ACK } from 'components/js/ack'
 import { Header } from 'components/js/frame'
 import { mapGetters, mapState } from 'vuex'
 
@@ -81,7 +82,7 @@ export default {
   },
   computed: {
     ...mapState('database', ['config']),
-    ...mapGetters('database', ['selectedReports', 'selectedFingers'])
+    ...mapGetters('database', ['selectedReports', 'selectedFingers', 'uniqueReport'])
   },
   methods: {
     onResize ({ height }) {
@@ -116,8 +117,14 @@ export default {
           if (size.value === ((hexData.length / 2) - headerSize)) {
             // everything match, frame is valid
             valid = true
+          } else {
+            console.warn(`CORRUPT: Size not same`)
           }
+        } else {
+          console.warn(`CORRUPT: CRC not valid`)
         }
+      } else {
+        console.warn(`CORRUPT: Prefix not same`)
       }
 
       return valid
@@ -140,6 +147,29 @@ export default {
       })
 
       return header
+    },
+    buildACK (frameID, sequentialID) {
+      let hex = ''
+
+      ACK.forEach((ele, i) => {
+        let el = ACK[ACK.length - 1 - i]
+
+        switch (el.field) {
+          case 'sequentialID':
+            hex = el.format(sequentialID) + hex
+            break
+          case 'frameID':
+            hex = el.format(frameID) + hex
+            break
+          case 'prefix':
+            hex = el.format() + hex
+            break
+          default:
+            break
+        }
+      })
+
+      return hex.toUpperCase()
     }
   },
   sockets: {
@@ -155,6 +185,7 @@ export default {
       let valid = false
       let hexData = res.hexData
       let client = res.client
+      let header = null
       // calculate minimum data size for header
       let headerSize = Header
         .map(el => el.size)
@@ -162,18 +193,20 @@ export default {
       // check minimum data size
       if (hexData.length > (headerSize * 2)) {
         // parse header
-        let header = this.parseHeader(hexData)
+        header = this.parseHeader(hexData)
         // validate frame
         valid = this.validateFrame(hexData, header)
         // handle valid frame
         if (valid) {
+          let unitID = header.find(el => el.field === 'unitID').value
           // add unit (if not exist)
           this.$store.commit('database/ADD_UNITS', {
-            unitID: header.find(el => el.field === 'unitID').value,
+            unitID,
             client
           })
           // frame is valid
           let frameID = header.find(el => el.field === 'frameID').value
+          let sequentialID = header.find(el => el.field === 'sequentialID').value
           // handle to corresponding frame
           if (frameID === this.config.frame.id.RESPONSE) {
             // response frame
@@ -181,26 +214,42 @@ export default {
             // handle response
             this.$root.$emit('handleResponse', { hexData })
           } else {
-            // report frame
-            console.log(`REPORT ${hexData}`)
-            // handle report
-            this.$root.$emit('handleReport', {
-              hexData,
-              frameID
-            })
+            // discard if duplicate
+            if (this.uniqueReport(unitID, sequentialID)) {
+              // report frame
+              console.log(`REPORT ${hexData}`)
+              // handle report
+              this.$root.$emit('handleReport', {
+                hexData,
+                frameID
+              })
+            } else {
+              console.warn(`DUPLICATE ${hexData}`)
+            }
           }
         }
+      } else {
+        console.warn(`CORRUPT: Bellow minimum size`)
       }
 
-      // handle corrupt frame
-      if (!valid) {
+      if (valid) {
+        // handle success frame (with ACK)
+        let frameID = header.find(el => el.field === 'frameID').value
+        let sequentialID = header.find(el => el.field === 'sequentialID').value
+        // send ACK + command (if any)
+        this.$socket.emit('send', {
+          client,
+          hex: this.buildACK(frameID, sequentialID)
+        })
+      } else {
+        // handle corrupt frame
         console.error(`CORRUPT ${hexData}`)
         // garbage (frame corrupt), do nothing
-        this.$q.notify({
-          message: `Just received corrupted data`,
-          type: 'negative',
-          position: this.$q.platform.is.desktop ? 'bottom-right' : 'top-right'
-        })
+        // this.$q.notify({
+        //   message: `Just received corrupted data`,
+        //   type: 'negative',
+        //   position: this.$q.platform.is.desktop ? 'bottom-right' : 'top-right'
+        // })
       }
     }
   }

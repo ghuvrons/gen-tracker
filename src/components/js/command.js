@@ -36,7 +36,7 @@ const CommandResponse = [
 ]
 
 const Response = [
-  ...Header.filter(el => el.field !== 'sequentialID'),
+  ...Header,
   {
     field: 'code',
     title: 'Code',

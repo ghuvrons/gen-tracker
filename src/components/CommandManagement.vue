@@ -242,7 +242,7 @@ export default {
         }
       })
 
-      return hex
+      return hex.toUpperCase()
     },
     executeCommand ({ payload, timeout }) {
       let message = null
@@ -275,10 +275,11 @@ export default {
           })
           // update command triggered by external components
           this.setCommand(payload)
-          // send command
-          this.$socket.emit('command', {
+          // send
+          this.$socket.emit('send', {
             client: this.theUnit.client,
-            hexCommand: this.buildCommand(refCommand, value)
+            hex: this.buildCommand(refCommand, value),
+            command: true
           })
         } else {
           message = 'Command is not registered'
@@ -333,40 +334,33 @@ export default {
       // dismiss loading notifcation
       this.stopWaitting('Command sent.', 'positive')
     },
-    splitResponseMsg (message) {
-      // breakdown the response message
-      if (message.indexOf(':') > -1) {
-        let cmd = message.split(':')[0]
-        let res = message.split(':')[1]
-        let prop = cmd
-        let val = null
+    splitCommand (cmd) {
+      // breakdown the  command
+      let prop = cmd
+      let val = null
 
-        // check is has value
-        if (cmd.indexOf('=') > -1) {
-          // response message has property and value
-          prop = cmd.split('=')[0]
-          val = cmd.split('=')[1]
-        }
-
-        return {
-          cmd,
-          res,
-          prop,
-          val
-        }
+      // check is has value
+      if (cmd.indexOf('=') > -1) {
+        // command has property and value
+        prop = cmd.split('=')[0]
+        val = cmd.split('=')[1]
       }
 
-      return null
+      return {
+        prop,
+        val
+      }
     },
-    processResponse ({ message }) {
+    processResponse (response) {
       // split response message
-      let splittedMsg = this.splitResponseMsg(message)
-      // process the splittedMsg response
-      if (splittedMsg) {
+      let cmd = this.splitCommand(response.command)
+      // process the cmd response
+      if (cmd) {
+        let result = response.code.title
         // check response
-        if (splittedMsg.res === 'OK') {
+        if (result === 'OK') {
           // check property
-          if (splittedMsg.prop === 'FINGER_ADD') {
+          if (cmd.prop === 'FINGER_ADD') {
             this.$q
               .dialog({
                 title: 'Add user',
@@ -382,23 +376,23 @@ export default {
               .then(data => {
                 this.$store.commit('database/ADD_FINGERS', {
                   unitID: this.theUnit.unitID,
-                  fingerID: splittedMsg.val,
+                  fingerID: cmd.val,
                   name: data
                 })
               })
-          } else if (splittedMsg.prop === 'FINGER_DEL') {
+          } else if (cmd.prop === 'FINGER_DEL') {
             this.$store.commit('database/DELETE_FINGERS', {
               unitID: this.theUnit.unitID,
-              fingerID: splittedMsg.val
+              fingerID: cmd.val
             })
-          } else if (splittedMsg.prop === 'FINGER_RST') {
+          } else if (cmd.prop === 'FINGER_RST') {
             this.$store.commit('database/RESET_FINGERS', {
               unitID: this.theUnit.unitID
             })
           }
         } else {
           this.$q.notify({
-            message: `Command is ${splittedMsg.res}`,
+            message: `Command is ${result}`,
             type: 'negative',
             position: this.notifPosition
           })

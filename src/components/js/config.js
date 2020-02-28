@@ -21,8 +21,11 @@ const config = {
     calibratedSeconds: 60
   },
   command: {
-    prefix: '@T',
-    timeoutMS: 10000
+    prefix: '$T',
+    timeoutMS: 20000
+  },
+  ack: {
+    prefix: '@C'
   },
   map: {
     zoom: 3,

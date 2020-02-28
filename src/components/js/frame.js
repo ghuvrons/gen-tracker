@@ -53,11 +53,7 @@ const Header = [
     size: 4,
     format: (val) => HexToInt(ChangeEndian(val)),
     display: (valFormat) => valFormat
-  }
-]
-
-const Report = [
-  ...Header,
+  },
   {
     field: 'sequentialID',
     title: 'Sequential ID',
@@ -66,7 +62,11 @@ const Report = [
     size: 2,
     format: (val) => HexToInt(ChangeEndian(val)),
     display: (valFormat) => Dot(valFormat)
-  },
+  }
+]
+
+const Report = [
+  ...Header,
   {
     field: 'rtcSendDatetime',
     title: 'RTC Send Datetime',
