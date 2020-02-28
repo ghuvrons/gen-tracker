@@ -28,7 +28,7 @@ const server = net.createServer((socket) => {
   // Callback for incomming message
   socket.on('data', (data) => {
     const hexData = data.toString('hex').toUpperCase();
-    log.info(`[TCP] Data from ${socket.remoteAddress}:${socket.remotePort}`);
+    log.info(`[TCP] DATA from ${socket.remoteAddress}:${socket.remotePort}`);
     log.info(`      ${hexData}`);
     // emit command response to all IO sockets
     io.emit('frameReceived', {
@@ -65,40 +65,21 @@ io.on('connection', (ioClient) => {
   log.info('[WEB] New WEB-client connected.');
   ioClient.emit('connected');
 
-  // callback when new command from Apps
-  ioClient.on('command', (req) => {
-    // send command to device
+  // callback when new send from Apps
+  ioClient.on('send', (req) => {
+    // find the socket client
     const socket = sockets.find(
       (el) => el.remoteAddress === req.client.address && el.remotePort === req.client.port,
     );
-    // send command to specified client
+    // send command/ack to specified client
     if (socket) {
-      // send command
-      socket.write(Buffer.from(req.hexCommand, 'hex'));
-    }
-  });
-
-  // callback for ACK from Apps
-  ioClient.on('ack', (req) => {
-    // send ack to device
-    const socket = sockets.find(
-      (el) => el.remoteAddress === req.client.address && el.remotePort === req.client.port,
-    );
-    // send ack to specified client
-    if (socket) {
-      // combine command (if any)
-      if (req.hexCommand) {
-        socket.write(Buffer.from(req.hexACK, 'hex') + Buffer.from(req.hexCommand, 'hex'));
-        // command sent (Apps waitting command response)
-        log.info(`[TCP] Command to ${socket.remoteAddress}:${socket.remotePort}`);
-        log.info(`      ${req.hexCommand}`);
-      } else {
-        // send ack (and command)
-        socket.write(Buffer.from(req.hexACK, 'hex'));
-      }
-      // ack (and command) sent
-      log.info(`[TCP] ACK to ${socket.remoteAddress}:${socket.remotePort}`);
-      log.info(`      ${req.hexACK}`);
+      // send command/ack
+      socket.write(Buffer.from(req.hex, 'hex'));
+      // decide the frame
+      const frame = req.command ? 'COMMAND' : 'ACK';
+      // info
+      log.info(`[TCP] ${frame} to ${socket.remoteAddress}:${socket.remotePort}`);
+      log.info(`      ${req.hex}`);
     }
   });
 });
