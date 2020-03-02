@@ -13,3 +13,13 @@
 
   Parse HEX string to readable data format.
 - Run: **quasar dev**
+
+## Todo Progress
+
+- [x] Decrease the number of LED Button control
+- [x] Use semi-permanent localStorage for VueJS app
+- [x] Save history for every reported data
+- [x] Handle connection for multiple IoT devices
+- [x] Separate VueJS app into multiple components for better code structure
+- [ ] Use Laravel web-socket & Vue for web-apps demo
+- [x] Backend should response ACK on every un-corrupted REPORT & RESPONSE
