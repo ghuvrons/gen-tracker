@@ -140,21 +140,22 @@ const Report = [
     size: 1,
     format: (val) => HexToInt(ChangeEndian(val)) * 0.1,
     display: (valFormat) => {
-      let rating = 'Ideal'
+      // let rating = 'Ideal'
 
-      if (valFormat > 1 && valFormat <= 2) {
-        rating = 'Excellent'
-      } else if (valFormat > 2 && valFormat <= 5) {
-        rating = 'Good'
-      } else if (valFormat > 5 && valFormat <= 10) {
-        rating = 'Moderate'
-      } else if (valFormat > 10 && valFormat <= 20) {
-        rating = 'Fair'
-      } else if (valFormat > 20) {
-        rating = 'Poor'
-      }
+      // if (valFormat > 1 && valFormat <= 2) {
+      //   rating = 'Excellent'
+      // } else if (valFormat > 2 && valFormat <= 5) {
+      //   rating = 'Good'
+      // } else if (valFormat > 5 && valFormat <= 10) {
+      //   rating = 'Moderate'
+      // } else if (valFormat > 10 && valFormat <= 20) {
+      //   rating = 'Fair'
+      // } else if (valFormat > 20) {
+      //   rating = 'Poor'
+      // }
 
-      return `${Dot(valFormat)} (${rating})`
+      // return `${Dot(valFormat)} (${rating})`
+      return Dot(valFormat)
     }
   },
   {
@@ -163,7 +164,7 @@ const Report = [
     optional: true,
     chartable: true,
     size: 1,
-    format: (val) => HexToInt(ChangeEndian(val)),
+    format: (val) => HexToInt(ChangeEndian(val)) * 2,
     display: (valFormat) => Dot(valFormat) + ' deg'
   },
   {
