@@ -22,7 +22,7 @@ const config = {
   },
   command: {
     prefix: '$T',
-    timeoutMS: 20000
+    timeoutMS: 10000
   },
   ack: {
     prefix: '@C'
