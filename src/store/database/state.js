@@ -5,7 +5,7 @@ export default {
   config,
   loading: false,
   settings: {
-    timeCalibration: true
+    timeCalibration: false
   },
   theUnit: null,
   theReport: null,

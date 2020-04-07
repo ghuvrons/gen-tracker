@@ -182,7 +182,7 @@ const Report = [
     optional: true,
     chartable: true,
     size: 1,
-    format: (val) => HexToInt(ChangeEndian(val)) * 13,
+    format: (val) => HexToInt(ChangeEndian(val)) * 18,
     display: (valFormat) => Dot(valFormat) + ' mV'
   },
   {
