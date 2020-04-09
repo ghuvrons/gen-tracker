@@ -49,7 +49,7 @@ const server = net.createServer((socket) => {
 
   // Callback on error
   socket.on('error', (error) => {
-    log.info(`[TCP] Error: ${error}`);
+    log.info(`[TCP] ${error}`);
   });
 });
 
