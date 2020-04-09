@@ -11,21 +11,24 @@ const config = {
     address: location.hostname,
     port: 4200
   },
+  command: {
+    prefix: '@C',
+    timeoutMS: 20000
+  },
+  ack: {
+    prefix: '@A'
+  },
+  nack: {
+    prefix: '@N'
+  },
   frame: {
-    prefix: '@G',
+    prefix: '@R',
     id: {
       RESPONSE: 0,
       SIMPLE: 1,
       FULL: 2
     },
     calibratedSeconds: 60
-  },
-  command: {
-    prefix: '$T',
-    timeoutMS: 20000
-  },
-  ack: {
-    prefix: '@C'
   },
   map: {
     zoom: 3,

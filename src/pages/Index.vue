@@ -59,7 +59,8 @@ import MapManagement from 'components/MapManagement'
 import ReportLog from 'components/ReportLog'
 import UserManagement from 'components/UserManagement'
 import GlobalConfiguration from 'components/GlobalConfiguration'
-import { CRC32 } from 'components/js/helper'
+import { config } from 'components/js/config'
+import { CRC32, AsciiToHex } from 'components/js/helper'
 import { ACK } from 'components/js/ack'
 import { Header } from 'components/js/frame'
 import { mapGetters, mapState } from 'vuex'
@@ -170,6 +171,11 @@ export default {
       })
 
       return hex.toUpperCase()
+    },
+    buildNACK () {
+      let hex = AsciiToHex(config.nack.prefix)
+
+      return hex.toUpperCase()
     }
   },
   sockets: {
@@ -242,6 +248,11 @@ export default {
           hex: this.buildACK(frameID, sequentialID)
         })
       } else {
+        // handle corrupted frame (with NACK)
+        this.$socket.emit('send', {
+          client,
+          hex: this.buildNACK()
+        })
         // handle corrupt frame
         console.error(`CORRUPT ${hexData}`)
         // garbage (frame corrupt), do nothing

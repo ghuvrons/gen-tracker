@@ -18,7 +18,7 @@
     "faker": "^4.1.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.27",
+    "moment-timezone": "^0.5.28",
     "tz-lookup": "^6.1.25",
     "vue-chartjs": "^3.5.0",
     "vue-socket.io": "^3.0.5",
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@vue/eslint-config-standard": "^4.0.0",
-    "babel-eslint": "^10.0.3",
+    "babel-eslint": "^10.1.0",
     "eslint": "^5.10.0",
     "eslint-loader": "^2.2.1",
     "eslint-plugin-vue": "^5.2.3",
