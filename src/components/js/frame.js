@@ -120,17 +120,19 @@ const Report = [
     field: 'gpsLongitude',
     title: 'GPS Longitude',
     optional: true,
+    chartable: true,
     size: 4,
     format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
-    display: (valFormat) => valFormat.toFixed(7)
+    display: (valFormat) => valFormat
   },
   {
     field: 'gpsLatitude',
     title: 'GPS Latitude',
     optional: true,
+    chartable: true,
     size: 4,
     format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
-    display: (valFormat) => valFormat.toFixed(7)
+    display: (valFormat) => valFormat
   },
   {
     field: 'gpsHDOP',
@@ -174,7 +176,8 @@ const Report = [
     chartable: true,
     size: 4,
     format: (val) => HexToInt(ChangeEndian(val)),
-    display: (valFormat) => Dot(valFormat) + ' km'
+    // FIXME: change from meter to km
+    display: (valFormat) => Dot(valFormat) + ' m'
   },
   {
     field: 'batVoltage',
