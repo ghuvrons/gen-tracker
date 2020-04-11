@@ -123,7 +123,7 @@ const Report = [
     chartable: true,
     size: 4,
     format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
-    display: (valFormat) => valFormat
+    display: (valFormat) => parseFloat(valFormat.toFixed(7))
   },
   {
     field: 'gpsLatitude',
@@ -132,7 +132,7 @@ const Report = [
     chartable: true,
     size: 4,
     format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
-    display: (valFormat) => valFormat
+    display: (valFormat) => parseFloat(valFormat.toFixed(7))
   },
   {
     field: 'gpsHDOP',
