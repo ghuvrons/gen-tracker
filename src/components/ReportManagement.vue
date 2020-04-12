@@ -136,12 +136,15 @@ export default {
       this.statisticsData = null
     },
     calibrateDeviceTime (report) {
+      let timezone = 'Asia/Jakarta'
       let lat = report.data.find(el => el.field === 'gpsLatitude').value
       let lng = report.data.find(el => el.field === 'gpsLongitude').value
       let sendTime = report.data.find(el => el.field === 'rtcSendDatetime').value
 
       // correct timestamp if not sync with server
-      let timezone = tzlookup(lat, lng)
+      if (lat !== 0 && lng !== 0) {
+        timezone = tzlookup(lat, lng)
+      }
       let serverTime = moment(new Date())
       let deviceTime = moment(sendTime, 'YYMMDDHHmmssE')
       let difference = moment.duration(serverTime.diff(deviceTime)).as('seconds')
