@@ -227,31 +227,7 @@ export default {
       this.setCommand(payload)
     },
     setCommand (payload) {
-      let message = null
-
-      if (payload) {
-        // split payload into property=value
-        let cmd = this.parseCommand(payload)
-
-        if (cmd.ref) {
-          // update command triggered by external components
-          this.cmd.payload = payload
-        } else {
-          message = 'Command is not registered'
-        }
-      } else {
-        message = "Command can't be empty"
-      }
-
-      if (message) {
-        this.$q.notify({
-          message,
-          type: 'warning',
-          position: this.notifPosition
-        })
-      }
-
-      return message === null
+      this.cmd.payload = payload
     },
     parseCommand (cmd) {
       // breakdown the  command
@@ -312,23 +288,30 @@ export default {
       let message = null
 
       // check is buffer already filled
-      if (this.theCommand === null) {
+      if (payload) {
+        if (this.theCommand === null) {
         // set the command
-        if (this.setCommand(payload)) {
+          this.setCommand(payload)
           // parse command
           let cmd = this.parseCommand(payload)
 
-          // buffer the command
-          this.$store.commit('database/SET_THE_COMMAND', {
-            unitID: this.theUnit.unitID,
-            hex: this.buildCommand(cmd),
-            timeout
-          })
-          // set notification
-          message = 'Command is buffered, will be sent on next Report frame'
+          if (cmd.ref) {
+            // buffer the command
+            this.$store.commit('database/SET_THE_COMMAND', {
+              unitID: this.theUnit.unitID,
+              hex: this.buildCommand(cmd),
+              timeout
+            })
+            // set notification
+            message = 'Command is buffered, will be sent on next Report frame'
+          } else {
+            message = 'Command is not registered'
+          }
+        } else {
+          message = 'Buffer already filled!'
         }
       } else {
-        message = 'Buffer already filled!'
+        message = "Command can't be empty"
       }
 
       // show notification
