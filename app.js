@@ -75,10 +75,8 @@ io.on('connection', (ioClient) => {
     if (socket) {
       // send command/ack
       socket.write(Buffer.from(req.hex, 'hex'));
-      // decide the frame
-      const frame = req.command ? 'COMMAND' : 'ACK';
       // info
-      log.info(`[TCP] ${frame} to ${socket.remoteAddress}:${socket.remotePort}`);
+      log.info(`[TCP] REPLY to ${socket.remoteAddress}:${socket.remotePort}`);
       log.info(`      ${req.hex}`);
     }
   });
