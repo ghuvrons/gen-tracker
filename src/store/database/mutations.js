@@ -15,6 +15,10 @@ export const SET_LOADING = (state, payload) => {
   state.loading = payload
 }
 
+export const SET_THE_COMMAND = (state, payload) => {
+  state.theCommand = payload
+}
+
 export const SET_THE_REPORT = (state, payload) => {
   state.theReport = payload
 }

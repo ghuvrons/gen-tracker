@@ -144,11 +144,13 @@ export default {
   created () {
     this.$root.$on('setCommand', this.setCommand)
     this.$root.$on('executeCommand', this.executeCommand)
+    this.$root.$on('startWaitting', this.startWaitting)
     this.$root.$on('handleResponse', this.handleResponse)
   },
   destroyed () {
     this.$root.$off('setCommand', this.setCommand)
     this.$root.$off('executeCommand', this.executeCommand)
+    this.$root.$off('startWaitting', this.startWaitting)
     this.$root.$off('handleResponse', this.handleResponse)
   },
   data () {
@@ -167,16 +169,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('database', ['loading', 'theUnit', 'config']),
+    ...mapState('database', ['loading', 'config', 'theUnit', 'theCommand']),
     searchResult () {
       return FlowFilter(this.cmd.list, this.modal.search)
     }
   },
   methods: {
-    saveResponse (response) {
-      // save command & response
-      this.$store.commit('database/ADD_RESPONSES', response)
-    },
     timeoutCommand () {
       let code = CommandResponse.find(el => el.name === 'timeout')
       // save response
@@ -191,7 +189,23 @@ export default {
       // dismiss loading notifcation
       this.stopWaitting('Command timeout.', 'negative')
     },
+    startWaitting (timeout) {
+      // prepare payload to send
+      this.$store.commit('database/SET_LOADING', true)
+      // timeout guard
+      this.timers.timeoutCommand.time = timeout || this.config.command.timeoutMS
+      this.$timer.start('timeoutCommand')
+      // show notification about sending command
+      this.dismiss = this.$q.notify({
+        message: 'Sending command....',
+        type: 'info',
+        timeout: 0,
+        position: this.notifPosition
+      })
+    },
     stopWaitting (message, type) {
+      // clear buffer
+      this.$store.commit('database/SET_THE_COMMAND', null)
       // hide any loading
       this.$store.commit('database/SET_LOADING', false)
       this.$q.loading.hide()
@@ -212,21 +226,70 @@ export default {
       this.setCommand(payload)
     },
     setCommand (payload) {
-      this.cmd.payload = payload
-    },
-    buildCommand (refCommand, val) {
-      let hex = ''
+      let message = null
 
+      if (payload) {
+        // split payload into property=value
+        let cmd = this.parseCommand(payload)
+
+        if (cmd.ref) {
+          // update command triggered by external components
+          this.cmd.payload = payload
+        } else {
+          message = 'Command is not registered'
+        }
+      } else {
+        message = "Command can't be empty"
+      }
+
+      if (message) {
+        this.$q.notify({
+          message,
+          type: 'warning',
+          position: this.notifPosition
+        })
+      }
+
+      return message === null
+    },
+    parseCommand (cmd) {
+      // breakdown the  command
+      let prop = cmd
+      let val = null
+      let ref = null
+
+      // check is has value
+      if (cmd.indexOf('=') > -1) {
+        // command has property and value
+        prop = cmd.split('=')[0]
+        val = cmd.split('=')[1]
+      }
+
+      // find prop from command list
+      ref = this.cmd.list.find(el => el.command === prop)
+
+      return {
+        prop,
+        val,
+        ref
+      }
+    },
+    buildCommand ({ ref, val }) {
+      let hex = ''
       Command.forEach((ele, i) => {
         let el = Command[Command.length - 1 - i]
 
         switch (el.field) {
           case 'value':
+            if (val === null) {
+              val = 0
+            }
+
             hex = el.format(val) + hex
             break
           case 'subCode':
           case 'code':
-            hex = el.format(refCommand[el.field]) + hex
+            hex = el.format(ref[el.field]) + hex
             break
           case 'size':
             hex = el.format(hex) + hex
@@ -246,52 +309,32 @@ export default {
     },
     executeCommand ({ payload, timeout }) {
       let message = null
-      let refCommand = null
-      let value = 0
 
-      if (payload) {
-        // split payload into property=value
-        let prop = payload.split('=')
-        let command = prop[0]
-        // if has value
-        if (prop.length > 1) {
-          value = prop[1]
-        }
-        // find prop from command list
-        refCommand = this.cmd.list.find(el => el.command === command)
+      // check is buffer already filled
+      if (this.theCommand === null) {
+        // set the command
+        if (this.setCommand(payload)) {
+          // parse command
+          let cmd = this.parseCommand(payload)
 
-        if (refCommand) {
-          // prepare payload to send
-          this.$store.commit('database/SET_LOADING', true)
-          // timeout guard
-          this.timers.timeoutCommand.time = timeout || this.config.command.timeoutMS
-          this.$timer.start('timeoutCommand')
-          // show notification about sending command
-          this.dismiss = this.$q.notify({
-            message: 'Sending command....',
-            type: 'info',
-            timeout: 0,
-            position: this.notifPosition
+          // buffer the command
+          this.$store.commit('database/SET_THE_COMMAND', {
+            unitID: this.theUnit.unitID,
+            hex: this.buildCommand(cmd),
+            timeout
           })
-          // update command triggered by external components
-          this.setCommand(payload)
-          // send
-          this.$socket.emit('send', {
-            client: this.theUnit.client,
-            hex: this.buildCommand(refCommand, value),
-            command: true
-          })
-        } else {
-          message = 'Command is not registered'
+          // set notification
+          message = 'Command is buffered, will be sent on next Report frame'
         }
       } else {
-        message = "Command can't be empty"
+        message = 'Buffer already filled!'
       }
 
+      // show notification
       if (message) {
         this.$q.notify({
           message,
-          type: 'warning',
+          type: 'info',
           position: this.notifPosition
         })
       }
@@ -334,26 +377,9 @@ export default {
       // dismiss loading notifcation
       this.stopWaitting('Command sent.', 'positive')
     },
-    splitCommand (cmd) {
-      // breakdown the  command
-      let prop = cmd
-      let val = null
-
-      // check is has value
-      if (cmd.indexOf('=') > -1) {
-        // command has property and value
-        prop = cmd.split('=')[0]
-        val = cmd.split('=')[1]
-      }
-
-      return {
-        prop,
-        val
-      }
-    },
     processResponse (response) {
-      // split response message
-      let cmd = this.splitCommand(response.command)
+      // split command message
+      let cmd = this.parseCommand(response.command)
       // process the cmd response
       let result = response.code.title
       // check response
@@ -396,6 +422,10 @@ export default {
           position: this.notifPosition
         })
       }
+    },
+    saveResponse (response) {
+      // save command & response
+      this.$store.commit('database/ADD_RESPONSES', response)
     }
   },
   timers: {

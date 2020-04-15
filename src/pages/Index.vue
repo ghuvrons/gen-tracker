@@ -82,7 +82,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('database', ['config']),
+    ...mapState('database', ['config', 'loading', 'theCommand']),
     ...mapGetters('database', ['selectedReports', 'selectedFingers', 'uniqueReport'])
   },
   methods: {
@@ -192,6 +192,8 @@ export default {
       let hexData = res.hexData
       let client = res.client
       let header = null
+      let reply = null
+
       // calculate minimum data size for header
       let headerSize = Header
         .map(el => el.size)
@@ -204,25 +206,25 @@ export default {
         valid = this.validateFrame(hexData, header)
         // handle valid frame
         if (valid) {
+          // frame is valid
           let unitID = header.find(el => el.field === 'unitID').value
+          let frameID = header.find(el => el.field === 'frameID').value
+          let sequentialID = header.find(el => el.field === 'sequentialID').value
           // add unit (if not exist)
           this.$store.commit('database/ADD_UNITS', {
             unitID,
             client
           })
-          // frame is valid
-          let frameID = header.find(el => el.field === 'frameID').value
-          let sequentialID = header.find(el => el.field === 'sequentialID').value
+
           // handle to corresponding frame
           if (frameID === this.config.frame.id.RESPONSE) {
             // response frame
-            console.warn(`RESPONSE ${hexData}`)
+            console.log(`RESPONSE ${hexData}`)
             // handle response
             this.$root.$emit('handleResponse', { hexData })
           } else {
-            // discard if duplicate
+            // if duplicate discard
             if (this.uniqueReport(unitID, sequentialID)) {
-              // report frame
               console.log(`REPORT ${hexData}`)
               // handle report
               this.$root.$emit('handleReport', {
@@ -230,38 +232,34 @@ export default {
                 frameID
               })
             } else {
-              console.warn(`DUPLICATE ${hexData}`)
+              console.warn(`REPORT (DUPLICATE) ${hexData}`)
             }
           }
+
+          // prepare ACK
+          reply = this.buildACK(frameID, sequentialID)
+
+          // check command
+          if (this.theCommand !== null && !this.loading) {
+            if (unitID === this.theCommand.unitID) {
+              // set command
+              reply += this.theCommand.hex
+              // send command, wait response
+              this.$root.$emit('startWaitting', this.theCommand.timeout)
+            }
+          }
+        } else {
+          console.error(`CORRUPT ${hexData}`)
         }
       } else {
         console.warn(`CORRUPT: Bellow minimum size`)
       }
 
-      if (valid) {
-        // handle success frame (with ACK)
-        let frameID = header.find(el => el.field === 'frameID').value
-        let sequentialID = header.find(el => el.field === 'sequentialID').value
-        // send ACK + command (if any)
-        this.$socket.emit('send', {
-          client,
-          hex: this.buildACK(frameID, sequentialID)
-        })
-      } else {
-        // handle corrupted frame (with NACK)
-        this.$socket.emit('send', {
-          client,
-          hex: this.buildNACK()
-        })
-        // handle corrupt frame
-        console.error(`CORRUPT ${hexData}`)
-        // garbage (frame corrupt), do nothing
-        // this.$q.notify({
-        //   message: `Just received corrupted data`,
-        //   type: 'negative',
-        //   position: this.$q.platform.is.desktop ? 'bottom-right' : 'top-right'
-        // })
-      }
+      // reply the REPORT frame
+      this.$socket.emit('send', {
+        client,
+        hex: reply || this.buildNACK()
+      })
     }
   }
 }

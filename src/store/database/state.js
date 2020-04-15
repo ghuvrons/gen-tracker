@@ -9,6 +9,7 @@ export default {
   },
   theUnit: null,
   theReport: null,
+  theCommand: null,
   units: [],
   reports: [],
   responses: [],
