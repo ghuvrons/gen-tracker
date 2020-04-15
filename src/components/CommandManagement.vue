@@ -19,6 +19,7 @@
         v-model="cmd.payload"
         stack-label="Input Command:"
         upper-case
+        :color="theCommand ? 'red' : 'primary'"
         type="text"
         :disable="loading || !theUnit"
         :readonly="loading"
