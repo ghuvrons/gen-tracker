@@ -1,6 +1,63 @@
 import moment from 'moment'
 import { ChangeEndian, Dot, HexToAscii, HexToInt, HexToSignedInt, IntToHex } from 'components/js/helper'
 
+const BatteryPackFields = ({ required }) => {
+  const BatteryPackCount = 2
+  let fields = []
+
+  for (let i = 1; i <= BatteryPackCount; i++) {
+    let tmp = [
+      {
+        field: `batteryPackId${i}`,
+        title: `BatteryPack-${i} ID`,
+        required: true,
+        chartable: true,
+        size: 8,
+        format: (val) => HexToInt(ChangeEndian(val)),
+        display: (valFormat) => valFormat
+      },
+      {
+        field: `batteryPackVoltage${i}`,
+        title: `BatteryPack-${i} Voltage`,
+        required: true,
+        chartable: true,
+        size: 2,
+        format: (val) => HexToInt(ChangeEndian(val)),
+        display: (valFormat) => valFormat
+      },
+      {
+        field: `batteryPackCurrent${i}`,
+        title: `BatteryPack-${i} Current`,
+        required: true,
+        chartable: true,
+        size: 2,
+        format: (val) => HexToInt(ChangeEndian(val)),
+        display: (valFormat) => valFormat
+      },
+      {
+        field: `batteryPackSoc${i}`,
+        title: `BatteryPack-${i} SoC`,
+        required: false,
+        chartable: true,
+        size: 2,
+        format: (val) => HexToInt(ChangeEndian(val)),
+        display: (valFormat) => valFormat
+      },
+      {
+        field: `batteryPackTemperature${i}`,
+        title: `BatteryPack-${i} Temperature`,
+        required: false,
+        chartable: true,
+        size: 2,
+        format: (val) => HexToInt(ChangeEndian(val)),
+        display: (valFormat) => valFormat
+      }
+    ]
+    fields = [...fields, ...tmp]
+  }
+  return fields.filter(el => el.required === required)
+}
+
 const Header = [
   {
     field: 'prefix',
@@ -107,19 +164,11 @@ const Report = [
     format: (val) => parseInt(ChangeEndian(val), 16),
     display: (valFormat) => IntToHex(valFormat, 16)
   },
-  {
-    field: 'speed',
-    title: 'Vehicle Speed',
-    required: true,
-    chartable: true,
-    size: 1,
-    format: (val) => HexToInt(ChangeEndian(val)),
-    display: (valFormat) => Dot(valFormat) + ' km/hr'
-  },
+  ...BatteryPackFields({ required: true }),
   {
     field: 'gpsLongitude',
     title: 'GPS Longitude',
-    optional: true,
+    required: false,
     chartable: true,
     size: 4,
     format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
@@ -128,7 +177,7 @@ const Report = [
   {
     field: 'gpsLatitude',
     title: 'GPS Latitude',
-    optional: true,
+    required: false,
     chartable: true,
     size: 4,
     format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
@@ -137,42 +186,37 @@ const Report = [
   {
     field: 'gpsHDOP',
     title: 'GPS HDOP',
-    optional: true,
+    required: false,
     chartable: true,
     size: 1,
     format: (val) => HexToInt(ChangeEndian(val)) * 0.1,
     display: (valFormat) => {
-      // let rating = 'Ideal'
-
-      // if (valFormat > 1 && valFormat <= 2) {
-      //   rating = 'Excellent'
-      // } else if (valFormat > 2 && valFormat <= 5) {
-      //   rating = 'Good'
-      // } else if (valFormat > 5 && valFormat <= 10) {
-      //   rating = 'Moderate'
-      // } else if (valFormat > 10 && valFormat <= 20) {
-      //   rating = 'Fair'
-      // } else if (valFormat > 20) {
-      //   rating = 'Poor'
-      // }
-
-      // return `${Dot(valFormat)} (${rating})`
       return Dot(valFormat)
     }
   },
   {
     field: 'gpsHeading',
     title: 'GPS Heading',
-    optional: true,
+    required: false,
     chartable: true,
     size: 1,
     format: (val) => HexToInt(ChangeEndian(val)) * 2,
     display: (valFormat) => Dot(valFormat) + ' deg'
   },
   {
+    field: 'speed',
+    title: 'Vehicle Speed',
+    required: true,
+    chartable: true,
+    size: 1,
+    format: (val) => HexToInt(ChangeEndian(val)),
+    // FIXME: change from meter to km/hr
+    display: (valFormat) => Dot(valFormat) + ' m/s'
+  },
+  {
     field: 'odometer',
     title: 'Odometer',
-    optional: true,
+    required: false,
     chartable: true,
     size: 4,
     format: (val) => HexToInt(ChangeEndian(val)),
@@ -181,26 +225,26 @@ const Report = [
   },
   {
     field: 'batVoltage',
-    title: 'Backup Bat. Voltage',
-    optional: true,
+    title: 'Battery Voltage',
+    required: false,
     chartable: true,
     size: 1,
     format: (val) => HexToInt(ChangeEndian(val)) * 18,
     display: (valFormat) => Dot(valFormat) + ' mV'
   },
   {
-    field: 'reportRange',
-    title: 'Report Range Left',
-    optional: true,
+    field: 'rangeApproximation',
+    title: 'Range Approximation',
+    required: false,
     chartable: true,
     size: 1,
     format: (val) => HexToInt(ChangeEndian(val)),
     display: (valFormat) => Dot(valFormat) + ' km'
   },
   {
-    field: 'reportBattery',
-    title: 'Report Bat. Efficiency',
-    optional: true,
+    field: 'batteryEfficiency',
+    title: 'Battery Efficiency',
+    required: false,
     chartable: true,
     size: 1,
     format: (val) => HexToInt(ChangeEndian(val)),
@@ -209,7 +253,7 @@ const Report = [
   {
     field: 'tripA',
     title: 'Trip A',
-    optional: true,
+    required: false,
     chartable: true,
     size: 4,
     format: (val) => HexToInt(ChangeEndian(val)),
@@ -218,12 +262,13 @@ const Report = [
   {
     field: 'tripB',
     title: 'Trip B',
-    optional: true,
+    required: false,
     chartable: true,
     size: 4,
     format: (val) => HexToInt(ChangeEndian(val)),
     display: (valFormat) => Dot(valFormat) + ' km'
-  }
+  },
+  ...BatteryPackFields({ required: false })
 ]
 
 export { Header, Report }

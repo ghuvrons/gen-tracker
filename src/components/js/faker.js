@@ -102,10 +102,10 @@ const generateReports = (total, unitID) => {
           case 'batVoltage':
             value = faker.random.number(3300) / 13
             break
-          case 'reportRange':
+          case 'rangeApproximation':
             value = faker.random.number(999)
             break
-          case 'reportBattery':
+          case 'batteryEfficiency':
             value = faker.random.number(99)
             break
           case 'tripA':
