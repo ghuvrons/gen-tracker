@@ -338,7 +338,6 @@ export default {
           output: el.display(valFormat)
         })
       })
-
       let code = CommandResponse.find(el => {
         return el.code === data.find(el => el.field === 'code').value
       })
