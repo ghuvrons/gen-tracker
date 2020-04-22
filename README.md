@@ -31,3 +31,5 @@
 - [ ] Use table to represent EventsGroup, not chart
 - [ ] Handle each EventsGroup
 - [ ] Group ReportReader parameter based on VCU, BMS & MCU
+- [ ] Bugs: When FollowButton clicked, it is not automatically scrolled to the last data
+- [ ] Add keyboard (up & down) control to ReportLog
