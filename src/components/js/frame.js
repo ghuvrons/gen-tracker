@@ -206,7 +206,7 @@ const Report = [
   {
     field: 'speed',
     title: 'Vehicle Speed',
-    required: true,
+    required: false,
     chartable: true,
     size: 1,
     format: (val) => HexToInt(ChangeEndian(val)),

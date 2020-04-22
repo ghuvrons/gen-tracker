@@ -224,13 +224,13 @@ const CommandList = [
     exDesc: 'Request HMI-2 to shutdown'
   },
   {
-    command: 'BMS_ON',
+    command: 'BMS_RUN',
     desc: 'Control BMS',
     code: 5,
     subCode: 0,
     type: 'Bool',
     range: '{ 0, 1 }',
-    exCommand: 'BMS_ON=1',
+    exCommand: 'BMS_RUN=1',
     exDesc: 'Turn on the BMS'
   }
 ]
