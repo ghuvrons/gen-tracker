@@ -11,10 +11,11 @@ const BatteryPackFields = ({ required }) => {
         field: `batteryPackId${i}`,
         title: `BatteryPack-${i} ID`,
         required: true,
-        chartable: true,
-        size: 8,
+        size: 4,
         format: (val) => HexToInt(ChangeEndian(val)),
-        display: (valFormat) => valFormat
+        display: (valFormat) => {
+          return valFormat === 0xFFFFFFFF ? 'OFF' : valFormat
+        }
       },
       {
         field: `batteryPackVoltage${i}`,
