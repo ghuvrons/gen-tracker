@@ -33,3 +33,4 @@
 - [ ] Group ReportReader parameter based on VCU, BMS & MCU
 - [ ] Bugs: When FollowButton clicked, it is not automatically scrolled to the last data
 - [ ] Add keyboard (up & down) control to ReportLog
+- [ ] Re-check "Generate Unit" compatibility
