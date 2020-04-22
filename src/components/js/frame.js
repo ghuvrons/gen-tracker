@@ -23,7 +23,7 @@ const BatteryPackFields = ({ required }) => {
         required: true,
         chartable: true,
         size: 2,
-        format: (val) => HexToInt(ChangeEndian(val)),
+        format: (val) => HexToInt(ChangeEndian(val)) * 0.01,
         display: (valFormat) => Dot(valFormat) + ' V'
       },
       {
@@ -32,7 +32,7 @@ const BatteryPackFields = ({ required }) => {
         required: true,
         chartable: true,
         size: 2,
-        format: (val) => HexToInt(ChangeEndian(val)),
+        format: (val) => (HexToInt(ChangeEndian(val)) * 0.01) - 50,
         display: (valFormat) => Dot(valFormat) + ' A'
       },
       {
@@ -50,7 +50,7 @@ const BatteryPackFields = ({ required }) => {
         required: false,
         chartable: true,
         size: 2,
-        format: (val) => HexToInt(ChangeEndian(val)),
+        format: (val) => HexToInt(ChangeEndian(val)) - 40,
         display: (valFormat) => Dot(valFormat) + ' C'
       }
     ]
