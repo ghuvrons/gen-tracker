@@ -21,5 +21,13 @@
 - [x] Save history for every reported data
 - [x] Handle connection for multiple IoT devices
 - [x] Separate VueJS app into multiple components for better code structure
-- [ ] Use Laravel web-socket & Vue for web-apps demo
+- [x] ~~Use Laravel web-socket & Vue for web-apps demo~~
 - [x] Backend should response ACK on every un-corrupted REPORT & RESPONSE
+- [ ] Use GPS heading for StreetView
+  - <https://developers.google.com/maps/documentation/javascript/streetview?hl=id>
+- [ ] ReportReader should change based on ReportLog, some parameter not changed
+- [ ] Bugs: FullData can be clicked when it's only 1, make the chart error
+- [ ] Fix "intervention" error log when scrolling command list
+- [ ] Use table to represent EventsGroup, not chart
+- [ ] Handle each EventsGroup
+- [ ] Group ReportReader parameter based on VCU, BMS & MCU
