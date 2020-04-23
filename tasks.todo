@@ -3,7 +3,7 @@
 // DONE: handle socketIO connection
 // DONE: add global settings menu, clear localStorage
 // DONE: add minimum q-scroll for landscape mobile desktop
-// DONE: fix user management dynamic button, recalculate the height
+// DONE: fix driver management dynamic button, recalculate the height
 // DONE: add simple report to faker
 // DONE: give send icon on command field
 // DONE: add command list reference
@@ -31,7 +31,7 @@
 // DONE: change y-axes based on rangeValue max
 // DONE: change chart height based on screen size
 // TODO: add event reference and the reader
-// TODO: add user name to the report log (if any)
+// TODO: add driver name to the report log (if any)
 // DONE: call software developer
 // DONE: call amber goldentek
 // DONE: change $lodash to $_

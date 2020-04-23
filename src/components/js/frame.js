@@ -50,7 +50,7 @@ const BatteryPackFields = ({ required }) => {
         required: false,
         chartable: true,
         size: 2,
-        format: (val) => HexToInt(ChangeEndian(val)) - 40,
+        format: (val) => (HexToInt(ChangeEndian(val)) * 0.1) - 40,
         display: (valFormat) => Dot(valFormat) + ' C'
       }
     ]

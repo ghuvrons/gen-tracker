@@ -35,3 +35,5 @@
 - [ ] Add keyboard (up & down) control to ReportLog
 - [ ] Re-check "Generate Unit" compatibility
 - [ ] Fix back Odometer and Speed to km and km/h
+- [ ] Move communication handler to backend, not client
+- [ ] Fix "put your fingerprint on scanner" when command is buffered

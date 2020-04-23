@@ -31,7 +31,7 @@
         :count="selectedFingers.length"
         slot="title"
         name="tab-2"
-        label="User Management"
+        label="Driver Management"
       />
       <q-tab
         slot="title"
@@ -43,7 +43,7 @@
         <report-log :height="paneHeight"></report-log>
       </q-tab-pane>
       <q-tab-pane name="tab-2">
-        <user-management :height="paneHeight"></user-management>
+        <driver-management :height="paneHeight"></driver-management>
       </q-tab-pane>
       <q-tab-pane name="tab-3">
         <global-configuration></global-configuration>
@@ -57,7 +57,7 @@
 <script>
 import MapManagement from 'components/MapManagement'
 import ReportLog from 'components/ReportLog'
-import UserManagement from 'components/UserManagement'
+import DriverManagement from 'components/DriverManagement'
 import GlobalConfiguration from 'components/GlobalConfiguration'
 import { config } from 'components/js/config'
 import { CRC32, AsciiToHex } from 'components/js/helper'
@@ -70,7 +70,7 @@ export default {
   components: {
     MapManagement,
     ReportLog,
-    UserManagement,
+    DriverManagement,
     GlobalConfiguration
   },
   data () {

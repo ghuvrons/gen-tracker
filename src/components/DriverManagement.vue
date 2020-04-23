@@ -32,7 +32,7 @@
           v-if="selectedFingers.length"
         >
           <q-item
-            v-for="(user, index) in selectedFingers"
+            v-for="(driver, index) in selectedFingers"
             :key="index"
           >
 
@@ -41,10 +41,10 @@
                 color="primary"
                 square
               >
-                {{user.fingerID}}
+                {{driver.fingerID}}
               </q-chip>
             </q-item-side>
-            <q-item-main :label="user.name" />
+            <q-item-main :label="driver.name" />
             <q-item-side right>
               <q-btn
                 round
@@ -53,7 +53,7 @@
                 color="red"
                 size="sm"
                 icon="delete"
-                @click="deleteFinger(user)"
+                @click="deleteFinger(driver)"
                 :loading="loading"
               />
             </q-item-side>
@@ -65,7 +65,7 @@
           icon="info"
           color="faded"
         >
-          No finger user yet
+          No finger driver yet
         </q-alert>
       </q-scroll-area>
     </div>
@@ -120,17 +120,17 @@ export default {
         timeout: 30000
       })
     },
-    deleteFinger (user) {
+    deleteFinger (driver) {
       this.$q
         .dialog({
           title: 'Confirmation',
-          message: `Are you sure to remove this fingerprint *${user.name}* ?`,
+          message: `Are you sure to remove this fingerprint *${driver.name}* ?`,
           preventClose: true,
           cancel: true
         })
         .then(() => {
           // emit to event bus
-          let payload = `FINGER_DEL=${user.fingerID}`
+          let payload = `FINGER_DEL=${driver.fingerID}`
           this.$root.$emit('executeCommand', { payload })
         })
         .catch(() => { })

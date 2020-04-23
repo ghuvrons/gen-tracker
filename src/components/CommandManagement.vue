@@ -371,8 +371,8 @@ export default {
         if (cmd.prop === 'FINGER_ADD') {
           this.$q
             .dialog({
-              title: 'Add user',
-              message: 'Name of fingerprint user.',
+              title: 'Add driver',
+              message: 'Name of driver.',
               preventClose: true,
               cancel: false,
               color: 'secondary',
