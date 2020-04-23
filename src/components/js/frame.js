@@ -24,7 +24,7 @@ const BatteryPackFields = ({ required }) => {
         chartable: true,
         size: 2,
         format: (val) => HexToInt(ChangeEndian(val)) * 0.01,
-        display: (valFormat) => Dot(valFormat) + ' V'
+        display: (valFormat) => valFormat.toFixed(2) + ' V'
       },
       {
         field: `batteryPackCurrent${i}`,
@@ -33,7 +33,7 @@ const BatteryPackFields = ({ required }) => {
         chartable: true,
         size: 2,
         format: (val) => (HexToInt(ChangeEndian(val)) * 0.01) - 50,
-        display: (valFormat) => Dot(valFormat) + ' A'
+        display: (valFormat) => valFormat.toFixed(2) + ' A'
       },
       {
         field: `batteryPackSoc${i}`,
@@ -51,7 +51,7 @@ const BatteryPackFields = ({ required }) => {
         chartable: true,
         size: 2,
         format: (val) => (HexToInt(ChangeEndian(val)) * 0.1) - 40,
-        display: (valFormat) => Dot(valFormat) + ' C'
+        display: (valFormat) => valFormat.toFixed(2) + ' C'
       }
     ]
     fields = [...fields, ...tmp]
