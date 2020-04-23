@@ -246,6 +246,10 @@ export default {
               reply += this.theCommand.hex
               // send command, wait response
               this.$root.$emit('startWaitting', this.theCommand.timeout)
+              // check is FINGER_ADD
+              if (this.theCommand.ref.command === 'FINGER_ADD') {
+                this.$root.$emit('scanningDialog')
+              }
             }
           }
         } else {

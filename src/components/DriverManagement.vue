@@ -78,6 +78,12 @@ import { mapState, mapGetters } from 'vuex'
 import { QSpinnerFacebook } from 'quasar'
 
 export default {
+  created () {
+    this.$root.$on('scanningDialog', this.scanningDialog)
+  },
+  destroyed () {
+    this.$root.$off('scanningDialog', this.scanningDialog)
+  },
   // name: 'ComponentName',
   props: {
     height: Number
@@ -104,7 +110,7 @@ export default {
       // return the free index
       return id
     },
-    addFinger () {
+    scanningDialog () {
       // give notification to scan
       this.$q.loading.show({
         spinner: QSpinnerFacebook,
@@ -113,6 +119,8 @@ export default {
         message: 'Put your fingerprint on scanner...',
         messageColor: 'red'
       })
+    },
+    addFinger () {
       // emit to event bus
       let payload = `FINGER_ADD=${this.findFreeFingerID()}`
       this.$root.$emit('executeCommand', {

@@ -300,7 +300,8 @@ export default {
             this.$store.commit('database/SET_THE_COMMAND', {
               unitID: this.theUnit.unitID,
               hex: this.buildCommand(cmd),
-              timeout
+              timeout,
+              ref: cmd.ref
             })
             // set notification
             message = 'Command is buffered, will be sent on next Report frame'
