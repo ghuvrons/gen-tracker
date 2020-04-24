@@ -162,8 +162,8 @@ const VCU = ({ required }) => {
       required: true,
       chartable: true,
       size: 8,
-      format: (val) => parseInt(ChangeEndian(val), 16),
-      display: (valFormat) => IntToHex(valFormat, 16)
+      format: (val) => HexToInt(ChangeEndian(val)),
+      display: (valFormat) => valFormat
     },
     {
       field: 'gpsLongitude',

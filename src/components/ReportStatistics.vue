@@ -98,7 +98,7 @@
             <q-list link dense>
               <q-scroll-area
                 class="bg-white"
-                :style="{ height: (height < 150 ? 150 : height) + 80 + 'px' }"
+                :style="{ height: (height < 150 ? 150 : height) + 120 + 'px' }"
               >
                 <template v-for="event in events">
                   <q-item
@@ -128,6 +128,7 @@
 import LineChart from 'components/LineChart'
 import { Events } from 'components/js/events'
 import { mapGetters } from 'vuex'
+var Long = require('long')
 
 export default {
   // name: 'ComponentName',
@@ -232,7 +233,7 @@ export default {
   },
   methods: {
     activeEvent (bit) {
-      return this.currentValue & Math.pow(2, bit)
+      return Long.fromValue(this.currentValue).shiftRight(bit) & 1
     },
     changeChartData ({ labels, data, label }) {
       this.chart.data.labels = labels

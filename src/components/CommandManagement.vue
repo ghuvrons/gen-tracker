@@ -1,6 +1,7 @@
 <template>
   <div class="shadow-1">
-    <p class="q-pa-sm q-mb-none">Command Management
+    <p class="q-pa-sm q-mb-none">
+      Command Management
       <q-btn
         v-if="cmd.list.length"
         icon="info"
@@ -29,8 +30,8 @@
           {
             icon: 'send',
             content: true,
-            handler () {
-              executeCommand({ payload: cmd.payload })
+            handler() {
+              executeCommand({ payload: cmd.payload });
             }
           }
         ]"
@@ -39,24 +40,14 @@
 
     <q-modal
       v-model="modal.open"
-      :content-css="{minWidth: '80vw', minHeight: '80vh'}"
+      :content-css="{ minWidth: '80vw', minHeight: '80vh' }"
     >
       <q-modal-layout>
         <q-toolbar slot="header">
-          <q-btn
-            flat
-            round
-            dense
-            v-close-overlay
-            icon="keyboard_arrow_left"
-          />
+          <q-btn flat round dense v-close-overlay icon="keyboard_arrow_left" />
           <q-toolbar-title>
             Command List
-            <q-chip
-              color="red"
-              dense
-              square
-            >{{ cmd.list.length }}</q-chip>
+            <q-chip color="red" dense square>{{ cmd.list.length }}</q-chip>
           </q-toolbar-title>
         </q-toolbar>
 
@@ -64,6 +55,7 @@
           <q-search
             class="fit"
             inverted
+            autofocus
             v-model="modal.search"
             color="none"
           />
@@ -71,60 +63,42 @@
 
         <q-toolbar slot="footer">
           <q-toolbar-title class="q-pa-xs">
-            <q-btn
-              color="primary"
-              @click="modal.open = false"
-              label="Close"
-            />
+            <q-btn color="primary" @click="modal.open = false" label="Close" />
           </q-toolbar-title>
         </q-toolbar>
 
         <div class="layout-padding">
-          <q-list
-            link
-            separator
-          >
+          <q-list link separator>
             <q-item
               v-for="(el, i) in searchResult"
               :key="i"
-              @click.native="selectCommandRefference(el.exCommand ? el.exCommand : el.command)"
+              @click.native="
+                selectCommandRefference(
+                  el.exCommand ? el.exCommand : el.command
+                )
+              "
             >
               <q-item-main>
-                <q-item-tile label>{{el.command}}</q-item-tile>
-                <q-item-tile sublabel>{{el.desc}}</q-item-tile>
+                <q-item-tile label>{{ el.command }}</q-item-tile>
+                <q-item-tile sublabel>{{ el.desc }}</q-item-tile>
 
                 <q-item-tile sublabel>
-                  <q-chip
-                    dense
-                    square
-                    color="red"
-                  >{{el.exCommand ? el.exCommand : el.command}}</q-chip>
+                  <q-chip dense square color="red">{{
+                    el.exCommand ? el.exCommand : el.command
+                  }}</q-chip>
                 </q-item-tile>
                 <q-item-tile sublabel>
-                  <q-chip
-                    dense
-                    square
-                    color="green"
-                  >{{el.exDesc ? el.exDesc : el.desc}}</q-chip>
+                  <q-chip dense square color="green">{{
+                    el.exDesc ? el.exDesc : el.desc
+                  }}</q-chip>
                 </q-item-tile>
               </q-item-main>
-              <q-item-side
-                right
-                v-if="el.type"
-              >
+              <q-item-side right v-if="el.type">
                 <q-item-tile>
-                  <q-chip
-                    dense
-                    square
-                    color="blue"
-                  >{{el.type}}</q-chip>
+                  <q-chip dense square color="blue">{{ el.type }}</q-chip>
                 </q-item-tile>
                 <q-item-tile>
-                  <q-chip
-                    dense
-                    square
-                    color="blue"
-                  >{{el.range}}</q-chip>
+                  <q-chip dense square color="blue">{{ el.range }}</q-chip>
                 </q-item-tile>
               </q-item-side>
             </q-item>
