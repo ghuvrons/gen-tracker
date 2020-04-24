@@ -26,7 +26,7 @@
         <div class="row gutter-sm justify-between">
           <div
             :class="
-              statistics.field.field === 'eventsGroup'
+              statistics.field.field === 'eventsGroup' && currentValue > 0
                 ? 'col-sm-12 col-md-7 col-lg-8'
                 : 'col-12'
             "
@@ -92,7 +92,7 @@
             </div>
           </div>
           <div
-            v-if="statistics.field.field === 'eventsGroup'"
+            v-if="statistics.field.field === 'eventsGroup' && currentValue > 0"
             class="col-sm-12 col-md-5 col-lg-4"
           >
             <q-list link dense>
@@ -141,7 +141,7 @@ export default {
   data () {
     return {
       events: this.$_.cloneDeep(Events),
-      value: null,
+      currentValue: 0,
       modalOpen: false,
       sample: {
         min: 10,
@@ -232,7 +232,7 @@ export default {
   },
   methods: {
     activeEvent (bit) {
-      return this.value & Math.pow(2, bit)
+      return this.currentValue & Math.pow(2, bit)
     },
     changeChartData ({ labels, data, label }) {
       this.chart.data.labels = labels
@@ -255,7 +255,7 @@ export default {
       xMin = labels[minIndex]
       xMax = labels[maxIndex]
       // update value
-      this.value = data[maxIndex]
+      this.currentValue = data[maxIndex]
       // calculate y-axes
       let dataInRange = data.filter((val, i) => i >= minIndex && i <= maxIndex)
       let yMax = this.$_.max(dataInRange)
