@@ -3,96 +3,120 @@
     v-model="modalOpen"
     @show="statistics.render = true"
     @hide="stopRender()"
-    :content-css="{minWidth: '80vw', minHeight: '90vh'}"
+    :content-css="{ minWidth: '90vw', minHeight: '95vh' }"
   >
     <q-modal-layout>
       <q-toolbar slot="header">
-        <q-btn
-          flat
-          round
-          dense
-          v-close-overlay
-          icon="keyboard_arrow_left"
-        />
+        <q-btn flat round dense v-close-overlay icon="keyboard_arrow_left" />
         <q-toolbar-title>
           Report Statistics
-          <q-chip
-            color="red"
-            dense
-            square
-            v-if="chart.data"
-          >{{chart.data.labels.length}}</q-chip>
+          <q-chip color="red" dense square v-if="chart.data">{{
+            chart.data.labels.length
+          }}</q-chip>
         </q-toolbar-title>
       </q-toolbar>
 
       <q-toolbar slot="footer">
         <q-toolbar-title class="q-pa-xs">
-          <q-btn
-            color="primary"
-            @click="modalOpen = false"
-            label="Close"
-          />
+          <q-btn color="primary" @click="modalOpen = false" label="Close" />
         </q-toolbar-title>
       </q-toolbar>
 
-      <div
-        class="layout-padding"
-        v-if="statistics.render"
-      >
-        <line-chart
-          :styles="{height: (height < 200 ? 200 : height) + 'px'}"
-          :chart-data="chart.data"
-          :options="chart.options"
-          :update-data="statistics.update.data"
-          :update-options="statistics.update.options"
-        />
-        <q-range
-          v-model="range.value"
-          :min="range.min"
-          :max="range.max"
-          :disable="range.disable"
-          label
-          snap
-          square
-          label-always
-          :drag-range="range.control.drag"
-        />
-        <div class="row justify-between items-center content-center">
-          <div class="col-auto">
-            <q-toggle
-              v-model="range.control.beginAtZero"
-              label="Begin Zero"
-              class="q-ma-xs"
+      <div class="layout-padding" v-if="statistics.render">
+        <div class="row gutter-sm justify-between">
+          <div
+            :class="
+              statistics.field.field === 'eventsGroup'
+                ? 'col-sm-12 col-md-7 col-lg-8'
+                : 'col-12'
+            "
+          >
+            <line-chart
+              :styles="{ height: (height < 200 ? 200 : height) + 'px' }"
+              :chart-data="chart.data"
+              :options="chart.options"
+              :update-data="statistics.update.data"
+              :update-options="statistics.update.options"
             />
-            <q-toggle
-              v-model="range.control.drag"
-              label="Lock Sample"
-              class="q-ma-xs"
-              :disable="range.control.maximize || chart.data.labels.length < sample.min"
+            <q-range
+              v-model="range.value"
+              :min="range.min"
+              :max="range.max"
+              :disable="range.disable"
+              label
+              snap
+              square
+              label-always
+              :drag-range="range.control.drag"
             />
-            <q-toggle
-              v-model="range.control.follow"
-              :disable="range.control.maximize"
-              label="Follow Data"
-              class="q-ma-xs"
-            />
-            <q-toggle
-              v-model="range.control.maximize"
-              label="Max Range"
-              class="q-ma-xs"
-            />
+            <div class="row justify-between items-center content-center">
+              <div class="col-auto">
+                <q-toggle
+                  v-model="range.control.beginAtZero"
+                  label="Begin Zero"
+                  class="q-ma-xs"
+                />
+                <q-toggle
+                  v-model="range.control.drag"
+                  label="Lock Sample"
+                  class="q-ma-xs"
+                  :disable="
+                    range.control.maximize ||
+                      chart.data.labels.length < sample.min
+                  "
+                />
+                <q-toggle
+                  v-model="range.control.follow"
+                  :disable="range.control.maximize"
+                  label="Follow Data"
+                  class="q-ma-xs"
+                />
+                <q-toggle
+                  v-model="range.control.maximize"
+                  label="Max Range"
+                  class="q-ma-xs"
+                />
+              </div>
+              <div class="col-auto">
+                <q-input
+                  v-model="range.sample"
+                  type="number"
+                  class="q-ma-xs"
+                  style="width:130px"
+                  prefix="Sample :"
+                  inverted
+                  align="right"
+                  disable
+                />
+              </div>
+            </div>
           </div>
-          <div class="col-auto">
-            <q-input
-              v-model="range.sample"
-              type="number"
-              class="q-ma-xs"
-              style="width:130px"
-              prefix="Sample :"
-              inverted
-              align="right"
-              disable
-            />
+          <div
+            v-if="statistics.field.field === 'eventsGroup'"
+            class="col-sm-12 col-md-5 col-lg-4"
+          >
+            <q-list link dense>
+              <q-scroll-area
+                class="bg-white"
+                :style="{ height: (height < 150 ? 150 : height) + 80 + 'px' }"
+              >
+                <template v-for="event in events">
+                  <q-item
+                    :key="event.bit"
+                    v-if="activeEvent(event.bit)"
+                    dense
+                    separator
+                    link
+                  >
+                    <q-item-main>
+                      <q-item-tile sublabel>
+                        {{ event.name }}
+                      </q-item-tile>
+                    </q-item-main>
+                  </q-item>
+                </template>
+              </q-scroll-area>
+            </q-list>
           </div>
         </div>
       </div>
@@ -102,6 +126,7 @@
 
 <script>
 import LineChart from 'components/LineChart'
+import { Events } from 'components/js/events'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -115,6 +140,8 @@ export default {
   },
   data () {
     return {
+      events: this.$_.cloneDeep(Events),
+      value: null,
       modalOpen: false,
       sample: {
         min: 10,
@@ -170,30 +197,33 @@ export default {
             align: 'end'
           },
           scales: {
-            xAxes: [{
-              ticks: {
-                max: 1,
-                min: 0
-              },
-              scaleLabel: {
-                display: true,
-                labelString: 'Sequential ID'
+            xAxes: [
+              {
+                ticks: {
+                  max: 1,
+                  min: 0
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Sequential ID'
+                }
               }
-            }],
-            yAxes: [{
-              ticks: {
-                beginAtZero: true,
-                max: 1,
-                min: 0
-              },
-              scaleLabel: {
-                display: true,
-                labelString: 'Value'
+            ],
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                  max: 1,
+                  min: 0
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Value'
+                }
               }
-            }]
+            ]
           }
         }
-
       }
     }
   },
@@ -201,6 +231,9 @@ export default {
     ...mapGetters('database', ['selectedReports'])
   },
   methods: {
+    activeEvent (bit) {
+      return this.value & Math.pow(2, bit)
+    },
     changeChartData ({ labels, data, label }) {
       this.chart.data.labels = labels
       this.chart.data.datasets[0].data = data
@@ -221,6 +254,8 @@ export default {
       // sometime the sequentialID is corrupt, so set the nearest greater value
       xMin = labels[minIndex]
       xMax = labels[maxIndex]
+      // update value
+      this.value = data[maxIndex]
       // calculate y-axes
       let dataInRange = data.filter((val, i) => i >= minIndex && i <= maxIndex)
       let yMax = this.$_.max(dataInRange)
@@ -263,13 +298,16 @@ export default {
       let labels = []
       // get datasets
       this.selectedReports.forEach(el => {
-        let theField = el.data.find(ele => ele.field === this.statistics.field.field)
+        let theField = el.data.find(
+          ele => ele.field === this.statistics.field.field
+        )
         // is data-field exist on this report
         if (theField) {
           // insert to datasets
           datasets.push(theField.value)
           // insert the label
-          let sequentialID = el.data.find(ele => ele.field === 'sequentialID').value
+          let sequentialID = el.data.find(ele => ele.field === 'sequentialID')
+            .value
           labels.push(sequentialID)
           // labels.push(datasets.length)
         }
@@ -290,7 +328,7 @@ export default {
     }
   },
   watch: {
-    'data': {
+    data: {
       immediate: true,
       handler (data) {
         if (data) {
@@ -301,7 +339,7 @@ export default {
         }
       }
     },
-    'selectedReports': {
+    selectedReports: {
       immediate: true,
       handler (val) {
         if (this.statistics.render) {
@@ -312,7 +350,7 @@ export default {
             let min = this.range.value.min
             let sample = this.range.max - this.range.min
             // set drag to true if sample less than sample.min
-            if (!(sample > (this.sample.min + 1))) {
+            if (!(sample > this.sample.min + 1)) {
               this.range.control.drag = sample > this.sample.min
             }
             // update min on range.control.drag
@@ -335,7 +373,7 @@ export default {
       handler (state) {
         let max = this.range.max
         let min = this.range.min
-        let sample = (max - min)
+        let sample = max - min
         // check state
         if (state) {
           // save previous sample value
@@ -393,5 +431,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>

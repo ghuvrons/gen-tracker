@@ -67,19 +67,18 @@
 - [x] ~~Use Laravel web-socket & Vue for web-apps demo~~
 - [x] Backend should response ACK on every un-corrupted REPORT & RESPONSE
 - [x] Fix "put your fingerprint on scanner" when command is buffered
+- [x] Use table to represent EventsGroup, not chart
+- [x] Handle each EventsGroup
+- [x] add event reference and the reader
 - [ ] make auto focus on command reference search bar
 - [ ] add driver name to the report log (if any)
 - [ ] simulate reports every 5 second for faker
 - [ ] move faker to server
-- [ ] change axes range unit (K, M, G)
 - [ ] Use GPS heading for StreetView
   - <https://developers.google.com/maps/documentation/javascript/streetview?hl=id>
 - [ ] ReportReader should change based on ReportLog, some parameter not changed
 - [ ] Bugs: FullData can be clicked when it's only 1, make the chart error
 - [ ] Fix "intervention" error log when scrolling command list
-- [ ] Use table to represent EventsGroup, not chart
-- [ ] Handle each EventsGroup
-- [ ] add event reference and the reader
 - [ ] Group ReportReader parameter based on VCU, BMS & MCU
 - [ ] Bugs: When FollowButton clicked, it is not automatically scrolled to the last data
 - [ ] Add keyboard (up & down) control to ReportLog
@@ -87,3 +86,4 @@
 - [ ] Fix back Odometer and Speed to km and km/h
 - [ ] Move communication handler to backend, not client
 - [ ] Fix y-axis chart when its bigger
+- [ ] change axes range unit (K, M, G)
