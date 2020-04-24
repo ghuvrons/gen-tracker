@@ -104,8 +104,8 @@
                   <q-item
                     :key="event.bit"
                     v-if="activeEvent(event.bit)"
-                    dense
                     separator
+                    dense
                     link
                   >
                     <q-item-main>
@@ -233,7 +233,7 @@ export default {
   },
   methods: {
     activeEvent (bit) {
-      return Long.fromValue(this.currentValue).shiftRight(bit) & 1
+      return Long.fromNumber(this.currentValue, 1).shiftRight(bit) & 1
     },
     changeChartData ({ labels, data, label }) {
       this.chart.data.labels = labels
