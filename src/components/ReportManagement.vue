@@ -108,17 +108,15 @@ export default {
     },
     optionalReport () {
       let nearestOptional = []
-      // if full frame, use it
-      if (this.theReport.frameID === this.config.frame.id.FULL) {
-        nearestOptional = this.theReport.data.filter(el => !el.required)
-      } else {
-        // if simple frame, use nearest full frame (before it)
-        let selectedIndex = this.selectedReports.findIndex(el => el.hexData === this.theReport.hexData)
-        let nearestFull = this.selectedReports.find((el, i) => {
-          return el.frameID === this.config.frame.id.FULL && i <= selectedIndex
-        })
-        if (nearestFull) {
-          nearestOptional = nearestFull.data.filter(el => !el.required)
+
+      // use nearest full frame
+      let selectedIndex = this.selectedReports.findIndex(el => el.hexData === this.theReport.hexData)
+      for (let index = this.selectedReports.length - 1; index >= 0; index--) {
+        if (index <= selectedIndex) {
+          if (this.selectedReports[index].frameID === this.config.frame.id.FULL) {
+            nearestOptional = this.selectedReports[index].data.filter(el => !el.required)
+            break
+          }
         }
       }
 

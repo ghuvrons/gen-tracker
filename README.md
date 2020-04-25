@@ -83,6 +83,7 @@
 - [ ] Bugs: When FollowButton clicked, it is not automatically scrolled to the last data
 - [ ] Add keyboard (up & down) control to ReportLog
 - [ ] Re-check "Generate Unit" compatibility
+- [ ] Change Y-axes label from 'value' to 'unit name'
 - [ ] Fix back Odometer and Speed to km and km/h
 - [ ] Move communication handler to backend, not client
 - [ ] Fix y-axis chart when its bigger
