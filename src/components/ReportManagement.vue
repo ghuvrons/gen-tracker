@@ -111,12 +111,10 @@ export default {
 
       // use nearest full frame
       let selectedIndex = this.selectedReports.findIndex(el => el.hexData === this.theReport.hexData)
-      for (let index = this.selectedReports.length - 1; index >= 0; index--) {
-        if (index <= selectedIndex) {
-          if (this.selectedReports[index].frameID === this.config.frame.id.FULL) {
-            nearestOptional = this.selectedReports[index].data.filter(el => !el.required)
-            break
-          }
+      for (let index = selectedIndex; index >= 0; index--) {
+        if (this.selectedReports[index].frameID === this.config.frame.id.FULL) {
+          nearestOptional = this.selectedReports[index].data.filter(el => !el.required)
+          break
         }
       }
 
