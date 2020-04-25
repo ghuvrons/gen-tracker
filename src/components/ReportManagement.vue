@@ -1,52 +1,41 @@
 <template>
   <div class="shadow-1">
-    <p class="q-pa-sm q-mb-none">Report Reader
-      <q-chip
-        color="negative"
-        dense
-        square
-        v-if="theReport"
-      >
-        {{theReport.frameID === config.frame.id.FULL ? 'FULL' : 'SIMPLE'}}
+    <p class="q-pa-sm q-mb-none">
+      Report Reader
+      <q-chip color="negative" dense square v-if="theReport">
+        {{ theReport.frameID === config.frame.id.FULL ? "FULL" : "SIMPLE" }}
       </q-chip>
     </p>
 
     <q-scroll-area
       class="bg-white"
-      :style="{height: (height < 150 ? 150 : height) + 'px'}"
+      :style="{ height: (height < 150 ? 150 : height) + 'px' }"
     >
-      <q-list
-        separator
-        dense
-        v-if="theReport"
-      >
+      <q-list separator dense v-if="theReport">
         <!-- the new required frame -->
         <q-item
           v-for="data in requiredReport"
           :link="selectedReports.length > 1 && data.chartable"
           :key="data.field"
-          :class="{'bg-dark text-white': activeField(data)}"
+          :class="{ 'bg-dark text-white': activeField(data) }"
           @click.native="openReportStatistics(data)"
         >
           <q-item-main>
             <q-item-tile label>{{ data.title }}</q-item-tile>
             <q-item-tile
               sublabel
-              :text-color="activeField(data) ? 'yellow': null"
-            >{{ data.output }}</q-item-tile>
+              :text-color="activeField(data) ? 'yellow' : null"
+              >{{ data.output }}</q-item-tile
+            >
           </q-item-main>
-          <q-item-side
-            right
-            color="green"
-            icon="cloud_download"
-          />
+          <q-item-side right color="green" icon="cloud_download" />
         </q-item>
         <!-- add latest optional frame -->
         <q-item
           v-for="data in optionalReport"
           :link="selectedReports.length > 1 && data.chartable"
           :key="data.field"
-          :class="{'bg-dark text-white': activeField(data) }"
+          :class="{ 'bg-dark text-white': activeField(data) }"
           @click.native="openReportStatistics(data)"
         >
           <q-item-main>
@@ -55,18 +44,19 @@
           </q-item-main>
           <q-item-side
             right
-            :color="theReport.frameID === config.frame.id.FULL ? 'green' : 'red'"
-            :icon="theReport.frameID === config.frame.id.FULL ? 'cloud_download' : 'cloud_off'"
+            :color="
+              theReport.frameID === config.frame.id.FULL ? 'green' : 'red'
+            "
+            :icon="
+              theReport.frameID === config.frame.id.FULL
+                ? 'cloud_download'
+                : 'cloud_off'
+            "
           />
         </q-item>
       </q-list>
 
-      <q-alert
-        v-else
-        icon="info"
-        color="faded"
-        class="q-ma-xs"
-      >
+      <q-alert v-else icon="info" color="faded" class="q-ma-xs">
         No active report yet
       </q-alert>
     </q-scroll-area>
@@ -117,14 +107,22 @@ export default {
       return this.theReport.data.filter(el => el.required)
     },
     optionalReport () {
-      let lastOptional = []
-      // find latest full report
-      let lastFull = this.selectedReports.find(el => el.frameID === this.config.frame.id.FULL)
-      if (lastFull) {
-        lastOptional = lastFull.data.filter(el => !el.required)
+      let nearestOptional = []
+      // if full frame, use it
+      if (this.theReport.frameID === this.config.frame.id.FULL) {
+        nearestOptional = this.theReport.data.filter(el => !el.required)
+      } else {
+        // if simple frame, use nearest full frame (before it)
+        let selectedIndex = this.selectedReports.findIndex(el => el.hexData === this.theReport.hexData)
+        let nearestFull = this.selectedReports.find((el, i) => {
+          return el.frameID === this.config.frame.id.FULL && i <= selectedIndex
+        })
+        if (nearestFull) {
+          nearestOptional = nearestFull.data.filter(el => !el.required)
+        }
       }
 
-      return lastOptional
+      return nearestOptional
     }
   },
   methods: {

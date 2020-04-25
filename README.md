@@ -70,13 +70,13 @@
 - [x] Use table to represent EventsGroup, not chart
 - [x] Handle each EventsGroup
 - [x] add event reference and the reader
+- [x] ReportReader should change based on ReportLog, some parameter not changed
 - [ ] make auto focus on command reference search bar
 - [ ] add driver name to the report log (if any)
 - [ ] simulate reports every 5 second for faker
 - [ ] move faker to server
 - [ ] Use GPS heading for StreetView
   - <https://developers.google.com/maps/documentation/javascript/streetview?hl=id>
-- [ ] ReportReader should change based on ReportLog, some parameter not changed
 - [ ] Bugs: FullData can be clicked when it's only 1, make the chart error
 - [ ] Fix "intervention" error log when scrolling command list
 - [ ] Group ReportReader parameter based on VCU, BMS & MCU
