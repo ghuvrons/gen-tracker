@@ -129,22 +129,26 @@ const VCU = ({ required }) => {
       field: 'rtcSendDatetime',
       title: 'RTC Send Datetime',
       required: true,
+      chartable: true,
       size: 8,
-      format: (val) => HexToInt(ChangeEndian(val)).toString(),
+      format: (val) => {
+        return Number(moment(HexToInt(ChangeEndian(val)).toString(), 'YYMMDDHHmmssE').format('X'))
+      },
       display: (valFormat) => {
-      // datetime string to timestamp
-        return moment(valFormat, 'YYMMDDHHmmssE').format('ddd, DD MMM YYYY, HH:mm:ss')
+        return moment(valFormat, 'X').format('ddd, DD MMM YYYY, HH:mm:ss')
       }
     },
     {
       field: 'rtcLogDatetime',
       title: 'RTC Log Datetime',
       required: true,
+      chartable: true,
       size: 8,
-      format: (val) => HexToInt(ChangeEndian(val)).toString(),
+      format: (val) => {
+        return Number(moment(HexToInt(ChangeEndian(val)).toString(), 'YYMMDDHHmmssE').format('X'))
+      },
       display: (valFormat) => {
-      // datetime string to timestamp
-        return moment(valFormat, 'YYMMDDHHmmssE').format('ddd, DD MMM YYYY, HH:mm:ss')
+        return moment(valFormat, 'X').format('ddd, DD MMM YYYY, HH:mm:ss')
       }
     },
     {
