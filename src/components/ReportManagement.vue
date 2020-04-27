@@ -25,7 +25,7 @@
             <q-item-tile
               sublabel
               :text-color="activeField(data) ? 'yellow' : null"
-              >{{ data.output }}</q-item-tile
+              >{{ data.output }} {{ data.unit }}</q-item-tile
             >
           </q-item-main>
           <q-item-side right color="green" icon="cloud_download" />
@@ -40,7 +40,9 @@
         >
           <q-item-main>
             <q-item-tile label>{{ data.title }}</q-item-tile>
-            <q-item-tile sublabel>{{ data.output }}</q-item-tile>
+            <q-item-tile sublabel
+              >{{ data.output }} {{ data.unit }}</q-item-tile
+            >
           </q-item-main>
           <q-item-side
             right

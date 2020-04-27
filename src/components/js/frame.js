@@ -17,6 +17,7 @@ const Header = [
     header: true,
     required: true,
     chartable: true,
+    unit: 'Units',
     size: 4,
     format: (val) => parseInt(ChangeEndian(val), 16),
     display: (valFormat) => IntToHex(valFormat, 16).slice(8).toUpperCase()
@@ -27,9 +28,10 @@ const Header = [
     header: true,
     required: true,
     chartable: true,
+    unit: 'Bytes',
     size: 1,
     format: (val) => HexToInt(ChangeEndian(val)),
-    display: (valFormat) => Dot(valFormat) + ' bytes'
+    display: (valFormat) => Dot(valFormat)
   },
   {
     field: 'frameID',
@@ -37,6 +39,7 @@ const Header = [
     header: true,
     required: true,
     chartable: true,
+    unit: 'Type',
     size: 1,
     format: (val) => HexToInt(ChangeEndian((val))),
     display: (valFormat) => {
@@ -59,6 +62,7 @@ const Header = [
     title: 'Sequential ID',
     required: true,
     chartable: true,
+    unit: 'Units',
     size: 2,
     format: (val) => HexToInt(ChangeEndian(val)),
     display: (valFormat) => Dot(valFormat)
@@ -86,36 +90,40 @@ const BMS = ({ required }) => {
         title: `BMS-${i} Voltage`,
         required: true,
         chartable: true,
+        unit: 'Volt',
         size: 2,
         format: (val) => HexToInt(ChangeEndian(val)) * 0.01,
-        display: (valFormat) => valFormat.toFixed(2) + ' V'
+        display: (valFormat) => valFormat.toFixed(2)
       },
       {
         field: `BMSCurrent${i}`,
         title: `BMS-${i} Current`,
         required: true,
         chartable: true,
+        unit: 'Ampere',
         size: 2,
         format: (val) => (HexToInt(ChangeEndian(val)) * 0.01) - 50,
-        display: (valFormat) => valFormat.toFixed(2) + ' A'
+        display: (valFormat) => valFormat.toFixed(2)
       },
       {
         field: `BMSSoc${i}`,
         title: `BMS-${i} SoC`,
         required: false,
         chartable: true,
+        unit: '%',
         size: 2,
         format: (val) => HexToInt(ChangeEndian(val)),
-        display: (valFormat) => Dot(valFormat) + ' %'
+        display: (valFormat) => Dot(valFormat)
       },
       {
         field: `BMSTemperature${i}`,
         title: `BMS-${i} Temperature`,
         required: false,
         chartable: true,
+        unit: 'Celcius',
         size: 2,
         format: (val) => (HexToInt(ChangeEndian(val)) * 0.1) - 40,
-        display: (valFormat) => valFormat.toFixed(2) + ' C'
+        display: (valFormat) => valFormat.toFixed(2)
       }
     ]
     fields = [...fields, ...tmp]
@@ -130,6 +138,7 @@ const VCU = ({ required }) => {
       title: 'RTC Send Datetime',
       required: true,
       chartable: true,
+      unit: 'Seconds',
       size: 8,
       format: (val) => {
         return Number(moment(HexToInt(ChangeEndian(val)).toString(), 'YYMMDDHHmmssE').format('X'))
@@ -143,6 +152,7 @@ const VCU = ({ required }) => {
       title: 'RTC Log Datetime',
       required: true,
       chartable: true,
+      unit: 'Seconds',
       size: 8,
       format: (val) => {
         return Number(moment(HexToInt(ChangeEndian(val)).toString(), 'YYMMDDHHmmssE').format('X'))
@@ -156,6 +166,7 @@ const VCU = ({ required }) => {
       title: 'Driver ID',
       required: true,
       chartable: true,
+      unit: 'Units',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)),
       display: (valFormat) => valFormat
@@ -165,6 +176,7 @@ const VCU = ({ required }) => {
       title: 'Events Group',
       required: true,
       chartable: true,
+      unit: 'Accumulated',
       size: 8,
       format: (val) => HexToInt(ChangeEndian(val)),
       display: (valFormat) => valFormat
@@ -174,6 +186,7 @@ const VCU = ({ required }) => {
       title: 'GPS Longitude',
       required: false,
       chartable: true,
+      unit: 'Units',
       size: 4,
       format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
       display: (valFormat) => parseFloat(valFormat.toFixed(7))
@@ -183,6 +196,7 @@ const VCU = ({ required }) => {
       title: 'GPS Latitude',
       required: false,
       chartable: true,
+      unit: 'Units',
       size: 4,
       format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
       display: (valFormat) => parseFloat(valFormat.toFixed(7))
@@ -192,6 +206,7 @@ const VCU = ({ required }) => {
       title: 'GPS HDOP',
       required: false,
       chartable: true,
+      unit: 'Units',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)) * 0.1,
       display: (valFormat) => {
@@ -203,74 +218,80 @@ const VCU = ({ required }) => {
       title: 'GPS Heading',
       required: false,
       chartable: true,
+      unit: 'Degree',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)) * 2,
-      display: (valFormat) => Dot(valFormat) + ' deg'
+      display: (valFormat) => Dot(valFormat)
     },
     {
       field: 'speed',
       title: 'Vehicle Speed',
       required: false,
       chartable: true,
+      unit: 'Km/hr',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)),
-      // FIXME: change from meter to km/hr
-      display: (valFormat) => Dot(valFormat) + ' m/s'
+      display: (valFormat) => Dot(valFormat)
     },
     {
       field: 'odometer',
       title: 'Odometer',
       required: false,
       chartable: true,
+      unit: 'Km',
       size: 4,
       format: (val) => HexToInt(ChangeEndian(val)),
-      // FIXME: change from meter to km
-      display: (valFormat) => Dot(valFormat) + ' m'
+      display: (valFormat) => Dot(valFormat)
     },
     {
       field: 'batVoltage',
       title: 'Battery Voltage',
       required: false,
       chartable: true,
+      unit: 'mVolt',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)) * 18,
-      display: (valFormat) => Dot(valFormat) + ' mV'
+      display: (valFormat) => Dot(valFormat)
     },
     {
       field: 'rangeApproximation',
       title: 'Range Approximation',
       required: false,
       chartable: true,
+      unit: 'Km',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat) + ' km'
+      display: (valFormat) => Dot(valFormat)
     },
     {
       field: 'batteryEfficiency',
       title: 'Battery Efficiency',
       required: false,
       chartable: true,
+      unit: 'Km/kWh',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat) + ' km/kWh'
+      display: (valFormat) => Dot(valFormat)
     },
     {
       field: 'tripA',
       title: 'Trip A',
       required: false,
       chartable: true,
+      unit: 'Km',
       size: 4,
       format: (val) => HexToInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat) + ' km'
+      display: (valFormat) => Dot(valFormat)
     },
     {
       field: 'tripB',
       title: 'Trip B',
       required: false,
       chartable: true,
+      unit: 'Km',
       size: 4,
       format: (val) => HexToInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat) + ' km'
+      display: (valFormat) => Dot(valFormat)
     }
   ]
 

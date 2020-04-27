@@ -8,18 +8,10 @@
     <!--can be placed anywhere within your template -->
     <q-window-resize-observable @resize="onResize" />
 
-    <map-management
-      :height="mapHeight"
-      :pageWidth="pageWidth"
-    >
+    <map-management :height="mapHeight" :pageWidth="pageWidth">
     </map-management>
 
-    <q-tabs
-      v-model="selectedTab"
-      inverted
-      animated
-      swipeable
-    >
+    <q-tabs v-model="selectedTab" inverted animated swipeable>
       <!-- Tabs - notice slot="title" -->
       <q-tab
         :count="selectedReports.length"
@@ -33,11 +25,7 @@
         name="tab-2"
         label="Driver Management"
       />
-      <q-tab
-        slot="title"
-        name="tab-3"
-        label="Configuration"
-      />
+      <q-tab slot="title" name="tab-3" label="Configuration" />
       <!-- Targets -->
       <q-tab-pane name="tab-1">
         <report-log :height="paneHeight"></report-log>
@@ -219,20 +207,20 @@ export default {
           // handle to corresponding frame
           if (frameID === this.config.frame.id.RESPONSE) {
             // response frame
-            console.log(`RESPONSE ${hexData}`)
+            console.log(`RESPONSE-${sequentialID} ${hexData}`)
             // handle response
             this.$root.$emit('handleResponse', { hexData })
           } else {
             // if duplicate discard
             if (this.uniqueReport(unitID, sequentialID)) {
-              console.log(`REPORT ${hexData}`)
+              console.log(`REPORT-${sequentialID} ${hexData}`)
               // handle report
               this.$root.$emit('handleReport', {
                 hexData,
                 frameID
               })
             } else {
-              console.warn(`REPORT (DUPLICATE) ${hexData}`)
+              console.warn(`REPORT-${sequentialID} (DUPLICATE) ${hexData}`)
             }
           }
 

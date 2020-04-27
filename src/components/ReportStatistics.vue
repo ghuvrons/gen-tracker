@@ -235,10 +235,12 @@ export default {
     activeEvent (bit) {
       return Long.fromNumber(this.currentValue, 1).shiftRight(bit) & 1
     },
-    changeChartData ({ labels, data, label }) {
-      this.chart.data.labels = labels
-      this.chart.data.datasets[0].data = data
-      this.chart.data.datasets[0].label = label
+    changeChartData ({ yData, xData, yLabel, title }) {
+      this.chart.options.scales.yAxes[0].scaleLabel.labelString = yLabel
+      this.chart.data.labels = xData
+      this.chart.data.datasets[0].data = yData
+      this.chart.data.datasets[0].label = title
+
       // trigger update
       this.statistics.update.data = !this.statistics.update.data
     },
@@ -315,9 +317,10 @@ export default {
       })
       // update the datasets
       this.changeChartData({
-        labels: labels.reverse(),
-        data: datasets.reverse(),
-        label: this.statistics.field.title
+        xData: labels.reverse(),
+        yData: datasets.reverse(),
+        yLabel: this.statistics.field.unit,
+        title: this.statistics.field.title
       })
       // set range (always update on data change)
       this.range.min = this.$_.min(labels)
