@@ -128,6 +128,16 @@ const CommandList = [
     exDesc: 'Turn on the test LED'
   },
   {
+    command: 'GEN_KNOB',
+    desc: 'Force set KNOB state',
+    code: 0,
+    subCode: 2,
+    type: 'Bool',
+    range: '{ 0, 1 }',
+    exCommand: 'GEN_KNOB=1',
+    exDesc: 'Set KNOB state on'
+  },
+  {
     command: 'REPORT_RTC',
     desc: 'Set RTC value ( E start from 1=Monday )',
     code: 1,
@@ -212,26 +222,6 @@ const CommandList = [
     subCode: 2,
     type: null,
     range: null
-  },
-  {
-    command: 'HMI2_SHUTDOWN',
-    desc: 'Request HMI-2 to shutdown',
-    code: 4,
-    subCode: 0,
-    type: 'Bool',
-    range: '{ 0, 1 }',
-    exCommand: 'HMI2_SHUTDOWN=1',
-    exDesc: 'Request HMI-2 to shutdown'
-  },
-  {
-    command: 'BMS_RUN',
-    desc: 'Control BMS',
-    code: 5,
-    subCode: 0,
-    type: 'Bool',
-    range: '{ 0, 1 }',
-    exCommand: 'BMS_RUN=1',
-    exDesc: 'Turn on the BMS'
   }
 ]
 
