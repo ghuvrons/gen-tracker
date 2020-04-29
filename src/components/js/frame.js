@@ -17,7 +17,6 @@ const Header = [
     header: true,
     required: true,
     chartable: true,
-    unit: 'Units',
     size: 4,
     format: (val) => parseInt(ChangeEndian(val), 16),
     display: (valFormat) => IntToHex(valFormat, 16).slice(8).toUpperCase()
@@ -62,7 +61,6 @@ const Header = [
     title: 'Sequential ID',
     required: true,
     chartable: true,
-    unit: 'Units',
     size: 2,
     format: (val) => HexToInt(ChangeEndian(val)),
     display: (valFormat) => Dot(valFormat)
@@ -138,7 +136,6 @@ const VCU = ({ required }) => {
       title: 'RTC Send Datetime',
       required: true,
       chartable: true,
-      unit: 'Seconds',
       size: 8,
       format: (val) => {
         return Number(moment(HexToInt(ChangeEndian(val)).toString(), 'YYMMDDHHmmssE').format('X'))
@@ -152,7 +149,6 @@ const VCU = ({ required }) => {
       title: 'RTC Log Datetime',
       required: true,
       chartable: true,
-      unit: 'Seconds',
       size: 8,
       format: (val) => {
         return Number(moment(HexToInt(ChangeEndian(val)).toString(), 'YYMMDDHHmmssE').format('X'))
@@ -166,7 +162,6 @@ const VCU = ({ required }) => {
       title: 'Driver ID',
       required: true,
       chartable: true,
-      unit: 'Units',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)),
       display: (valFormat) => valFormat
@@ -176,7 +171,6 @@ const VCU = ({ required }) => {
       title: 'Events Group',
       required: true,
       chartable: true,
-      unit: 'Accumulated',
       size: 8,
       format: (val) => HexToInt(ChangeEndian(val)),
       display: (valFormat) => valFormat
@@ -186,7 +180,6 @@ const VCU = ({ required }) => {
       title: 'GPS Longitude',
       required: false,
       chartable: true,
-      unit: 'Units',
       size: 4,
       format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
       display: (valFormat) => parseFloat(valFormat.toFixed(7))
@@ -196,7 +189,6 @@ const VCU = ({ required }) => {
       title: 'GPS Latitude',
       required: false,
       chartable: true,
-      unit: 'Units',
       size: 4,
       format: (val) => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
       display: (valFormat) => parseFloat(valFormat.toFixed(7))
@@ -206,7 +198,6 @@ const VCU = ({ required }) => {
       title: 'GPS HDOP',
       required: false,
       chartable: true,
-      unit: 'Units',
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)) * 0.1,
       display: (valFormat) => {

@@ -319,7 +319,7 @@ export default {
       this.changeChartData({
         xData: labels.reverse(),
         yData: datasets.reverse(),
-        yLabel: this.statistics.field.unit,
+        yLabel: this.statistics.field.unit || 'Value',
         title: this.statistics.field.title
       })
       // set range (always update on data change)

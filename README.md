@@ -71,6 +71,8 @@
 - [x] Handle each EventsGroup
 - [x] add event reference and the reader
 - [x] ReportReader should change based on ReportLog, some parameter not changed
+- [x] Change Y-axes label from 'value' to 'unit name'
+- [x] Fix back Odometer and Speed to km and km/h
 - [ ] make auto focus on command reference search bar
 - [ ] add driver name to the report log (if any)
 - [ ] simulate reports every 5 second for faker
@@ -80,11 +82,10 @@
 - [ ] Bugs: FullData can be clicked when it's only 1, make the chart error
 - [ ] Fix "intervention" error log when scrolling command list
 - [ ] Group ReportReader parameter based on VCU, BMS & MCU
-- [ ] Bugs: When FollowButton clicked, it is not automatically scrolled to the last data
+- [ ] Fix, When FollowButton clicked, it is not automatically scrolled to the last data
 - [ ] Add keyboard (up & down) control to ReportLog
 - [ ] Re-check "Generate Unit" compatibility
-- [ ] Change Y-axes label from 'value' to 'unit name'
-- [ ] Fix back Odometer and Speed to km and km/h
 - [ ] Move communication handler to backend, not client
 - [ ] Fix y-axis chart when its bigger
 - [ ] change axes range unit (K, M, G)
+- [ ] Fix RepsonseLog not sync with command sent
