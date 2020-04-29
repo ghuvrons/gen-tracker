@@ -244,6 +244,16 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat)
     },
     {
+      field: 'signal',
+      title: 'Signal Quality',
+      required: false,
+      chartable: true,
+      unit: '%',
+      size: 1,
+      format: (val) => HexToInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat)
+    },
+    {
       field: 'batVoltage',
       title: 'Battery Voltage',
       required: false,
