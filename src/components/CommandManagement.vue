@@ -157,7 +157,7 @@ export default {
         unitID: this.theUnit.unitID,
         data: null,
         hexData: null,
-        command: this.cmd.payload,
+        payload: this.theCommand.payload,
         code,
         message: ''
       })
@@ -274,11 +274,12 @@ export default {
             this.$store.commit('database/SET_THE_COMMAND', {
               unitID: this.theUnit.unitID,
               hex: this.buildCommand(cmd),
+              payload,
               timeout,
-              ref: cmd.ref
+              cmd
             })
             // set notification
-            message = 'Command is buffered, will be sent on next Report frame'
+            message = 'Command is queued, will be sent with next ACK'
           } else {
             message = 'Command is not registered'
           }
@@ -321,7 +322,7 @@ export default {
         unitID: data.find(el => el.field === 'unitID').value,
         data,
         hexData,
-        command: this.cmd.payload,
+        payload: this.theCommand.payload,
         code,
         message: data.find(el => el.field === 'message').value
       }
@@ -337,7 +338,7 @@ export default {
     },
     processResponse (response) {
       // split command message
-      let cmd = this.parseCommand(response.command)
+      let cmd = this.parseCommand(response.payload)
       // process the cmd response
       let result = response.code.title
       // check response
