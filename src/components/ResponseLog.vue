@@ -42,11 +42,6 @@ export default {
   props: {
     height: Number
   },
-  data () {
-    return {
-      theResponse: null
-    }
-  },
   computed: {
     ...mapState('database', ['loading']),
     ...mapGetters('database', ['selectedResponses'])
@@ -54,8 +49,7 @@ export default {
   methods: {
     setCommand (response) {
       if (!this.loading) {
-        this.theResponse = response
-        this.$root.$emit('setCommand', response.command)
+        this.$root.$emit('setCommand', response.payload)
       }
     }
   }
