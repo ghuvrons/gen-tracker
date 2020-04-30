@@ -98,7 +98,7 @@
             <q-list link dense>
               <q-scroll-area
                 class="bg-white"
-                :style="{ height: (height < 150 ? 150 : height) + 120 + 'px' }"
+                :style="{ height: (height < 150 ? 150 : height) + 110 + 'px' }"
               >
                 <template v-for="event in events">
                   <q-item
