@@ -87,6 +87,7 @@ export default {
         .map(el => el.size)
         .reduce((sum, val) => sum + val)
       // calculate the crc
+      console.log(hexData.substring(crcSize * 2))
       return CRC32(hexData.substring(crcSize * 2))
     },
     validateFrame (hexData, header) {

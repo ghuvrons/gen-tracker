@@ -11,7 +11,7 @@ Vue.use(Vuex)
  * directly export the Store instantiation
  */
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage
+  storage: window.sessionStorage
 })
 
 export default function (/* { ssrContext } */) {

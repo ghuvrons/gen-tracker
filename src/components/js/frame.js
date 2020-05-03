@@ -18,7 +18,7 @@ const Header = [
     required: true,
     chartable: true,
     size: 4,
-    format: (val) => parseInt(ChangeEndian(val), 16),
+    format: (val) => HexToInt(ChangeEndian(val)),
     display: (valFormat) => IntToHex(valFormat, 16).slice(8).toUpperCase()
   },
   {
@@ -80,7 +80,10 @@ const BMS = ({ required }) => {
         size: 4,
         format: (val) => HexToInt(ChangeEndian(val)),
         display: (valFormat) => {
-          return valFormat === 0xFFFFFFFF ? 'NONE' : valFormat
+          if (valFormat === 0xFFFFFFFF) {
+            return 'NONE'
+          }
+          return IntToHex(valFormat, 16).slice(8).toUpperCase()
         }
       },
       {
@@ -173,7 +176,7 @@ const VCU = ({ required }) => {
       chartable: true,
       size: 8,
       format: (val) => HexToInt(ChangeEndian(val)),
-      display: (valFormat) => valFormat
+      display: (valFormat) => IntToHex(valFormat, 16).toUpperCase()
     },
     {
       field: 'gpsLongitude',
