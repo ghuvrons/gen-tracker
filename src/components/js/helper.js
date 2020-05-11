@@ -60,8 +60,9 @@ const CRC32 = (buf) => {
 
   // split hex string into 32 bit chunk (8 chars)
   buf = buf.match(/.{1,8}/g)
-    .map(word => ChangeEndian(word.padStart(8, '0')))
+    .map(word => ChangeEndian(word.padEnd(8, '0')))
     .join('')
+
   // convert hex string to buffer
   buf = Buffer.from(buf, 'hex')
 
