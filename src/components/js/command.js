@@ -168,6 +168,16 @@ const CommandList = [
     exDesc: 'Set VCU unit ID to 354313'
   },
   {
+    command: 'REPORT_INTERVAL',
+    desc: 'Set reporting interval',
+    code: 1,
+    subCode: 3,
+    type: 'U16',
+    range: '{ 0, 65535 }',
+    exCommand: 'REPORT_INTERVAL=60',
+    exDesc: 'Set reporting interval every 1 minute'
+  },
+  {
     command: 'AUDIO_BEEP',
     desc: 'Set beep the audio module',
     code: 2,
