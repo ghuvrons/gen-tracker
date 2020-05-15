@@ -75,7 +75,7 @@ const CRC32 = (buf) => {
     crc = (crc << 8) ^ TABLE[((crc >> 24) ^ byte) & 0xFF]
   }
 
-  return (crc >>> 0).toString(16).toUpperCase()
+  return (crc >>> 0).toString(16).toUpperCase().padStart(8, '0')
 }
 
 const FlowFilter = (array, substr) => {
