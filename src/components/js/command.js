@@ -232,6 +232,14 @@ const CommandList = [
     subCode: 2,
     type: null,
     range: null
+  },
+  {
+    command: 'KEYLESS_PAIRING',
+    desc: 'Pairing Pocket Keyless',
+    code: 4,
+    subCode: 0,
+    type: null,
+    range: null
   }
 ]
 
