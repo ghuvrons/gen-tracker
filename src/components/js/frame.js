@@ -19,7 +19,7 @@ const Header = [
     chartable: true,
     size: 4,
     format: (val) => HexToInt(ChangeEndian(val)),
-    display: (valFormat) => IntToHex(valFormat, 16).slice(8).toUpperCase()
+    display: (valFormat) => IntToHex(valFormat, 8).toUpperCase()
   },
   {
     field: 'size',
@@ -83,7 +83,7 @@ const BMS = ({ required }) => {
           if (valFormat === 0xFFFFFFFF) {
             return 'NONE'
           }
-          return IntToHex(valFormat, 16).slice(8).toUpperCase()
+          return IntToHex(valFormat, 8).toUpperCase()
         }
       },
       {
@@ -167,7 +167,12 @@ const VCU = ({ required }) => {
       chartable: true,
       size: 1,
       format: (val) => HexToInt(ChangeEndian(val)),
-      display: (valFormat) => valFormat
+      display: (valFormat) => {
+        if (valFormat === 0xFF) {
+          return 'NONE'
+        }
+        return IntToHex(valFormat, 2).toUpperCase()
+      }
     },
     {
       field: 'eventsGroup',

@@ -95,17 +95,17 @@ export default {
   methods: {
     findFreeFingerID () {
       // find not used id
-      let id = 1
+      let id = 0
       // save all registered id
-      let usedFingerID = this.selectedFingers.map(el => parseInt(el.fingerID))
+      let usedFingerIDs = this.selectedFingers.map(el => parseInt(el.fingerID))
       // sort id to ascending
-      usedFingerID.sort((a, b) => a - b)
+      usedFingerIDs.sort((a, b) => a - b)
       // check the lowest unused id
       for (let i = 0; i < this.config.finger.max; i++) {
-        id = i + 1
-        if (usedFingerID[i] !== id) {
+        if (usedFingerIDs[i] !== id) {
           break
         }
+        id++
       }
       // return the free index
       return id

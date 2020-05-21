@@ -1,10 +1,10 @@
 export const CLEAR_ALL = (state) => {
-  state.theUnit = null
+  // state.theUnit = null
   state.theReport = null
-  state.units = []
+  // state.units = []
   state.reports = []
   state.responses = []
-  state.fingers = []
+  // state.fingers = []
 }
 
 export const TOGGLE_TIME_CALIBRATION = (state) => {
