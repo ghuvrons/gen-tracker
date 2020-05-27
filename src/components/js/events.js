@@ -4,6 +4,7 @@ const Events = [
   { name: 'VCU_BIKE_CRASHED', bit: 2, group: 'VCU' },
   { name: 'VCU_KEYLESS_MISSING', bit: 3, group: 'VCU' },
   { name: 'VCU_INDEPENDENT', bit: 4, group: 'VCU' },
+  { name: 'VCU_UNAUTHORIZE_REMOVAL', bit: 5, group: 'VCU' },
   { name: 'BMS_DISCHARGE_OVER_CURRENT', bit: 30, group: 'BMS' },
   { name: 'BMS_CHARGE_OVER_CURRENT', bit: 31, group: 'BMS' },
   { name: 'BMS_SHORT_CIRCUIT', bit: 32, group: 'BMS' },
