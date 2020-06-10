@@ -27,44 +27,26 @@
     </div>
     <div class="col-xs-12">
       <q-scroll-area
-        :style="{height: (height < 150 ? 150 : height) + 'px'}"
+        :style="{ height: (height < 150 ? 150 : height) + 'px' }"
         ref="scroller"
       >
-        <q-list
-          highlight
-          link
-          dense
-          separator
-          v-if="selectedReports.length"
-        >
+        <q-list highlight link dense separator v-if="selectedReports.length">
           <q-item
             v-for="(el, index) in selectedReports"
             :key="index"
-            :class="{'bg-dark text-white': el.hexData === theReport.hexData }"
+            :class="{ 'bg-dark text-white': el.hexData === theReport.hexData }"
             @click.native="setTheReport(el)"
           >
             <q-item-side>
-              <q-chip
-                color="primary"
-                dense
-                square
-              >
+              <q-chip color="primary" dense square>
                 <!-- {{selectedReports.length - index}} -->
                 {{ getSequentialID(el.data) }}
               </q-chip>
             </q-item-side>
-            <q-item-main
-              :label="el.hexData"
-              class="q-caption"
-            />
+            <q-item-main :label="el.hexData" class="q-caption" />
           </q-item>
         </q-list>
-        <q-alert
-          v-else
-          icon="info"
-          color="faded"
-          class="q-ma-xs"
-        >
+        <q-alert v-else icon="info" color="faded" class="q-ma-xs">
           No report yet
         </q-alert>
       </q-scroll-area>
@@ -73,72 +55,75 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   // name: 'ComponentName',
   props: {
     height: Number
   },
-  data () {
+  data() {
     return {
       lock: {
         follow: true,
         mapable: false
       }
-    }
+    };
   },
   computed: {
-    ...mapState('database', ['loading', 'config', 'theUnit', 'theReport']),
-    ...mapGetters('database', ['selectedReports'])
+    ...mapState("database", ["loading", "config", "theUnit", "theReport"]),
+    ...mapGetters("database", ["selectedReports"])
   },
   methods: {
-    setTheReport (report) {
-      this.$store.commit('database/SET_THE_REPORT', report)
+    ...mapMutations("database", ["SET_THE_REPORT"]),
+    setTheReport(report) {
+      this.SET_THE_REPORT(report);
     },
-    getSequentialID (data) {
-      return data.find(el => el.field === 'sequentialID').value
+    getSequentialID(data) {
+      return data.find(el => el.field === "sequentialID").value;
     }
   },
   watch: {
-    'theReport' (report) {
+    theReport(report) {
       if (report) {
         if (this.selectedReports[0].hexData === report.hexData) {
           // set scroller back to top
-          this.$refs.scroller.setScrollPosition(0)
+          this.$refs.scroller.setScrollPosition(0);
         }
       }
     },
-    'selectedReports': {
+    selectedReports: {
       immediate: true,
-      handler (newReports, oldReports) {
-        let newReport = newReports[0]
-        let triggered = false
+      handler(newReports, oldReports) {
+        let newReport = newReports[0];
+        let triggered = false;
         // get last reporst length
-        let oldReportsLength = 0
+        let oldReportsLength = 0;
         if (oldReports) {
-          oldReportsLength = oldReports.length
+          oldReportsLength = oldReports.length;
         }
 
         // checking
         if (!this.theReport) {
           // set for the first time (theReport is null)
-          triggered = true
+          triggered = true;
         } else if (newReport.unitID !== this.theReport.unitID) {
           // set again on different unitID
-          triggered = true
+          triggered = true;
         } else {
           // only update if got new data
           if (newReports.length !== oldReportsLength) {
             if (this.lock.follow) {
               // same unitID, but lock.follow is active
-              triggered = true
+              triggered = true;
               // only follow mapable reports
               if (this.lock.mapable) {
                 // find the latest mapable report (it can be other than the report input)
-                let reportMapable = newReports.find(el => el.frameID === this.config.frame.id.FULL)
+                let reportMapable = newReports.find(
+                  el => el.frameID === this.config.frame.id.FULL
+                );
                 if (reportMapable) {
-                  newReport = reportMapable
+                  newReport = reportMapable;
                 }
               }
             }
@@ -147,13 +132,12 @@ export default {
 
         // trigger to set the report
         if (triggered) {
-          this.setTheReport(newReport)
+          this.setTheReport(newReport);
         }
       }
     }
   }
-}
+};
 </script>
 
-<style>
-</style>
+<style></style>

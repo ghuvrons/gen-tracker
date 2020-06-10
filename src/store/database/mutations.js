@@ -15,6 +15,10 @@ export const SET_LOADING = (state, payload) => {
   state.loading = payload;
 };
 
+export const TOGGLE_COMBINE_CMD = state => {
+  state.combineCmd = !state.combineCmd;
+};
+
 export const SET_THE_COMMAND = (state, data) => {
   let { unitID, hex, payload, timeout, cmd } = data;
 

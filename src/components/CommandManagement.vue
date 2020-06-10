@@ -117,7 +117,7 @@ import {
   CommandResponse,
   Response
 } from "components/js/command";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   // name: 'ComponentName',
@@ -154,6 +154,15 @@ export default {
     }
   },
   methods: {
+    ...mapMutations("database", [
+      "SET_LOADING",
+      "CLEAR_THE_COMMAND",
+      "SET_THE_COMMAND",
+      "ADD_FINGERS",
+      "DELETE_FINGERS",
+      "RESET_FINGERS",
+      "ADD_RESPONSES"
+    ]),
     timeoutCommand() {
       let code = CommandResponse.find(el => el.name === "timeout");
       // save response
@@ -170,7 +179,7 @@ export default {
     },
     startWaitting(timeout) {
       // prepare payload to send
-      this.$store.commit("database/SET_LOADING", true);
+      this.SET_LOADING(true);
       // timeout guard
       this.timers.timeoutCommand.time =
         timeout || this.config.command.timeoutMS;
@@ -183,9 +192,9 @@ export default {
     },
     stopWaitting(message, type) {
       // clear buffer
-      this.$store.commit("database/CLEAR_THE_COMMAND");
+      this.CLEAR_THE_COMMAND();
       // hide any loading
-      this.$store.commit("database/SET_LOADING", false);
+      this.SET_LOADING(false);
       this.$q.loading.hide();
       this.dismiss();
       // stop timer
@@ -273,7 +282,7 @@ export default {
           // check command refference
           if (cmd.ref) {
             // buffer the command
-            this.$store.commit("database/SET_THE_COMMAND", {
+            this.SET_THE_COMMAND({
               unitID: this.theUnit.unitID,
               hex: this.buildCommand(cmd),
               payload,
@@ -356,19 +365,19 @@ export default {
               }
             })
             .then(data => {
-              this.$store.commit("database/ADD_FINGERS", {
+              this.ADD_FINGERS({
                 unitID: this.theUnit.unitID,
                 fingerID: cmd.val,
                 name: data
               });
             });
         } else if (cmd.prop === "FINGER_DEL") {
-          this.$store.commit("database/DELETE_FINGERS", {
+          this.DELETE_FINGERS({
             unitID: this.theUnit.unitID,
             fingerID: cmd.val
           });
         } else if (cmd.prop === "FINGER_RST") {
-          this.$store.commit("database/RESET_FINGERS", {
+          this.RESET_FINGERS({
             unitID: this.theUnit.unitID
           });
         }
@@ -381,7 +390,7 @@ export default {
     },
     saveResponse(response) {
       // save command & response
-      this.$store.commit("database/ADD_RESPONSES", response);
+      this.ADD_RESPONSES(response);
     }
   },
   timers: {
@@ -390,5 +399,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

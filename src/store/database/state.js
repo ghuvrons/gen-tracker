@@ -4,6 +4,7 @@ import { config } from "components/js/config";
 export default {
   config,
   loading: false,
+  combineCmd: false,
   settings: {
     timeCalibration: false
   },

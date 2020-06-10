@@ -17,26 +17,46 @@
         class="q-ma-xs"
       />
     </div>
+    <div class="col-auto">
+      <q-toggle
+        v-model="combineCommand"
+        label="Combine Command"
+        class="q-ma-xs"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   // name: 'ComponentName',
   computed: {
-    ...mapState("database", ["units"]),
-    timeCalibrationState: {
+    ...mapState("database", ["units", "settings", "combineCmd"]),
+    combineCommand: {
       get() {
-        return this.$store.state.database.settings.timeCalibration;
+        return this.combineCmd;
       },
       set(value) {
-        this.$store.commit("database/TOGGLE_TIME_CALIBRATION");
+        this.TOGGLE_COMBINE_CMD();
+      }
+    },
+    timeCalibrationState: {
+      get() {
+        return this.settings.timeCalibration;
+      },
+      set(value) {
+        this.TOGGLE_TIME_CALIBRATION();
       }
     }
   },
   methods: {
+    ...mapMutations("database", [
+      "TOGGLE_COMBINE_CMD",
+      "TOGGLE_TIME_CALIBRATION"
+    ]),
+    ...mapActions("database", ["RESET_DATABASE"]),
     clearStore() {
       this.$q
         .dialog({
@@ -47,7 +67,7 @@ export default {
         })
         .then(() => {
           // clear all the store
-          this.$store.dispatch("database/RESET_DATABASE");
+          this.RESET_DATABASE();
           // reset command input
           this.$root.$emit("setCommand", "");
         })
@@ -57,5 +77,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

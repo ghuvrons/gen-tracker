@@ -75,7 +75,7 @@
 <script>
 import ReportStatistics from "components/ReportStatistics";
 import { Report } from "components/js/frame";
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 const moment = require("moment-timezone");
 const tzlookup = require("tz-lookup");
 
@@ -99,10 +99,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("database", ["theReport", "config"]),
+    ...mapState("database", ["theReport", "settings", "config"]),
     ...mapGetters("database", ["selectedReports"]),
     timeCalibrationState() {
-      return this.$store.state.database.settings.timeCalibration;
+      return this.settings.timeCalibration;
     },
     requiredReport() {
       return this.theReport.data.filter(el => el.required);
@@ -127,6 +127,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations("database", ["ADD_REPORTS"]),
     openReportStatistics(data) {
       this.statisticsData = data;
     },
@@ -205,7 +206,7 @@ export default {
     },
     handleReport(prop) {
       let report = this.parseReport(prop);
-      this.$store.commit("database/ADD_REPORTS", report);
+      this.ADD_REPORTS(report);
 
       // check device time, calibrate if error
       if (this.timeCalibrationState) {
@@ -218,5 +219,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

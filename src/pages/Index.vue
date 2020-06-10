@@ -51,7 +51,7 @@ import { config } from "components/js/config";
 import { CRC32, AsciiToHex } from "components/js/helper";
 import { ACK } from "components/js/ack";
 import { Header } from "components/js/frame";
-import { mapGetters, mapState } from "vuex";
+import { mapGetters, mapState, mapMutations } from "vuex";
 
 export default {
   // name: 'PageIndex',
@@ -72,12 +72,17 @@ export default {
       selectedTab: "tab-1",
       mapHeight: 300,
       paneHeight: 0,
-      pageWidth: 0,
-      combineCommand: false
+      pageWidth: 0
     };
   },
   computed: {
-    ...mapState("database", ["config", "loading", "theCommand", "units"]),
+    ...mapState("database", [
+      "config",
+      "loading",
+      "theCommand",
+      "units",
+      "combineCmd"
+    ]),
     ...mapGetters("database", [
       "selectedReports",
       "selectedFingers",
@@ -86,6 +91,7 @@ export default {
     ])
   },
   methods: {
+    ...mapMutations("database", ["ADD_UNITS"]),
     onResize({ height }) {
       this.paneHeight = height - this.mapHeight - 180;
     },
@@ -227,7 +233,7 @@ export default {
             .value;
 
           // add unit (if not exist)
-          this.$store.commit("database/ADD_UNITS", {
+          this.ADD_UNITS({
             unitID,
             client
           });
@@ -256,7 +262,7 @@ export default {
           reply = this.buildACK(frameID, sequentialID);
 
           // insert Command to ACK frame
-          if (this.combineCommand) {
+          if (this.combineCmd) {
             if (this.theCommand !== null && !this.loading) {
               if (unitID === this.theCommand.unitID) {
                 // set command
@@ -287,7 +293,7 @@ export default {
     "theCommand.hex": function(val) {
       if (val) {
         // show notification
-        if (this.combineCommand) {
+        if (this.combineCmd) {
           this.$q.notify({
             message: "Command is queued, will be sent with next ACK"
           });
