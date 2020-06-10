@@ -73,19 +73,19 @@
 </template>
 
 <script>
-import ReportStatistics from 'components/ReportStatistics'
-import { Report } from 'components/js/frame'
-import { mapState, mapGetters } from 'vuex'
-const moment = require('moment-timezone')
-const tzlookup = require('tz-lookup')
+import ReportStatistics from "components/ReportStatistics";
+import { Report } from "components/js/frame";
+import { mapState, mapGetters } from "vuex";
+const moment = require("moment-timezone");
+const tzlookup = require("tz-lookup");
 
 export default {
   // name: 'ComponentName',
-  created () {
-    this.$root.$on('handleReport', this.handleReport)
+  created() {
+    this.$root.$on("handleReport", this.handleReport);
   },
-  destroyed () {
-    this.$root.$off('handleReport', this.handleReport)
+  destroyed() {
+    this.$root.$off("handleReport", this.handleReport);
   },
   components: {
     ReportStatistics
@@ -93,122 +93,129 @@ export default {
   props: {
     height: Number
   },
-  data () {
+  data() {
     return {
-      statisticsData: null,
-      notifPosition: this.$q.platform.is.desktop ? 'bottom-right' : 'top-right'
-    }
+      statisticsData: null
+    };
   },
   computed: {
-    ...mapState('database', ['theReport', 'config']),
-    ...mapGetters('database', ['selectedReports']),
-    timeCalibrationState () {
-      return this.$store.state.database.settings.timeCalibration
+    ...mapState("database", ["theReport", "config"]),
+    ...mapGetters("database", ["selectedReports"]),
+    timeCalibrationState() {
+      return this.$store.state.database.settings.timeCalibration;
     },
-    requiredReport () {
-      return this.theReport.data.filter(el => el.required)
+    requiredReport() {
+      return this.theReport.data.filter(el => el.required);
     },
-    optionalReport () {
-      let nearestOptional = []
+    optionalReport() {
+      let nearestOptional = [];
 
       // use nearest full frame
-      let selectedIndex = this.selectedReports.findIndex(el => el.hexData === this.theReport.hexData)
+      let selectedIndex = this.selectedReports.findIndex(
+        el => el.hexData === this.theReport.hexData
+      );
       for (let index = selectedIndex; index >= 0; index--) {
         if (this.selectedReports[index].frameID === this.config.frame.id.FULL) {
-          nearestOptional = this.selectedReports[index].data.filter(el => !el.required)
-          break
+          nearestOptional = this.selectedReports[index].data.filter(
+            el => !el.required
+          );
+          break;
         }
       }
 
-      return nearestOptional
+      return nearestOptional;
     }
   },
   methods: {
-    openReportStatistics (data) {
-      this.statisticsData = data
+    openReportStatistics(data) {
+      this.statisticsData = data;
     },
-    closeReportStatistics () {
-      this.statisticsData = null
+    closeReportStatistics() {
+      this.statisticsData = null;
     },
-    calibrateDeviceTime (report) {
-      let timezone = 'Asia/Jakarta'
-      let lat = report.data.find(el => el.field === 'gpsLatitude').value
-      let lng = report.data.find(el => el.field === 'gpsLongitude').value
-      let sendTime = report.data.find(el => el.field === 'rtcSendDatetime').value
+    calibrateDeviceTime(report) {
+      let timezone = "Asia/Jakarta";
+      let lat = report.data.find(el => el.field === "gpsLatitude").value;
+      let lng = report.data.find(el => el.field === "gpsLongitude").value;
+      let sendTime = report.data.find(el => el.field === "rtcSendDatetime")
+        .value;
 
       // correct timestamp if not sync with server
       if (lat !== 0 && lng !== 0) {
-        timezone = tzlookup(lat, lng)
+        timezone = tzlookup(lat, lng);
       }
-      let serverTime = moment(new Date())
-      let deviceTime = moment(sendTime, 'X')
-      let difference = Math.abs(moment.duration(serverTime.diff(deviceTime)).as('seconds'))
+      let serverTime = moment(new Date());
+      let deviceTime = moment(sendTime, "X");
+      let difference = Math.abs(
+        moment.duration(serverTime.diff(deviceTime)).as("seconds")
+      );
 
       //  (at least more n minutes different)
-      if (!deviceTime.isValid() || difference > this.config.frame.calibratedSeconds) {
-        let validTime = serverTime.tz(timezone).format('YYMMDDHHmmssE')
+      if (
+        !deviceTime.isValid() ||
+        difference > this.config.frame.calibratedSeconds
+      ) {
+        let validTime = serverTime.tz(timezone).format("YYMMDDHHmmssE");
 
         // send command to fix the RTC time
-        let payload = `REPORT_RTC=${validTime}`
-        this.$root.$emit('executeCommand', { payload })
+        let payload = `REPORT_RTC=${validTime}`;
+        this.$root.$emit("executeCommand", { payload });
         // give notification
         this.$q.notify({
-          message: 'Calibrating device time',
-          type: 'info',
-          position: this.notifPosition
-        })
+          message: "Calibrating device time"
+        });
       }
     },
-    activeField (data) {
-      let active = false
+    activeField(data) {
+      let active = false;
       if (this.statisticsData) {
-        active = data.field === this.statisticsData.field
+        active = data.field === this.statisticsData.field;
       }
 
-      return active
+      return active;
     },
-    parseReport ({ hexData, frameID }) {
-      let data = []
-      let elCursor = 0
+    parseReport({ hexData, frameID }) {
+      let data = [];
+      let elCursor = 0;
       // loop for each element
       Report.forEach(el => {
         if (
           (frameID === this.config.frame.id.SIMPLE && el.required) ||
           frameID === this.config.frame.id.FULL
         ) {
-          let rawHex = hexData.substr(elCursor, el.size * 2)
-          let valFormat = el.format(rawHex)
+          let rawHex = hexData.substr(elCursor, el.size * 2);
+          let valFormat = el.format(rawHex);
           // update cursor position
-          elCursor += (el.size * 2)
+          elCursor += el.size * 2;
           // fill data
           data.push({
             ...el,
             value: valFormat,
             output: el.display(valFormat)
-          })
+          });
         }
-      })
+      });
 
       return {
-        unitID: data.find(el => el.field === 'unitID').value,
+        unitID: data.find(el => el.field === "unitID").value,
         frameID,
         data,
         hexData
-      }
+      };
     },
-    handleReport (prop) {
-      let report = this.parseReport(prop)
-      this.$store.commit('database/ADD_REPORTS', report)
+    handleReport(prop) {
+      let report = this.parseReport(prop);
+      this.$store.commit("database/ADD_REPORTS", report);
 
       // check device time, calibrate if error
       if (this.timeCalibrationState) {
         if (report.frameID === this.config.frame.id.FULL) {
-          this.calibrateDeviceTime(report)
+          this.calibrateDeviceTime(report);
         }
       }
     }
   }
-}
+};
 </script>
 
 <style>

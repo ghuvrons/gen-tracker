@@ -1,4 +1,4 @@
-import { config } from 'components/js/config'
+import { config } from "components/js/config";
 
 // database
 export default {
@@ -9,9 +9,15 @@ export default {
   },
   theUnit: null,
   theReport: null,
-  theCommand: null,
+  theCommand: {
+    unitID: null,
+    hex: "",
+    payload: "",
+    timeout: null,
+    cmd: null
+  },
   units: [],
   reports: [],
   responses: [],
   fingers: []
-}
+};

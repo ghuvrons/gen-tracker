@@ -61,20 +61,28 @@ export default {
     DriverManagement,
     GlobalConfiguration
   },
+  created() {
+    this.$root.$on("sendCommand", this.sendCommand);
+  },
+  destroyed() {
+    this.$root.$off("sendCommand", this.sendCommand);
+  },
   data() {
     return {
       selectedTab: "tab-1",
       mapHeight: 300,
       paneHeight: 0,
-      pageWidth: 0
+      pageWidth: 0,
+      combineCommand: false
     };
   },
   computed: {
-    ...mapState("database", ["config", "loading", "theCommand"]),
+    ...mapState("database", ["config", "loading", "theCommand", "units"]),
     ...mapGetters("database", [
       "selectedReports",
       "selectedFingers",
-      "uniqueReport"
+      "uniqueReport",
+      "getClientByUnitId"
     ])
   },
   methods: {
@@ -168,24 +176,37 @@ export default {
       let hex = AsciiToHex(config.nack.prefix);
 
       return hex.toUpperCase();
+    },
+    sendCommand({ client, type, hex }) {
+      this.$socket.emit("send", {
+        client,
+        type,
+        hex
+      });
+    },
+    showLoadingCommand() {
+      let { timeout, cmd } = this.theCommand;
+      this.$root.$emit("startWaitting", timeout);
+      // check is FINGER_ADD
+      if (cmd.ref.command === "FINGER_ADD") {
+        this.$root.$emit("scanningDialog");
+      }
     }
   },
   sockets: {
     connected: function() {
-      let socketServer = `${this.config.socket.address}:${this.config.socket.port}`;
+      let { socket } = this.config;
+
       this.$q.notify({
-        message: `Connected to Socket Server ${socketServer}`,
-        type: "positive",
-        position: this.$q.platform.is.desktop ? "bottom-right" : "top-right"
+        message: `Connected to Socket Server ${socket.address}:${socket.port}`
       });
     },
     frameReceived: function(res) {
+      let { hexData, client } = res;
       let valid = false;
-      let hexData = res.hexData;
-      let client = res.client;
       let header = null;
       let reply = null;
-      let type = "RESPONSE";
+      let type = "ACK";
 
       // calculate minimum data size for header
       let headerSize = Header.map(el => el.size).reduce(
@@ -204,6 +225,7 @@ export default {
           let frameID = header.find(el => el.field === "frameID").value;
           let sequentialID = header.find(el => el.field === "sequentialID")
             .value;
+
           // add unit (if not exist)
           this.$store.commit("database/ADD_UNITS", {
             unitID,
@@ -233,17 +255,16 @@ export default {
           // prepare ACK
           reply = this.buildACK(frameID, sequentialID);
 
-          // preepare Command
-          if (this.theCommand !== null && !this.loading) {
-            if (unitID === this.theCommand.unitID) {
-              // set command
-              reply += this.theCommand.hex;
-              type = "RESPONSE & COMMAND";
-              // send command, wait response
-              this.$root.$emit("startWaitting", this.theCommand.timeout);
-              // check is FINGER_ADD
-              if (this.theCommand.cmd.ref.command === "FINGER_ADD") {
-                this.$root.$emit("scanningDialog");
+          // insert Command to ACK frame
+          if (this.combineCommand) {
+            if (this.theCommand !== null && !this.loading) {
+              if (unitID === this.theCommand.unitID) {
+                // set command
+                reply += this.theCommand.hex;
+                type += " & COMMAND";
+
+                // send command, wait response
+                this.showLoadingCommand();
               }
             }
           }
@@ -255,11 +276,36 @@ export default {
       }
 
       // reply the REPORT frame
-      this.$socket.emit("send", {
+      this.sendCommand({
         client,
-        type,
+        type: reply ? type : "NACK",
         hex: reply || this.buildNACK()
       });
+    }
+  },
+  watch: {
+    "theCommand.hex": function(val) {
+      if (val) {
+        // show notification
+        if (this.combineCommand) {
+          this.$q.notify({
+            message: "Command is queued, will be sent with next ACK"
+          });
+        } else {
+          // send directly
+          let client = this.getClientByUnitId(this.theCommand.unitID);
+          if (client) {
+            this.sendCommand({
+              client,
+              type: "COMMAND",
+              hex: val
+            });
+
+            // send command, wait response
+            this.showLoadingCommand();
+          }
+        }
+      }
     }
   }
 };
