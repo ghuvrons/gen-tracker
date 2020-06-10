@@ -43,15 +43,15 @@
 <style></style>
 
 <script>
-import MapManagement from 'components/MapManagement'
-import ReportLog from 'components/ReportLog'
-import DriverManagement from 'components/DriverManagement'
-import GlobalConfiguration from 'components/GlobalConfiguration'
-import { config } from 'components/js/config'
-import { CRC32, AsciiToHex } from 'components/js/helper'
-import { ACK } from 'components/js/ack'
-import { Header } from 'components/js/frame'
-import { mapGetters, mapState } from 'vuex'
+import MapManagement from "components/MapManagement";
+import ReportLog from "components/ReportLog";
+import DriverManagement from "components/DriverManagement";
+import GlobalConfiguration from "components/GlobalConfiguration";
+import { config } from "components/js/config";
+import { CRC32, AsciiToHex } from "components/js/helper";
+import { ACK } from "components/js/ack";
+import { Header } from "components/js/frame";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   // name: 'PageIndex',
@@ -61,40 +61,43 @@ export default {
     DriverManagement,
     GlobalConfiguration
   },
-  data () {
+  data() {
     return {
-      selectedTab: 'tab-1',
+      selectedTab: "tab-1",
       mapHeight: 300,
       paneHeight: 0,
       pageWidth: 0
-    }
+    };
   },
   computed: {
-    ...mapState('database', ['config', 'loading', 'theCommand']),
-    ...mapGetters('database', ['selectedReports', 'selectedFingers', 'uniqueReport'])
+    ...mapState("database", ["config", "loading", "theCommand"]),
+    ...mapGetters("database", [
+      "selectedReports",
+      "selectedFingers",
+      "uniqueReport"
+    ])
   },
   methods: {
-    onResize ({ height }) {
-      this.paneHeight = height - this.mapHeight - 180
+    onResize({ height }) {
+      this.paneHeight = height - this.mapHeight - 180;
     },
-    onResizePage ({ width }) {
-      this.pageWidth = width
+    onResizePage({ width }) {
+      this.pageWidth = width;
     },
-    calculateCRC32 (hexData) {
+    calculateCRC32(hexData) {
       // calculate size of crcHeader
-      let crcSize = Header
-        .filter(el => ['prefix', 'crc'].includes(el.field))
+      let crcSize = Header.filter(el => ["prefix", "crc"].includes(el.field))
         .map(el => el.size)
-        .reduce((sum, val) => sum + val)
+        .reduce((sum, val) => sum + val);
       // calculate the crc
-      return CRC32(hexData.substring(crcSize * 2))
+      return CRC32(hexData.substring(crcSize * 2));
     },
-    validateFrame (hexData, header) {
-      let valid = false
+    validateFrame(hexData, header) {
+      let valid = false;
       // parse header
-      let prefix = header.find(el => el.field === 'prefix')
-      let crc = header.find(el => el.field === 'crc')
-      let size = header.find(el => el.field === 'size')
+      let prefix = header.find(el => el.field === "prefix");
+      let crc = header.find(el => el.field === "crc");
+      let size = header.find(el => el.field === "size");
       // valid report should be more than 8 chars
 
       // validate by prefix, crc and size
@@ -102,158 +105,162 @@ export default {
         // validate CRC
         if (crc.output === this.calculateCRC32(hexData)) {
           // validate Size
-          let headerSize = prefix.size + crc.size + size.size
-          if (size.value === ((hexData.length / 2) - headerSize)) {
+          let headerSize = prefix.size + crc.size + size.size;
+          if (size.value === hexData.length / 2 - headerSize) {
             // everything match, frame is valid
-            valid = true
+            valid = true;
           } else {
-            console.warn(`CORRUPT: Size not same`)
+            console.warn(`CORRUPT: Size not same`);
           }
         } else {
-          console.warn(`CORRUPT: CRC not valid`)
-          console.log(crc.output, this.calculateCRC32(hexData))
+          console.warn(`CORRUPT: CRC not valid`);
+          console.log(crc.output, this.calculateCRC32(hexData));
         }
       } else {
-        console.warn(`CORRUPT: Prefix not same`)
+        console.warn(`CORRUPT: Prefix not same`);
       }
 
-      return valid
+      return valid;
     },
-    parseHeader (hexData) {
+    parseHeader(hexData) {
       // get header field for header and frame decision
-      let elCursor = 0
-      let header = []
+      let elCursor = 0;
+      let header = [];
       // parse frame by header
       Header.forEach(el => {
-        let valFormat = el.format(hexData.substr(elCursor, el.size * 2))
+        let valFormat = el.format(hexData.substr(elCursor, el.size * 2));
         // update cursor position
-        elCursor += (el.size * 2)
+        elCursor += el.size * 2;
         // fill data
         header.push({
           ...el,
           value: valFormat,
           output: el.display(valFormat)
-        })
-      })
+        });
+      });
 
-      return header
+      return header;
     },
-    buildACK (frameID, sequentialID) {
-      let hex = ''
+    buildACK(frameID, sequentialID) {
+      let hex = "";
 
       ACK.forEach((ele, i) => {
-        let el = ACK[ACK.length - 1 - i]
+        let el = ACK[ACK.length - 1 - i];
 
         switch (el.field) {
-          case 'sequentialID':
-            hex = el.format(sequentialID) + hex
-            break
-          case 'frameID':
-            hex = el.format(frameID) + hex
-            break
-          case 'prefix':
-            hex = el.format() + hex
-            break
+          case "sequentialID":
+            hex = el.format(sequentialID) + hex;
+            break;
+          case "frameID":
+            hex = el.format(frameID) + hex;
+            break;
+          case "prefix":
+            hex = el.format() + hex;
+            break;
           default:
-            break
+            break;
         }
-      })
+      });
 
-      return hex.toUpperCase()
+      return hex.toUpperCase();
     },
-    buildNACK () {
-      let hex = AsciiToHex(config.nack.prefix)
+    buildNACK() {
+      let hex = AsciiToHex(config.nack.prefix);
 
-      return hex.toUpperCase()
+      return hex.toUpperCase();
     }
   },
   sockets: {
-    connected: function () {
-      let socketServer = `${this.config.socket.address}:${this.config.socket.port}`
+    connected: function() {
+      let socketServer = `${this.config.socket.address}:${this.config.socket.port}`;
       this.$q.notify({
         message: `Connected to Socket Server ${socketServer}`,
-        type: 'positive',
-        position: this.$q.platform.is.desktop ? 'bottom-right' : 'top-right'
-      })
+        type: "positive",
+        position: this.$q.platform.is.desktop ? "bottom-right" : "top-right"
+      });
     },
-    frameReceived: function (res) {
-      let valid = false
-      let hexData = res.hexData
-      let client = res.client
-      let header = null
-      let reply = null
+    frameReceived: function(res) {
+      let valid = false;
+      let hexData = res.hexData;
+      let client = res.client;
+      let header = null;
+      let reply = null;
+      let type = "RESPONSE";
 
       // calculate minimum data size for header
-      let headerSize = Header
-        .map(el => el.size)
-        .reduce((sum, val) => sum + val)
+      let headerSize = Header.map(el => el.size).reduce(
+        (sum, val) => sum + val
+      );
       // check minimum data size
-      if (hexData.length > (headerSize * 2)) {
+      if (hexData.length > headerSize * 2) {
         // parse header
-        header = this.parseHeader(hexData)
+        header = this.parseHeader(hexData);
         // validate frame
-        valid = this.validateFrame(hexData, header)
+        valid = this.validateFrame(hexData, header);
         // handle valid frame
         if (valid) {
           // frame is valid
-          let unitID = header.find(el => el.field === 'unitID').value
-          let frameID = header.find(el => el.field === 'frameID').value
-          let sequentialID = header.find(el => el.field === 'sequentialID').value
+          let unitID = header.find(el => el.field === "unitID").value;
+          let frameID = header.find(el => el.field === "frameID").value;
+          let sequentialID = header.find(el => el.field === "sequentialID")
+            .value;
           // add unit (if not exist)
-          this.$store.commit('database/ADD_UNITS', {
+          this.$store.commit("database/ADD_UNITS", {
             unitID,
             client
-          })
+          });
 
           // handle to corresponding frame
           if (frameID === this.config.frame.id.RESPONSE) {
             // response frame
-            console.log(`RESPONSE-${sequentialID} ${hexData}`)
+            console.log(`RESPONSE-${sequentialID} ${hexData}`);
             // handle response
-            this.$root.$emit('handleResponse', { hexData })
+            this.$root.$emit("handleResponse", { hexData });
           } else {
             // if duplicate discard
             if (this.uniqueReport(unitID, sequentialID)) {
-              console.log(`REPORT-${sequentialID} ${hexData}`)
+              console.log(`REPORT-${sequentialID} ${hexData}`);
               // handle report
-              this.$root.$emit('handleReport', {
+              this.$root.$emit("handleReport", {
                 hexData,
                 frameID
-              })
+              });
             } else {
-              console.warn(`REPORT-${sequentialID} (DUPLICATE) ${hexData}`)
+              console.warn(`REPORT-${sequentialID} (DUPLICATE) ${hexData}`);
             }
           }
 
           // prepare ACK
-          reply = this.buildACK(frameID, sequentialID)
+          reply = this.buildACK(frameID, sequentialID);
 
-          // check command
+          // preepare Command
           if (this.theCommand !== null && !this.loading) {
             if (unitID === this.theCommand.unitID) {
               // set command
-              reply += this.theCommand.hex
+              reply += this.theCommand.hex;
+              type = "RESPONSE & COMMAND";
               // send command, wait response
-              this.$root.$emit('startWaitting', this.theCommand.timeout)
+              this.$root.$emit("startWaitting", this.theCommand.timeout);
               // check is FINGER_ADD
-              if (this.theCommand.cmd.ref.command === 'FINGER_ADD') {
-                this.$root.$emit('scanningDialog')
+              if (this.theCommand.cmd.ref.command === "FINGER_ADD") {
+                this.$root.$emit("scanningDialog");
               }
             }
           }
         } else {
-          console.error(`CORRUPT ${hexData}`)
+          console.error(`CORRUPT ${hexData}`);
         }
       } else {
-        console.warn(`CORRUPT: Bellow minimum size`)
+        console.warn(`CORRUPT: Bellow minimum size`);
       }
 
       // reply the REPORT frame
-      this.$socket.emit('send', {
+      this.$socket.emit("send", {
         client,
+        type,
         hex: reply || this.buildNACK()
-      })
+      });
     }
   }
-}
+};
 </script>
