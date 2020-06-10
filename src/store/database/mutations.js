@@ -52,12 +52,7 @@ export const ADD_UNITS = (state, payload) => {
   // check unit
   if (!unit) {
     // unit not exist add it
-    if (!payload.fake) {
-      state.units.unshift(payload);
-    } else {
-      // put fake on last index
-      state.units.push(payload);
-    }
+    state.units.unshift(payload);
     // check if theUnit is null
     if (!state.theUnit) {
       state.theUnit = payload;

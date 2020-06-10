@@ -1,28 +1,25 @@
 const config = {
   app: {
-    version: '1.7',
-    title: 'GPS Tracker',
-    subTitle: 'GEN Indonesia'
-  },
-  faker: {
-    sample: 0
+    version: "1.7",
+    title: "GPS Tracker",
+    subTitle: "GEN Indonesia"
   },
   socket: {
     address: location.hostname,
     port: 4200
   },
   command: {
-    prefix: '@C',
+    prefix: "@C",
     timeoutMS: 20000
   },
   ack: {
-    prefix: '@A'
+    prefix: "@A"
   },
   nack: {
-    prefix: '@N'
+    prefix: "@N"
   },
   frame: {
-    prefix: '@R',
+    prefix: "@R",
     id: {
       RESPONSE: 0,
       SIMPLE: 1,
@@ -46,6 +43,6 @@ const config = {
   finger: {
     max: 5
   }
-}
+};
 
-export { config }
+export { config };

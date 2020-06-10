@@ -3,15 +3,15 @@
 - GEN Server & GEN Client should be executed from same machine (the server).
 
   Or change the **socket.address** in **GEN-Client/src/components/js/config.js**
-- Use **fake generator** feature if you don't have the IoT Device ready
 
 ## GEN-Tracker Client
 
 ![gen-tracker-server](gen-tracker-2020-02-05_10.51.37.gif)
 
-- Use socket.io-client *(for bi-directional communication with GEN-Server)*.
+- Use socket.io-client _(for bi-directional communication with GEN-Server)_.
 
   Parse HEX string to readable data format.
+
 - Run: **quasar dev**
 
 ## Todo Progress
@@ -22,13 +22,13 @@
 - [x] add global settings menu, clear localStorage
 - [x] add minimum q-scroll for landscape mobile desktop
 - [x] fix driver management dynamic button, recalculate the height
-- [x] add simple report to faker
+- [x] ~~add simple report to faker~~
 - [x] give send icon on command field
 - [x] add command list reference
 - [x] add modal chart history when sub-report log is clicked
 - [x] unit management minimum height
 - [x] ~~de-structure config import~~
-- [x] use _.cloneDeep, to decouple data binding
+- [x] use \_.cloneDeep, to decouple data binding
 - [x] change frame to frameID, frameType to frameID
 - [x] just the autofetch disable for github
 - [x] add total report next to unit index
@@ -45,12 +45,12 @@
 - [x] ~~change bus event to using store and watch~~
 - [x] show full frame on simple frame (if has)
 - [x] fix bugs in error min value, when not in rangeMax (on null value), then enable again to rangeMax
-- [x] add faker push with unique unitID on global settings
+- [x] ~~add faker push with unique unitID on global settings~~
 - [x] change y-axes based on rangeValue max
 - [x] change chart height based on screen size
 - [x] call software developer
 - [x] call amber goldentek
-- [x] change $lodash to $_
+- [x] change $lodash to $\_
 - [x] set immediate to true on watcher, so remove created() events
 - [x] add black color on report being read by chart
 - [x] remove parseInt() for chart input, instead change the frame formatter
@@ -75,8 +75,8 @@
 - [x] Fix back Odometer and Speed to km and km/h
 - [ ] make auto focus on command reference search bar
 - [ ] add driver name to the report log (if any)
-- [ ] simulate reports every 5 second for faker
-- [ ] move faker to server
+- [x] ~~simulate reports every 5 second for faker~~
+- [x] ~~move faker to server~~
 - [ ] Use GPS heading for StreetView
   - <https://developers.google.com/maps/documentation/javascript/streetview?hl=id>
 - [ ] Bugs: FullData can be clicked when it's only 1, make the chart error
