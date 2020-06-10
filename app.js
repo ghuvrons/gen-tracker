@@ -30,8 +30,7 @@ const server = net.createServer((socket) => {
     const ip = socket.remoteAddress.replace('::ffff:', '')
     const hexData = data.toString('hex').toUpperCase()
 
-    log.info(`[TCP] DATA from ${ip}:${socket.remotePort}`)
-    log.info(`      ${hexData}`)
+    log.info(`[TCP] ${ip}:${socket.remotePort} -> DATA = ${hexData}`)
     // emit command response to all IO sockets
     io.emit('frameReceived', {
       client: {
@@ -83,8 +82,7 @@ io.on('connection', (ioClient) => {
       socket.write(Buffer.from(req.hex, 'hex'))
       // info
       const ip = socket.remoteAddress.replace('::ffff:', '')
-      log.info(`[TCP] ${req.type} to ${ip}:${socket.remotePort}`)
-      log.info(`      ${req.hex}`)
+      log.info(`[TCP] ${ip}:${socket.remotePort} <- ${req.type} = ${req.hex}`)
     }
   })
 })
