@@ -145,6 +145,14 @@ const CommandList = [
     exDesc: "Set KNOB state on"
   },
   {
+    command: "GEN_FOTA",
+    desc: "Request VCU to enter DFU mode",
+    code: 0,
+    subCode: 3,
+    type: null,
+    range: null
+  },
+  {
     command: "REPORT_RTC",
     desc: "Set RTC value ( E start from 1=Monday )",
     code: 1,
