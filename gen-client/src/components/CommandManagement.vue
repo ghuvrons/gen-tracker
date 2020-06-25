@@ -83,14 +83,14 @@
                 <q-item-tile sublabel>{{ el.desc }}</q-item-tile>
 
                 <q-item-tile sublabel>
-                  <q-chip dense square color="red">{{
-                    el.exCommand ? el.exCommand : el.command
-                  }}</q-chip>
+                  <q-chip dense square color="red">
+                    {{ el.exCommand ? el.exCommand : el.command }}
+                  </q-chip>
                 </q-item-tile>
                 <q-item-tile sublabel>
-                  <q-chip dense square color="green">{{
-                    el.exDesc ? el.exDesc : el.desc
-                  }}</q-chip>
+                  <q-chip dense square color="green">
+                    {{ el.exDesc ? el.exDesc : el.desc }}
+                  </q-chip>
                 </q-item-tile>
               </q-item-main>
               <q-item-side right v-if="el.type">
@@ -271,6 +271,11 @@ export default {
     },
     executeCommand({ payload, timeout }) {
       let message = null;
+
+      // special commands timeout
+      if (payload == "GEN_FOTA") {
+        timeout = 3 * 60000;
+      }
 
       // check is buffer already filled
       if (payload) {
