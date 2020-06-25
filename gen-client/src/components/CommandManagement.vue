@@ -274,7 +274,7 @@ export default {
 
       // special commands timeout
       if (payload == "GEN_FOTA") {
-        timeout = 3 * 60000;
+        timeout = 4 * 60000;
       }
 
       // check is buffer already filled
