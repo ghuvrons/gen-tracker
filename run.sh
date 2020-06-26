@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ "$EUID" != 0 ]]; then
+    echo "Should be run with 'sudo'"
+    exit 1
+fi
+
 echo "Starting client..."
 pushd gen-client
 quasar dev &
