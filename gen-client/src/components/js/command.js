@@ -145,10 +145,18 @@ const CommandList = [
     exDesc: "Set KNOB state on"
   },
   {
-    command: "GEN_FOTA",
-    desc: "Request VCU to enter DFU mode",
+    command: "GEN_UPGRADE_VCU",
+    desc: "Upgrade VCU firmware",
     code: 0,
     subCode: 3,
+    type: null,
+    range: null
+  },
+  {
+    command: "GEN_UPGRADE_HMI",
+    desc: "Upgrade HMI firmware",
+    code: 0,
+    subCode: 4,
     type: null,
     range: null
   },
