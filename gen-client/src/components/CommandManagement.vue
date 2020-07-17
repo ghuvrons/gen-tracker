@@ -297,8 +297,10 @@ export default {
             let message = null;
 
             // special commands timeout
-            if (payload.includes("GEN_UPGRADE")) {
+            if (payload.includes("GEN_UPGRADE_VCU")) {
                 timeout = 4 * 60000;
+            } else if (payload.includes("GEN_UPGRADE_HMI")) {
+                timeout = 8 * 60000;
             }
 
             // check is buffer already filled
