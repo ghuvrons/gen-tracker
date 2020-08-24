@@ -300,7 +300,7 @@ export default {
             if (payload.includes("GEN_UPGRADE_VCU")) {
                 timeout = 4 * 60000;
             } else if (payload.includes("GEN_UPGRADE_HMI")) {
-                timeout = 5 * 60000;
+                timeout = 8 * 60000;
             }
 
             // check is buffer already filled
