@@ -32,8 +32,8 @@
                         content: true,
                         handler() {
                             executeCommand({ payload: cmd.payload });
-                        }
-                    }
+                        },
+                    },
                 ]"
             />
         </q-field>
@@ -139,7 +139,7 @@ import {
     Command,
     CommandList,
     CommandResponse,
-    Response
+    Response,
 } from "components/js/command";
 import { mapState, mapMutations } from "vuex";
 
@@ -148,34 +148,36 @@ export default {
     created() {
         this.$root.$on("setCommand", this.setCommand);
         this.$root.$on("executeCommand", this.executeCommand);
-        this.$root.$on("startWaitting", this.startWaitting);
+        this.$root.$on("waitCommand", this.waitCommand);
+        this.$root.$on("ignoreCommand", this.ignoreCommand);
         this.$root.$on("handleResponse", this.handleResponse);
     },
     destroyed() {
         this.$root.$off("setCommand", this.setCommand);
         this.$root.$off("executeCommand", this.executeCommand);
-        this.$root.$off("startWaitting", this.startWaitting);
+        this.$root.$off("waitCommand", this.waitCommand);
+        this.$root.$off("ignoreCommand", this.ignoreCommand);
         this.$root.$off("handleResponse", this.handleResponse);
     },
     data() {
         return {
             cmd: {
                 payload: "",
-                list: this.$_.cloneDeep(CommandList)
+                list: this.$_.cloneDeep(CommandList),
             },
             modal: {
                 open: false,
                 height: 300,
-                search: ""
+                search: "",
             },
-            dismiss: null
+            dismiss: null,
         };
     },
     computed: {
         ...mapState("database", ["loading", "config", "theUnit", "theCommand"]),
         searchResult() {
             return FlowFilter(this.cmd.list, this.modal.search);
-        }
+        },
     },
     methods: {
         ...mapMutations("database", [
@@ -185,10 +187,10 @@ export default {
             "ADD_FINGERS",
             "DELETE_FINGERS",
             "RESET_FINGERS",
-            "ADD_RESPONSES"
+            "ADD_RESPONSES",
         ]),
         timeoutCommand() {
-            let code = CommandResponse.find(el => el.name === "timeout");
+            let code = CommandResponse.find((el) => el.name === "timeout");
             // save response
             this.saveResponse({
                 unitID: this.theUnit.unitID,
@@ -196,12 +198,12 @@ export default {
                 hexData: null,
                 payload: this.theCommand.payload,
                 code,
-                message: ""
+                message: "",
             });
             // dismiss loading notifcation
             this.stopWaitting("Command timeout.", "negative");
         },
-        startWaitting(timeout) {
+        waitCommand(timeout) {
             // prepare payload to send
             this.SET_LOADING(true);
             // timeout guard
@@ -211,7 +213,7 @@ export default {
             // show notification about sending command
             this.dismiss = this.$q.notify({
                 message: "Sending command....",
-                timeout: 0
+                timeout: 0,
             });
         },
         stopWaitting(message, type) {
@@ -228,7 +230,7 @@ export default {
             // show notification result
             this.$q.notify({
                 message,
-                type
+                type,
             });
         },
         selectCommandRefference(payload) {
@@ -252,12 +254,12 @@ export default {
             }
 
             // find prop from command list
-            ref = this.cmd.list.find(el => el.command === prop);
+            ref = this.cmd.list.find((el) => el.command === prop);
 
             return {
                 prop,
                 val,
-                ref
+                ref,
             };
         },
         buildCommand({ ref, val }) {
@@ -318,7 +320,7 @@ export default {
                             hex: this.buildCommand(cmd),
                             payload,
                             timeout,
-                            cmd
+                            cmd,
                         });
                     } else {
                         message = "Command is not registered";
@@ -333,7 +335,7 @@ export default {
             // show notification
             if (message) {
                 this.$q.notify({
-                    message
+                    message,
                 });
             }
         },
@@ -341,7 +343,7 @@ export default {
             let data = [];
             let elCursor = 0;
             // loop for each element
-            Response.forEach(el => {
+            Response.forEach((el) => {
                 let valFormat = el.format(
                     hexData.substr(elCursor, el.size * 2)
                 );
@@ -351,21 +353,24 @@ export default {
                 data.push({
                     ...el,
                     value: valFormat,
-                    output: el.display(valFormat)
+                    output: el.display(valFormat),
                 });
             });
-            let code = CommandResponse.find(el => {
-                return el.code === data.find(el => el.field === "code").value;
+            let code = CommandResponse.find((el) => {
+                return el.code === data.find((el) => el.field === "code").value;
             });
 
             return {
-                unitID: data.find(el => el.field === "unitID").value,
+                unitID: data.find((el) => el.field === "unitID").value,
                 data,
                 hexData,
                 payload: this.theCommand.payload,
                 code,
-                message: data.find(el => el.field === "message").value
+                message: data.find((el) => el.field === "message").value,
             };
+        },
+        ignoreCommand() {
+            this.stopWaitting("Command error.", "warning");
         },
         handleResponse({ hexData }) {
             let response = this.parseResponse(hexData);
@@ -394,41 +399,41 @@ export default {
                             color: "secondary",
                             prompt: {
                                 model: "",
-                                type: "text"
-                            }
+                                type: "text",
+                            },
                         })
-                        .then(data => {
+                        .then((data) => {
                             this.ADD_FINGERS({
                                 unitID: this.theUnit.unitID,
                                 fingerID: cmd.val,
-                                name: data
+                                name: data,
                             });
                         });
                 } else if (cmd.prop === "FINGER_DEL") {
                     this.DELETE_FINGERS({
                         unitID: this.theUnit.unitID,
-                        fingerID: cmd.val
+                        fingerID: cmd.val,
                     });
                 } else if (cmd.prop === "FINGER_RST") {
                     this.RESET_FINGERS({
-                        unitID: this.theUnit.unitID
+                        unitID: this.theUnit.unitID,
                     });
                 }
             } else {
                 this.$q.notify({
                     message: `Command is ${result}`,
-                    type: "negative"
+                    type: "negative",
                 });
             }
         },
         saveResponse(response) {
             // save command & response
             this.ADD_RESPONSES(response);
-        }
+        },
     },
     timers: {
-        timeoutCommand: { time: 0 }
-    }
+        timeoutCommand: { time: 0 },
+    },
 };
 </script>
 
