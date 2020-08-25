@@ -370,7 +370,9 @@ export default {
             };
         },
         ignoreCommand() {
-            this.stopWaitting("Command error.", "warning");
+            if (this.timers.timeoutCommand.isRunning) {
+                this.stopWaitting("Command error.", "warning");
+            }
         },
         handleResponse({ hexData }) {
             let response = this.parseResponse(hexData);
