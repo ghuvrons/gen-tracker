@@ -370,8 +370,10 @@ export default {
             };
         },
         ignoreCommand() {
-            if (this.timers.timeoutCommand.isRunning) {
-                this.stopWaitting("Command error.", "warning");
+            if (this.cmd.payload.includes("GEN_UPGRADE_")) {
+                if (this.timers.timeoutCommand.isRunning) {
+                    this.stopWaitting("Command error.", "warning");
+                }
             }
         },
         handleResponse({ hexData }) {

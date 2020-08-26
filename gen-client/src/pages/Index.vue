@@ -252,7 +252,6 @@ export default {
                         // handle response
                         this.$root.$emit("handleResponse", { hexData });
                     } else {
-                        this.$root.$emit("ignoreCommand");
                         // if duplicate discard
                         if (this.uniqueReport(unitID, sequentialID)) {
                             console.log(`REPORT-${sequentialID} ${hexData}`);
@@ -266,6 +265,7 @@ export default {
                                 `REPORT-${sequentialID} (DUPLICATE) ${hexData}`
                             );
                         }
+                        // this.$root.$emit("ignoreCommand");
                     }
 
                     // prepare ACK
