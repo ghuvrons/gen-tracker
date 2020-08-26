@@ -265,7 +265,7 @@ export default {
                                 `REPORT-${sequentialID} (DUPLICATE) ${hexData}`
                             );
                         }
-                        // this.$root.$emit("ignoreCommand");
+                        this.$root.$emit("ignoreCommand");
                     }
 
                     // prepare ACK
