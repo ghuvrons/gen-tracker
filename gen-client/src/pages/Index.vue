@@ -256,7 +256,6 @@ export default {
                         if (this.uniqueReport(unitID, sequentialID)) {
                             console.log(`REPORT-${sequentialID} ${hexData}`);
                             // handle report
-                            this.$root.$emit("ignoreCommand");
                             this.$root.$emit("handleReport", {
                                 hexData,
                                 frameID,
