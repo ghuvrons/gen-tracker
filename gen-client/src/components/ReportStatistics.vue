@@ -96,7 +96,7 @@
                                     v-model="range.sample"
                                     type="number"
                                     class="q-ma-xs"
-                                    style="width: 130px;"
+                                    style="width: 130px"
                                     prefix="Sample :"
                                     inverted
                                     align="right"
@@ -119,17 +119,19 @@
                                         'px',
                                 }"
                             >
-                                <template v-for="event in events">
+                                <template
+                                    v-for="(evt, name) in selectedReportEvents"
+                                >
                                     <q-item
-                                        :key="event.bit"
-                                        v-if="activeEvent(event.bit)"
+                                        :key="name"
+                                        :dark="!activeEvent(name)"
                                         separator
                                         dense
                                         link
                                     >
                                         <q-item-main>
                                             <q-item-tile sublabel>
-                                                {{ event.name }}
+                                                {{ name }} ({{ evt.length }})
                                             </q-item-tile>
                                         </q-item-main>
                                     </q-item>
@@ -147,7 +149,7 @@
 import LineChart from "components/LineChart";
 import { Events } from "components/js/events";
 import { mapGetters } from "vuex";
-var Long = require("long");
+const Long = require("long");
 
 export default {
     // name: 'ComponentName',
@@ -248,10 +250,11 @@ export default {
         };
     },
     computed: {
-        ...mapGetters("database", ["selectedReports"]),
+        ...mapGetters("database", ["selectedReports", "selectedReportEvents"]),
     },
     methods: {
-        activeEvent(bit) {
+        activeEvent(name) {
+            let bit = Events.find((el) => el.name === name).bit;
             return Long.fromNumber(this.currentValue, 1).shiftRight(bit) & 1;
         },
         changeChartData({ yData, xData, yLabel, title }) {
