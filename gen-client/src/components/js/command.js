@@ -51,12 +51,12 @@ const Response = [
     size: 1,
     format: val => HexToInt(val),
     display: valFormat => {
-      let res = CommandResponse.find(el => el.code === valFormat);
+      let res = CommandResponse.find(({ code }) => code === valFormat);
 
       if (res) {
         return res.title;
       }
-      return CommandResponse.find(el => el.name === "unknown").title;
+      return CommandResponse.find(({ name }) => name === "unknown").title;
     }
   },
   {

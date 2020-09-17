@@ -61,6 +61,7 @@ module.exports = function(ctx) {
         "QIcon",
         "QList",
         "QListHeader",
+        "QCollapsible",
         "QItem",
         "QItemTile",
         "QItemMain",

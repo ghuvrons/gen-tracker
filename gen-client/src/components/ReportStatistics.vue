@@ -109,7 +109,7 @@
                         v-if="statistics.field.field === 'eventsGroup'"
                         class="col-sm-12 col-md-5 col-lg-4"
                     >
-                        <q-list link dense>
+                        <q-list dense>
                             <q-scroll-area
                                 class="bg-white"
                                 :style="{
@@ -120,21 +120,34 @@
                                 }"
                             >
                                 <template
-                                    v-for="(evt, name) in selectedReportEvents"
+                                    v-for="(events,
+                                    name) in selectedReportEvents"
                                 >
-                                    <q-item
+                                    <q-collapsible
                                         :key="name"
-                                        :dark="!activeEvent(name)"
+                                        :label="`${name} `"
+                                        :sublabel="`(${events.length}) times`"
+                                        :header-class="`text-${
+                                            activeEvent(name) ? 'green' : 'grey'
+                                        }`"
                                         separator
                                         dense
-                                        link
                                     >
-                                        <q-item-main>
-                                            <q-item-tile sublabel>
-                                                {{ name }} ({{ evt.length }})
-                                            </q-item-tile>
-                                        </q-item-main>
-                                    </q-item>
+                                        <q-list dense>
+                                            <q-item
+                                                v-for="event in events"
+                                                :key="`${name}-${event.seqID}`"
+                                                separator
+                                                dense
+                                            >
+                                                <q-item-main>
+                                                    <q-item-tile sublabel>
+                                                        {{ event.seqID }}
+                                                    </q-item-tile>
+                                                </q-item-main>
+                                            </q-item>
+                                        </q-list>
+                                    </q-collapsible>
                                 </template>
                             </q-scroll-area>
                         </q-list>
@@ -254,7 +267,7 @@ export default {
     },
     methods: {
         activeEvent(name) {
-            let bit = Events.find((el) => el.name === name).bit;
+            let bit = Events.find(({ name: _name }) => _name === name).bit;
             return Long.fromNumber(this.currentValue, 1).shiftRight(bit) & 1;
         },
         changeChartData({ yData, xData, yLabel, title }) {
@@ -283,7 +296,7 @@ export default {
             this.currentValue = data[maxIndex];
             // calculate y-axes
             let dataInRange = data.filter(
-                (val, i) => i >= minIndex && i <= maxIndex
+                (_, i) => i >= minIndex && i <= maxIndex
             );
             let yMax = this.$_.max(dataInRange);
             let yMin = this.range.control.beginAtZero
@@ -326,17 +339,17 @@ export default {
             let datasets = [];
             let labels = [];
             // get datasets
-            this.selectedReports.forEach((el) => {
-                let theField = el.data.find(
-                    (ele) => ele.field === this.statistics.field.field
+            this.selectedReports.forEach(({ data }) => {
+                let theField = data.find(
+                    ({ field }) => field === this.statistics.field.field
                 );
                 // is data-field exist on this report
                 if (theField) {
                     // insert to datasets
                     datasets.push(theField.value);
                     // insert the label
-                    let sequentialID = el.data.find(
-                        (ele) => ele.field === "sequentialID"
+                    let sequentialID = data.find(
+                        ({ field }) => field === "sequentialID"
                     ).value;
                     labels.push(sequentialID);
                     // labels.push(datasets.length)

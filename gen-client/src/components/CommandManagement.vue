@@ -190,7 +190,7 @@ export default {
             "ADD_RESPONSES",
         ]),
         timeoutCommand() {
-            let code = CommandResponse.find((el) => el.name === "timeout");
+            let code = CommandResponse.find(({ name }) => name === "timeout");
             // save response
             this.saveResponse({
                 unitID: this.theUnit.unitID,
@@ -254,7 +254,7 @@ export default {
             }
 
             // find prop from command list
-            ref = this.cmd.list.find((el) => el.command === prop);
+            ref = this.cmd.list.find(({ command }) => command === prop);
 
             return {
                 prop,
@@ -264,29 +264,29 @@ export default {
         },
         buildCommand({ ref, val }) {
             let hex = "";
-            Command.forEach((ele, i) => {
-                let el = Command[Command.length - 1 - i];
+            Command.forEach((_, i) => {
+                let { field, format } = Command[Command.length - 1 - i];
 
-                switch (el.field) {
+                switch (field) {
                     case "value":
                         if (val === null) {
                             val = 0;
                         }
 
-                        hex = el.format(val) + hex;
+                        hex = format(val) + hex;
                         break;
                     case "subCode":
                     case "code":
-                        hex = el.format(ref[el.field]) + hex;
+                        hex = format(ref[field]) + hex;
                         break;
                     case "size":
-                        hex = el.format(hex) + hex;
+                        hex = format(hex) + hex;
                         break;
                     case "crc":
-                        hex = el.format(hex) + hex;
+                        hex = format(hex) + hex;
                         break;
                     case "prefix":
-                        hex = el.format() + hex;
+                        hex = format() + hex;
                         break;
                     default:
                         break;
@@ -356,17 +356,19 @@ export default {
                     output: el.display(valFormat),
                 });
             });
-            let code = CommandResponse.find((el) => {
-                return el.code === data.find((el) => el.field === "code").value;
+            let code = CommandResponse.find(({ code }) => {
+                return (
+                    code === data.find(({ field }) => field === "code").value
+                );
             });
 
             return {
-                unitID: data.find((el) => el.field === "unitID").value,
+                unitID: data.find(({ field }) => field === "unitID").value,
                 data,
                 hexData,
                 payload: this.theCommand.payload,
                 code,
-                message: data.find((el) => el.field === "message").value,
+                message: data.find(({ field }) => field === "message").value,
             };
         },
         ignoreCommand() {

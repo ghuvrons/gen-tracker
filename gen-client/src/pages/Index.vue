@@ -100,10 +100,10 @@ export default {
         },
         calculateCRC32(hexData) {
             // calculate size of crcHeader
-            let crcSize = Header.filter((el) =>
-                ["prefix", "crc"].includes(el.field)
+            let crcSize = Header.filter(({ field }) =>
+                ["prefix", "crc"].includes(field)
             )
-                .map((el) => el.size)
+                .map(({ size }) => size)
                 .reduce((sum, val) => sum + val);
             // calculate the crc
             return CRC32(hexData.substring(crcSize * 2));
@@ -111,9 +111,9 @@ export default {
         validateFrame(hexData, header) {
             let valid = false;
             // parse header
-            let prefix = header.find((el) => el.field === "prefix");
-            let crc = header.find((el) => el.field === "crc");
-            let size = header.find((el) => el.field === "size");
+            let prefix = header.find(({ field }) => field === "prefix");
+            let crc = header.find(({ field }) => field === "crc");
+            let size = header.find(({ field }) => field === "size");
             // valid report should be more than 8 chars
 
             // validate by prefix, crc and size
@@ -162,18 +162,18 @@ export default {
         buildACK(frameID, sequentialID) {
             let hex = "";
 
-            ACK.forEach((ele, i) => {
-                let el = ACK[ACK.length - 1 - i];
+            ACK.forEach((_, i) => {
+                let { field, format } = ACK[ACK.length - 1 - i];
 
-                switch (el.field) {
+                switch (field) {
                     case "sequentialID":
-                        hex = el.format(sequentialID) + hex;
+                        hex = format(sequentialID) + hex;
                         break;
                     case "frameID":
-                        hex = el.format(frameID) + hex;
+                        hex = format(frameID) + hex;
                         break;
                     case "prefix":
-                        hex = el.format() + hex;
+                        hex = format() + hex;
                         break;
                     default:
                         break;
@@ -219,7 +219,7 @@ export default {
             let type = "ACK";
 
             // calculate minimum data size for header
-            let headerSize = Header.map((el) => el.size).reduce(
+            let headerSize = Header.map(({ size }) => size).reduce(
                 (sum, val) => sum + val
             );
             // check minimum data size
@@ -231,12 +231,13 @@ export default {
                 // handle valid frame
                 if (valid) {
                     // frame is valid
-                    let unitID = header.find((el) => el.field === "unitID")
+                    let unitID = header.find(({ field }) => field === "unitID")
                         .value;
-                    let frameID = header.find((el) => el.field === "frameID")
-                        .value;
+                    let frameID = header.find(
+                        ({ field }) => field === "frameID"
+                    ).value;
                     let sequentialID = header.find(
-                        (el) => el.field === "sequentialID"
+                        ({ field }) => field === "sequentialID"
                     ).value;
 
                     // add unit (if not exist)
