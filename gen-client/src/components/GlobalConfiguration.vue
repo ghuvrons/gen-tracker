@@ -1,5 +1,5 @@
 <template>
-    <div class="row justify-between items-center" style="height: 150px;">
+    <div class="row justify-between items-center" style="height: 150px">
         <div class="col-auto">
             <q-btn
                 class="q-ma-xs"
@@ -33,16 +33,31 @@
                 @click="ignoreCommand()"
             />
         </div>
+        <div class="col-auto">
+            <json-csv :data="exportedData" name="tracking.csv">
+                Download CSV
+            </json-csv>
+        </div>
     </div>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import JsonCsv from "vue-json-csv";
 
 export default {
     // name: 'ComponentName',
+    components: {
+        JsonCsv,
+    },
+    data() {
+        return {
+            exportedField: ["rtcLogDatetime", "speed"],
+        };
+    },
     computed: {
         ...mapState("database", ["units", "settings", "combineCmd"]),
+        ...mapGetters("database", ["selectedReports"]),
         combineCommand: {
             get() {
                 return this.combineCmd;
@@ -58,6 +73,23 @@ export default {
             set(value) {
                 this.TOGGLE_TIME_CALIBRATION();
             },
+        },
+        exportedData() {
+            return this.selectedReports.map(({ data }) => {
+                return data
+                    .filter(({ field }) => this.exportedField.includes(field))
+                    .reduce((carry, { field, value, output, unit }) => {
+                        return {
+                            ...carry,
+                            [field]: output,
+                            // [field]: {
+                            //     value,
+                            //     output,
+                            //     unit,
+                            // },
+                        };
+                    }, {});
+            });
         },
     },
     methods: {
