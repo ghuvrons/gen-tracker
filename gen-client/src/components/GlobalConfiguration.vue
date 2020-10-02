@@ -11,6 +11,15 @@
             />
         </div>
         <div class="col-auto">
+            <q-btn
+                class="q-ma-xs"
+                icon="stop"
+                color="primary"
+                label="Ingnore command"
+                @click="ignoreCommand()"
+            />
+        </div>
+        <div class="col-auto">
             <q-toggle
                 v-model="timeCalibrationState"
                 label="Time Calibration"
@@ -25,17 +34,16 @@
             />
         </div>
         <div class="col-auto">
-            <q-btn
-                class="q-ma-xs"
-                icon="stop"
-                color="primary"
-                label="Ingnore command"
-                @click="ignoreCommand()"
-            />
-        </div>
-        <div class="col-auto">
-            <json-csv :data="exportedData" name="tracking.csv">
-                Download CSV
+            <json-csv
+                :data="exportedData"
+                :labels="labelData"
+                name="tracking.csv"
+            >
+                <q-btn
+                    class="q-ma-xs"
+                    icon="cloud_download"
+                    label="Download CSV"
+                />
             </json-csv>
         </div>
     </div>
@@ -45,15 +53,12 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import JsonCsv from "vue-json-csv";
 
+import { Report } from "../components/js/frame";
+
 export default {
     // name: 'ComponentName',
     components: {
         JsonCsv,
-    },
-    data() {
-        return {
-            exportedField: ["rtcLogDatetime", "speed"],
-        };
     },
     computed: {
         ...mapState("database", ["units", "settings", "combineCmd"]),
@@ -75,21 +80,27 @@ export default {
             },
         },
         exportedData() {
-            return this.selectedReports.map(({ data }) => {
-                return data
-                    .filter(({ field }) => this.exportedField.includes(field))
-                    .reduce((carry, { field, value, output, unit }) => {
-                        return {
+            return this.selectedReports.reverse().map(({ data }) =>
+                data
+                    .reverse()
+                    .filter(({ chartable }) => chartable)
+                    .reduce(
+                        (carry, { field, value, output, unit }) => ({
                             ...carry,
                             [field]: output,
-                            // [field]: {
-                            //     value,
-                            //     output,
-                            //     unit,
-                            // },
-                        };
-                    }, {});
-            });
+                        }),
+                        {}
+                    )
+            );
+        },
+        labelData() {
+            return Report.reduce(
+                (carry, { field, title, unit }) => ({
+                    ...carry,
+                    [field]: title + (unit ? ` (${unit})` : ""),
+                }),
+                {}
+            );
         },
     },
     methods: {
