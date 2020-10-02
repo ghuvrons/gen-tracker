@@ -36,8 +36,8 @@
         <div class="col-auto">
             <json-csv
                 :data="exportedData"
-                :labels="labelData"
-                name="tracking.csv"
+                :labels="exportedLabel"
+                :name="exportedFilename"
             >
                 <q-btn
                     class="q-ma-xs"
@@ -52,6 +52,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import JsonCsv from "vue-json-csv";
+import moment from "moment";
 
 import { Report } from "../components/js/frame";
 
@@ -93,7 +94,7 @@ export default {
                     )
             );
         },
-        labelData() {
+        exportedLabel() {
             return Report.reduce(
                 (carry, { field, title, unit }) => ({
                     ...carry,
@@ -101,6 +102,9 @@ export default {
                 }),
                 {}
             );
+        },
+        exportedFilename() {
+            return `tracking-${moment().format("YYYYMMDDHHmmss")}.csv`;
         },
     },
     methods: {
