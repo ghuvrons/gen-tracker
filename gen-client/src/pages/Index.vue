@@ -130,7 +130,6 @@ export default {
                     }
                 } else {
                     console.warn(`CORRUPT: CRC not valid`);
-                    console.log(crc.output, this.calculateCRC32(hexData));
                 }
             } else {
                 console.warn(`CORRUPT: Prefix not same`);

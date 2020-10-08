@@ -227,9 +227,7 @@ const VCU = ({ required }) => {
       unit: "m",
       size: 4,
       format: val => HexToInt(ChangeEndian(val)) * 0.1,
-      display: valFormat => {
-        return Dot(valFormat);
-      }
+      display: valFormat => parseFloat(valFormat.toFixed(2))
     },
     {
       field: "gpsHDOP",
