@@ -95,6 +95,16 @@ export default {
 
             return pos;
         },
+        getCurrentHeading(report) {
+            if (report) {
+                if (report.frameID === this.config.frame.id.FULL) {
+                    return report.data.find(
+                        ({ field }) => field === "gpsHeading"
+                    ).value;
+                }
+            }
+            return 0;
+        },
         setPosition({ lng, lat, error }) {
             // update position
             if (!error) {
@@ -147,6 +157,12 @@ export default {
             immediate: true,
             handler(report) {
                 this.setPosition(this.generatePosition(report));
+                if (this.pov) {
+                    this.updatePov({
+                        ...this.pov,
+                        heading: this.getCurrentHeading(report),
+                    });
+                }
             },
         },
         selectedReports: {
