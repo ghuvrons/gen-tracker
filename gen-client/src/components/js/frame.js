@@ -282,8 +282,8 @@ const VCU = ({ required }) => {
       display: valFormat => Dot(valFormat)
     },
     {
-      field: "odometer_m",
-      title: "Odometer (m)",
+      field: "odometer2",
+      title: "Odometer2",
       required: false,
       chartable: true,
       unit: "m",
