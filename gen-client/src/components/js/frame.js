@@ -224,8 +224,9 @@ const VCU = ({ required }) => {
       title: "GPS Altitude",
       required: false,
       chartable: true,
+      unit: "m",
       size: 4,
-      format: val => HexToInt(ChangeEndian(val)),
+      format: val => HexToInt(ChangeEndian(val)) * 0.1,
       display: valFormat => {
         return Dot(valFormat);
       }
@@ -284,10 +285,10 @@ const VCU = ({ required }) => {
     },
     {
       field: "odometer_m",
-      title: "Odometer_m",
+      title: "Odometer (m)",
       required: false,
       chartable: true,
-      unit: "M",
+      unit: "m",
       size: 4,
       format: val => HexToInt(ChangeEndian(val)),
       display: valFormat => Dot(valFormat)
