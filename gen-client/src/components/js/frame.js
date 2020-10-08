@@ -220,8 +220,30 @@ const VCU = ({ required }) => {
       display: valFormat => parseFloat(valFormat.toFixed(7))
     },
     {
+      field: "gpsAltitude",
+      title: "GPS Altitude",
+      required: false,
+      chartable: true,
+      size: 4,
+      format: val => HexToInt(ChangeEndian(val)),
+      display: valFormat => {
+        return Dot(valFormat);
+      }
+    },
+    {
       field: "gpsHDOP",
       title: "GPS HDOP",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: val => HexToInt(ChangeEndian(val)) * 0.1,
+      display: valFormat => {
+        return Dot(valFormat);
+      }
+    },
+    {
+      field: "gpsVDOP",
+      title: "GPS VDOP",
       required: false,
       chartable: true,
       size: 1,
@@ -256,6 +278,16 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       unit: "Km",
+      size: 4,
+      format: val => HexToInt(ChangeEndian(val)),
+      display: valFormat => Dot(valFormat)
+    },
+    {
+      field: "odometer_m",
+      title: "Odometer_m",
+      required: false,
+      chartable: true,
+      unit: "M",
       size: 4,
       format: val => HexToInt(ChangeEndian(val)),
       display: valFormat => Dot(valFormat)
