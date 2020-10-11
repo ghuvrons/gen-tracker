@@ -267,22 +267,20 @@ export default {
                         }
                     }
 
-                    // prepare ACK
-                    reply = this.buildACK(frameID, sequentialID);
-
-                    // insert Command to ACK frame
-                    if (this.combineCmd) {
-                        if (this.theCommand !== null && !this.loading) {
-                            if (unitID === this.theCommand.unitID) {
-                                // set command
-                                reply += this.theCommand.hex;
-                                type += " & COMMAND";
-
-                                // send command, wait response
-                                this.showLoadingCommand();
-                            }
-                        }
-                    }
+                    // // prepare ACK
+                    // reply = this.buildACK(frameID, sequentialID);
+                    // // insert Command to ACK frame
+                    // if (this.combineCmd) {
+                    //     if (this.theCommand !== null && !this.loading) {
+                    //         if (unitID === this.theCommand.unitID) {
+                    //             // set command
+                    //             reply += this.theCommand.hex;
+                    //             type += " & COMMAND";
+                    //             // send command, wait response
+                    //             this.showLoadingCommand();
+                    //         }
+                    //     }
+                    // }
                 } else {
                     console.error(`CORRUPT ${hexData}`);
                 }
@@ -290,37 +288,38 @@ export default {
                 console.warn(`CORRUPT: Bellow minimum size`);
             }
 
-            // reply the REPORT frame
-            this.sendCommand({
-                client,
-                type: reply ? type : "NACK",
-                hex: reply || this.buildNACK(),
-            });
+            // // reply the REPORT frame
+            // this.sendCommand({
+            //     client,
+            //     type: reply ? type : "NACK",
+            //     hex: reply || this.buildNACK(),
+            // });
         },
     },
     watch: {
         "theCommand.hex": function (val) {
             if (val) {
-                // show notification
-                if (this.combineCmd) {
-                    this.$q.notify({
-                        message:
-                            "Command is queued, will be sent with next ACK",
-                    });
-                } else {
-                    // send directly
-                    let client = this.getClientByUnitId(this.theCommand.unitID);
-                    if (client) {
-                        this.sendCommand({
-                            client,
-                            type: "COMMAND",
-                            hex: val,
-                        });
+                // // show notification
+                // if (this.combineCmd) {
+                //     this.$q.notify({
+                //         message:
+                //             "Command is queued, will be sent with next ACK",
+                //     });
+                // } else {
+                // send directly
+                let client = this.getClientByUnitId(this.theCommand.unitID);
 
-                        // send command, wait response
-                        this.showLoadingCommand();
-                    }
+                if (client) {
+                    this.sendCommand({
+                        client,
+                        type: "COMMAND",
+                        hex: val,
+                    });
+
+                    // send command, wait response
+                    this.showLoadingCommand();
                 }
+                // }
             }
         },
     },
