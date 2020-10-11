@@ -7,16 +7,16 @@ export const CLEAR_ALL = state => {
   // state.fingers = []
 };
 
-export const TOGGLE_TIME_CALIBRATION = ({ settings }) => {
-  settings.timeCalibration = !settings.timeCalibration;
+export const TOGGLE_TIME_CALIBRATION = state => {
+  state.settings.timeCalibration = !settings.timeCalibration;
 };
 
 export const SET_LOADING = (state, payload) => {
   state.loading = payload;
 };
 
-export const TOGGLE_COMBINE_CMD = ({ combineCmd }) => {
-  combineCmd = !combineCmd;
+export const TOGGLE_COMBINE_CMD = state => {
+  state.combineCmd = !combineCmd;
 };
 
 export const SET_THE_COMMAND = (state, data) => {
@@ -31,8 +31,8 @@ export const SET_THE_COMMAND = (state, data) => {
   };
 };
 
-export const CLEAR_THE_COMMAND = ({ theCommand }) => {
-  theCommand = {
+export const CLEAR_THE_COMMAND = state => {
+  state.theCommand = {
     unitID: null,
     hex: "",
     payload: "",
