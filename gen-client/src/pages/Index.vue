@@ -31,9 +31,9 @@ export default {
     },
     data() {
         return {
-            mapHeight: 300,
+            mapHeight: 0,
             pageWidth: 0,
-            paneHeight: 0,
+            paneHeight: 150,
         };
     },
     computed: {
@@ -41,7 +41,7 @@ export default {
     },
     methods: {
         onResize({ height }) {
-            this.paneHeight = height - this.mapHeight - 180;
+            this.mapHeight = height - this.paneHeight - 180;
         },
         onResizePage({ width }) {
             this.pageWidth = width;

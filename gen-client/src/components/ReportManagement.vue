@@ -11,63 +11,63 @@
             </q-chip>
         </p>
 
-        <q-scroll-area
+        <!-- <q-scroll-area
             class="bg-white"
             :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-        >
-            <q-list separator dense v-if="theReport">
-                <!-- the new required frame -->
-                <q-item
-                    v-for="data in requiredReport"
-                    :link="selectedReports.length > 1 && data.chartable"
-                    :key="data.field"
-                    :class="{ 'bg-dark text-white': activeField(data) }"
-                    @click.native="openReportStatistics(data)"
-                >
-                    <q-item-main>
-                        <q-item-tile label>{{ data.title }}</q-item-tile>
-                        <q-item-tile
-                            sublabel
-                            :text-color="activeField(data) ? 'yellow' : null"
-                            >{{ data.output }} {{ data.unit }}</q-item-tile
-                        >
-                    </q-item-main>
-                    <q-item-side right color="green" icon="cloud_download" />
-                </q-item>
-                <!-- add latest optional frame -->
-                <q-item
-                    v-for="data in optionalReport"
-                    :link="selectedReports.length > 1 && data.chartable"
-                    :key="data.field"
-                    :class="{ 'bg-dark text-white': activeField(data) }"
-                    @click.native="openReportStatistics(data)"
-                >
-                    <q-item-main>
-                        <q-item-tile label>{{ data.title }}</q-item-tile>
-                        <q-item-tile sublabel
-                            >{{ data.output }} {{ data.unit }}</q-item-tile
-                        >
-                    </q-item-main>
-                    <q-item-side
-                        right
-                        :color="
-                            theReport.frameID === config.frame.id.FULL
-                                ? 'green'
-                                : 'red'
-                        "
-                        :icon="
-                            theReport.frameID === config.frame.id.FULL
-                                ? 'cloud_download'
-                                : 'cloud_off'
-                        "
-                    />
-                </q-item>
-            </q-list>
+        > -->
+        <q-list separator dense v-if="theReport">
+            <!-- the new required frame -->
+            <q-item
+                v-for="data in requiredReport"
+                :link="selectedReports.length > 1 && data.chartable"
+                :key="data.field"
+                :class="{ 'bg-dark text-white': activeField(data) }"
+                @click.native="openReportStatistics(data)"
+            >
+                <q-item-main>
+                    <q-item-tile label>{{ data.title }}</q-item-tile>
+                    <q-item-tile
+                        sublabel
+                        :text-color="activeField(data) ? 'yellow' : null"
+                        >{{ data.output }} {{ data.unit }}</q-item-tile
+                    >
+                </q-item-main>
+                <q-item-side right color="green" icon="cloud_download" />
+            </q-item>
+            <!-- add latest optional frame -->
+            <q-item
+                v-for="data in optionalReport"
+                :link="selectedReports.length > 1 && data.chartable"
+                :key="data.field"
+                :class="{ 'bg-dark text-white': activeField(data) }"
+                @click.native="openReportStatistics(data)"
+            >
+                <q-item-main>
+                    <q-item-tile label>{{ data.title }}</q-item-tile>
+                    <q-item-tile sublabel
+                        >{{ data.output }} {{ data.unit }}</q-item-tile
+                    >
+                </q-item-main>
+                <q-item-side
+                    right
+                    :color="
+                        theReport.frameID === config.frame.id.FULL
+                            ? 'green'
+                            : 'red'
+                    "
+                    :icon="
+                        theReport.frameID === config.frame.id.FULL
+                            ? 'cloud_download'
+                            : 'cloud_off'
+                    "
+                />
+            </q-item>
+        </q-list>
 
-            <q-alert v-else icon="info" color="faded" class="q-ma-xs">
-                No active report yet
-            </q-alert>
-        </q-scroll-area>
+        <q-alert v-else icon="info" color="faded" class="q-ma-xs">
+            No active report yet
+        </q-alert>
+        <!-- </q-scroll-area> -->
 
         <report-statistics
             :height="height - 210"
@@ -88,17 +88,11 @@ import { Report } from "../utils/frame";
 
 export default {
     // name: 'ComponentName',
-    created() {
-        this.$root.$on("handleReport", this.handleReport);
-    },
-    destroyed() {
-        this.$root.$off("handleReport", this.handleReport);
+    props: {
+        height: Number,
     },
     components: {
         ReportStatistics,
-    },
-    props: {
-        height: Number,
     },
     data() {
         return {
@@ -228,6 +222,12 @@ export default {
                 }
             }
         },
+    },
+    created() {
+        this.$root.$on("handleReport", this.handleReport);
+    },
+    destroyed() {
+        this.$root.$off("handleReport", this.handleReport);
     },
 };
 </script>
