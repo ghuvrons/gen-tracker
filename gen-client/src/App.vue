@@ -21,7 +21,8 @@ export default {
         this.$root.$off("sendCommand", this.sendCommand);
     },
     computed: {
-        ...mapState("database", ["config", "loading", "theCommand"]),
+        ...mapState("app", ["config", "loading"]),
+        ...mapState("database", ["theCommand"]),
         ...mapGetters("database", ["uniqueReport", "getClientByUnitId"]),
     },
     methods: {

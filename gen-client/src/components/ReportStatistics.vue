@@ -167,13 +167,12 @@ import { Events } from "../utils/events";
 import LineChart from "components/LineChart";
 
 export default {
-    // name: 'ComponentName',
-    components: {
-        LineChart,
-    },
     props: {
         data: Object,
         height: Number,
+    },
+    components: {
+        LineChart,
     },
     data() {
         return {

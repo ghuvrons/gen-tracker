@@ -72,18 +72,18 @@ import { mapState, mapGetters } from "vuex";
 import { QSpinnerFacebook } from "quasar";
 
 export default {
+    props: {
+        height: Number,
+    },
     created() {
         this.$root.$on("scanningDialog", this.scanningDialog);
     },
     destroyed() {
         this.$root.$off("scanningDialog", this.scanningDialog);
     },
-    // name: 'ComponentName',
-    props: {
-        height: Number,
-    },
     computed: {
-        ...mapState("database", ["loading", "config", "theUnit"]),
+        ...mapState("app", ["loading", "config"]),
+        ...mapState("database", ["theUnit"]),
         ...mapGetters("database", ["selectedFingers"]),
     },
     methods: {

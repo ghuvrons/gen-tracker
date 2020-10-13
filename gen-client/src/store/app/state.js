@@ -4,5 +4,8 @@ import { cloneDeep } from "lodash";
 // database
 export default {
   config: cloneDeep(config),
-  loading: false
+  loading: false,
+  settings: {
+    timeCalibration: false
+  }
 };

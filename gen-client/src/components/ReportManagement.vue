@@ -94,13 +94,20 @@ export default {
     components: {
         ReportStatistics,
     },
+    created() {
+        this.$root.$on("handleReport", this.handleReport);
+    },
+    destroyed() {
+        this.$root.$off("handleReport", this.handleReport);
+    },
     data() {
         return {
             statisticsData: null,
         };
     },
     computed: {
-        ...mapState("database", ["theReport", "settings", "config"]),
+        ...mapState("app", ["settings", "config"]),
+        ...mapState("database", ["theReport"]),
         ...mapGetters("database", ["selectedReports"]),
         timeCalibrationState() {
             return this.settings.timeCalibration;
@@ -222,12 +229,6 @@ export default {
                 }
             }
         },
-    },
-    created() {
-        this.$root.$on("handleReport", this.handleReport);
-    },
-    destroyed() {
-        this.$root.$off("handleReport", this.handleReport);
     },
 };
 </script>

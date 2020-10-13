@@ -7,14 +7,6 @@ export const CLEAR_ALL = state => {
   // state.fingers = []
 };
 
-export const TOGGLE_TIME_CALIBRATION = state => {
-  state.settings.timeCalibration = !settings.timeCalibration;
-};
-
-export const SET_LOADING = (state, payload) => {
-  state.loading = payload;
-};
-
 export const SET_THE_COMMAND = (state, data) => {
   let { unitID, hex, payload, timeout, cmd } = data;
 

@@ -175,7 +175,8 @@ export default {
         };
     },
     computed: {
-        ...mapState("database", ["loading", "config", "theUnit", "theCommand"]),
+        ...mapState("app", ["loading", "config"]),
+        ...mapState("database", ["theUnit", "theCommand"]),
         searchResult() {
             return FlowFilter(this.cmd.list, this.modal.search);
         },

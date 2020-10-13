@@ -80,7 +80,8 @@ export default {
         };
     },
     computed: {
-        ...mapState("database", ["loading", "config", "theUnit", "theReport"]),
+        ...mapState("app", ["loading", "config"]),
+        ...mapState("database", ["theUnit", "theReport"]),
         ...mapGetters("database", ["selectedReports"]),
     },
     methods: {

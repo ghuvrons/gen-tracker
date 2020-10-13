@@ -15,7 +15,7 @@
                 class="q-ma-xs"
                 icon="stop"
                 color="primary"
-                label="Ingnore command"
+                label="Ignore command"
                 @click="ignoreCommand()"
             />
         </div>
@@ -56,7 +56,8 @@ export default {
         JsonCsv,
     },
     computed: {
-        ...mapState("database", ["units", "settings"]),
+        ...mapState("app", ["settings"]),
+        ...mapState("database", ["units"]),
         ...mapGetters("database", ["selectedReports"]),
         timeCalibrationState: {
             get() {

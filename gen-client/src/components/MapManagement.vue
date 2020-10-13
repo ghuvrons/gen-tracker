@@ -62,7 +62,8 @@ export default {
         };
     },
     computed: {
-        ...mapState("database", ["theReport", "config"]),
+        ...mapState("app", ["config"]),
+        ...mapState("database", ["theReport"]),
         ...mapGetters("database", ["selectedReports"]),
         showStreetView() {
             return this.pageWidth >= 728;

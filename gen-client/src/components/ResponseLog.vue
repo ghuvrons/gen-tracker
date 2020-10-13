@@ -48,7 +48,7 @@ export default {
         height: Number,
     },
     computed: {
-        ...mapState("database", ["loading"]),
+        ...mapState("app", ["loading"]),
         ...mapGetters("database", ["selectedResponses"]),
     },
     methods: {

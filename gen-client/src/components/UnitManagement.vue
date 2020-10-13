@@ -41,7 +41,8 @@ export default {
         height: Number,
     },
     computed: {
-        ...mapState("database", ["units", "theUnit", "loading"]),
+        ...mapState("app", ["loading"]),
+        ...mapState("database", ["theUnit", "units"]),
         ...mapGetters("database", ["getTotalReports"]),
     },
     methods: {
