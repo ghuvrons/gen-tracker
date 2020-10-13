@@ -159,10 +159,12 @@
 </template>
 
 <script>
-import LineChart from "components/LineChart";
-import { Events } from "components/js/events";
 import { mapGetters } from "vuex";
 const Long = require("long");
+
+import { Events } from "../utils/events";
+
+import LineChart from "components/LineChart";
 
 export default {
     // name: 'ComponentName',

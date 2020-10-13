@@ -134,14 +134,15 @@
 </template>
 
 <script>
-import { FlowFilter } from "components/js/helper";
+import { mapState, mapMutations } from "vuex";
+
 import {
     Command,
     CommandList,
     CommandResponse,
     Response,
-} from "components/js/command";
-import { mapState, mapMutations } from "vuex";
+} from "../utils/command";
+import { FlowFilter } from "../utils/helper";
 
 export default {
     // name: 'ComponentName',

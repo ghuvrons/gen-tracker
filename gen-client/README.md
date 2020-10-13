@@ -2,7 +2,7 @@
 
 - GEN Server & GEN Client should be executed from same machine (the server).
 
-  Or change the **socket.address** in **GEN-Client/src/components/js/config.js**
+  Or change the **socket.address** in **GEN-Client/src/utils/config.js**
 
 ## GEN-Tracker Client
 

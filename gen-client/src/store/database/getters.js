@@ -1,6 +1,7 @@
 const Long = require("long");
 import { groupBy, mapValues, omit } from "lodash";
-import { Events } from "../../components/js/events";
+
+import { Events } from "../../utils/events";
 
 export const getClientByUnitId = ({ units }) => unitID => {
   let unit = units.find(({ unitID: _unitID }) => _unitID === unitID);

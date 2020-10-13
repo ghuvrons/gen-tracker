@@ -1,13 +1,238 @@
 <template>
-  <div id="q-app">
-    <router-view />
-  </div>
+    <div id="q-app">
+        <router-view />
+    </div>
 </template>
 
 <script>
+import { mapGetters, mapState, mapMutations } from "vuex";
+
+import { ACK } from "./utils/ack";
+import { Header } from "./utils/frame";
+import { config } from "./utils/config";
+import { CRC32, AsciiToHex } from "./utils/helper";
+
 export default {
-  name: 'App'
-}
+    // name: "App",
+    created() {
+        this.$root.$on("sendCommand", this.sendCommand);
+    },
+    destroyed() {
+        this.$root.$off("sendCommand", this.sendCommand);
+    },
+    computed: {
+        ...mapState("database", ["config", "loading", "theCommand", "units"]),
+        ...mapGetters("database", [
+            "selectedReports",
+            "selectedFingers",
+            "uniqueReport",
+            "getClientByUnitId",
+        ]),
+    },
+    methods: {
+        ...mapMutations("database", ["ADD_UNITS"]),
+        calculateCRC32(hexData) {
+            // calculate size of crcHeader
+            let crcSize = Header.filter(({ field }) =>
+                ["prefix", "crc"].includes(field)
+            )
+                .map(({ size }) => size)
+                .reduce((sum, val) => sum + val);
+            // calculate the crc
+            return CRC32(hexData.substring(crcSize * 2));
+        },
+        validateFrame(hexData, header) {
+            let valid = false;
+            // parse header
+            let prefix = header.find(({ field }) => field === "prefix");
+            let crc = header.find(({ field }) => field === "crc");
+            let size = header.find(({ field }) => field === "size");
+            // valid report should be more than 8 chars
+
+            // validate by prefix, crc and size
+            if (prefix.value === this.config.frame.prefix) {
+                // validate CRC
+                if (crc.output === this.calculateCRC32(hexData)) {
+                    // validate Size
+                    let headerSize = prefix.size + crc.size + size.size;
+                    if (size.value === hexData.length / 2 - headerSize) {
+                        // everything match, frame is valid
+                        valid = true;
+                    } else {
+                        console.warn(`CORRUPT: Size not same`);
+                    }
+                } else {
+                    console.warn(`CORRUPT: CRC not valid`);
+                }
+            } else {
+                console.warn(`CORRUPT: Prefix not same`);
+            }
+
+            return valid;
+        },
+        parseHeader(hexData) {
+            // get header field for header and frame decision
+            let elCursor = 0;
+            let header = [];
+            // parse frame by header
+            Header.forEach((el) => {
+                let valFormat = el.format(
+                    hexData.substr(elCursor, el.size * 2)
+                );
+                // update cursor position
+                elCursor += el.size * 2;
+                // fill data
+                header.push({
+                    ...el,
+                    value: valFormat,
+                    output: el.display(valFormat),
+                });
+            });
+
+            return header;
+        },
+        buildACK(frameID, sequentialID) {
+            let hex = "";
+
+            ACK.forEach((_, i) => {
+                let { field, format } = ACK[ACK.length - 1 - i];
+
+                switch (field) {
+                    case "sequentialID":
+                        hex = format(sequentialID) + hex;
+                        break;
+                    case "frameID":
+                        hex = format(frameID) + hex;
+                        break;
+                    case "prefix":
+                        hex = format() + hex;
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            return hex.toUpperCase();
+        },
+        buildNACK() {
+            let hex = AsciiToHex(config.nack.prefix);
+
+            return hex.toUpperCase();
+        },
+        sendCommand({ client, type, hex }) {
+            this.$socket.emit("send", {
+                client,
+                type,
+                hex,
+            });
+        },
+        showLoadingCommand() {
+            let { timeout, cmd } = this.theCommand;
+            this.$root.$emit("waitCommand", timeout);
+            // check is FINGER_ADD
+            if (cmd.ref.command === "FINGER_ADD") {
+                this.$root.$emit("scanningDialog");
+            }
+        },
+    },
+    sockets: {
+        connected: function () {
+            let { socket } = this.config;
+
+            this.$q.notify({
+                message: `Connected to Socket Server ${socket.address}:${socket.port}`,
+            });
+        },
+        frameReceived: function (res) {
+            let { hexData, client } = res;
+            let valid = false;
+            let header = null;
+            let reply = null;
+            let type = "ACK";
+
+            // calculate minimum data size for header
+            let headerSize = Header.map(({ size }) => size).reduce(
+                (sum, val) => sum + val
+            );
+            // check minimum data size
+            if (hexData.length > headerSize * 2) {
+                // parse header
+                header = this.parseHeader(hexData);
+                // validate frame
+                valid = this.validateFrame(hexData, header);
+                // handle valid frame
+                if (valid) {
+                    // frame is valid
+                    let unitID = header.find(({ field }) => field === "unitID")
+                        .value;
+                    let frameID = header.find(
+                        ({ field }) => field === "frameID"
+                    ).value;
+                    let sequentialID = header.find(
+                        ({ field }) => field === "sequentialID"
+                    ).value;
+
+                    // add unit (if not exist)
+                    this.ADD_UNITS({
+                        unitID,
+                        client,
+                    });
+
+                    // handle to corresponding frame
+                    if (frameID === this.config.frame.id.RESPONSE) {
+                        // response frame
+                        console.log(`RESPONSE-${sequentialID} ${hexData}`);
+                        // handle response
+                        this.$root.$emit("handleResponse", { hexData });
+                    } else {
+                        // if duplicate discard
+                        if (this.uniqueReport(unitID, sequentialID)) {
+                            console.log(`REPORT-${sequentialID} ${hexData}`);
+                            // handle report
+                            this.$root.$emit("handleReport", {
+                                hexData,
+                                frameID,
+                            });
+                        } else {
+                            console.warn(
+                                `REPORT-${sequentialID} (DUPLICATE) ${hexData}`
+                            );
+                        }
+                    }
+                } else {
+                    console.error(`CORRUPT ${hexData}`);
+                }
+            } else {
+                console.warn(`CORRUPT: Bellow minimum size`);
+            }
+
+            // // reply the REPORT frame
+            // this.sendCommand({
+            //     client,
+            //     type: reply ? type : "NACK",
+            //     hex: reply || this.buildNACK(),
+            // });
+        },
+    },
+    watch: {
+        "theCommand.hex": function (val) {
+            if (val) {
+                let client = this.getClientByUnitId(this.theCommand.unitID);
+
+                if (client) {
+                    this.sendCommand({
+                        client,
+                        type: "COMMAND",
+                        hex: val,
+                    });
+
+                    // send command, wait response
+                    this.showLoadingCommand();
+                }
+            }
+        },
+    },
+};
 </script>
 
 <style>

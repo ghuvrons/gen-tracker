@@ -1,10 +1,9 @@
-import { config } from "components/js/config";
+import { config } from "../../utils/config";
 
 // database
 export default {
   config,
   loading: false,
-  combineCmd: false,
   settings: {
     timeCalibration: false
   },

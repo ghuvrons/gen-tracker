@@ -20,20 +20,6 @@
             />
         </div>
         <div class="col-auto">
-            <q-toggle
-                v-model="timeCalibrationState"
-                label="Time Calibration"
-                class="q-ma-xs"
-            />
-        </div>
-        <div class="col-auto">
-            <q-toggle
-                v-model="combineCommand"
-                label="Combine Command"
-                class="q-ma-xs"
-            />
-        </div>
-        <div class="col-auto">
             <json-csv
                 :data="exportedData"
                 :labels="exportedLabel"
@@ -43,8 +29,16 @@
                     class="q-ma-xs"
                     icon="cloud_download"
                     label="Download CSV"
+                    color="purple"
                 />
             </json-csv>
+        </div>
+        <div class="col-auto">
+            <q-toggle
+                v-model="timeCalibrationState"
+                label="Time Calibration"
+                class="q-ma-xs"
+            />
         </div>
     </div>
 </template>
@@ -54,7 +48,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import JsonCsv from "vue-json-csv";
 import moment from "moment";
 
-import { Report } from "../components/js/frame";
+import { Report } from "../utils/frame";
 
 export default {
     // name: 'ComponentName',
@@ -62,16 +56,8 @@ export default {
         JsonCsv,
     },
     computed: {
-        ...mapState("database", ["units", "settings", "combineCmd"]),
+        ...mapState("database", ["units", "settings"]),
         ...mapGetters("database", ["selectedReports"]),
-        combineCommand: {
-            get() {
-                return this.combineCmd;
-            },
-            set(value) {
-                this.TOGGLE_COMBINE_CMD();
-            },
-        },
         timeCalibrationState: {
             get() {
                 return this.settings.timeCalibration;
@@ -112,10 +98,7 @@ export default {
         },
     },
     methods: {
-        ...mapMutations("database", [
-            "TOGGLE_COMBINE_CMD",
-            "TOGGLE_TIME_CALIBRATION",
-        ]),
+        ...mapMutations("database", ["TOGGLE_TIME_CALIBRATION"]),
         ...mapActions("database", ["RESET_DATABASE"]),
         clearStore() {
             this.$q

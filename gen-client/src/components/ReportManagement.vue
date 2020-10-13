@@ -79,11 +79,12 @@
 </template>
 
 <script>
-import ReportStatistics from "components/ReportStatistics";
-import { Report } from "components/js/frame";
 import { mapState, mapGetters, mapMutations } from "vuex";
 const moment = require("moment-timezone");
 const tzlookup = require("tz-lookup");
+
+import ReportStatistics from "components/ReportStatistics";
+import { Report } from "../utils/frame";
 
 export default {
     // name: 'ComponentName',

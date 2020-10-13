@@ -1,4 +1,5 @@
-import { config } from "components/js/config";
+import { config } from "./config";
+import { Header } from "./frame";
 import {
   AsciiToHex,
   HexToInt,
@@ -6,8 +7,7 @@ import {
   IntToHex,
   CRC32,
   ChangeEndian
-} from "components/js/helper";
-import { Header } from "components/js/frame";
+} from "./helper";
 
 const CommandResponse = [
   {
