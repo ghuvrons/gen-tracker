@@ -2,7 +2,7 @@ import { config } from "./config";
 import { Header } from "./frame";
 import {
   AsciiToHex,
-  HexToInt,
+  HexToUnsignedInt,
   HexToAscii,
   IntToHex,
   CRC32,
@@ -49,7 +49,7 @@ const Response = [
     title: "Code",
     required: true,
     size: 1,
-    format: val => HexToInt(val),
+    format: val => HexToUnsignedInt(val),
     display: valFormat => {
       let res = CommandResponse.find(({ code }) => code === valFormat);
 
