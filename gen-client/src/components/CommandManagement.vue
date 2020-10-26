@@ -182,8 +182,8 @@ export default {
         },
     },
     methods: {
+        ...mapMutations("app", ["SET_LOADING"]),
         ...mapMutations("database", [
-            "SET_LOADING",
             "CLEAR_THE_COMMAND",
             "SET_THE_COMMAND",
             "ADD_FINGERS",
