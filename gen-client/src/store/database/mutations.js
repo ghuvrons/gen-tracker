@@ -8,13 +8,12 @@ export const CLEAR_ALL = state => {
 };
 
 export const SET_THE_COMMAND = (state, data) => {
-  let { unitID, hex, payload, timeout, cmd } = data;
+  let { unitID, hex, payload, cmd } = data;
 
   state.theCommand = {
     unitID,
     hex,
     payload,
-    timeout,
     cmd
   };
 };
@@ -24,7 +23,6 @@ export const CLEAR_THE_COMMAND = state => {
     unitID: null,
     hex: "",
     payload: "",
-    timeout: null,
     cmd: null
   };
 };

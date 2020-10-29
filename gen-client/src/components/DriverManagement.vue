@@ -119,10 +119,7 @@ export default {
         addFinger() {
             // emit to event bus
             let payload = `FINGER_ADD=${this.findFreeFingerID()}`;
-            this.$root.$emit("executeCommand", {
-                payload,
-                timeout: 30000,
-            });
+            this.$root.$emit("executeCommand", payload);
         },
         deleteFinger(driver) {
             this.$q
@@ -135,7 +132,7 @@ export default {
                 .then(() => {
                     // emit to event bus
                     let payload = `FINGER_DEL=${driver.fingerID}`;
-                    this.$root.$emit("executeCommand", { payload });
+                    this.$root.$emit("executeCommand", payload);
                 })
                 .catch(() => {});
         },
@@ -150,7 +147,7 @@ export default {
                 .then(() => {
                     // emit to event bus
                     let payload = `FINGER_RST`;
-                    this.$root.$emit("executeCommand", { payload });
+                    this.$root.$emit("executeCommand", payload);
                 })
                 .catch(() => {});
         },

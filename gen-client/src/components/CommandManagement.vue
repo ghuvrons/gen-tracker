@@ -25,13 +25,13 @@
                 :disable="loading || !theUnit"
                 :readonly="loading"
                 :loading="loading"
-                @keyup.enter="executeCommand({ payload: cmd.payload })"
+                @keyup.enter="executeCommand(cmd.payload)"
                 :after="[
                     {
                         icon: 'send',
                         content: true,
                         handler() {
-                            executeCommand({ payload: cmd.payload });
+                            executeCommand(cmd.payload);
                         },
                     },
                 ]"
@@ -195,11 +195,11 @@ export default {
             let code = CommandResponse.find(({ name }) => name === "timeout");
             // save response
             this.saveResponse({
+                code,
                 unitID: this.theUnit.unitID,
+                payload: this.theCommand.payload,
                 data: null,
                 hexData: null,
-                payload: this.theCommand.payload,
-                code,
                 message: "",
             });
             // dismiss loading notifcation
@@ -210,7 +210,7 @@ export default {
             this.SET_LOADING(true);
             // timeout guard
             this.timers.timeoutCommand.time =
-                timeout || this.config.command.timeoutMS;
+                (timeout || this.config.command.timeout) * 1000;
             this.$timer.start("timeoutCommand");
             // show notification about sending command
             this.dismiss = this.$q.notify({
@@ -297,15 +297,8 @@ export default {
 
             return hex.toUpperCase();
         },
-        executeCommand({ payload, timeout }) {
+        executeCommand(payload) {
             let message = null;
-
-            // special commands timeout
-            if (payload.includes("GEN_UPGRADE_VCU")) {
-                timeout = 5 * 60000;
-            } else if (payload.includes("GEN_UPGRADE_HMI")) {
-                timeout = 10 * 60000;
-            }
 
             // check is buffer already filled
             if (payload) {
@@ -321,7 +314,6 @@ export default {
                             unitID: this.theUnit.unitID,
                             hex: this.buildCommand(cmd),
                             payload,
-                            timeout,
                             cmd,
                         });
                     } else {

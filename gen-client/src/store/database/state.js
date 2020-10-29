@@ -6,7 +6,6 @@ export default {
     unitID: null,
     hex: "",
     payload: "",
-    timeout: null,
     cmd: null
   },
   units: [],

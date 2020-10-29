@@ -102,8 +102,9 @@ export default {
             });
         },
         showLoadingCommand() {
-            let { timeout, cmd } = this.theCommand;
-            this.$root.$emit("waitCommand", timeout);
+            let { cmd } = this.theCommand;
+
+            this.$root.$emit("waitCommand", cmd.ref.timeout);
             // check is FINGER_ADD
             if (cmd.ref.command === "FINGER_ADD") {
                 this.$root.$emit("scanningDialog");

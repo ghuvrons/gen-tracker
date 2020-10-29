@@ -150,7 +150,8 @@ const CommandList = [
     code: 0,
     subCode: 3,
     type: null,
-    range: null
+    range: null,
+    timeout: 5 * 60
   },
   {
     command: "GEN_UPGRADE_HMI",
@@ -158,7 +159,8 @@ const CommandList = [
     code: 0,
     subCode: 4,
     type: null,
-    range: null
+    range: null,
+    timeout: 10 * 60
   },
   {
     command: "REPORT_RTC",
@@ -226,7 +228,8 @@ const CommandList = [
     type: "U8",
     range: "{ 0, 4 }",
     exCommand: "FINGER_ADD=2",
-    exDesc: "Instruct the VCU to scan new fingerprint for ID=2"
+    exDesc: "Instruct the VCU to scan new fingerprint for ID=2",
+    timeout: 30
   },
   {
     command: "FINGER_DEL",
