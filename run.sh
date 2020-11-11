@@ -6,8 +6,9 @@ if [[ "$EUID" != 0 ]]; then
 fi
 
 echo "Starting client..."
-pushd gen-client
-quasar dev &
+pushd gen-client/dist/spa-mat
+#quasar dev &
+quasar serve -s &
 P0=$!
 popd 
 
