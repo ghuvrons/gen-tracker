@@ -17,7 +17,11 @@ const Events = [
   { name: "BMS_OVER_VOLTAGE", bit: 38, group: "BMS" },
   { name: "BMS_OVER_DISCHARGE_CAPACITY", bit: 39, group: "BMS" },
   { name: "BMS_UNBALANCE", bit: 40, group: "BMS" },
-  { name: "BMS_SYSTEM_FAILURE", bit: 41, group: "BMS" }
+  { name: "BMS_SYSTEM_FAILURE", bit: 41, group: "BMS" },
+  { name: "BMS_WARNING_OVER_CURRENT", bit: 42, group: "BMS" },
+  { name: "BMS_WARNING_OVER_TEMPERATURE", bit: 43, group: "BMS" },
+  { name: "BMS_WARNING_UNDER_VOLTAGE", bit: 44, group: "BMS" },
+  { name: "BMS_WARNING_UNBALANCE", bit: 45, group: "BMS" },
 ];
 
 export { Events };
