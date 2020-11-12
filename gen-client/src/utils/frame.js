@@ -122,7 +122,7 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "%",
         size: 2,
-        format: val => HexToUnsignedInt(ChangeEndian(val)),
+        format: val => HexToUnsignedInt(ChangeEndian(val)) * 0.01,
         display: valFormat => Dot(valFormat)
       },
       {
