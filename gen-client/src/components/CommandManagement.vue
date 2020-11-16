@@ -224,7 +224,8 @@ export default {
             // hide any loading
             this.SET_LOADING(false);
             this.$q.loading.hide();
-            this.dismiss();
+            if (typeof this.dismiss === 'function')
+              this.dismiss();
             // stop timer
             if (this.timers.timeoutCommand.isRunning) {
                 this.$timer.stop("timeoutCommand");
