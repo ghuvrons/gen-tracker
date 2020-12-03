@@ -358,7 +358,7 @@ const VCU = ({ required }) => {
       title: "Trip A",
       required: false,
       chartable: true,
-      unit: "Km",
+      unit: "m",
       size: 4,
       format: val => HexToUnsignedInt(ChangeEndian(val)),
       display: valFormat => Dot(valFormat)
@@ -368,7 +368,7 @@ const VCU = ({ required }) => {
       title: "Trip B",
       required: false,
       chartable: true,
-      unit: "Km",
+      unit: "m",
       size: 4,
       format: val => HexToUnsignedInt(ChangeEndian(val)),
       display: valFormat => Dot(valFormat)
