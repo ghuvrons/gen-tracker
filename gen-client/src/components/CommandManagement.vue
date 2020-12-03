@@ -367,7 +367,7 @@ export default {
             };
         },
         ignoreCommand() {
-            if (this.cmd.payload.includes("GEN_UPGRADE_")) {
+            if (this.cmd.payload.includes("GEN_FOTA_")) {
                 if (this.timers.timeoutCommand.isRunning) {
                     this.stopWaitting("Command error.", "warning");
                 }

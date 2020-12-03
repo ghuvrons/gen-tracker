@@ -135,17 +135,17 @@ const CommandList = [
     exDesc: "Turn on the test LED"
   },
   {
-    command: "GEN_KNOB",
-    desc: "Force set KNOB state",
+    command: "GEN_OVERRIDE",
+    desc: "Override the fingerprint & keyless",
     code: 0,
     subCode: 2,
     type: "Bool",
     range: "{ 0, 1 }",
-    exCommand: "GEN_KNOB=1",
-    exDesc: "Set KNOB state on"
+    exCommand: "GEN_OVERRIDE=1",
+    exDesc: "Turn on override mode"
   },
   {
-    command: "GEN_UPGRADE_VCU",
+    command: "GEN_FOTA_VCU",
     desc: "Upgrade VCU firmware",
     code: 0,
     subCode: 3,
@@ -154,7 +154,7 @@ const CommandList = [
     timeout: 5 * 60
   },
   {
-    command: "GEN_UPGRADE_HMI",
+    command: "GEN_FOTA_HMI",
     desc: "Upgrade HMI firmware",
     code: 0,
     subCode: 4,

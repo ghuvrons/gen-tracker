@@ -264,6 +264,16 @@ const VCU = ({ required }) => {
       display: valFormat => Dot(valFormat)
     },
     {
+      field: "gpsSatInUse",
+      title: "GPS Sat. in use",
+      required: false,
+      chartable: true,
+      unit: "Sat.",
+      size: 1,
+      format: val => HexToUnsignedInt(ChangeEndian(val)),
+      display: valFormat => Dot(valFormat)
+    },
+    {
       field: "speed",
       title: "Vehicle Speed",
       required: false,
@@ -276,16 +286,6 @@ const VCU = ({ required }) => {
     {
       field: "odometer",
       title: "Odometer",
-      required: false,
-      chartable: true,
-      unit: "Km",
-      size: 4,
-      format: val => HexToUnsignedInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
-    },
-    {
-      field: "odometer2",
-      title: "Odometer2",
       required: false,
       chartable: true,
       unit: "m",
