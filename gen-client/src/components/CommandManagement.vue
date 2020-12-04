@@ -367,11 +367,11 @@ export default {
             };
         },
         ignoreCommand() {
-            if (this.cmd.payload.includes("GEN_FOTA_")) {
+            // if (this.cmd.payload.includes("GEN_FOTA_")) {
                 if (this.timers.timeoutCommand.isRunning) {
-                    this.stopWaitting("Command error.", "warning");
+                    this.stopWaitting("Command cancelled.", "warning");
                 }
-            }
+            // }
         },
         handleResponse({ hexData }) {
             let response = this.parseResponse(hexData);
