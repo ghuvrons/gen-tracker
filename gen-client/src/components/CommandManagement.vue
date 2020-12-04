@@ -369,7 +369,7 @@ export default {
         ignoreCommand() {
             // if (this.cmd.payload.includes("GEN_FOTA_")) {
                 if (this.timers.timeoutCommand.isRunning) {
-                    this.stopWaitting("Command cancelled.", "warning");
+                    this.stopWaitting("Command ignored.", "warning");
                 }
             // }
         },
