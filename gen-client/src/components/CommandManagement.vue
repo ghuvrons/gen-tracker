@@ -227,9 +227,8 @@ export default {
             if (typeof this.dismiss === 'function')
               this.dismiss();
             // stop timer
-            if (this.timers.timeoutCommand.isRunning) {
+            if (this.timers.timeoutCommand.isRunning)
                 this.$timer.stop("timeoutCommand");
-            }
             // show notification result
             this.$q.notify({
                 message,
@@ -367,11 +366,7 @@ export default {
             };
         },
         ignoreCommand() {
-            // if (this.cmd.payload.includes("GEN_FOTA_")) {
-                if (this.timers.timeoutCommand.isRunning) {
-                    this.stopWaitting("Command ignored.", "warning");
-                }
-            // }
+            this.stopWaitting("Command ignored.", "warning");
         },
         handleResponse({ hexData }) {
             let response = this.parseResponse(hexData);

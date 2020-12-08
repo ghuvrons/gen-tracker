@@ -142,6 +142,22 @@ const BMS = ({ required }) => {
   return fields.filter(({ required: _required }) => _required === required);
 };
 
+const RtosTask = {
+  'manager': 'ManagerTask',
+  'iot': 'IotTask',
+  'reporter': 'ReporterTask',
+  'command': 'CommandTask',
+  'gps': 'GpsTask',
+  'gyro': 'GyroTask',
+  'keyless': 'KeylessTask',
+  'finger': 'FingerTask',
+  'audio': 'AudioTask',
+  'switches': 'SwitchTask',
+  'canRx': 'CanRxTask',
+  'canTx': 'CanTxTask',
+  'hmi2Power': 'Hmi2PowerTask'
+};
+
 const VCU = ({ required }) => {
   let fields = [
     {
@@ -372,7 +388,31 @@ const VCU = ({ required }) => {
       size: 4,
       format: val => HexToUnsignedInt(ChangeEndian(val)),
       display: valFormat => Dot(valFormat)
-    }
+    },
+    ...Object.keys(RtosTask).reduce((total, field) => {
+      return total.concat([
+        {
+          field: `${field}-wakeup`,
+          title: `${RtosTask[field]} wakeup`,
+          required: false,
+          chartable: true,
+          unit: "s",
+          size: 4,
+          format: val => HexToUnsignedInt(ChangeEndian(val)),
+          display: valFormat => Dot(valFormat)
+        },
+        {
+          field: `${field}-stack`,
+          title: `${RtosTask[field]} stack`,
+          required: false,
+          chartable: true,
+          unit: "words",
+          size: 4,
+          format: val => HexToUnsignedInt(ChangeEndian(val)),
+          display: valFormat => Dot(valFormat)
+        },
+      ]);
+    }, [])
   ];
 
   return fields.filter(({ required: _required }) => _required === required);
