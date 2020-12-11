@@ -330,6 +330,16 @@ const VCU = ({ required }) => {
       display: valFormat => Dot(valFormat)
     },
     {
+      field: "motionYaw",
+      title: "Motion Yaw",
+      required: false,
+      chartable: true,
+      unit: "Degree",
+      size: 1,
+      format: val => HexToSignedInt8(ChangeEndian(val)),
+      display: valFormat => Dot(valFormat)
+    },
+    {
       field: "motionPitch",
       title: "Motion Pitch",
       required: false,
@@ -397,7 +407,7 @@ const VCU = ({ required }) => {
           required: false,
           chartable: true,
           unit: "s",
-          size: 4,
+          size: 1,
           format: val => HexToUnsignedInt(ChangeEndian(val)),
           display: valFormat => Dot(valFormat)
         },
@@ -407,7 +417,7 @@ const VCU = ({ required }) => {
           required: false,
           chartable: true,
           unit: "words",
-          size: 4,
+          size: 2,
           format: val => HexToUnsignedInt(ChangeEndian(val)),
           display: valFormat => Dot(valFormat)
         },

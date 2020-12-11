@@ -211,16 +211,6 @@ const CommandList = [
     exDesc: "Un-mute the audio module"
   },
   {
-    command: "AUDIO_VOL",
-    desc: "Change audio module volume",
-    code: 2,
-    subCode: 2,
-    type: "U8",
-    range: "{ 0, 100 }",
-    exCommand: "AUDIO_VOL=100",
-    exDesc: "Set audio module volume to maximum"
-  },
-  {
     command: "FINGER_ADD",
     desc: "Add new fingerprint to specified ID",
     code: 3,
