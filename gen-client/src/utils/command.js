@@ -136,7 +136,7 @@ const CommandList = [
   },
   {
     command: "GEN_OVERRIDE",
-    desc: "Override the fingerprint & keyless",
+    desc: "Override the fingerprint & remote",
     code: 0,
     subCode: 2,
     type: "Bool",
@@ -240,8 +240,8 @@ const CommandList = [
     range: null
   },
   {
-    command: "KEYLESS_PAIRING",
-    desc: "Pairing Pocket Keyless",
+    command: "REMOTE_PAIRING",
+    desc: "Pairing Remote",
     code: 4,
     subCode: 0,
     type: null,

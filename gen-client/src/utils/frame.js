@@ -149,10 +149,10 @@ const RtosTask = {
   'command': 'CommandTask',
   'gps': 'GpsTask',
   'gyro': 'GyroTask',
-  'keyless': 'KeylessTask',
+  'remote': 'RemoteTask',
   'finger': 'FingerTask',
   'audio': 'AudioTask',
-  'switches': 'SwitchTask',
+  'gate': 'GateTask',
   'canRx': 'CanRxTask',
   'canTx': 'CanTxTask',
   'hmi2Power': 'Hmi2PowerTask'

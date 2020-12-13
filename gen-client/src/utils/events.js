@@ -3,7 +3,7 @@ const Events = [
   { name: "VCU_NET_HARD_RESET", bit: 1, group: "VCU" },
   { name: "VCU_BIKE_FALLING", bit: 2, group: "VCU" },
   { name: "VCU_BIKE_CRASHED", bit: 3, group: "VCU" },
-  { name: "VCU_KEYLESS_MISSING", bit: 4, group: "VCU" },
+  { name: "VCU_REMOTE_MISSING", bit: 4, group: "VCU" },
   { name: "VCU_INDEPENDENT", bit: 5, group: "VCU" },
   { name: "VCU_UNAUTHORIZE_REMOVAL", bit: 6, group: "VCU" },
   { name: "BMS_DISCHARGE_OVER_CURRENT", bit: 30, group: "BMS" },
