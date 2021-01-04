@@ -225,7 +225,7 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 1,
-      format: val => HexToUnsignedInt(ChangeEndian(val)),
+      format: val => HexToSignedInt8(ChangeEndian(val)),
       display: valFormat => Dot(valFormat)
     },
     {
