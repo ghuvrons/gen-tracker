@@ -220,6 +220,15 @@ const VCU = ({ required }) => {
       display: valFormat => IntToHex(valFormat, 16).toUpperCase()
     },
     {
+      field: "vehicleState",
+      title: "Vehicle State",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: val => HexToUnsignedInt(ChangeEndian(val)),
+      display: valFormat => Dot(valFormat)
+    },
+    {
       field: "gpsLongitude",
       title: "GPS Longitude",
       required: false,

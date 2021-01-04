@@ -9,7 +9,7 @@
                 :disable="!units.length"
                 @click="clearStore()"
             />
-        </div>
+        </div> 
         <div class="col-auto">
             <q-btn
                 class="q-ma-xs"
@@ -39,7 +39,7 @@
                 label="Time Calibration"
                 class="q-ma-xs"
             />
-        </div>
+  </div>
     </div>
 </template>
 
@@ -51,77 +51,78 @@ import moment from "moment";
 import { Report } from "../utils/frame";
 
 export default {
-    // name: 'ComponentName',
-    components: {
-        JsonCsv,
+  // name: 'ComponentName',
+  components: {
+    JsonCsv
+  },
+  computed: {
+    ...mapState("app", ["settings"]),
+    ...mapState("database", ["units"]),
+    ...mapGetters("database", ["selectedReports"]),
+    timeCalibrationState: {
+      get() {
+        return this.settings.timeCalibration;
+      },
+      set(value) {
+        this.TOGGLE_TIME_CALIBRATION();
+      }
     },
-    computed: {
-        ...mapState("app", ["settings"]),
-        ...mapState("database", ["units"]),
-        ...mapGetters("database", ["selectedReports"]),
-        timeCalibrationState: {
-            get() {
-                return this.settings.timeCalibration;
-            },
-            set(value) {
-                this.TOGGLE_TIME_CALIBRATION();
-            },
-        },
-        exportedData() {
-            return (
-                this.selectedReports
-                    // .reverse()
-                    .map(({ data }) =>
-                        data
-                            .reverse()
-                            .filter(({ chartable }) => chartable)
-                            .reduce(
-                                (carry, { field, value, output, unit }) => ({
-                                    ...carry,
-                                    [field]: output,
-                                }),
-                                {}
-                            )
-                    )
-            );
-        },
-        exportedLabel() {
-            return Report.reduce(
-                (carry, { field, title, unit }) => ({
-                    ...carry,
-                    [field]: title + (unit ? ` (${unit})` : ""),
+    exportedData() {
+      return (
+        this.selectedReports
+          // .reverse()
+          .map(({ data }) =>
+            data
+              .reverse()
+              .filter(({ chartable }) => chartable)
+              .reduce(
+                (carry, { field, value, output, unit }) => ({
+                  ...carry,
+                  [field]: output
                 }),
                 {}
-            );
-        },
-        exportedFilename() {
-            return `tracking-${moment().format("YYYYMMDDHHmmss")}.csv`;
-        },
+              )
+          )
+      );
     },
-    methods: {
-        ...mapMutations("database", ["TOGGLE_TIME_CALIBRATION"]),
-        ...mapActions("database", ["RESET_DATABASE"]),
-        clearStore() {
-            this.$q
-                .dialog({
-                    title: "Confirmation",
-                    message: `Are you sure to remove all data?`,
-                    preventClose: true,
-                    cancel: true,
-                })
-                .then(() => {
-                    // clear all the store
-                    this.RESET_DATABASE();
-                    // reset command input
-                    this.$root.$emit("setCommand", "");
-                })
-                .catch(() => {});
-        },
-        ignoreCommand() {
-            this.$root.$emit("ignoreCommand");
-        },
+    exportedLabel() {
+      return Report.reduce(
+        (carry, { field, title, unit }) => ({
+          ...carry,
+          [field]: title + (unit ? ` (${unit})` : "")
+        }),
+        {}
+      );
     },
+    exportedFilename() {
+      return `tracking-${moment().format("YYYYMMDDHHmmss")}.csv`;
+    }
+  },
+  methods: {
+    ...mapMutations("database", ["TOGGLE_TIME_CALIBRATION"]),
+    ...mapActions("database", ["RESET_DATABASE"]),
+    clearStore() {
+      this.$q
+        .dialog({
+          title: "Confirmation",
+          message: `Are you sure to remove all data?`,
+          preventClose: true,
+          cancel: true
+        })
+        .then(() => {
+          // clear all the store
+          this.RESET_DATABASE();
+          // reset command input
+          this.$root.$emit("setCommand", "");
+        })
+        .catch(() => {});
+    },
+    ignoreCommand() {
+      this.$root.$emit("ignoreCommand");
+    }
+  }
 };
 </script>
 
-<style></style>
+<style>
+</style>

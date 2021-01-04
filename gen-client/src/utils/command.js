@@ -139,10 +139,10 @@ const CommandList = [
     desc: "Override the fingerprint & remote",
     code: 0,
     subCode: 2,
-    type: "Bool",
-    range: "{ 0, 1 }",
+    type: "U8",
+    range: "{ 1, 2 }",
     exCommand: "GEN_OVERRIDE=1",
-    exDesc: "Turn on override mode"
+    exDesc: "Override remote keyless"
   },
   {
     command: "GEN_FOTA_VCU",

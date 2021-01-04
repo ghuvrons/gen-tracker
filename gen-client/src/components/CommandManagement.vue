@@ -122,7 +122,7 @@
                                 <q-item-tile>
                                     <q-chip dense square color="blue">{{
                                         el.range
-                                    }}</q-chip>
+                                    }}</q-chip> 
                                 </q-item-tile>
                             </q-item-side>
                         </q-item>
