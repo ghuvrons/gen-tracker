@@ -222,7 +222,7 @@ const VCU = ({ required }) => {
     {
       field: "vehicleState",
       title: "Vehicle State",
-      required: true,
+      required: false,
       chartable: true,
       size: 1,
       format: val => HexToSignedInt8(ChangeEndian(val)),
