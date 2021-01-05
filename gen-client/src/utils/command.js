@@ -136,13 +136,13 @@ const CommandList = [
   },
   {
     command: "GEN_OVERRIDE",
-    desc: "Override the fingerprint & remote",
+    desc: "Override the vehicle state",
     code: 0,
     subCode: 2,
     type: "I8",
     range: "{ 1, 3 }",
     exCommand: "GEN_OVERRIDE=1",
-    exDesc: "Override remote keyless"
+    exDesc: "Override to state 1 (Standby state)"
   },
   {
     command: "GEN_FOTA_VCU",
