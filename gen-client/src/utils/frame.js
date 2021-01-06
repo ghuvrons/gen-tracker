@@ -339,36 +339,6 @@ const VCU = ({ required }) => {
       display: valFormat => Dot(valFormat)
     },
     {
-      field: "motionYaw",
-      title: "Motion Yaw",
-      required: false,
-      chartable: true,
-      unit: "Degree",
-      size: 1,
-      format: val => HexToSignedInt8(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
-    },
-    {
-      field: "motionPitch",
-      title: "Motion Pitch",
-      required: false,
-      chartable: true,
-      unit: "Degree",
-      size: 1,
-      format: val => HexToSignedInt8(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
-    },
-    {
-      field: "motionRoll",
-      title: "Motion Roll",
-      required: false,
-      chartable: true,
-      unit: "Degree",
-      size: 1,
-      format: val => HexToSignedInt8(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
-    },
-    {
       field: "rangeApproximation",
       title: "Range Approximation",
       required: false,
@@ -408,41 +378,76 @@ const VCU = ({ required }) => {
       format: val => HexToUnsignedInt(ChangeEndian(val)),
       display: valFormat => Dot(valFormat)
     },
-    ...Object.keys(RtosTask).reduce((total, field) => {
-      return total.concat([
-        {
-          field: `${field}-wakeup`,
-          title: `${RtosTask[field]} wakeup`,
-          required: false,
-          chartable: true,
-          unit: "s",
-          size: 1,
-          format: val => HexToUnsignedInt(ChangeEndian(val)),
-          display: valFormat => Dot(valFormat)
-        },
-        {
-          field: `${field}-stack`,
-          title: `${RtosTask[field]} stack`,
-          required: false,
-          chartable: true,
-          unit: "words",
-          size: 2,
-          format: val => HexToUnsignedInt(ChangeEndian(val)),
-          display: valFormat => Dot(valFormat)
-        },
-      ]);
-    }, [])
   ];
 
-  return fields.filter(({ required: _required }) => _required === required);
+  return fields.filter((el) => (el.required === required));
 };
+
+const TEST = () => {
+  return [
+  ...Object.keys(RtosTask).reduce((total, field) => {
+    return total.concat([
+      {
+        field: `${field}-wakeup`,
+        title: `${RtosTask[field]} wakeup`,
+        required: false,
+        chartable: true,
+        unit: "s",
+        size: 1,
+        format: val => HexToUnsignedInt(ChangeEndian(val)),
+        display: valFormat => Dot(valFormat)
+      },
+      {
+        field: `${field}-stack`,
+        title: `${RtosTask[field]} stack`,
+        required: false,
+        chartable: true,
+        unit: "words",
+        size: 2,
+        format: val => HexToUnsignedInt(ChangeEndian(val)),
+        display: valFormat => Dot(valFormat)
+      },
+    ]);
+  }, []),
+  {
+    field: "motionYaw",
+    title: "Motion Yaw",
+    required: false,
+    chartable: true,
+    unit: "Degree",
+    size: 1,
+    format: val => HexToSignedInt8(ChangeEndian(val)),
+    display: valFormat => Dot(valFormat)
+  },
+  {
+    field: "motionPitch",
+    title: "Motion Pitch",
+    required: false,
+    chartable: true,
+    unit: "Degree",
+    size: 1,
+    format: val => HexToSignedInt8(ChangeEndian(val)),
+    display: valFormat => Dot(valFormat)
+  },
+  {
+    field: "motionRoll",
+    title: "Motion Roll",
+    required: false,
+    chartable: true,
+    unit: "Degree",
+    size: 1,
+    format: val => HexToSignedInt8(ChangeEndian(val)),
+    display: valFormat => Dot(valFormat)
+  },
+]}
 
 const Report = [
   ...Header,
   ...VCU({ required: true }),
   ...BMS({ required: true }),
   ...VCU({ required: false }),
-  ...BMS({ required: false })
+  ...BMS({ required: false }),
+  ...TEST()
 ];
 
 export { Header, Report };
