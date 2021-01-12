@@ -163,16 +163,6 @@ const CommandList = [
     timeout: 10 * 60
   },
   {
-    command: "GEN_FAKE_HBAR",
-    desc: "Use remote as fake handlebar",
-    code: 0,
-    subCode: 5,
-    type: "Bool",
-    range: "{ 0, 1 }",
-    exCommand: "GEN_FAKE_HBAR=1",
-    exDesc: "Activate handlebar emulation"
-  },
-  {
     command: "REPORT_RTC",
     desc: "Set RTC value ( E start from 1=Monday )",
     code: 1,
