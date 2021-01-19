@@ -31,6 +31,7 @@ module.exports = {
     // allow async-await
     "generator-star-spacing": "off",
     // allow paren-less arrow functions
+    "space-before-function-paren": "off",
     "arrow-parens": "off",
     "one-var": "off",
     "prefer-promise-reject-errors": "off",

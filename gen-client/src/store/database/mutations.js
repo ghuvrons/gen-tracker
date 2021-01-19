@@ -62,18 +62,15 @@ export const ADD_UNITS = (state, payload) => {
       state.theUnit = payload;
     }
   } else {
-    if (unit.client !== payload.client) {
-      // unit exist, but address is different (so update it)
-      let unitIndex = state.units.findIndex(
-        ({ unitID }) => unitID === payload.unitID
-      );
-      // update the corresponding units
-      state.units.splice(unitIndex, 1, payload);
-      // update theUnit data
-      if (state.theUnit) {
-        if (state.theUnit.unitID === unit.unitID) {
-          state.theUnit = payload;
-        }
+    let unitIndex = state.units.findIndex(
+      ({ unitID }) => unitID === payload.unitID
+    );
+    // update the corresponding units
+    state.units.splice(unitIndex, 1, payload);
+    // update theUnit data
+    if (state.theUnit) {
+      if (state.theUnit.unitID === unit.unitID) {
+        state.theUnit = payload;
       }
     }
   }

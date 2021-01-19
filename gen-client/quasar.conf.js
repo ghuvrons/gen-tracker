@@ -4,9 +4,9 @@ module.exports = function(ctx) {
   return {
     // app plugins (/src/plugins)
     plugins: [
-      "lodash",
+      "lodash", 
       "axios",
-      "vue-socket",
+      "vue-mqtt",
       "vue2-google-maps",
       "vue-timers"
     ],

@@ -5,8 +5,10 @@ const config = {
     subTitle: "GEN Indonesia"
   },
   socket: {
-    address: location.hostname,
-    port: 4200
+    // address: "localhost",
+    // port: 4200,
+    address: "broker.hivemq.com",
+    port: 8000
   },
   command: {
     prefix: "@C",
