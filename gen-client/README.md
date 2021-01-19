@@ -65,7 +65,7 @@
 - [x] Handle connection for multiple IoT devices
 - [x] Separate VueJS app into multiple components for better code structure
 - [x] ~~Use Laravel web-socket & Vue for web-apps demo~~
-- [x] Backend should response ACK on every un-corrupted REPORT & RESPONSE
+- [x] ~~Backend should response ACK on every un-corrupted REPORT & RESPONSE~~
 - [x] Fix "put your fingerprint on scanner" when command is buffered
 - [x] Use table to represent EventsGroup, not chart
 - [x] Handle each EventsGroup

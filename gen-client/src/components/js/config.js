@@ -12,12 +12,6 @@ const config = {
     prefix: "@C",
     timeoutMS: 20000
   },
-  ack: {
-    prefix: "@A"
-  },
-  nack: {
-    prefix: "@N"
-  },
   frame: {
     prefix: "@R",
     id: {

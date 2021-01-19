@@ -49,7 +49,6 @@ import DriverManagement from "components/DriverManagement";
 import GlobalConfiguration from "components/GlobalConfiguration";
 import { config } from "components/js/config";
 import { CRC32, AsciiToHex } from "components/js/helper";
-import { ACK } from "components/js/ack";
 import { Header } from "components/js/frame";
 import { mapGetters, mapState, mapMutations } from "vuex";
 
@@ -158,34 +157,6 @@ export default {
 
             return header;
         },
-        buildACK(frameID, sequentialID) {
-            let hex = "";
-
-            ACK.forEach((_, i) => {
-                let { field, format } = ACK[ACK.length - 1 - i];
-
-                switch (field) {
-                    case "sequentialID":
-                        hex = format(sequentialID) + hex;
-                        break;
-                    case "frameID":
-                        hex = format(frameID) + hex;
-                        break;
-                    case "prefix":
-                        hex = format() + hex;
-                        break;
-                    default:
-                        break;
-                }
-            });
-
-            return hex.toUpperCase();
-        },
-        buildNACK() {
-            let hex = AsciiToHex(config.nack.prefix);
-
-            return hex.toUpperCase();
-        },
         sendCommand({ client, type, hex }) {
             this.$socket.emit("send", {
                 client,
@@ -215,7 +186,6 @@ export default {
             let valid = false;
             let header = null;
             let reply = null;
-            let type = "ACK";
 
             // calculate minimum data size for header
             let headerSize = Header.map(({ size }) => size).reduce(
@@ -266,47 +236,17 @@ export default {
                             );
                         }
                     }
-
-                    // // prepare ACK
-                    // reply = this.buildACK(frameID, sequentialID);
-                    // // insert Command to ACK frame
-                    // if (this.combineCmd) {
-                    //     if (this.theCommand !== null && !this.loading) {
-                    //         if (unitID === this.theCommand.unitID) {
-                    //             // set command
-                    //             reply += this.theCommand.hex;
-                    //             type += " & COMMAND";
-                    //             // send command, wait response
-                    //             this.showLoadingCommand();
-                    //         }
-                    //     }
-                    // }
                 } else {
                     console.error(`CORRUPT ${hexData}`);
                 }
             } else {
                 console.warn(`CORRUPT: Bellow minimum size`);
             }
-
-            // // reply the REPORT frame
-            // this.sendCommand({
-            //     client,
-            //     type: reply ? type : "NACK",
-            //     hex: reply || this.buildNACK(),
-            // });
         },
     },
     watch: {
         "theCommand.hex": function (val) {
             if (val) {
-                // // show notification
-                // if (this.combineCmd) {
-                //     this.$q.notify({
-                //         message:
-                //             "Command is queued, will be sent with next ACK",
-                //     });
-                // } else {
-                // send directly
                 let client = this.getClientByUnitId(this.theCommand.unitID);
 
                 if (client) {
