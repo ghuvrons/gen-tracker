@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export HOSTING_PATH=/home/genmotor/tracker.genmotorcycles.com/
+    - /bin/rsync -avr --exclude '.git/' . $HOSTING_PATH
