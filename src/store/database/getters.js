@@ -2,7 +2,7 @@ const Long = require("long");
 import { groupBy, mapValues, omit } from "lodash";
 import { Events } from "../../components/js/events";
 
-export const getTotalReports = ({ reports }) => unitID => {
+export const getTotalReports = ({ reports }) => (unitID) => {
   return reports.filter(({ unitID: _unitID }) => _unitID === unitID).length;
 };
 
@@ -14,19 +14,19 @@ export const uniqueReport = ({ reports }) => (unitID, sequentialID) => {
   });
 };
 
-export const selectedReports = ({ reports, theUnit }) => {
+export const devReports = ({ reports, theUnit }) => {
   let _reports = reports.filter(({ unitID }) => unitID === theUnit.unitID);
 
   return theUnit ? _reports : [];
 };
 
-export const selectedReportEvents = (state, getters) => {
-  let events = getters.selectedReports.reduce((carry, { data }) => {
+export const devEvents = (state, getters) => {
+  let events = getters.devReports.reduce((carry, { data }) => {
     let seqID = data.find(({ field }) => field === "sequentialID").value;
     let evtValue = data.find(({ field }) => field === "eventsGroup").value;
-    let events = Events.filter(({ bit }) => {
-      return Long.fromNumber(evtValue, 1).shiftRight(bit) & 1;
-    });
+    let events = Events.filter(
+      ({ bit }) => Long.fromNumber(evtValue, 1).shiftRight(bit) & 1
+    );
 
     return [...carry, ...events.map(({ name }) => ({ name, seqID }))];
   }, []);
@@ -34,13 +34,13 @@ export const selectedReportEvents = (state, getters) => {
   return groupBy(events, "name");
 };
 
-export const selectedResponses = ({ responses, theUnit }) => {
+export const devCommands = ({ commands, theUnit }) => {
   return theUnit
-    ? responses.filter(({ unitID }) => unitID === theUnit.unitID)
+    ? commands.filter(({ unitID }) => unitID === theUnit.unitID)
     : [];
 };
 
-export const selectedFingers = ({ fingers, theUnit }) => {
+export const devFingers = ({ fingers, theUnit }) => {
   return theUnit
     ? fingers.filter(({ unitID }) => unitID === theUnit.unitID)
     : [];

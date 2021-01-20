@@ -22,14 +22,14 @@ export default {
       default: null
     }
   },
-  mounted () {
+  mounted() {
     this.renderChart(this.chartData, this.options)
   },
   watch: {
-    'updateData' (val) {
+    updateData(val) {
       this.$data._chart.update()
     },
-    'updateOptions' (val) {
+    updateOptions(val) {
       this.renderChart(this.chartData, this.options)
     }
   }

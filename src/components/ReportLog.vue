@@ -1,153 +1,135 @@
 <template>
-    <div class="row gutter-xs">
-        <div class="col-xs-12 text-right">
-            <q-btn
-                color="blue"
-                label="MAPABLE"
-                :icon="lock.mapable ? 'layers' : 'layers_clear'"
-                class="q-ma-xs"
-                dense
-                :outline="!lock.mapable"
-                :loading="loading"
-                :disable="!selectedReports.length"
-                @click="lock.mapable = !lock.mapable"
-                v-if="lock.follow"
-            />
-            <q-btn
-                color="green"
-                label="FOLLOW"
-                :icon="lock.follow ? 'lock' : 'lock_open'"
-                class="q-ma-xs"
-                dense
-                :outline="!lock.follow"
-                :loading="loading"
-                :disable="!selectedReports.length"
-                @click="lock.follow = !lock.follow"
-            />
-        </div>
-        <div class="col-xs-12">
-            <q-scroll-area
-                :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-                ref="scroller"
-            >
-                <q-list
-                    highlight
-                    link
-                    dense
-                    separator
-                    v-if="selectedReports.length"
-                >
-                    <q-item
-                        v-for="(el, index) in selectedReports"
-                        :key="index"
-                        :class="{
-                            'bg-dark text-white':
-                                el.hexData === theReport.hexData,
-                        }"
-                        @click.native="setTheReport(el)"
-                    >
-                        <q-item-side>
-                            <q-chip color="primary" dense square>
-                                <!-- {{selectedReports.length - index}} -->
-                                {{ getSequentialID(el.data) }}
-                            </q-chip>
-                        </q-item-side>
-                        <q-item-main :label="el.hexData" class="q-caption" />
-                    </q-item>
-                </q-list>
-                <q-alert v-else icon="info" color="faded" class="q-ma-xs">
-                    No report yet
-                </q-alert>
-            </q-scroll-area>
-        </div>
+  <div class="row gutter-xs">
+    <div class="col-xs-12 text-right">
+      <q-btn
+        color="blue"
+        label="MAPABLE"
+        :icon="lock.mapable ? 'layers' : 'layers_clear'"
+        class="q-ma-xs"
+        dense
+        :outline="!lock.mapable"
+        :loading="loading"
+        :disable="!devReports.length"
+        @click="lock.mapable = !lock.mapable"
+        v-if="lock.follow"
+      />
+      <q-btn
+        color="green"
+        label="FOLLOW"
+        :icon="lock.follow ? 'lock' : 'lock_open'"
+        class="q-ma-xs"
+        dense
+        :outline="!lock.follow"
+        :loading="loading"
+        :disable="!devReports.length"
+        @click="lock.follow = !lock.follow"
+      />
     </div>
+    <div class="col-xs-12">
+      <q-scroll-area
+        :style="{ height: (height < 150 ? 150 : height) + 'px' }"
+        ref="scroller"
+      >
+        <q-list highlight link dense separator v-if="devReports.length">
+          <q-item
+            v-for="(el, index) in devReports"
+            :key="index"
+            :class="{
+              'bg-dark text-white': el.hexData === theReport.hexData,
+            }"
+            @click.native="setTheReport(el)"
+          >
+            <q-item-side>
+              <q-chip color="primary" dense square>
+                <!-- {{devReports.length - index}} -->
+                {{ getSequentialID(el.data) }}
+              </q-chip>
+            </q-item-side>
+            <q-item-main :label="el.hexData" class="q-caption" />
+          </q-item>
+        </q-list>
+        <q-alert v-else icon="info" color="faded" class="q-ma-xs">
+          No report yet
+        </q-alert>
+      </q-scroll-area>
+    </div>
+  </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from "vuex";
+import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
-    // name: 'ComponentName',
-    props: {
-        height: Number,
+  // name: 'ComponentName',
+  props: {
+    height: Number
+  },
+  data() {
+    return {
+      lock: {
+        follow: true,
+        mapable: false
+      }
+    }
+  },
+  computed: {
+    ...mapState('database', ['loading', 'config', 'theUnit', 'theReport']),
+    ...mapGetters('database', ['devReports'])
+  },
+  methods: {
+    ...mapMutations('database', ['SET_THE_REPORT']),
+    setTheReport(report) {
+      this.SET_THE_REPORT(report)
     },
-    data() {
-        return {
-            lock: {
-                follow: true,
-                mapable: false,
-            },
-        };
+    getSequentialID(data) {
+      return data.find(({ field }) => field === 'sequentialID').value
+    }
+  },
+  watch: {
+    theReport(report) {
+      if (report)
+        if (this.devReports[0].hexData === report.hexData)
+          this.$refs.scroller.setScrollPosition(0)
     },
-    computed: {
-        ...mapState("database", ["loading", "config", "theUnit", "theReport"]),
-        ...mapGetters("database", ["selectedReports"]),
-    },
-    methods: {
-        ...mapMutations("database", ["SET_THE_REPORT"]),
-        setTheReport(report) {
-            this.SET_THE_REPORT(report);
-        },
-        getSequentialID(data) {
-            return data.find(({ field }) => field === "sequentialID").value;
-        },
-    },
-    watch: {
-        theReport(report) {
-            if (report) {
-                if (this.selectedReports[0].hexData === report.hexData) {
-                    // set scroller back to top
-                    this.$refs.scroller.setScrollPosition(0);
-                }
+    devReports: {
+      immediate: true,
+      handler(newReports, oldReports) {
+        let newReport = newReports[0]
+        let triggered = false
+        // get last reporst length
+        let oldReportsLength = 0
+        if (oldReports) oldReportsLength = oldReports.length
+
+        // checking
+        if (!this.theReport)
+          // set for the first time (theReport is null)
+          triggered = true
+        else if (newReport.unitID !== this.theReport.unitID)
+          // set again on different unitID
+          triggered = true
+        else {
+          // only update if got new data
+          if (newReports.length !== oldReportsLength) {
+            if (this.lock.follow) {
+              // same unitID, but lock.follow is active
+              triggered = true
+              // only follow mapable reports
+              if (this.lock.mapable) {
+                // find the latest mapable report (it can be other than the report input)
+                let reportMapable = newReports.find(
+                  ({ frameID }) => frameID === this.config.frame.id.FULL
+                )
+                if (reportMapable) newReport = reportMapable
+              }
             }
-        },
-        selectedReports: {
-            immediate: true,
-            handler(newReports, oldReports) {
-                let newReport = newReports[0];
-                let triggered = false;
-                // get last reporst length
-                let oldReportsLength = 0;
-                if (oldReports) {
-                    oldReportsLength = oldReports.length;
-                }
+          }
+        }
 
-                // checking
-                if (!this.theReport) {
-                    // set for the first time (theReport is null)
-                    triggered = true;
-                } else if (newReport.unitID !== this.theReport.unitID) {
-                    // set again on different unitID
-                    triggered = true;
-                } else {
-                    // only update if got new data
-                    if (newReports.length !== oldReportsLength) {
-                        if (this.lock.follow) {
-                            // same unitID, but lock.follow is active
-                            triggered = true;
-                            // only follow mapable reports
-                            if (this.lock.mapable) {
-                                // find the latest mapable report (it can be other than the report input)
-                                let reportMapable = newReports.find(
-                                    ({ frameID }) =>
-                                        frameID === this.config.frame.id.FULL
-                                );
-                                if (reportMapable) {
-                                    newReport = reportMapable;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // trigger to set the report
-                if (triggered) {
-                    this.setTheReport(newReport);
-                }
-            },
-        },
-    },
-};
+        if (triggered) this.setTheReport(newReport)
+      }
+    }
+  }
+}
 </script>
 
 <style></style>

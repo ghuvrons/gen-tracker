@@ -2,27 +2,27 @@
   <div class="shadow-1">
     <p class="q-pa-sm q-mb-none">
       Response Log
-      <q-chip color="negative" dense square v-if="selectedResponses.length">
-        {{ selectedResponses.length }}
+      <q-chip color="negative" dense square v-if="devCommands.length">
+        {{ devCommands.length }}
       </q-chip>
     </p>
     <q-scroll-area
       class="bg-white"
       :style="{ height: (height < 150 ? 150 : height) + 'px' }"
     >
-      <q-list link dense separator v-if="selectedResponses.length">
+      <q-list link dense separator v-if="devCommands.length">
         <q-item
-          v-for="(response, index) in selectedResponses"
+          v-for="(cmd, index) in devCommands"
           :key="index"
-          @click.native="setCommand(response)"
+          @click.native="applyCommand(cmd.payload)"
         >
           <q-item-main>
-            <q-item-tile label>{{ response.payload }}</q-item-tile>
+            <q-item-tile label>{{ cmd.payload }}</q-item-tile>
             <q-item-tile sublabel>
-              <q-chip :color="response.code.color" dense square>{{
-                response.code.title
+              <q-chip :color="cmd.resCode.color" dense square>{{
+                cmd.resCode.title
               }}</q-chip>
-              {{ response.message }}
+              {{ cmd.message }}
             </q-item-tile>
           </q-item-main>
         </q-item>
@@ -44,13 +44,11 @@ export default {
   },
   computed: {
     ...mapState('database', ['loading']),
-    ...mapGetters('database', ['selectedResponses'])
+    ...mapGetters('database', ['devCommands'])
   },
   methods: {
-    setCommand (response) {
-      if (!this.loading) {
-        this.$root.$emit('setCommand', response.payload)
-      }
+    applyCommand(payload) {
+      if (!this.loading) this.$root.$emit('setCommand', payload)
     }
   }
 }

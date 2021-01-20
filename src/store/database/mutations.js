@@ -1,44 +1,27 @@
-export const CLEAR_ALL = state => {
+export const CLEAR_ALL = (state) => {
   // state.theUnit = null
   state.theReport = null;
+
   // state.units = []
   state.reports = [];
-  state.responses = [];
+  state.commands = [];
   // state.fingers = []
 };
 
-export const TOGGLE_TIME_CALIBRATION = state => {
-  state.settings.timeCalibration = !settings.timeCalibration;
+export const TOGGLE_TIME_CALIBRATION = (state) => {
+  state.timeCalibration = !state.timeCalibration;
 };
 
 export const SET_LOADING = (state, payload) => {
   state.loading = payload;
 };
 
-export const TOGGLE_COMBINE_CMD = state => {
-  state.combineCmd = !combineCmd;
-};
-
 export const SET_THE_COMMAND = (state, data) => {
-  let { unitID, hex, payload, timeout, cmd } = data;
-
-  state.theCommand = {
-    unitID,
-    hex,
-    payload,
-    timeout,
-    cmd
-  };
+  state.theCommand = data;
 };
 
-export const CLEAR_THE_COMMAND = state => {
-  state.theCommand = {
-    unitID: null,
-    hex: "",
-    payload: "",
-    timeout: null,
-    cmd: null
-  };
+export const CLEAR_THE_COMMAND = (state) => {
+  state.theCommand = null;
 };
 
 export const SET_THE_REPORT = (state, payload) => {
@@ -58,9 +41,7 @@ export const ADD_UNITS = (state, payload) => {
     // unit not exist add it
     state.units.unshift(payload);
     // check if theUnit is null
-    if (!state.theUnit) {
-      state.theUnit = payload;
-    }
+    if (!state.theUnit) state.theUnit = payload;
   } else {
     let unitIndex = state.units.findIndex(
       ({ unitID }) => unitID === payload.unitID
@@ -68,11 +49,8 @@ export const ADD_UNITS = (state, payload) => {
     // update the corresponding units
     state.units.splice(unitIndex, 1, payload);
     // update theUnit data
-    if (state.theUnit) {
-      if (state.theUnit.unitID === unit.unitID) {
-        state.theUnit = payload;
-      }
-    }
+    if (state.theUnit)
+      if (state.theUnit.unitID === unit.unitID) state.theUnit = payload;
   }
 };
 
@@ -80,8 +58,8 @@ export const ADD_REPORTS = (state, payload) => {
   state.reports.unshift(payload);
 };
 
-export const ADD_RESPONSES = (state, payload) => {
-  state.responses.unshift(payload);
+export const ADD_COMMANDS = (state, payload) => {
+  state.commands.unshift(payload);
 };
 
 export const ADD_FINGERS = (state, payload) => {

@@ -1,11 +1,13 @@
 import moment from "moment";
+
 import {
   ChangeEndian,
   Dot,
   HexToAscii,
-  HexToInt,
-  HexToSignedInt,
-  IntToHex
+  HexToUnsignedInt,
+  HexToSignedInt8,
+  HexToSignedInt32,
+  IntToHex,
 } from "components/js/helper";
 
 const Header = [
@@ -15,8 +17,8 @@ const Header = [
     header: true,
     required: true,
     size: 2,
-    format: val => HexToAscii(ChangeEndian(val)),
-    display: valFormat => valFormat
+    format: (val) => HexToAscii(ChangeEndian(val)),
+    display: (valFormat) => valFormat,
   },
   {
     field: "crc",
@@ -25,8 +27,8 @@ const Header = [
     required: true,
     chartable: true,
     size: 4,
-    format: val => HexToInt(ChangeEndian(val)),
-    display: valFormat => IntToHex(valFormat, 8).toUpperCase()
+    format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+    display: (valFormat) => IntToHex(valFormat, 8).toUpperCase(),
   },
   {
     field: "size",
@@ -36,8 +38,8 @@ const Header = [
     chartable: true,
     unit: "Bytes",
     size: 1,
-    format: val => HexToInt(ChangeEndian(val)),
-    display: valFormat => Dot(valFormat)
+    format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+    display: (valFormat) => Dot(valFormat),
   },
   {
     field: "frameID",
@@ -47,12 +49,12 @@ const Header = [
     chartable: true,
     unit: "Type",
     size: 1,
-    format: val => HexToInt(ChangeEndian(val)),
-    display: valFormat => {
+    format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+    display: (valFormat) => {
       let frameIDs = ["Response", "Simple", "Full"];
 
       return `${valFormat} (${frameIDs[valFormat]})`;
-    }
+    },
   },
   {
     field: "unitID",
@@ -60,8 +62,8 @@ const Header = [
     header: true,
     required: true,
     size: 4,
-    format: val => HexToInt(ChangeEndian(val)),
-    display: valFormat => valFormat
+    format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+    display: (valFormat) => valFormat,
   },
   {
     field: "sequentialID",
@@ -69,9 +71,9 @@ const Header = [
     required: true,
     chartable: true,
     size: 2,
-    format: val => HexToInt(ChangeEndian(val)),
-    display: valFormat => Dot(valFormat)
-  }
+    format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+    display: (valFormat) => Dot(valFormat),
+  },
 ];
 
 const BMS = ({ required }) => {
@@ -85,13 +87,13 @@ const BMS = ({ required }) => {
         title: `BMS-${i} ID`,
         required: true,
         size: 4,
-        format: val => HexToInt(ChangeEndian(val)),
-        display: valFormat => {
+        format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+        display: (valFormat) => {
           if (valFormat === 0xffffffff) {
             return "NONE";
           }
           return IntToHex(valFormat, 8).toUpperCase();
-        }
+        },
       },
       {
         field: `BMSVoltage${i}`,
@@ -100,8 +102,8 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "Volt",
         size: 2,
-        format: val => HexToInt(ChangeEndian(val)) * 0.01,
-        display: valFormat => valFormat.toFixed(2)
+        format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.01,
+        display: (valFormat) => valFormat.toFixed(2),
       },
       {
         field: `BMSCurrent${i}`,
@@ -110,8 +112,8 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "Ampere",
         size: 2,
-        format: val => HexToInt(ChangeEndian(val)) * 0.01 - 50,
-        display: valFormat => valFormat.toFixed(2)
+        format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.01 - 50,
+        display: (valFormat) => valFormat.toFixed(2),
       },
       {
         field: `BMSSoc${i}`,
@@ -120,8 +122,8 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "%",
         size: 2,
-        format: val => HexToInt(ChangeEndian(val)),
-        display: valFormat => Dot(valFormat)
+        format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.01,
+        display: (valFormat) => Dot(valFormat),
       },
       {
         field: `BMSTemperature${i}`,
@@ -130,9 +132,9 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "Celcius",
         size: 2,
-        format: val => HexToInt(ChangeEndian(val)) * 0.1 - 40,
-        display: valFormat => valFormat.toFixed(2)
-      }
+        format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1 - 40,
+        display: (valFormat) => valFormat.toFixed(2),
+      },
     ];
     fields = [...fields, ...tmp];
   }
@@ -148,17 +150,17 @@ const VCU = ({ required }) => {
       required: true,
       chartable: true,
       size: 8,
-      format: val => {
+      format: (val) => {
         return Number(
           moment(
-            HexToInt(ChangeEndian(val)).toString(),
+            HexToUnsignedInt(ChangeEndian(val)).toString(),
             "YYMMDDHHmmssE"
           ).format("X")
         );
       },
-      display: valFormat => {
+      display: (valFormat) => {
         return moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss");
-      }
+      },
     },
     {
       field: "rtcLogDatetime",
@@ -166,17 +168,17 @@ const VCU = ({ required }) => {
       required: true,
       chartable: true,
       size: 8,
-      format: val => {
+      format: (val) => {
         return Number(
           moment(
-            HexToInt(ChangeEndian(val)).toString(),
+            HexToUnsignedInt(ChangeEndian(val)).toString(),
             "YYMMDDHHmmssE"
           ).format("X")
         );
       },
-      display: valFormat => {
+      display: (valFormat) => {
         return moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss");
-      }
+      },
     },
     {
       field: "driverID",
@@ -184,13 +186,13 @@ const VCU = ({ required }) => {
       required: true,
       chartable: true,
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => {
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => {
         if (valFormat === 0xff) {
           return "NONE";
         }
         return IntToHex(valFormat, 2).toUpperCase();
-      }
+      },
     },
     {
       field: "eventsGroup",
@@ -198,8 +200,17 @@ const VCU = ({ required }) => {
       required: true,
       chartable: true,
       size: 8,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => IntToHex(valFormat, 16).toUpperCase()
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => IntToHex(valFormat, 16).toUpperCase(),
+    },
+    {
+      field: "vehicleState",
+      title: "Vehicle State",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (val) => HexToSignedInt8(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "gpsLongitude",
@@ -207,8 +218,8 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 4,
-      format: val => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
-      display: valFormat => parseFloat(valFormat.toFixed(7))
+      format: (val) => HexToSignedInt32(ChangeEndian(val)) * 0.0000001,
+      display: (valFormat) => parseFloat(valFormat.toFixed(7)),
     },
     {
       field: "gpsLatitude",
@@ -216,8 +227,8 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 4,
-      format: val => HexToSignedInt(ChangeEndian(val)) * 0.0000001,
-      display: valFormat => parseFloat(valFormat.toFixed(7))
+      format: (val) => HexToSignedInt32(ChangeEndian(val)) * 0.0000001,
+      display: (valFormat) => parseFloat(valFormat.toFixed(7)),
     },
     {
       field: "gpsAltitude",
@@ -226,8 +237,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "m",
       size: 4,
-      format: val => HexToInt(ChangeEndian(val)) * 0.1,
-      display: valFormat => parseFloat(valFormat.toFixed(2))
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1,
+      display: (valFormat) => parseFloat(valFormat.toFixed(2)),
     },
     {
       field: "gpsHDOP",
@@ -235,10 +246,10 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)) * 0.1,
-      display: valFormat => {
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1,
+      display: (valFormat) => {
         return Dot(valFormat);
-      }
+      },
     },
     {
       field: "gpsVDOP",
@@ -246,10 +257,10 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)) * 0.1,
-      display: valFormat => {
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1,
+      display: (valFormat) => {
         return Dot(valFormat);
-      }
+      },
     },
     {
       field: "gpsHeading",
@@ -258,8 +269,18 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Degree",
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)) * 2,
-      display: valFormat => Dot(valFormat)
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 2,
+      display: (valFormat) => Dot(valFormat),
+    },
+    {
+      field: "gpsSatInUse",
+      title: "GPS Sat. in use",
+      required: false,
+      chartable: true,
+      unit: "Sat.",
+      size: 1,
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "speed",
@@ -268,28 +289,18 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Km/hr",
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "odometer",
       title: "Odometer",
       required: false,
       chartable: true,
-      unit: "Km",
-      size: 4,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
-    },
-    {
-      field: "odometer2",
-      title: "Odometer2",
-      required: false,
-      chartable: true,
       unit: "m",
       size: 4,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "signal",
@@ -298,8 +309,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "%",
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "batVoltage",
@@ -308,8 +319,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "mVolt",
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)) * 18,
-      display: valFormat => Dot(valFormat)
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 18,
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "rangeApproximation",
@@ -318,8 +329,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Km",
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "batteryEfficiency",
@@ -328,32 +339,107 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Km/kWh",
       size: 1,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "tripA",
       title: "Trip A",
       required: false,
       chartable: true,
-      unit: "Km",
+      unit: "m",
       size: 4,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "tripB",
       title: "Trip B",
       required: false,
       chartable: true,
-      unit: "Km",
+      unit: "m",
       size: 4,
-      format: val => HexToInt(ChangeEndian(val)),
-      display: valFormat => Dot(valFormat)
-    }
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
+    },
   ];
 
-  return fields.filter(({ required: _required }) => _required === required);
+  return fields.filter((el) => el.required === required);
+};
+
+const TEST = () => {
+  const RtosTask = {
+    manager: "ManagerTask",
+    iot: "IotTask",
+    reporter: "ReporterTask",
+    command: "CommandTask",
+    gps: "GpsTask",
+    gyro: "GyroTask",
+    remote: "RemoteTask",
+    finger: "FingerTask",
+    audio: "AudioTask",
+    gate: "GateTask",
+    canRx: "CanRxTask",
+    canTx: "CanTxTask",
+    hmi2Power: "Hmi2PowerTask",
+  };
+
+  return [
+    ...Object.keys(RtosTask).reduce((total, field) => {
+      return total.concat([
+        {
+          field: `${field}-wakeup`,
+          title: `${RtosTask[field]} wakeup`,
+          required: false,
+          chartable: true,
+          unit: "s",
+          size: 1,
+          format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+          display: (valFormat) => Dot(valFormat),
+        },
+        {
+          field: `${field}-stack`,
+          title: `${RtosTask[field]} stack`,
+          required: false,
+          chartable: true,
+          unit: "words",
+          size: 2,
+          format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+          display: (valFormat) => Dot(valFormat),
+        },
+      ]);
+    }, []),
+    {
+      field: "motionYaw",
+      title: "Motion Yaw",
+      required: false,
+      chartable: true,
+      unit: "Degree",
+      size: 1,
+      format: (val) => HexToSignedInt8(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
+    },
+    {
+      field: "motionPitch",
+      title: "Motion Pitch",
+      required: false,
+      chartable: true,
+      unit: "Degree",
+      size: 1,
+      format: (val) => HexToSignedInt8(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
+    },
+    {
+      field: "motionRoll",
+      title: "Motion Roll",
+      required: false,
+      chartable: true,
+      unit: "Degree",
+      size: 1,
+      format: (val) => HexToSignedInt8(ChangeEndian(val)),
+      display: (valFormat) => Dot(valFormat),
+    },
+  ];
 };
 
 const Report = [
@@ -361,7 +447,8 @@ const Report = [
   ...VCU({ required: true }),
   ...BMS({ required: true }),
   ...VCU({ required: false }),
-  ...BMS({ required: false })
+  ...BMS({ required: false }),
+  ...TEST(),
 ];
 
 export { Header, Report };

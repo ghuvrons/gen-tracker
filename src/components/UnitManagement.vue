@@ -15,7 +15,9 @@
           v-for="(el, index) in units"
           :key="index"
           @click.native="setTheUnit(el)"
-          :class="{ 'bg-dark text-white': el.unitID === theUnit.unitID }"
+          :class="{
+            'bg-dark text-white': el.unitID === theUnit.unitID,
+          }"
         >
           <q-item-main :label="el.unitID.toString()" />
           <q-item-side right>
@@ -33,32 +35,28 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from "vuex";
+import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
   // name: 'ComponentName',
   created() {
-    this.setTheUnit();
+    this.setTheUnit()
   },
   props: {
     height: Number
   },
   computed: {
-    ...mapState("database", ["units", "theUnit", "loading"]),
-    ...mapGetters("database", ["getTotalReports"])
+    ...mapState('database', ['units', 'theUnit', 'loading']),
+    ...mapGetters('database', ['getTotalReports'])
   },
   methods: {
-    ...mapMutations("database", ["SET_THE_UNIT"]),
+    ...mapMutations('database', ['SET_THE_UNIT']),
     setTheUnit(unit) {
-      if (!this.loading) {
-        if (this.units.length) {
-          // set the unit
-          this.SET_THE_UNIT(unit || this.units[0]);
-        }
-      }
+      if (!this.loading)
+        if (this.units.length) this.SET_THE_UNIT(unit || this.units[0])
     }
   }
-};
+}
 </script>
 
 <style></style>

@@ -19,7 +19,7 @@ export default function (/* { ssrContext } */) {
     modules: {
       database
     },
-    plugins: [vuexLocal.plugin]
+    // plugins: [vuexLocal.plugin]
   })
 
   return Store
