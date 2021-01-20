@@ -42,21 +42,26 @@ const parseReport = (hexData) => {
   };
 };
 
-const parseResponse = (hexData, payload) => {
-  let data = parseFrame(hexData, Response);
+const parseCmdResponse = ({ payload, unitID }, hexData) => {
+  let message, resCode;
 
-  let resCode = RESPONSE_LIST.find(
-    ({ code }) => code === data.find(({ field }) => field === "code").value
-  );
+  if (hexData) {
+    let data = parseFrame(hexData, Response);
+    let codeData = data.find(({ field }) => field === "code").value;
+
+    resCode = RESPONSE_LIST.find(({ code }) => code === codeData);
+    message = data.find(({ field }) => field === "message").value;
+  } else {
+    resCode = RESPONSE_LIST.find(({ name }) => name === "timeout");
+    message = null;
+  }
 
   return {
     payload,
-    unitID: data.find(({ field }) => field === "unitID").value,
-    // data,
-    // hexData,
+    unitID,
     resCode,
-    message: data.find(({ field }) => field === "message").value,
+    message,
   };
 };
 
-export { parseFrame, parseReport, parseResponse };
+export { parseFrame, parseReport, parseCmdResponse };

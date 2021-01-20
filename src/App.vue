@@ -9,7 +9,7 @@ import { config } from 'components/js/config'
 import { validPacket } from 'components/js/validator'
 import { calibrateDeviceTime } from 'components/js/utils'
 import { readCommand } from 'components/js/builder'
-import { parseReport, parseResponse } from 'components/js/parser'
+import { parseReport, parseCmdResponse } from 'components/js/parser'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
@@ -78,13 +78,13 @@ export default {
     },
 
     handleResponse(hexData) {
-      let response = parseResponse(hexData, this.theCommand.payload)
-      this.ADD_COMMANDS(response)
-      this.processResponse(response)
+      let cmd = parseCmdResponse(this.theCommand, hexData)
+      this.ADD_COMMANDS(cmd)
+      this.processResponse(cmd)
       this.stopWaitting('Command sent.', 'positive')
     },
 
-    processResponse({ resCode, payload }) {
+    processResponse({ resCode, payload, unitID }) {
       if (resCode.title != 'OK') {
         this.$q.notify({
           message: `Command is ${resCode.title}`,
@@ -110,7 +110,7 @@ export default {
             })
             .then((data) => {
               this.ADD_FINGERS({
-                unitID: this.theUnit.unitID,
+                unitID,
                 fingerID: cmd.value,
                 name: data
               })
@@ -118,13 +118,13 @@ export default {
           break
         case 'FINGER_DEL':
           this.DELETE_FINGERS({
-            unitID: this.theUnit.unitID,
+            unitID,
             fingerID: cmd.value
           })
           break
         case 'FINGER_RST':
           this.RESET_FINGERS({
-            unitID: this.theUnit.unitID
+            unitID
           })
           break
 
@@ -154,15 +154,7 @@ export default {
       this.$mqtt.publish(`VCU/${unitID}/CMD`, Buffer.from(hexData, 'hex'))
     },
     cmdTimeout() {
-      this.ADD_COMMANDS({
-        payload: this.theCommand.payload,
-        unitID: this.theUnit.unitID,
-        // data: null,
-        // hexData: null,
-        resCode: RESPONSE_LIST.find(({ name }) => name === 'timeout'),
-        message: null
-      })
-
+      this.ADD_COMMANDS(parseCmdResponse(this.theCommand))
       this.stopWaitting('Command timeout.', 'negative')
     },
 
