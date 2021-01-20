@@ -73,7 +73,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('database', ['loading', 'config', 'theUnit', 'theReport']),
+    ...mapState('database', ['loading', 'theUnit', 'theReport']),
     ...mapGetters('database', ['devReports'])
   },
   methods: {
@@ -95,29 +95,30 @@ export default {
       immediate: true,
       handler(newReports, oldReports) {
         let newReport = newReports[0]
-        let triggered = false
-        // get last reporst length
+        let trigger = false
         let oldReportsLength = 0
+
+        // get last reporst length
         if (oldReports) oldReportsLength = oldReports.length
 
         // checking
         if (!this.theReport)
           // set for the first time (theReport is null)
-          triggered = true
+          trigger = true
         else if (newReport.unitID !== this.theReport.unitID)
           // set again on different unitID
-          triggered = true
+          trigger = true
         else {
           // only update if got new data
           if (newReports.length !== oldReportsLength) {
             if (this.lock.follow) {
               // same unitID, but lock.follow is active
-              triggered = true
+              trigger = true
               // only follow mapable reports
               if (this.lock.mapable) {
                 // find the latest mapable report (it can be other than the report input)
                 let reportMapable = newReports.find(
-                  ({ frameID }) => frameID === this.config.frame.id.FULL
+                  ({ frameID }) => frameID === this.$config.frame.id.FULL
                 )
                 if (reportMapable) newReport = reportMapable
               }
@@ -125,7 +126,7 @@ export default {
           }
         }
 
-        if (triggered) this.setTheReport(newReport)
+        if (trigger) this.setTheReport(newReport)
       }
     }
   }

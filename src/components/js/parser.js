@@ -1,6 +1,6 @@
 import { config } from "components/js/config";
 import { Header, Report } from "components/js/frame";
-import { COMMAND_LIST } from "components/js/command";
+import { Command, COMMAND_LIST } from "components/js/command";
 import { Response, RESPONSE_LIST } from "components/js/response";
 
 const parseFrame = (hexData, frame) => {
@@ -10,14 +10,13 @@ const parseFrame = (hexData, frame) => {
     let formatted = el.format(hexData.substr(cursor, el.size * 2));
     cursor += el.size * 2;
 
-    return [
-      ...carry,
+    return carry.concat([
       {
         ...el,
         value: formatted,
         output: el.display(formatted),
       },
-    ];
+    ]);
   }, []);
 };
 
@@ -64,4 +63,47 @@ const parseCmdResponse = ({ payload, unitID }, hexData) => {
   };
 };
 
-export { parseFrame, parseReport, parseCmdResponse };
+const readCommand = (payload) => {
+  let prop = payload;
+  let value = null;
+
+  // check is has value
+  if (payload.indexOf("=") > -1) {
+    prop = payload.split("=")[0];
+    value = payload.split("=")[1];
+  }
+
+  return {
+    ...COMMAND_LIST.find(({ command }) => command === prop),
+    value,
+  };
+};
+
+const buildCommand = (cmd) => {
+  return Command.reduce((carry, el, idx) => {
+    let { field, format } = Command[Command.length - 1 - idx];
+
+    switch (field) {
+      case "value":
+        carry = format(cmd.value || 0) + carry;
+        break;
+      case "subCode":
+      case "code":
+        carry = format(cmd[field]) + carry;
+        break;
+      case "size":
+      case "crc":
+        carry = format(carry) + carry;
+        break;
+      case "prefix":
+        carry = format() + carry;
+        break;
+      default:
+        break;
+    }
+
+    return carry;
+  }, "").toUpperCase();
+};
+
+export { parseFrame, parseReport, parseCmdResponse, readCommand, buildCommand };

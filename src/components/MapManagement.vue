@@ -39,10 +39,10 @@ export default {
     pageWidth: Number
   },
   created() {
-    this.zoom = this.$_.cloneDeep(this.config.map.zoom)
-    this.centerPosition = this.$_.cloneDeep(this.config.map.centerIndonesia)
+    this.zoom = this.$_.cloneDeep(this.$config.map.zoom)
+    this.centerPosition = this.$_.cloneDeep(this.$config.map.centerIndonesia)
     this.position = {
-      ...this.$_.cloneDeep(this.config.map.centerIndonesia),
+      ...this.$_.cloneDeep(this.$config.map.centerIndonesia),
       error: true
     }
   },
@@ -57,7 +57,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('database', ['theReport', 'config']),
+    ...mapState('database', ['theReport']),
     ...mapGetters('database', ['devReports']),
     showStreetView() {
       return this.pageWidth >= 728
@@ -72,12 +72,12 @@ export default {
     },
     generatePosition(report) {
       let pos = {
-        ...this.$_.cloneDeep(this.config.map.centerIndonesia),
+        ...this.$_.cloneDeep(this.$config.map.centerIndonesia),
         error: true
       }
 
       if (report) {
-        if (report.frameID === this.config.frame.id.FULL) {
+        if (report.frameID === this.$config.frame.id.FULL) {
           pos.lng = report.data.find(
             ({ field }) => field === 'gpsLongitude'
           ).value
@@ -92,18 +92,19 @@ export default {
     },
     getCurrentHeading(report) {
       if (report)
-        if (report.frameID === this.config.frame.id.FULL)
+        if (report.frameID === this.$config.frame.id.FULL)
           return report.data.find(({ field }) => field === 'gpsHeading').value
       return 0
     },
     setPosition({ lng, lat, error }) {
-      // update position
       if (!error) {
         this.zoom = 17
         this.centerPosition = { lng, lat }
       } else {
-        this.zoom = this.$_.cloneDeep(this.config.map.zoom)
-        this.centerPosition = this.$_.cloneDeep(this.config.map.centerIndonesia)
+        this.zoom = this.$_.cloneDeep(this.$config.map.zoom)
+        this.centerPosition = this.$_.cloneDeep(
+          this.$config.map.centerIndonesia
+        )
       }
       this.position = { lng, lat, error }
     },
@@ -116,7 +117,7 @@ export default {
           let frameID = report.data.find(({ field }) => field === 'frameID')
             .value
           // only handle gps on full frame
-          if (frameID === this.config.frame.id.FULL) {
+          if (frameID === this.$config.frame.id.FULL) {
             let { lng, lat, error } = this.generatePosition(report)
             // add path (valid area only)
             if (!error) this.path.push({ lng, lat, error })
@@ -127,11 +128,12 @@ export default {
       }
     },
     isIndonesia({ lng, lat }) {
+      let { borderIndonesia } = this.$config.map
       return (
-        lng > this.config.map.borderIndonesia.lngMin &&
-        lng < this.config.map.borderIndonesia.lngMax &&
-        lat > this.config.map.borderIndonesia.latMin &&
-        lat < this.config.map.borderIndonesia.latMax
+        lng > borderIndonesia.lngMin &&
+        lng < borderIndonesia.lngMax &&
+        lat > borderIndonesia.latMin &&
+        lat < borderIndonesia.latMax
       )
     }
   },

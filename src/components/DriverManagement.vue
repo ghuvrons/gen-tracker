@@ -7,7 +7,7 @@
         class="q-ma-xs"
         dense
         outline
-        :disable="devFingers.length >= config.finger.max || !theUnit"
+        :disable="devFingers.length >= $config.finger.max || !theUnit"
         :loading="loading"
         @click="addFinger()"
       />
@@ -56,52 +56,21 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { QSpinnerFacebook } from 'quasar'
+import { makeFingerID } from 'components/js/utils'
 
 export default {
   // name: 'ComponentName',
   props: {
     height: Number
   },
-  created() {
-    this.$root.$on('scanningDialog', this.scanningDialog)
-  },
-  destroyed() {
-    this.$root.$off('scanningDialog', this.scanningDialog)
-  },
   computed: {
-    ...mapState('database', ['loading', 'config', 'theUnit']),
+    ...mapState('database', ['loading', 'theUnit']),
     ...mapGetters('database', ['devFingers'])
   },
   methods: {
-    findFreeFingerID() {
-      // find not used id
-      let id = 0
-      // save all registered id
-      let usedFingerIDs = this.devFingers.map(({ fingerID }) =>
-        parseInt(fingerID)
-      )
-      // sort id to ascending
-      usedFingerIDs.sort((a, b) => a - b)
-      // check the lowest unused id
-      for (let i = 0; i < this.config.finger.max; i++) {
-        if (usedFingerIDs[i] !== id) break
-        id++
-      }
-      // return the free index
-      return id
-    },
-    scanningDialog() {
-      this.$q.loading.show({
-        spinner: QSpinnerFacebook,
-        spinnerColor: 'amber',
-        spinnerSize: 140,
-        message: 'Put your fingerprint on scanner...',
-        messageColor: 'red'
-      })
-    },
     addFinger() {
-      let payload = `FINGER_ADD=${this.findFreeFingerID()}`
+      let id = makeFingerID(this.devFingers)
+      let payload = `FINGER_ADD=${id}`
       this.$root.$emit('executeCommand', { payload })
     },
     deleteFinger(driver) {

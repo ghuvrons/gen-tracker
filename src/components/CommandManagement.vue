@@ -71,11 +71,7 @@
             <q-item
               v-for="(el, i) in searchResult"
               :key="i"
-              @click.native="
-                selectCommandRefference(
-                  el.exCommand ? el.exCommand : el.command
-                )
-              "
+              @click.native="selectCommand(el.command)"
             >
               <q-item-main>
                 <q-item-tile label>{{ el.command }}</q-item-tile>
@@ -83,12 +79,12 @@
 
                 <q-item-tile sublabel>
                   <q-chip dense square color="red">
-                    {{ el.exCommand ? el.exCommand : el.command }}
+                    {{ el.command }}
                   </q-chip>
                 </q-item-tile>
                 <q-item-tile sublabel>
                   <q-chip dense square color="green">
-                    {{ el.exDesc ? el.exDesc : el.desc }}
+                    {{ el.desc }}
                   </q-chip>
                 </q-item-tile>
               </q-item-main>
@@ -110,7 +106,7 @@
 
 <script>
 import { FlowFilter } from 'components/js/helper'
-import { readCommand, buildCommand } from 'components/js/builder'
+import { readCommand, buildCommand } from 'components/js/parser'
 import {
   Response,
   Command,
@@ -148,12 +144,12 @@ export default {
   },
   methods: {
     ...mapMutations('database', ['SET_THE_COMMAND']),
-    selectCommandRefference(payload) {
-      this.modal.open = false
-      this.setCommand(payload)
-    },
     setCommand(payload) {
       this.buffer = payload
+    },
+    selectCommand(payload) {
+      this.modal.open = false
+      this.setCommand(payload)
     },
     executeCommand({ payload }) {
       if (!payload) {
@@ -167,7 +163,7 @@ export default {
       }
 
       if (!this.theUnit) {
-        this.$q.notify({ message: 'No destination.' })
+        this.$q.notify({ message: 'No device.' })
         return
       }
 

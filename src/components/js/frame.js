@@ -368,28 +368,28 @@ const VCU = ({ required }) => {
 };
 
 const TEST = () => {
-  const RtosTask = {
-    manager: "ManagerTask",
-    iot: "IotTask",
-    reporter: "ReporterTask",
-    command: "CommandTask",
-    gps: "GpsTask",
-    gyro: "GyroTask",
-    remote: "RemoteTask",
-    finger: "FingerTask",
-    audio: "AudioTask",
-    gate: "GateTask",
-    canRx: "CanRxTask",
-    canTx: "CanTxTask",
-    hmi2Power: "Hmi2PowerTask",
-  };
+  const TASK_LIST = [
+    "ManagerTask",
+    "IotTask",
+    "ReporterTask",
+    "CommandTask",
+    "GpsTask",
+    "GyroTask",
+    "RemoteTask",
+    "FingerTask",
+    "AudioTask",
+    "GateTask",
+    "CanRxTask",
+    "CanTxTask",
+    "Hmi2PowerTask",
+  ];
 
   return [
-    ...Object.keys(RtosTask).reduce((total, field) => {
-      return total.concat([
+    TASK_LIST.reduce((carry, task) => {
+      return carry.concat([
         {
-          field: `${field}-wakeup`,
-          title: `${RtosTask[field]} wakeup`,
+          field: `${task}-wakeup`,
+          title: `${task} wakeup`,
           required: false,
           chartable: true,
           unit: "s",
@@ -398,8 +398,8 @@ const TEST = () => {
           display: (valFormat) => Dot(valFormat),
         },
         {
-          field: `${field}-stack`,
-          title: `${RtosTask[field]} stack`,
+          field: `${task}-stack`,
+          title: `${task} stack`,
           required: false,
           chartable: true,
           unit: "words",

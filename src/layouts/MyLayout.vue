@@ -9,18 +9,15 @@
         :glossy="$q.theme === 'mat'"
         :inverted="$q.theme === 'ios'"
       >
-        <q-btn
-          flat
-          dense
-          round
-          @click="drawerOpen.left = !drawerOpen.left"
-        >
+        <q-btn flat dense round @click="drawerOpen.left = !drawerOpen.left">
           <q-icon name="menu" />
         </q-btn>
 
         <q-toolbar-title>
-          {{ config.app.title }}
-          <div slot="subtitle">Rev.{{ config.app.version}} &copy; {{ config.app.subTitle }} </div>
+          {{ $config.app.title }}
+          <div slot="subtitle">
+            Rev.{{ $config.app.version }} &copy; {{ $config.app.subTitle }}
+          </div>
         </q-toolbar-title>
 
         <q-btn
@@ -30,15 +27,12 @@
           v-if="$q.fullscreen.isCapable"
           @click="$q.fullscreen.toggle()"
         >
-          <q-icon :name="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'" />
+          <q-icon
+            :name="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+          />
         </q-btn>
 
-        <q-btn
-          flat
-          dense
-          round
-          @click="drawerOpen.right = !drawerOpen.right"
-        >
+        <q-btn flat dense round @click="drawerOpen.right = !drawerOpen.right">
           <q-icon name="apps" />
         </q-btn>
       </q-toolbar>
@@ -82,7 +76,7 @@ export default {
     ResponseLog,
     CommandManagement
   },
-  data () {
+  data() {
     return {
       drawerOpen: {
         left: this.$q.platform.is.desktop,
@@ -94,11 +88,8 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapState('database', ['config'])
-  },
   methods: {
-    onResize ({ height }) {
+    onResize({ height }) {
       this.height.bottom = height - this.height.top
     }
   }

@@ -28,7 +28,7 @@ export const devEvents = (state, getters) => {
       ({ bit }) => Long.fromNumber(evtValue, 1).shiftRight(bit) & 1
     );
 
-    return [...carry, ...events.map(({ name }) => ({ name, seqID }))];
+    return carry.concat(...events.map(({ name }) => ({ name, seqID })));
   }, []);
 
   return groupBy(events, "name");

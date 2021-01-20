@@ -3,7 +3,7 @@
     <p class="q-pa-sm q-mb-none">
       Report Reader
       <q-chip color="negative" dense square v-if="theReport">
-        {{ theReport.frameID === config.frame.id.FULL ? "FULL" : "SIMPLE" }}
+        {{ theReport.frameID === $config.frame.id.FULL ? "FULL" : "SIMPLE" }}
       </q-chip>
     </p>
 
@@ -47,10 +47,10 @@
           <q-item-side
             right
             :color="
-              theReport.frameID === config.frame.id.FULL ? 'green' : 'red'
+              theReport.frameID === $config.frame.id.FULL ? 'green' : 'red'
             "
             :icon="
-              theReport.frameID === config.frame.id.FULL
+              theReport.frameID === $config.frame.id.FULL
                 ? 'cloud_download'
                 : 'cloud_off'
             "
@@ -90,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('database', ['theReport', 'settings', 'config']),
+    ...mapState('database', ['theReport']),
     ...mapGetters('database', ['devReports']),
     requiredReport() {
       return this.theReport.data.filter(({ required }) => required)
@@ -103,7 +103,7 @@ export default {
         ({ hexData }) => hexData === this.theReport.hexData
       )
       for (let index = selectedIndex; index >= 0; index--) {
-        if (this.devReports[index].frameID === this.config.frame.id.FULL) {
+        if (this.devReports[index].frameID === this.$config.frame.id.FULL) {
           nearestOptional = this.devReports[index].data.filter(
             ({ required }) => !required
           )

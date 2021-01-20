@@ -1,7 +1,4 @@
-import { config } from "components/js/config";
-
 export default {
-  config,
   loading: false,
   timeCalibration: false,
 

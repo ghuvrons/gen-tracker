@@ -16,7 +16,7 @@
         icon="stop"
         color="primary"
         label="Ingnore command"
-        @click="ignoreCommand()"
+        @click="$root.$emit('ignoreCommand')"
       />
     </div>
     <div class="col-auto">
@@ -89,7 +89,8 @@ export default {
       )
     },
     exportedFilename() {
-      return `tracking-${moment().format('YYYYMMDDHHmmss')}.csv`
+      let now = moment().format('YYYYMMDDHHmmss')
+      return `tracking-${now}.csv`
     }
   },
   methods: {
@@ -108,9 +109,6 @@ export default {
           this.$root.$emit('setCommand', '')
         })
         .catch(() => {})
-    },
-    ignoreCommand() {
-      this.$root.$emit('ignoreCommand')
     }
   }
 }

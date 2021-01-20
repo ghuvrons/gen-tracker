@@ -5,12 +5,15 @@
 </template>
 
 <script>
-import { config } from 'components/js/config'
 import { validPacket } from 'components/js/validator'
 import { calibrateDeviceTime } from 'components/js/utils'
-import { readCommand } from 'components/js/builder'
-import { parseReport, parseCmdResponse } from 'components/js/parser'
+import { QSpinnerFacebook } from 'quasar'
 import { mapState, mapGetters, mapMutations } from 'vuex'
+import {
+  parseReport,
+  parseCmdResponse,
+  readCommand
+} from 'components/js/parser'
 
 export default {
   name: 'App',
@@ -52,7 +55,7 @@ export default {
       let sequentialID = header.find(({ field }) => field === 'sequentialID')
         .value
 
-      if (frameID === config.frame.id.RESPONSE) {
+      if (frameID === this.$config.frame.id.RESPONSE) {
         console.log(`RESPONSE-${sequentialID} ${hexData}`)
         this.handleResponse(hexData)
       } else if (this.uniqueReport(unitID, sequentialID)) {
@@ -62,12 +65,13 @@ export default {
 
       this.ADD_UNITS(unitID)
     },
+
     handleReport(hexData) {
       let report = parseReport(hexData)
       this.ADD_REPORTS(report)
 
       if (this.timeCalibration)
-        if (report.frameID === config.frame.id.FULL) {
+        if (report.frameID === this.$config.frame.id.FULL) {
           let validTime = calibrateDeviceTime(report.data)
           if (validTime) {
             let payload = `REPORT_RTC=${validTime}`
@@ -133,45 +137,42 @@ export default {
       }
     },
 
-    showLoader() {
+    waitCommand() {
       let { timeout, command } = this.theCommand
-      this.waitCommand(timeout || config.command.timeoutMS)
 
-      if (command == 'FINGER_ADD') this.$root.$emit('scanningDialog')
-    },
-    waitCommand(timeout) {
-      this.SET_LOADING(true)
+      this.timers.cmdTimeout.time = timeout || this.$config.command.timeoutMS
 
-      this.timers.cmdTimeout.time = timeout
       this.$timer.start('cmdTimeout')
-
+      this.SET_LOADING(true)
       this.dismiss = this.$q.notify({
         message: 'Sending command....',
         timeout: 0
       })
-    },
-    sendCommand({ unitID, hexData }) {
-      this.$mqtt.publish(`VCU/${unitID}/CMD`, Buffer.from(hexData, 'hex'))
+      if (command == 'FINGER_ADD')
+        this.$q.loading.show({
+          spinner: QSpinnerFacebook,
+          spinnerColor: 'amber',
+          spinnerSize: 140,
+          message: 'Put your fingerprint on scanner...',
+          messageColor: 'red'
+        })
     },
     cmdTimeout() {
-      this.ADD_COMMANDS(parseCmdResponse(this.theCommand))
+      this.ADD_COMMANDS(parseCmdResponse(this.theCommand, null))
       this.stopWaitting('Command timeout.', 'negative')
     },
 
+    ignoreCommand() {
+      this.stopWaitting('Command ignored.', 'warning')
+    },
     stopWaitting(message, type) {
-      this.CLEAR_THE_COMMAND()
-
       this.SET_LOADING(false)
-      this.$q.loading.hide()
       this.dismiss()
-
+      this.$q.loading.hide()
       if (this.timers.cmdTimeout.isRunning) this.$timer.stop('cmdTimeout')
 
+      this.CLEAR_THE_COMMAND()
       this.$q.notify({ message, type })
-    },
-    ignoreCommand() {
-      if (this.timers.cmdTimeout.isRunning)
-        this.stopWaitting('Command error.', 'warning')
     }
   },
   timers: {
@@ -191,8 +192,10 @@ export default {
   watch: {
     theCommand: function (cmd) {
       if (cmd) {
-        this.sendCommand({ unitID: cmd.unitID, hexData: cmd.hexData })
-        this.showLoader()
+        let { unitID, hexData } = cmd
+
+        this.waitCommand()
+        this.$mqtt.publish(`VCU/${unitID}/CMD`, Buffer.from(hexData, 'hex'))
       }
     }
   }

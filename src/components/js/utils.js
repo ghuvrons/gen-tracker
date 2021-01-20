@@ -23,4 +23,17 @@ const calibrateDeviceTime = (data) => {
     return serverTime.tz(timezone).format("YYMMDDHHmmssE");
 };
 
-export { calibrateDeviceTime };
+const makeFingerID = (devFingers) => {
+  let id = 0;
+  let usedFingerIDs = devFingers.map(({ fingerID }) => parseInt(fingerID));
+  // sort id to ascending
+  usedFingerIDs.sort((a, b) => a - b);
+  // check the lowest unused id
+  for (let i = 0; i < config.finger.max; i++) {
+    if (usedFingerIDs[i] !== id) break;
+    id++;
+  }
+  return id;
+};
+
+export { calibrateDeviceTime, makeFingerID };
