@@ -166,6 +166,11 @@ export default {
         return
       }
 
+      if (!this.theUnit.unitID) {
+        this.$q.notify({ message: 'No destination.' })
+        return
+      }
+
       let cmd = readCommand(payload)
       if (!cmd.command) {
         this.$q.notify({ message: 'Unknown command.' })
