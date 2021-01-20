@@ -166,7 +166,7 @@ export default {
         return
       }
 
-      if (!this.theUnit.unitID) {
+      if (!this.theUnit) {
         this.$q.notify({ message: 'No destination.' })
         return
       }
@@ -180,7 +180,7 @@ export default {
       this.setCommand(payload)
       this.SET_THE_COMMAND({
         ...cmd,
-        unitID: this.theUnit.unitID,
+        unitID: this.theUnit,
         hexData: buildCommand(cmd),
         payload
       })

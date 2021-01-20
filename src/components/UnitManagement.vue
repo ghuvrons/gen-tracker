@@ -12,17 +12,17 @@
     >
       <q-list highlight link separator dense v-if="units.length && theUnit">
         <q-item
-          v-for="(el, index) in units"
+          v-for="(unitID, index) in units"
           :key="index"
-          @click.native="setTheUnit(el)"
+          @click.native="setTheUnit(unitID)"
           :class="{
-            'bg-dark text-white': el.unitID === theUnit.unitID,
+            'bg-dark text-white': unitID === theUnit,
           }"
         >
-          <q-item-main :label="el.unitID.toString()" />
+          <q-item-main :label="unitID.toString()" />
           <q-item-side right>
             <q-chip color="primary" dense square>
-              {{ getTotalReports(el.unitID) }}
+              {{ getTotalReports(unitID) }}
             </q-chip>
           </q-item-side>
         </q-item>
@@ -51,9 +51,9 @@ export default {
   },
   methods: {
     ...mapMutations('database', ['SET_THE_UNIT']),
-    setTheUnit(unit) {
+    setTheUnit(unitID) {
       if (!this.loading)
-        if (this.units.length) this.SET_THE_UNIT(unit || this.units[0])
+        if (this.units.length) this.SET_THE_UNIT(unitID || this.units[0])
     }
   }
 }

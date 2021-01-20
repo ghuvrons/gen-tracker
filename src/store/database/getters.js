@@ -15,7 +15,7 @@ export const uniqueReport = ({ reports }) => (unitID, sequentialID) => {
 };
 
 export const devReports = ({ reports, theUnit }) => {
-  let _reports = reports.filter(({ unitID }) => unitID === theUnit.unitID);
+  let _reports = reports.filter(({ unitID }) => unitID === theUnit);
 
   return theUnit ? _reports : [];
 };
@@ -35,13 +35,9 @@ export const devEvents = (state, getters) => {
 };
 
 export const devCommands = ({ commands, theUnit }) => {
-  return theUnit
-    ? commands.filter(({ unitID }) => unitID === theUnit.unitID)
-    : [];
+  return theUnit ? commands.filter(({ unitID }) => unitID === theUnit) : [];
 };
 
 export const devFingers = ({ fingers, theUnit }) => {
-  return theUnit
-    ? fingers.filter(({ unitID }) => unitID === theUnit.unitID)
-    : [];
+  return theUnit ? fingers.filter(({ unitID }) => unitID === theUnit) : [];
 };

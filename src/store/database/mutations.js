@@ -33,24 +33,15 @@ export const SET_THE_UNIT = (state, payload) => {
 };
 
 export const ADD_UNITS = (state, payload) => {
-  // get unit
-  let unit = state.units.find(({ unitID }) => unitID === payload.unitID);
+  let unit = state.units.find((unitID) => unitID === payload);
 
-  // check unit
   if (!unit) {
-    // unit not exist add it
     state.units.unshift(payload);
-    // check if theUnit is null
     if (!state.theUnit) state.theUnit = payload;
   } else {
-    let unitIndex = state.units.findIndex(
-      ({ unitID }) => unitID === payload.unitID
-    );
-    // update the corresponding units
+    let unitIndex = state.units.findIndex((unitID) => unitID === payload);
     state.units.splice(unitIndex, 1, payload);
-    // update theUnit data
-    if (state.theUnit)
-      if (state.theUnit.unitID === unit.unitID) state.theUnit = payload;
+    if (state.theUnit === unit.unitID) state.theUnit = payload;
   }
 };
 

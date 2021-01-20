@@ -60,7 +60,7 @@ export default {
         this.handleReport(hexData)
       } else console.warn(`REPORT-${sequentialID} (DUPLICATE) ${hexData}`)
 
-      this.ADD_UNITS({ unitID })
+      this.ADD_UNITS(unitID)
     },
     handleReport(hexData) {
       let report = parseReport(hexData)
