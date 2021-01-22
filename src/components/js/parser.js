@@ -41,7 +41,7 @@ const parseReport = (hexData) => {
   };
 };
 
-const parseCmdResponse = ({ payload, unitID }, hexData) => {
+const parseResponse = ({ payload, unitID }, hexData) => {
   let message, resCode;
 
   if (hexData) {
@@ -60,22 +60,6 @@ const parseCmdResponse = ({ payload, unitID }, hexData) => {
     unitID,
     resCode,
     message,
-  };
-};
-
-const readCommand = (payload) => {
-  let prop = payload;
-  let value = null;
-
-  // check is has value
-  if (payload.indexOf("=") > -1) {
-    prop = payload.split("=")[0];
-    value = payload.split("=")[1];
-  }
-
-  return {
-    ...COMMAND_LIST.find(({ command }) => command === prop),
-    value,
   };
 };
 
@@ -106,4 +90,21 @@ const buildCommand = (cmd) => {
   }, "").toUpperCase();
 };
 
-export { parseFrame, parseReport, parseCmdResponse, readCommand, buildCommand };
+const parseCommand = (payload) => {
+  let prop = payload;
+  let value = null;
+
+  // check is has value
+  if (payload.indexOf("=") > -1) {
+    prop = payload.split("=")[0];
+    value = payload.split("=")[1];
+  }
+
+  return {
+    ...COMMAND_LIST.find(({ command }) => command === prop),
+    hexData: buildCommand(cmd),
+    value,
+  };
+};
+
+export { parseFrame, parseReport, parseResponse, parseCommand };

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { validPacket } from 'components/js/validator'
+import { validateFrame } from 'components/js/validator'
 import { calibrateDeviceTime } from 'components/js/utils'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { uniqueReport } from './store/db/getter-types'
@@ -17,12 +17,7 @@ import {
   SET_THE_COMMAND,
   CLEAR_THE_COMMAND
 } from './store/db/mutation-types'
-import {
-  parseReport,
-  parseCmdResponse,
-  readCommand,
-  buildCommand
-} from 'components/js/parser'
+import { parseReport, parseResponse, parseCommand } from 'components/js/parser'
 
 export default {
   name: 'App',
@@ -52,8 +47,8 @@ export default {
       SET_THE_COMMAND,
       CLEAR_THE_COMMAND
     ]),
-    processPacket(hexData) {
-      let header = validPacket(hexData)
+    handleFrame(hexData) {
+      let header = validateFrame(hexData)
 
       if (!header) {
         console.error(`CORRUPT ${hexData}`)
@@ -82,6 +77,12 @@ export default {
       this.hookReport(report)
     },
 
+    handleResponse(hexData) {
+      let cmd = parseResponse(this.theCommand, hexData)
+      this.ADD_COMMANDS(cmd)
+      this.hookResponse(cmd)
+    },
+
     hookReport(report) {
       if (this.timeCalibration)
         if (report.frameID === this.$config.frame.id.FULL) {
@@ -91,12 +92,6 @@ export default {
             this.$q.notify({ message: 'Calibrating device time..' })
           }
         }
-    },
-
-    handleResponse(hexData) {
-      let cmd = parseCmdResponse(this.theCommand, hexData)
-      this.ADD_COMMANDS(cmd)
-      this.hookResponse(cmd)
     },
 
     hookResponse(cmd) {
@@ -133,7 +128,7 @@ export default {
       this.$q.notify({ message, type })
     },
     cmdTimeout() {
-      this.ADD_COMMANDS(parseCmdResponse(this.theCommand, null))
+      this.ADD_COMMANDS(parseResponse(this.theCommand, null))
       this.stopWaitting('Command timeout.', 'negative')
     },
     ignoreCommand() {
@@ -156,7 +151,7 @@ export default {
         return
       }
 
-      let cmd = readCommand(payload)
+      let cmd = parseCommand(payload)
       if (!cmd.command) {
         this.$q.notify({ message: 'Unknown command.' })
         return
@@ -165,7 +160,6 @@ export default {
       this.SET_THE_COMMAND({
         ...cmd,
         unitID: this.theUnit,
-        hexData: buildCommand(cmd),
         payload
       })
     }
@@ -179,11 +173,11 @@ export default {
   mqtt: {
     'VCU/+/RSP': function (data, topic) {
       let hexData = data.toString('hex').toUpperCase()
-      this.processPacket(hexData)
+      this.handleFrame(hexData)
     },
     'VCU/+/RPT': function (data, topic) {
       let hexData = data.toString('hex').toUpperCase()
-      this.processPacket(hexData)
+      this.handleFrame(hexData)
     }
   },
   watch: {
