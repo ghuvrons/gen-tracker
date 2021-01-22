@@ -9,7 +9,7 @@
         dense
         :outline="!lock.mapable"
         :loading="loading"
-        :disable="!devReports.length"
+        :disable="devReports.length == 0"
         @click="lock.mapable = !lock.mapable"
         v-if="lock.follow"
       />
@@ -21,7 +21,7 @@
         dense
         :outline="!lock.follow"
         :loading="loading"
-        :disable="!devReports.length"
+        :disable="devReports.length == 0"
         @click="lock.follow = !lock.follow"
       />
     </div>
@@ -30,7 +30,7 @@
         :style="{ height: (height < 150 ? 150 : height) + 'px' }"
         ref="scroller"
       >
-        <q-list highlight link dense separator v-if="devReports.length">
+        <q-list highlight link dense separator v-if="devReports.length > 0">
           <q-item
             v-for="(el, index) in devReports"
             :key="index"
@@ -57,6 +57,8 @@
 </template>
 
 <script>
+import { devReports } from '../store/db/getter-types'
+import { SET_THE_REPORT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
@@ -73,11 +75,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('database', ['loading', 'theUnit', 'theReport']),
-    ...mapGetters('database', ['devReports'])
+    ...mapState('db', ['loading', 'theUnit', 'theReport']),
+    ...mapGetters('db', [devReports])
   },
   methods: {
-    ...mapMutations('database', ['SET_THE_REPORT']),
+    ...mapMutations('db', [SET_THE_REPORT]),
     setTheReport(report) {
       this.SET_THE_REPORT(report)
     },

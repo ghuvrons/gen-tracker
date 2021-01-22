@@ -47,6 +47,7 @@ import MapManagement from 'components/MapManagement'
 import ReportLog from 'components/ReportLog'
 import DriverManagement from 'components/DriverManagement'
 import GlobalConfiguration from 'components/GlobalConfiguration'
+import { devReports, devFingers } from '../store/db/getter-types'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -66,7 +67,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('database', ['devReports', 'devFingers'])
+    ...mapGetters('db', [devReports, devFingers])
   },
   methods: {
     onResize({ height }) {

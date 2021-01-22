@@ -385,7 +385,7 @@ const TEST = () => {
   ];
 
   return [
-    TASK_LIST.reduce((carry, task) => {
+    ...TASK_LIST.reduce((carry, task) => {
       return carry.concat([
         {
           field: `${task}-wakeup`,

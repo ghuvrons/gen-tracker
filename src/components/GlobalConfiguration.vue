@@ -6,7 +6,7 @@
         icon="delete"
         color="negative"
         label="Clear all data"
-        :disable="!units.length"
+        :disable="units.length == 0"
         @click="clearStore()"
       />
     </div>
@@ -39,11 +39,13 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import JsonCsv from 'vue-json-csv'
 import moment from 'moment'
-
 import { Report } from '../components/js/frame'
+import { devReports } from '../store/db/getter-types'
+import { RESET_DATABASE } from '../store/db/action-types'
+import { TOGGLE_TIME_CALIBRATION } from '../store/db/mutation-types'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   // name: 'ComponentName',
@@ -51,8 +53,8 @@ export default {
     JsonCsv
   },
   computed: {
-    ...mapState('database', ['units', 'timeCalibration']),
-    ...mapGetters('database', ['devReports']),
+    ...mapState('db', ['units', 'timeCalibration']),
+    ...mapGetters('db', [devReports]),
     timeCalibrationState: {
       get() {
         return this.timeCalibration
@@ -94,8 +96,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('database', ['TOGGLE_TIME_CALIBRATION']),
-    ...mapActions('database', ['RESET_DATABASE']),
+    ...mapMutations('db', [TOGGLE_TIME_CALIBRATION]),
+    ...mapActions('db', [RESET_DATABASE]),
     clearStore() {
       this.$q
         .dialog({
@@ -104,10 +106,7 @@ export default {
           preventClose: true,
           cancel: true
         })
-        .then(() => {
-          this.RESET_DATABASE()
-          this.$root.$emit('setCommand', '')
-        })
+        .then(() => this.RESET_DATABASE())
         .catch(() => {})
     }
   }

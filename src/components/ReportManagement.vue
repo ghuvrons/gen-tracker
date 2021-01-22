@@ -74,7 +74,8 @@
 
 <script>
 import ReportStatistics from 'components/ReportStatistics'
-import { mapState, mapGetters, mapMutations } from 'vuex'
+import { devReports } from '../store/db/getter-types'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   // name: 'ComponentName',
@@ -90,8 +91,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('database', ['theReport']),
-    ...mapGetters('database', ['devReports']),
+    ...mapState('db', ['theReport']),
+    ...mapGetters('db', [devReports]),
     requiredReport() {
       return this.theReport.data.filter(({ required }) => required)
     },

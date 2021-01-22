@@ -9,7 +9,7 @@
       >
         <gmap-marker v-if="!position.error" :position="position"></gmap-marker>
         <gmap-polyline
-          v-if="path.length"
+          v-if="path.length > 0"
           :path="path"
           ref="polyline"
         ></gmap-polyline>
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -57,8 +58,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('database', ['theReport']),
-    ...mapGetters('database', ['devReports']),
+    ...mapState('db', ['theReport']),
+    ...mapGetters('db', [devReports]),
     showStreetView() {
       return this.pageWidth >= 728
     }
@@ -111,7 +112,7 @@ export default {
     setPath(reports) {
       // reset map
       this.path = []
-      if (reports.length) {
+      if (reports.length > 0) {
         // set the path
         reports.forEach((report) => {
           let frameID = report.data.find(({ field }) => field === 'frameID')

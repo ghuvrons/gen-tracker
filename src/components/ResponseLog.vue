@@ -2,7 +2,7 @@
   <div class="shadow-1">
     <p class="q-pa-sm q-mb-none">
       Response Log
-      <q-chip color="negative" dense square v-if="devCommands.length">
+      <q-chip color="negative" dense square v-if="devCommands.length > 0">
         {{ devCommands.length }}
       </q-chip>
     </p>
@@ -10,7 +10,7 @@
       class="bg-white"
       :style="{ height: (height < 150 ? 150 : height) + 'px' }"
     >
-      <q-list link dense separator v-if="devCommands.length">
+      <q-list link dense separator v-if="devCommands.length > 0">
         <q-item
           v-for="(cmd, index) in devCommands"
           :key="index"
@@ -35,7 +35,9 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { devCommands } from '../store/db/getter-types'
+import { SET_COMMAND_BUFFER } from '../store/db/mutation-types'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
   // name: 'ComponentName',
@@ -43,12 +45,13 @@ export default {
     height: Number
   },
   computed: {
-    ...mapState('database', ['loading']),
-    ...mapGetters('database', ['devCommands'])
+    ...mapState('db', ['loading']),
+    ...mapGetters('db', ['devCommands'])
   },
   methods: {
+    ...mapMutations('db', [SET_COMMAND_BUFFER]),
     applyCommand(payload) {
-      if (!this.loading) this.$root.$emit('setCommand', payload)
+      if (!this.loading) this.SET_COMMAND_BUFFER(payload)
     }
   }
 }

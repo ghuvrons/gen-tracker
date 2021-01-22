@@ -141,8 +141,9 @@
 </template>
 
 <script>
-import LineChart from 'components/LineChart'
+import LineChart from 'components/etc/LineChart'
 import { Events } from 'components/js/events'
+import { devReports, devEvents } from '../store/db/getter-types'
 import { mapGetters } from 'vuex'
 const Long = require('long')
 
@@ -245,7 +246,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('database', ['devReports', 'devEvents'])
+    ...mapGetters('db', [devReports, devEvents])
   },
   methods: {
     activeEvent(name) {

@@ -26,13 +26,16 @@ const calibrateDeviceTime = (data) => {
 const makeFingerID = (devFingers) => {
   let id = 0;
   let usedFingerIDs = devFingers.map(({ fingerID }) => parseInt(fingerID));
+
   // sort id to ascending
   usedFingerIDs.sort((a, b) => a - b);
+
   // check the lowest unused id
-  for (let i = 0; i < config.finger.max; i++) {
-    if (usedFingerIDs[i] !== id) break;
-    id++;
-  }
+  for (let i = 0; i < config.finger.max; i++)
+    if (usedFingerIDs[i] !== id++) break;
+
+  if (id >= this.$config.finger.max) id = -1;
+
   return id;
 };
 

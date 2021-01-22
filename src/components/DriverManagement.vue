@@ -24,7 +24,7 @@
     </div>
     <div class="col-xs-12">
       <q-scroll-area :style="{ height: (height < 150 ? 150 : height) + 'px' }">
-        <q-list highlight separator dense link v-if="devFingers.length">
+        <q-list highlight separator dense link v-if="devFingers.length > 0">
           <q-item v-for="(driver, index) in devFingers" :key="index">
             <q-item-side>
               <q-chip color="primary" square>
@@ -55,7 +55,13 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import {
+  ADD_FINGERS,
+  DELETE_FINGERS,
+  RESET_FINGERS
+} from '../store/db/mutation-types'
+import { devFingers } from '../store/db/getter-types'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 import { makeFingerID } from 'components/js/utils'
 
 export default {
@@ -63,15 +69,41 @@ export default {
   props: {
     height: Number
   },
+  created() {
+    this.$root.$on('hookResponseFinger', this.hookResponse)
+  },
+  destroyed() {
+    this.$root.$off('hookResponseFinger', this.hookResponse)
+  },
   computed: {
-    ...mapState('database', ['loading', 'theUnit']),
-    ...mapGetters('database', ['devFingers'])
+    ...mapState('db', ['loading', 'theUnit']),
+    ...mapGetters('db', [devFingers])
   },
   methods: {
+    ...mapMutations('db', [ADD_FINGERS, DELETE_FINGERS, RESET_FINGERS]),
     addFinger() {
       let id = makeFingerID(this.devFingers)
-      let payload = `FINGER_ADD=${id}`
-      this.$root.$emit('executeCommand', { payload })
+
+      if (id < 0) {
+        this.$q.notify({ message: 'Finger full.' })
+        return
+      }
+
+      this.$q
+        .dialog({
+          title: 'Add driver',
+          message: 'Initial Name of driver.',
+          preventClose: true,
+          cancel: false,
+          color: 'secondary',
+          prompt: {
+            model: '',
+            type: 'text'
+          }
+        })
+        .then((data) =>
+          this.$root.$emit('executeCommand', `FINGER_ADD=${id},${data}`)
+        )
     },
     deleteFinger(driver) {
       this.$q
@@ -81,10 +113,9 @@ export default {
           preventClose: true,
           cancel: true
         })
-        .then(() => {
-          let payload = `FINGER_DEL=${driver.fingerID}`
-          this.$root.$emit('executeCommand', { payload })
-        })
+        .then(() =>
+          this.$root.$emit('executeCommand', `FINGER_DEL=${driver.fingerID}`)
+        )
         .catch(() => {})
     },
     resetFinger() {
@@ -95,11 +126,33 @@ export default {
           preventClose: true,
           cancel: true
         })
-        .then(() => {
-          let payload = `FINGER_RST`
-          this.$root.$emit('executeCommand', { payload })
-        })
+        .then(() => this.$root.$emit('executeCommand', `FINGER_RST`))
         .catch(() => {})
+    },
+
+    hookResponse({ unitID, command, value }) {
+      switch (command) {
+        case 'FINGER_ADD':
+          this.ADD_FINGERS({
+            fingerID: value,
+            unitID
+          })
+          break
+        case 'FINGER_DEL':
+          this.DELETE_FINGERS({
+            fingerID: value,
+            unitID
+          })
+          break
+        case 'FINGER_RST':
+          this.RESET_FINGERS({
+            unitID
+          })
+          break
+
+        default:
+          break
+      }
     }
   }
 }
