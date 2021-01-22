@@ -100,8 +100,10 @@ const parseCommand = (payload) => {
     value = payload.split("=")[1];
   }
 
+  let cmd = COMMAND_LIST.find(({ command }) => command === prop);
+
   return {
-    ...COMMAND_LIST.find(({ command }) => command === prop),
+    ...cmd,
     hexData: buildCommand(cmd),
     value,
   };
