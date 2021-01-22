@@ -39,25 +39,25 @@
               <q-item-tile label>{{ el.command }}</q-item-tile>
               <q-item-tile sublabel>{{ el.desc }}</q-item-tile>
 
-              <q-item-tile sublabel>
+              <q-item-tile v-if="el.type" sublabel>
                 <q-chip dense square color="red">
-                  {{ el.command }}
+                  {{ el.type }}
                 </q-chip>
               </q-item-tile>
-              <q-item-tile sublabel>
+              <q-item-tile v-if="el.range" sublabel>
                 <q-chip dense square color="green">
-                  {{ el.desc }}
+                  {{ el.range }}
                 </q-chip>
               </q-item-tile>
             </q-item-main>
-            <q-item-side right v-if="el.type">
+            <!-- <q-item-side right v-if="el.type">
               <q-item-tile>
                 <q-chip dense square color="blue">{{ el.type }}</q-chip>
               </q-item-tile>
               <q-item-tile>
                 <q-chip dense square color="blue">{{ el.range }}</q-chip>
               </q-item-tile>
-            </q-item-side>
+            </q-item-side> -->
           </q-item>
         </q-list>
       </div>
