@@ -1,4 +1,6 @@
-const Events = [
+const Long = require("long");
+
+const EVENT_LIST = [
   { name: "VCU_NET_SOFT_RESET", bit: 0, group: "VCU" },
   { name: "VCU_NET_HARD_RESET", bit: 1, group: "VCU" },
   { name: "VCU_BIKE_FALLEN", bit: 2, group: "VCU" },
@@ -21,4 +23,8 @@ const Events = [
   { name: "BMS_WARNING_UNBALANCE", bit: 45, group: "BMS" },
 ];
 
-export { Events };
+const parseEvent = (value, bit) => {
+  return Long.fromNumber(value, 1).shiftRight(bit) & 1;
+};
+
+export { EVENT_LIST, parseEvent };

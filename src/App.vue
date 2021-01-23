@@ -6,8 +6,9 @@
 
 <script>
 import { validateFrame } from 'components/js/validator'
-import { calibrateDeviceTime } from 'components/js/utils'
+import { calibrateTime } from 'components/js/utils'
 import { mapState, mapGetters, mapMutations } from 'vuex'
+import { Field } from 'components/js/helper'
 import { uniqueReport } from './store/db/getter-types'
 import {
   SET_LOADING,
@@ -35,7 +36,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('db', ['theCommand', 'theUnit', 'timeCalibration']),
+    ...mapState('db', [
+      'theCommand',
+      'commands',
+      'reports',
+      'theUnit',
+      'calibration'
+    ]),
     ...mapGetters('db', [uniqueReport])
   },
   methods: {
@@ -49,84 +56,46 @@ export default {
     ]),
     handleFrame(hexData) {
       let header = validateFrame(hexData)
-
       if (!header) {
         console.error(`CORRUPT ${hexData}`)
         return
       }
 
-      let unitID = header.find(({ field }) => field === 'unitID').value
-      let frameID = header.find(({ field }) => field === 'frameID').value
-      let sequentialID = header.find(({ field }) => field === 'sequentialID')
-        .value
-
-      if (frameID === this.$config.frame.id.RESPONSE) {
-        console.log(`RESPONSE-${sequentialID} ${hexData}`)
-        this.handleResponse(hexData)
-      } else if (this.uniqueReport(unitID, sequentialID)) {
-        console.log(`REPORT-${sequentialID} ${hexData}`)
-        this.handleReport(hexData)
-      } else console.warn(`REPORT-${sequentialID} (DUPLICATE) ${hexData}`)
+      let { unitID, frameID, sequentialID } = Field(header, [
+        'unitID',
+        'frameID',
+        'sequentialID'
+      ])
 
       this.ADD_UNITS(unitID)
-    },
-
-    handleReport(hexData) {
-      let report = parseReport(hexData)
-      this.ADD_REPORTS(report)
-      this.hookReport(report)
-    },
-
-    handleResponse(hexData) {
-      let cmd = parseResponse(this.theCommand, hexData)
-      this.ADD_COMMANDS(cmd)
-      this.hookResponse(cmd)
-    },
-
-    hookReport(report) {
-      if (this.timeCalibration)
-        if (report.frameID === this.$config.frame.id.FULL) {
-          let validTime = calibrateDeviceTime(report.data)
-          if (validTime) {
-            this.$root.$emit('executeCommand', `REPORT_RTC=${validTime}`)
-            this.$q.notify({ message: 'Calibrating device time..' })
-          }
-        }
-    },
-
-    hookResponse(cmd) {
-      this.stopWaitting('Command sent.', 'positive')
-
-      if (cmd.resCode.title != 'OK') {
-        this.$q.notify({
-          message: `Command is ${cmd.resCode.title}`,
-          type: 'negative'
-        })
-        return
-      }
-
-      this.$root.$emit('hookResponseFinger', cmd)
+      if (frameID === this.$config.frame.id.RESPONSE) {
+        console.log(`RESPONSE-${sequentialID} ${hexData}`)
+        this.ADD_COMMANDS(parseResponse(this.theCommand, hexData))
+      } else if (this.uniqueReport(unitID, sequentialID)) {
+        console.log(`REPORT-${sequentialID} ${hexData}`)
+        this.ADD_REPORTS(parseReport(hexData))
+      } else console.warn(`REPORT-${sequentialID} (DUPLICATE) ${hexData}`)
     },
 
     starWaitting() {
-      this.timers.cmdTimeout.time =
-        this.theCommand.timeout || this.$config.command.timeoutMS
-
-      this.$timer.start('cmdTimeout')
       this.SET_LOADING(true)
       this.dismiss = this.$q.notify({
         message: 'Sending command....',
         timeout: 0
       })
+      this.timers.cmdTimeout.time =
+        this.theCommand.timeout || this.$config.command.timeoutMS
+      this.$timer.start('cmdTimeout')
     },
     stopWaitting(message, type) {
       this.dismiss()
+      this.CLEAR_THE_COMMAND()
       this.SET_LOADING(false)
       if (this.timers.cmdTimeout.isRunning) this.$timer.stop('cmdTimeout')
 
-      this.CLEAR_THE_COMMAND()
       this.$q.notify({ message, type })
     },
+
     cmdTimeout() {
       this.ADD_COMMANDS(parseResponse(this.theCommand, null))
       this.stopWaitting('Command timeout.', 'negative')
@@ -135,25 +104,22 @@ export default {
       this.stopWaitting('Command ignored.', 'warning')
     },
 
+    invalidCommand(payload, cmd) {
+      let error = null
+
+      if (!payload) error = 'Empty payload.'
+      else if (this.theCommand) error = 'Command busy.'
+      else if (!this.theUnit) error = 'No device.'
+      else if (!cmd.command) error = 'Unknown command.'
+
+      return error
+    },
     executeCommand(payload) {
-      if (!payload) {
-        this.$q.notify({ message: 'Empty payload.' })
-        return
-      }
-
-      if (this.theCommand) {
-        this.$q.notify({ message: 'Command busy.' })
-        return
-      }
-
-      if (!this.theUnit) {
-        this.$q.notify({ message: 'No device.' })
-        return
-      }
-
       let cmd = parseCommand(payload)
-      if (!cmd.command) {
-        this.$q.notify({ message: 'Unknown command.' })
+      let error = invalidCommand(payload, cmd)
+
+      if (error) {
+        this.$q.notify({ message: error })
         return
       }
 
@@ -163,9 +129,6 @@ export default {
         payload
       })
     }
-  },
-  timers: {
-    cmdTimeout: { time: 0 }
   },
   mounted() {
     this.$mqtt.subscribe('VCU/#')
@@ -180,6 +143,9 @@ export default {
       this.handleFrame(hexData)
     }
   },
+  timers: {
+    cmdTimeout: { time: 0 }
+  },
   watch: {
     theCommand: function (cmd) {
       if (cmd) {
@@ -188,6 +154,31 @@ export default {
 
         this.starWaitting()
         this.$mqtt.publish(`VCU/${unitID}/CMD`, binData)
+      }
+    },
+    reports: function (reports) {
+      if (reports.length > 0) {
+        let { frameID, data } = reports[0]
+
+        if (this.calibration)
+          if (frameID === this.$config.frame.id.FULL) {
+            let validTime = calibrateTime(data)
+            if (validTime) {
+              this.$root.$emit('executeCommand', `REPORT_RTC=${validTime}`)
+              this.$q.notify({ message: 'Calibrating device time..' })
+            }
+          }
+      }
+    },
+    commands: function (commands) {
+      if (commands.length > 0) {
+        let { resCode } = commands[0]
+        let ok = resCode.title == 'OK'
+
+        let message = ok ? 'Command sent.' : `Command is ${resCode.title}`
+        let type = ok ? 'positive' : 'negative'
+
+        this.stopWaitting(message, type)
       }
     }
   }

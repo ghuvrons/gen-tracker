@@ -1,4 +1,4 @@
-import { CRC32 } from "components/js/helper";
+import { CRC32, Field } from "components/js/helper";
 import { Header } from "components/js/frame";
 import { parseFrame } from "components/js/parser";
 import { config } from "components/js/config";
@@ -22,20 +22,18 @@ const validateFrame = (hexData) => {
     return;
   }
 
-  let prefix = header.find(({ field }) => field === "prefix");
-  if (prefix.value != config.frame.prefix) {
+  if (Field(header, "prefix") != config.frame.prefix) {
     console.warn(`CORRUPT: Prefix not same`);
     return;
   }
 
-  let crc = header.find(({ field }) => field === "crc");
-  if (crc.output != calculateCRC32(hexData)) {
+  let crc = header.find(({ field }) => field === "crc").output;
+  if (crc != calculateCRC32(hexData)) {
     console.warn(`CORRUPT: CRC not valid`);
     return;
   }
 
-  let size = header.find(({ field }) => field === "size");
-  if (size.value != (hexData.length - headerSize) / 2) {
+  if (Field(header, "size") != (hexData.length - headerSize) / 2) {
     console.warn(`CORRUPT: Size not same`);
     return;
   }

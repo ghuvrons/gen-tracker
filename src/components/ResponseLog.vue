@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     ...mapState('db', ['loading']),
-    ...mapGetters('db', ['devCommands'])
+    ...mapGetters('db', [devCommands])
   },
   methods: {
     ...mapMutations('db', [SET_COMMAND_BUFFER]),

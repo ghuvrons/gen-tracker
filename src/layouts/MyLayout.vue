@@ -43,7 +43,7 @@
       :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
     >
       <unit-management :height="height.top"></unit-management>
-      <report-management :height="height.bottom - 70"></report-management>
+      <report-reader :height="height.bottom - 70"></report-reader>
     </q-layout-drawer>
 
     <q-layout-drawer
@@ -62,16 +62,15 @@
 </template>
 
 <script>
-import ReportManagement from 'components/ReportManagement'
+import ReportReader from 'components/ReportReader'
 import UnitManagement from 'components/UnitManagement'
 import ResponseLog from 'components/ResponseLog'
 import CommandManagement from 'components/CommandManagement'
-import { mapState } from 'vuex'
 
 export default {
   name: 'MyLayout',
   components: {
-    ReportManagement,
+    ReportReader,
     UnitManagement,
     ResponseLog,
     CommandManagement

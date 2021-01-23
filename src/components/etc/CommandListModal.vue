@@ -38,17 +38,6 @@
             <q-item-main>
               <q-item-tile label>{{ el.command }}</q-item-tile>
               <q-item-tile sublabel>{{ el.desc }}</q-item-tile>
-
-              <!-- <q-item-tile v-if="el.type" sublabel>
-                <q-chip dense square color="red">
-                  {{ el.type }}
-                </q-chip>
-              </q-item-tile>
-              <q-item-tile v-if="el.range" sublabel>
-                <q-chip dense square color="green">
-                  {{ el.range }}
-                </q-chip>
-              </q-item-tile> -->
             </q-item-main>
             <q-item-side right v-if="el.type">
               <q-item-tile>

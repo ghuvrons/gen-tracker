@@ -1,13 +1,8 @@
 <template>
   <div class="row" :style="{ height: height + 'px' }">
     <div class="col-xs-12" :class="{ 'col-sm-6': showStreetView }">
-      <gmap-map
-        class="fit"
-        :center="centerPosition"
-        :zoom="zoom"
-        map-type-id="roadmap"
-      >
-        <gmap-marker v-if="!position.error" :position="position"></gmap-marker>
+      <gmap-map class="fit" :center="center" :zoom="zoom" map-type-id="roadmap">
+        <gmap-marker v-if="position.valid" :position="position"></gmap-marker>
         <gmap-polyline
           v-if="path.length > 0"
           :path="path"
@@ -30,6 +25,9 @@
 </template>
 
 <script>
+import { genPosition } from 'components/js/map'
+import { config } from 'components/js/config'
+import { Field } from 'components/js/helper'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
 
@@ -39,22 +37,17 @@ export default {
     height: Number,
     pageWidth: Number
   },
-  created() {
-    this.zoom = this.$_.cloneDeep(this.$config.map.zoom)
-    this.centerPosition = this.$_.cloneDeep(this.$config.map.centerIndonesia)
-    this.position = {
-      ...this.$_.cloneDeep(this.$config.map.centerIndonesia),
-      error: true
-    }
-  },
   data() {
     return {
-      zoom: 0,
-      centerPosition: null,
-      position: null,
-      path: [],
+      center: { ...config.map.centerIndonesia },
+      position: {
+        ...config.map.centerIndonesia,
+        valid: false
+      },
+      zoom: config.map.zoom,
       pov: null,
-      pano: null
+      pano: null,
+      path: []
     }
   },
   computed: {
@@ -71,89 +64,48 @@ export default {
     updatePano(pano) {
       this.pano = pano
     },
-    generatePosition(report) {
-      let pos = {
-        ...this.$_.cloneDeep(this.$config.map.centerIndonesia),
-        error: true
-      }
-
-      if (report) {
-        if (report.frameID === this.$config.frame.id.FULL) {
-          pos.lng = report.data.find(
-            ({ field }) => field === 'gpsLongitude'
-          ).value
-          pos.lat = report.data.find(
-            ({ field }) => field === 'gpsLatitude'
-          ).value
-          pos.error = !this.isIndonesia(pos)
-        }
-      }
-
-      return pos
-    },
-    getCurrentHeading(report) {
-      if (report)
-        if (report.frameID === this.$config.frame.id.FULL)
-          return report.data.find(({ field }) => field === 'gpsHeading').value
-      return 0
-    },
-    setPosition({ lng, lat, error }) {
-      if (!error) {
+    setPosition({ valid, ...location }) {
+      if (valid) {
         this.zoom = 17
-        this.centerPosition = { lng, lat }
+        this.center = { ...location }
       } else {
-        this.zoom = this.$_.cloneDeep(this.$config.map.zoom)
-        this.centerPosition = this.$_.cloneDeep(
-          this.$config.map.centerIndonesia
-        )
+        this.zoom = config.map.zoom
+        this.center = { ...config.map.centerIndonesia }
       }
-      this.position = { lng, lat, error }
-    },
-    setPath(reports) {
-      // reset map
-      this.path = []
-      if (reports.length > 0) {
-        // set the path
-        reports.forEach((report) => {
-          let frameID = report.data.find(({ field }) => field === 'frameID')
-            .value
-          // only handle gps on full frame
-          if (frameID === this.$config.frame.id.FULL) {
-            let { lng, lat, error } = this.generatePosition(report)
-            // add path (valid area only)
-            if (!error) this.path.push({ lng, lat, error })
-          }
-        })
-        // set the position
-        this.setPosition(this.generatePosition(this.theReport))
-      }
-    },
-    isIndonesia({ lng, lat }) {
-      let { borderIndonesia } = this.$config.map
-      return (
-        lng > borderIndonesia.lngMin &&
-        lng < borderIndonesia.lngMax &&
-        lat > borderIndonesia.latMin &&
-        lat < borderIndonesia.latMax
-      )
+      this.position = { ...location, valid }
     }
+    // setPath(reports) {
+    //   this.path = []
+    //   if (reports.length > 0) {
+    //     let paths = reports
+    //       .filter((report) => genPosition(report).valid)
+    //       .reduce((carry, report) => carry.concat(genPosition(report)), [])
+    //     this.path.push(...paths)
+    //     this.setPosition(genPosition(this.theReport))
+    //   }
+    // }
   },
   watch: {
-    theReport: {
-      immediate: true,
-      handler(report) {
-        this.setPosition(this.generatePosition(report))
-        if (this.pov)
-          this.updatePov({
-            ...this.pov,
-            heading: this.getCurrentHeading(report)
-          })
-      }
-    },
     devReports: {
       immediate: true,
       handler(reports) {
-        this.setPath(reports)
+        if (reports.length > 0) {
+          let pos = genPosition(report[0])
+          if (pos.valid) this.path.push(pos)
+        }
+      }
+    },
+    theReport: {
+      immediate: true,
+      handler(report) {
+        if (report) {
+          this.setPosition(genPosition(report))
+          // if (this.pov)
+          this.updatePov({
+            ...this.pov,
+            heading: getHeading(report)
+          })
+        }
       }
     }
   }

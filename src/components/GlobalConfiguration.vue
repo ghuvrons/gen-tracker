@@ -25,12 +25,17 @@
         :labels="exportedLabel"
         :name="exportedFilename"
       >
-        <q-btn class="q-ma-xs" icon="cloud_download" label="Download CSV" />
+        <q-btn
+          class="q-ma-xs"
+          icon="cloud_download"
+          color="green"
+          label="Download CSV"
+        />
       </json-csv>
     </div>
     <div class="col-auto">
       <q-toggle
-        v-model="timeCalibrationState"
+        v-model="calibrationState"
         label="Time Calibration"
         class="q-ma-xs"
       />
@@ -41,10 +46,10 @@
 <script>
 import JsonCsv from 'vue-json-csv'
 import moment from 'moment'
-import { Report } from '../components/js/frame'
+import { Report } from 'components/js/frame'
 import { devReports } from '../store/db/getter-types'
 import { RESET_DATABASE } from '../store/db/action-types'
-import { TOGGLE_TIME_CALIBRATION } from '../store/db/mutation-types'
+import { TOGGLE_CALIBRATION } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
@@ -53,14 +58,14 @@ export default {
     JsonCsv
   },
   computed: {
-    ...mapState('db', ['units', 'timeCalibration']),
+    ...mapState('db', ['units', 'calibration']),
     ...mapGetters('db', [devReports]),
-    timeCalibrationState: {
+    calibrationState: {
       get() {
-        return this.timeCalibration
+        return this.calibration
       },
       set(value) {
-        this.TOGGLE_TIME_CALIBRATION()
+        this.TOGGLE_CALIBRATION()
       }
     },
     exportedData() {
@@ -96,7 +101,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('db', [TOGGLE_TIME_CALIBRATION]),
+    ...mapMutations('db', [TOGGLE_CALIBRATION]),
     ...mapActions('db', [RESET_DATABASE]),
     clearStore() {
       this.$q

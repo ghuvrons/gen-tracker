@@ -1,4 +1,5 @@
 import { config } from "components/js/config";
+import { Field } from "components/js/helper";
 import { Header, Report } from "components/js/frame";
 import { Command, COMMAND_LIST } from "components/js/command";
 import { Response, RESPONSE_LIST } from "components/js/response";
@@ -22,9 +23,7 @@ const parseFrame = (hexData, frame) => {
 
 const parseReport = (hexData) => {
   let header = parseFrame(hexData, Header);
-
-  let frameID = header.find(({ field }) => field === "frameID").value;
-  let unitID = header.find(({ field }) => field === "unitID").value;
+  let { frameID, unitID } = Field(header, ["frameID", "unitID"]);
 
   let report = Report.filter((el) => {
     let { frame } = config;
@@ -46,10 +45,9 @@ const parseResponse = ({ payload, unitID }, hexData) => {
 
   if (hexData) {
     let data = parseFrame(hexData, Response);
-    let codeData = data.find(({ field }) => field === "code").value;
 
-    resCode = RESPONSE_LIST.find(({ code }) => code === codeData);
-    message = data.find(({ field }) => field === "message").value;
+    resCode = RESPONSE_LIST.find(({ code }) => code === Field(data, "code"));
+    message = Field(data, "message");
   } else {
     resCode = RESPONSE_LIST.find(({ name }) => name === "timeout");
     message = null;
@@ -64,6 +62,7 @@ const parseResponse = ({ payload, unitID }, hexData) => {
 };
 
 const buildCommand = (cmd) => {
+  if (!cmd) return;
   return Command.reduce((carry, el, idx) => {
     let { field, format } = Command[Command.length - 1 - idx];
 
@@ -93,6 +92,8 @@ const buildCommand = (cmd) => {
 const parseCommand = (payload) => {
   let prop = payload;
   let value = null;
+
+  if (!payload) return;
 
   // check is has value
   if (payload.indexOf("=") > -1) {

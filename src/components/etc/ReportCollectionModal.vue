@@ -1,7 +1,7 @@
 <template>
   <q-modal
     v-model="modalOpen"
-    @show="statistics.render = true"
+    @show="collection.render = true"
     @hide="stopRender()"
     :content-css="{ minWidth: '90vw', minHeight: '95vh' }"
   >
@@ -9,7 +9,7 @@
       <q-toolbar slot="header">
         <q-btn flat round dense v-close-overlay icon="keyboard_arrow_left" />
         <q-toolbar-title>
-          Report Statistics
+          Report Collection
           <q-chip color="red" dense square v-if="chart.data">{{
             chart.data.labels.length
           }}</q-chip>
@@ -22,11 +22,11 @@
         </q-toolbar-title>
       </q-toolbar>
 
-      <div class="layout-padding" v-if="statistics.render">
+      <div class="layout-padding" v-if="collection.render">
         <div class="row gutter-sm justify-between">
           <div
             :class="
-              statistics.field.field === 'eventsGroup'
+              collection.field.field === 'eventsGroup'
                 ? 'col-sm-12 col-md-7 col-lg-8'
                 : 'col-12'
             "
@@ -37,19 +37,19 @@
               }"
               :chart-data="chart.data"
               :options="chart.options"
-              :update-data="statistics.update.data"
-              :update-options="statistics.update.options"
+              :update-data="collection.update.data"
+              :update-options="collection.update.options"
             />
             <q-range
               v-model="range.value"
               :min="range.min"
               :max="range.max"
               :disable="range.disable"
+              :drag-range="range.control.drag"
               label
               snap
               square
               label-always
-              :drag-range="range.control.drag"
             />
             <div class="row justify-between items-center content-center">
               <div class="col-auto">
@@ -93,46 +93,15 @@
               </div>
             </div>
           </div>
+
           <div
-            v-if="statistics.field.field === 'eventsGroup'"
+            v-if="collection.field.field === 'eventsGroup'"
             class="col-sm-12 col-md-5 col-lg-4"
           >
-            <q-list dense>
-              <q-scroll-area
-                class="bg-white"
-                :style="{
-                  height: (height < 150 ? 150 : height) + 110 + 'px',
-                }"
-              >
-                <template v-for="(events, name) in devEvents">
-                  <q-collapsible
-                    :key="name"
-                    :label="`${name} `"
-                    :sublabel="`(${events.length}) times`"
-                    :header-class="`text-${
-                      activeEvent(name) ? 'green' : 'grey'
-                    }`"
-                    separator
-                    dense
-                  >
-                    <q-list dense>
-                      <q-item
-                        v-for="event in events"
-                        :key="`${name}-${event.seqID}`"
-                        separator
-                        dense
-                      >
-                        <q-item-main>
-                          <q-item-tile sublabel>
-                            {{ event.seqID }}
-                          </q-item-tile>
-                        </q-item-main>
-                      </q-item>
-                    </q-list>
-                  </q-collapsible>
-                </template>
-              </q-scroll-area>
-            </q-list>
+            <event-group-reader
+              :height="height"
+              :value="currentValue"
+            ></event-group-reader>
           </div>
         </div>
       </div>
@@ -141,16 +110,17 @@
 </template>
 
 <script>
-import LineChart from 'components/etc/LineChart'
-import { Events } from 'components/js/events'
-import { devReports, devEvents } from '../store/db/getter-types'
+import { Field } from 'components/js/helper'
+import { devReports } from '../../store/db/getter-types'
 import { mapGetters } from 'vuex'
-const Long = require('long')
+import LineChart from 'components/etc/LineChart'
+import EventGroupReader from 'components/etc/EventGroupReader'
 
 export default {
   // name: 'ComponentName',
   components: {
-    LineChart
+    LineChart,
+    EventGroupReader
   },
   props: {
     data: Object,
@@ -158,7 +128,6 @@ export default {
   },
   data() {
     return {
-      events: this.$_.cloneDeep(Events),
       currentValue: 0,
       modalOpen: false,
       sample: {
@@ -182,7 +151,7 @@ export default {
           max: 10
         }
       },
-      statistics: {
+      collection: {
         render: false,
         field: null,
         update: {
@@ -246,13 +215,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('db', [devReports, devEvents])
+    ...mapGetters('db', [devReports])
   },
   methods: {
-    activeEvent(name) {
-      let bit = Events.find(({ name: _name }) => _name === name).bit
-      return Long.fromNumber(this.currentValue, 1).shiftRight(bit) & 1
-    },
     changeChartData({ yData, xData, yLabel, title }) {
       this.chart.options.scales.yAxes[0].scaleLabel.labelString = yLabel
       this.chart.data.labels = xData
@@ -260,7 +225,7 @@ export default {
       this.chart.data.datasets[0].label = title
 
       // trigger update
-      this.statistics.update.data = !this.statistics.update.data
+      this.collection.update.data = !this.collection.update.data
     },
     changeChartOptions({ xMin, xMax, beginAtZero }) {
       let data = this.chart.data.datasets[0].data
@@ -291,12 +256,12 @@ export default {
       this.chart.options.scales.yAxes[0].ticks.min = yMin
       this.chart.options.scales.yAxes[0].ticks.beginAtZero = beginAtZero
       // trigger update
-      this.statistics.update.options = !this.statistics.update.options
+      this.collection.update.options = !this.collection.update.options
     },
-    readReportStatistics(dataField) {
-      this.statistics.field = dataField
+    readReportCollection(dataField) {
+      this.collection.field = dataField
       // build the datasets
-      this.buildReportStatistics()
+      this.buildReportCollection()
       // calculate min
       let min = this.range.min
       if (!this.range.control.maximize)
@@ -310,23 +275,21 @@ export default {
       // open the chart
       this.modalOpen = true
     },
-    buildReportStatistics() {
+    buildReportCollection() {
       // reset chart
       let datasets = []
       let labels = []
       // get datasets
       this.devReports.forEach(({ data }) => {
         let theField = data.find(
-          ({ field }) => field === this.statistics.field.field
+          ({ field }) => field === this.collection.field.field
         )
         // is data-field exist on this report
         if (theField) {
           // insert to datasets
           datasets.push(theField.value)
           // insert the label
-          let sequentialID = data.find(({ field }) => field === 'sequentialID')
-            .value
-          labels.push(sequentialID)
+          labels.push(Field(data, 'sequentialID'))
           // labels.push(datasets.length)
         }
       })
@@ -334,15 +297,15 @@ export default {
       this.changeChartData({
         xData: labels.reverse(),
         yData: datasets.reverse(),
-        yLabel: this.statistics.field.unit || 'Value',
-        title: this.statistics.field.title
+        yLabel: this.collection.field.unit || 'Value',
+        title: this.collection.field.title
       })
       // set range (always update on data change)
       this.range.min = this.$_.min(labels)
       this.range.max = this.$_.max(labels)
     },
     stopRender() {
-      this.statistics.render = false
+      this.collection.render = false
       this.$emit('close')
     }
   },
@@ -352,15 +315,15 @@ export default {
       handler(data) {
         if (data)
           if (data.chartable && this.devReports.length > 1)
-            this.readReportStatistics(data)
+            this.readReportCollection(data)
       }
     },
     devReports: {
       immediate: true,
       handler(val) {
-        if (this.statistics.render) {
+        if (this.collection.render) {
           // update datasets
-          this.buildReportStatistics()
+          this.buildReportCollection()
           // update follow data
           if (this.range.control.follow) {
             let min = this.range.value.min

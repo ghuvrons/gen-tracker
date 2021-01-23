@@ -32,20 +32,20 @@
       >
         <q-list highlight link dense separator v-if="devReports.length > 0">
           <q-item
-            v-for="(el, index) in devReports"
+            v-for="(report, index) in devReports"
             :key="index"
             :class="{
-              'bg-dark text-white': el.hexData === theReport.hexData,
+              'bg-dark text-white': report.hexData === theReport.hexData,
             }"
-            @click.native="setTheReport(el)"
+            @click.native="SET_THE_REPORT(report)"
           >
             <q-item-side>
               <q-chip color="primary" dense square>
                 <!-- {{devReports.length - index}} -->
-                {{ getSequentialID(el.data) }}
+                {{ getSeqID(report.data) }}
               </q-chip>
             </q-item-side>
-            <q-item-main :label="el.hexData" class="q-caption" />
+            <q-item-main :label="report.hexData" class="q-caption" />
           </q-item>
         </q-list>
         <q-alert v-else icon="info" color="faded" class="q-ma-xs">
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { Field } from 'components/js/helper'
 import { devReports } from '../store/db/getter-types'
 import { SET_THE_REPORT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
@@ -80,11 +81,8 @@ export default {
   },
   methods: {
     ...mapMutations('db', [SET_THE_REPORT]),
-    setTheReport(report) {
-      this.SET_THE_REPORT(report)
-    },
-    getSequentialID(data) {
-      return data.find(({ field }) => field === 'sequentialID').value
+    getSeqID(data) {
+      return Field(data, 'sequentialID')
     }
   },
   watch: {
@@ -95,40 +93,49 @@ export default {
     },
     devReports: {
       immediate: true,
-      handler(newReports, oldReports) {
-        let newReport = newReports[0]
-        let trigger = false
-        let oldReportsLength = 0
+      handler(reports) {
+        // let newReport = newReports[0]
+        // let trigger = false
+        // let oldReportsLength = 0
 
-        // get last reporst length
-        if (oldReports) oldReportsLength = oldReports.length
+        // if (oldReports) oldReportsLength = oldReports.length
 
-        // checking
-        if (!this.theReport)
-          // set for the first time (theReport is null)
-          trigger = true
-        else if (newReport.unitID !== this.theReport.unitID)
-          // set again on different unitID
-          trigger = true
-        else {
-          // only update if got new data
-          if (newReports.length !== oldReportsLength) {
-            if (this.lock.follow) {
-              // same unitID, but lock.follow is active
-              trigger = true
-              // only follow mapable reports
-              if (this.lock.mapable) {
-                // find the latest mapable report (it can be other than the report input)
-                let reportMapable = newReports.find(
-                  ({ frameID }) => frameID === this.$config.frame.id.FULL
-                )
-                if (reportMapable) newReport = reportMapable
-              }
-            }
+        // if (!this.theReport)
+        //   // set for the first time (theReport is null)
+        //   trigger = true
+        // else if (newReport.unitID !== this.theReport.unitID)
+        //   // set again on different unitID
+        //   trigger = true
+
+        // else {
+        //   // only update if got new data
+        //   if (newReports.length !== oldReportsLength) {
+        //     if (this.lock.follow) {
+        //       // same unitID, but lock.follow is active
+        //       trigger = true
+        //       // only follow mapable reports
+        //       if (this.lock.mapable) {
+        //         // find the latest mapable report (it can be other than the report input)
+        //         let reportMapable = newReports.find(
+        //           ({ frameID }) => frameID === this.$config.frame.id.FULL
+        //         )
+        //         if (reportMapable) newReport = reportMapable
+        //       }
+        //     }
+        //   }
+        // }
+        // if (trigger) this.SET_THE_REPORT(newReport)
+
+        if (reports.length > 0)
+          if (this.lock.follow) {
+            let report = reports[0]
+
+            if (this.lock.mapable)
+              report = reports.find(
+                ({ frameID }) => frameID === this.$config.frame.id.FULL
+              )
+            this.SET_THE_REPORT(report)
           }
-        }
-
-        if (trigger) this.setTheReport(newReport)
       }
     }
   }

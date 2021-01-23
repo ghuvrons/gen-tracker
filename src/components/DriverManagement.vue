@@ -62,28 +62,21 @@ import {
 } from '../store/db/mutation-types'
 import { devFingers } from '../store/db/getter-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import { makeFingerID } from 'components/js/utils'
+import { genFingerID } from 'components/js/utils'
 
 export default {
   // name: 'ComponentName',
   props: {
     height: Number
   },
-  created() {
-    this.$root.$on('hookResponseFinger', this.hookResponse)
-  },
-  destroyed() {
-    this.$root.$off('hookResponseFinger', this.hookResponse)
-  },
   computed: {
-    ...mapState('db', ['loading', 'theUnit']),
+    ...mapState('db', ['loading', 'theUnit', 'commands']),
     ...mapGetters('db', [devFingers])
   },
   methods: {
     ...mapMutations('db', [ADD_FINGERS, DELETE_FINGERS, RESET_FINGERS]),
     addFinger() {
-      let id = makeFingerID(this.devFingers)
-
+      let id = genFingerID(this.devFingers)
       if (id < 0) {
         this.$q.notify({ message: 'Finger full.' })
         return
@@ -104,6 +97,7 @@ export default {
         .then((data) =>
           this.$root.$emit('executeCommand', `FINGER_ADD=${id},${data}`)
         )
+        .catch(() => {})
     },
     deleteFinger(driver) {
       this.$q
@@ -128,30 +122,19 @@ export default {
         })
         .then(() => this.$root.$emit('executeCommand', `FINGER_RST`))
         .catch(() => {})
-    },
+    }
+  },
+  watch: {
+    commands: function (commands) {
+      if (commands.length > 0) {
+        const { resCode, unitID, command, value: fingerID } = commands[0]
 
-    hookResponse({ unitID, command, value }) {
-      switch (command) {
-        case 'FINGER_ADD':
-          this.ADD_FINGERS({
-            fingerID: value,
-            unitID
-          })
-          break
-        case 'FINGER_DEL':
-          this.DELETE_FINGERS({
-            fingerID: value,
-            unitID
-          })
-          break
-        case 'FINGER_RST':
-          this.RESET_FINGERS({
-            unitID
-          })
-          break
-
-        default:
-          break
+        if (resCode.title == 'OK') {
+          if (command == 'FINGER_ADD') this.ADD_FINGERS({ fingerID, unitID })
+          else if (command == 'FINGER_DEL')
+            this.DELETE_FINGERS({ fingerID, unitID })
+          else if (command == 'FINGER_RST') this.RESET_FINGERS({ unitID })
+        }
       }
     }
   }

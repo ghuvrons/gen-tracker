@@ -4,7 +4,7 @@ import actions from "./actions";
 
 const state = {
   loading: false,
-  timeCalibration: false,
+  calibration: false,
   theUnit: null,
   theReport: null,
   theCommand: null,

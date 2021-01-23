@@ -18,25 +18,24 @@
           :link="devReports.length > 1 && data.chartable"
           :key="data.field"
           :class="{ 'bg-dark text-white': activeField(data) }"
-          @click.native="openReportStatistics(data)"
+          @click.native="collectionData = data"
         >
           <q-item-main>
             <q-item-tile label>{{ data.title }}</q-item-tile>
-            <q-item-tile
-              sublabel
-              :text-color="activeField(data) ? 'yellow' : null"
+            <q-item-tile sublabel
               >{{ data.output }} {{ data.unit }}</q-item-tile
             >
           </q-item-main>
           <q-item-side right color="green" icon="cloud_download" />
         </q-item>
+
         <!-- add latest optional frame -->
         <q-item
           v-for="data in optionalReport"
           :link="devReports.length > 1 && data.chartable"
           :key="data.field"
           :class="{ 'bg-dark text-white': activeField(data) }"
-          @click.native="openReportStatistics(data)"
+          @click.native="collectionData = data"
         >
           <q-item-main>
             <q-item-tile label>{{ data.title }}</q-item-tile>
@@ -63,31 +62,31 @@
       </q-alert>
     </q-scroll-area>
 
-    <report-statistics
+    <report-collection-modal
       :height="height - 210"
-      :data="statisticsData"
-      @close="closeReportStatistics()"
+      :data="collectionData"
+      @close="collectionData = null"
     >
-    </report-statistics>
+    </report-collection-modal>
   </div>
 </template>
 
 <script>
-import ReportStatistics from 'components/ReportStatistics'
+import ReportCollectionModal from 'components/etc/ReportCollectionModal'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
   // name: 'ComponentName',
   components: {
-    ReportStatistics
+    ReportCollectionModal
   },
   props: {
     height: Number
   },
   data() {
     return {
-      statisticsData: null
+      collectionData: null
     }
   },
   computed: {
@@ -97,36 +96,23 @@ export default {
       return this.theReport.data.filter(({ required }) => required)
     },
     optionalReport() {
-      let nearestOptional = []
-
-      // use nearest full frame
-      let selectedIndex = this.devReports.findIndex(
+      let index = this.devReports.findIndex(
         ({ hexData }) => hexData === this.theReport.hexData
       )
-      for (let index = selectedIndex; index >= 0; index--) {
-        if (this.devReports[index].frameID === this.$config.frame.id.FULL) {
-          nearestOptional = this.devReports[index].data.filter(
-            ({ required }) => !required
-          )
-          break
-        }
+
+      while (index < this.devReports.length) {
+        let previous = this.devReports[index++]
+        if (previous.frameID === this.$config.frame.id.FULL)
+          return previous.data.filter(({ required }) => !required)
       }
 
-      return nearestOptional
+      return []
     }
   },
   methods: {
-    openReportStatistics(data) {
-      this.statisticsData = data
-    },
-    closeReportStatistics() {
-      this.statisticsData = null
-    },
-    activeField(data) {
-      let active = false
-      if (this.statisticsData) active = data.field === this.statisticsData.field
-
-      return active
+    activeField({ field }) {
+      if (this.collectionData) return this.collectionData.field == field
+      return false
     }
   }
 }

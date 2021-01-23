@@ -4,8 +4,8 @@ export default {
   [mutations.SET_LOADING](state, payload) {
     state.loading = payload;
   },
-  [mutations.TOGGLE_TIME_CALIBRATION](state) {
-    state.timeCalibration = !state.timeCalibration;
+  [mutations.TOGGLE_CALIBRATION](state) {
+    state.calibration = !state.calibration;
   },
   [mutations.CLEAR_ALL](state) {
     // state.theUnit = null
