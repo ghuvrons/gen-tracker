@@ -5,32 +5,29 @@ export default {
   // name: 'ComponentName',
   extends: Line,
   props: {
-    updateData: {
-      type: Boolean,
-      default: false
-    },
-    updateOptions: {
-      type: Boolean,
-      default: false
-    },
-    chartData: {
+    param: {
       type: Object,
-      default: null
+      required: true
     },
-    options: {
-      type: Object,
-      default: null
+    update: {
+      type: Boolean,
+      required: true
     }
   },
   mounted() {
-    this.renderChart(this.chartData, this.options)
+    this.render()
+  },
+  methods: {
+    render() {
+      this.renderChart(this.param.data, this.param.options)
+    }
   },
   watch: {
-    updateData(val) {
+    'update.data': function (val) {
       this.$data._chart.update()
     },
-    updateOptions(val) {
-      this.renderChart(this.chartData, this.options)
+    'update.options': function (val) {
+      this.render()
     }
   }
 }

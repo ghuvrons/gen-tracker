@@ -35,10 +35,8 @@
               :styles="{
                 height: (height < 200 ? 200 : height) + 'px',
               }"
-              :chart-data="chart.data"
-              :options="chart.options"
-              :update-data="collection.update.data"
-              :update-options="collection.update.options"
+              :param="chart"
+              :update="collection.update"
             />
             <q-range
               v-model="range.value"
