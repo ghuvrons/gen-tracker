@@ -1,14 +1,27 @@
-import { config } from "components/js/opt/config";
-import { Field } from "components/js/helper";
 import _ from "lodash";
+import { config } from "components/js/opt/config";
+import { Report } from "components/js/report";
+
 const moment = require("moment-timezone");
 const tzlookup = require("tz-lookup");
 
+const getField = (arr, fields) => {
+  if (Array.isArray(fields))
+    return fields.reduce(
+      (carry, _field) => ({
+        ...carry,
+        [fields]: arr.find(({ field }) => field === _field).value,
+      }),
+      {}
+    );
+  return arr.find(({ field }) => field === _field).value;
+};
+
 const calibrateTime = (data) => {
   let timezone = _.clone(config.timezone);
-  let lat = Field(data, "gpsLatitude");
-  let lng = Field(data, "gpsLongitude");
-  let sendTime = Field(data, "rtcSendDatetime");
+  let lat = getField(data, "gpsLatitude");
+  let lng = getField(data, "gpsLongitude");
+  let sendTime = getField(data, "rtcSendDatetime");
 
   // correct timestamp if not sync with server
   if (lat && lng) timezone = tzlookup(lat, lng);
@@ -40,4 +53,45 @@ const genFingerID = (devFingers) => {
   return id;
 };
 
-export { calibrateTime, genFingerID };
+const makeExportData = (devReports) => {
+  return (
+    devReports
+      // .reverse()
+      .map(({ data }) =>
+        data
+          .reverse()
+          .filter(({ chartable }) => chartable)
+          .reduce(
+            (carry, { field, value, output, unit }) => ({
+              ...carry,
+              [field]: output,
+            }),
+            {}
+          )
+      )
+  );
+};
+
+const makeExportLabel = () => {
+  return Report.reduce(
+    (carry, { field, title, unit }) => ({
+      ...carry,
+      [field]: title + (unit ? ` (${unit})` : ""),
+    }),
+    {}
+  );
+};
+
+const makeExportFilename = () => {
+  let now = moment().format("YYYYMMDDHHmmss");
+  return `tracking-${now}.csv`;
+};
+
+export {
+  getField,
+  calibrateTime,
+  genFingerID,
+  makeExportData,
+  makeExportLabel,
+  makeExportFilename,
+};

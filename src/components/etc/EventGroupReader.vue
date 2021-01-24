@@ -42,7 +42,7 @@ import { devEvents } from '../../store/db/getter-types'
 export default {
   props: {
     height: Number,
-    value: Number
+    currentValue: Number
   },
   data() {
     return {
@@ -55,7 +55,7 @@ export default {
   methods: {
     activeEvent(_name) {
       let bit = EVENT_LIST.find(({ name }) => name === _name).bit
-      return parseEvent(this.value, bit)
+      return parseEvent(this.currentValue, bit)
     }
   }
 }

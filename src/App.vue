@@ -6,9 +6,8 @@
 
 <script>
 import { validateFrame } from 'components/js/frame'
-import { calibrateTime } from 'components/js/utils'
+import { getField, calibrateTime } from 'components/js/utils'
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import { Field } from 'components/js/helper'
 import { uniqueReport } from './store/db/getter-types'
 import {
   SET_LOADING,
@@ -63,7 +62,7 @@ export default {
         return
       }
 
-      let { unitID, frameID, sequentialID } = Field(header, [
+      let { unitID, frameID, sequentialID } = getField(header, [
         'unitID',
         'frameID',
         'sequentialID'

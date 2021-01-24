@@ -1,5 +1,5 @@
 import { config } from "components/js/opt/config";
-import { Field } from "components/js/helper";
+import { getField } from "components/js/utils";
 
 const isIndonesia = ({ lng, lat }) => {
   let { borderIndonesia } = config.map;
@@ -18,8 +18,8 @@ const genPosition = (report) => {
   };
 
   if (report && report.frameID === config.frame.id.FULL) {
-    pos.lng = Field(report.data, "gpsLongitude");
-    pos.lat = Field(report.data, "gpsLatitude");
+    pos.lng = getField(report.data, "gpsLongitude");
+    pos.lat = getField(report.data, "gpsLatitude");
     pos.valid = isIndonesia(pos);
   }
 
@@ -29,7 +29,7 @@ const genPosition = (report) => {
 const getHeading = (report) => {
   if (report)
     if (report.frameID === config.frame.id.FULL)
-      return Field(report.data, "gpsHeading");
+      return getField(report.data, "gpsHeading");
   return 0;
 };
 

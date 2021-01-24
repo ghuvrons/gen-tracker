@@ -8,7 +8,7 @@
         <q-btn flat round dense v-close-overlay icon="keyboard_arrow_left" />
         <q-toolbar-title>
           Command List
-          <q-chip color="red" dense square>{{ commandList.length }}</q-chip>
+          <q-chip color="red" dense square>{{ COMMAND_LIST.length }}</q-chip>
         </q-toolbar-title>
       </q-toolbar>
 
@@ -55,29 +55,24 @@
 </template>
 
 <script>
+import { COMMAND_LIST } from 'components/js/command'
 import { FlowFilter } from 'components/js/helper'
 
 export default {
+  emits: ['select'],
   props: {
     value: {
       required: true,
       type: Boolean
-    },
-    commandList: {
-      required: true,
-      type: Array
     }
   },
-  emits: ['select'],
   data() {
     return {
+      COMMAND_LIST: this.$_.cloneDeep(COMMAND_LIST),
       keyword: ''
     }
   },
   computed: {
-    searchResult() {
-      return FlowFilter(this.commandList, this.keyword)
-    },
     modalOpen: {
       get() {
         return this.value
@@ -85,6 +80,9 @@ export default {
       set(value) {
         this.$emit('input', value)
       }
+    },
+    searchResult() {
+      return FlowFilter(this.COMMAND_LIST, this.keyword)
     }
   }
 }

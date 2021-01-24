@@ -100,7 +100,7 @@
           >
             <event-group-reader
               :height="height"
-              :value="currentValue"
+              :current-value="currentValue"
             ></event-group-reader>
           </div>
         </div>
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { Field } from 'components/js/helper'
+import { getField } from 'components/js/utils'
 import { devReports } from '../../store/db/getter-types'
 import { mapGetters } from 'vuex'
 import LineChart from 'components/etc/LineChart'
@@ -300,7 +300,7 @@ export default {
           // insert to datasets
           datasets.push(theField.value)
           // insert the label
-          labels.push(Field(data, 'sequentialID'))
+          labels.push(getField(data, 'sequentialID'))
           // labels.push(datasets.length)
         }
       })

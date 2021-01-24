@@ -1,5 +1,5 @@
 import { groupBy } from "lodash";
-import { Field } from "components/js/helper";
+import { getField } from "components/js/utils";
 import { EVENT_LIST, parseEvent } from "components/js/event";
 import * as getters from "./getter-types";
 
@@ -10,7 +10,7 @@ export default {
   [getters.uniqueReport]: ({ reports }) => (unitID, sequentialID) => {
     return !reports.find(
       ({ data, unitID: _unitID }) =>
-        _unitID === unitID && sequentialID == Field(data, "sequentialID")
+        _unitID === unitID && sequentialID == getField(data, "sequentialID")
     );
   },
   [getters.devReports]({ reports, theUnit }) {
@@ -22,9 +22,9 @@ export default {
     let events = getters.devReports.reduce((carry, { data }) => {
       return carry.concat(
         ...EVENT_LIST.filter(({ bit }) =>
-          parseEvent(Field(data, "eventsGroup"), bit)
+          parseEvent(getField(data, "eventsGroup"), bit)
         ).map(({ name }) => ({
-          seqID: Field(data, "sequentialID"),
+          seqID: getField(data, "sequentialID"),
           name,
         }))
       );

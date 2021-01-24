@@ -67,18 +67,6 @@ const AsciiToHex = (str) => {
   return arr.join("");
 };
 
-const Field = (arr, fields) => {
-  if (Array.isArray(fields))
-    return fields.reduce(
-      (carry, _field) => ({
-        ...carry,
-        [fields]: arr.find(({ field }) => field === _field).value,
-      }),
-      {}
-    );
-  return arr.find(({ field }) => field === _field).value;
-};
-
 export {
   Dot,
   HexToAscii,
@@ -89,5 +77,4 @@ export {
   AsciiToHex,
   ChangeEndian,
   FlowFilter,
-  Field,
 };

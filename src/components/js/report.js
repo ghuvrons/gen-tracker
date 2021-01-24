@@ -1,10 +1,11 @@
 import { config } from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
+import { getField } from "components/js/utils";
 import { Header, parseFrame } from "components/js/frame";
 
 const parseReport = (hexData) => {
   let header = parseFrame(hexData, Header);
-  let { frameID, unitID } = Field(header, ["frameID", "unitID"]);
+  let { frameID, unitID } = getField(header, ["frameID", "unitID"]);
 
   let report = Report.filter((el) => {
     let { frame } = config;

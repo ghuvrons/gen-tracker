@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { Field } from 'components/js/helper'
+import { getField } from 'components/js/utils'
 import { devReports } from '../store/db/getter-types'
 import { SET_THE_REPORT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
@@ -82,7 +82,7 @@ export default {
   methods: {
     ...mapMutations('db', [SET_THE_REPORT]),
     getSeqID(data) {
-      return Field(data, 'sequentialID')
+      return getField(data, 'sequentialID')
     }
   },
   watch: {

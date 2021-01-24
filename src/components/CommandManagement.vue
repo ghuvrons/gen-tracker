@@ -39,7 +39,6 @@
 
     <command-list-modal
       v-model="modalOpen"
-      :command-list="COMMAND_LIST"
       @select="selectCommand"
     ></command-list-modal>
   </div>
@@ -49,7 +48,7 @@
 import { COMMAND_LIST } from 'components/js/command'
 import { SET_COMMAND_BUFFER } from '../store/db/mutation-types'
 import { mapState, mapMutations } from 'vuex'
-import CommandListModal from './etc/CommandListModal.vue'
+import CommandListModal from 'components/etc/CommandListModal.vue'
 
 export default {
   // name: 'ComponentName',

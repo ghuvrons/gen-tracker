@@ -45,8 +45,7 @@
 
 <script>
 import JsonCsv from 'vue-json-csv'
-import moment from 'moment'
-import { Report } from 'components/js/report'
+import { makeExportData, makeExportLabel } from 'components/js/utils'
 import { devReports } from '../store/db/getter-types'
 import { RESET_DATABASE } from '../store/db/action-types'
 import { TOGGLE_CALIBRATION } from '../store/db/mutation-types'
@@ -69,35 +68,13 @@ export default {
       }
     },
     exportedData() {
-      return (
-        this.devReports
-          // .reverse()
-          .map(({ data }) =>
-            data
-              .reverse()
-              .filter(({ chartable }) => chartable)
-              .reduce(
-                (carry, { field, value, output, unit }) => ({
-                  ...carry,
-                  [field]: output
-                }),
-                {}
-              )
-          )
-      )
+      return makeExportData(this.devReports)
     },
     exportedLabel() {
-      return Report.reduce(
-        (carry, { field, title, unit }) => ({
-          ...carry,
-          [field]: title + (unit ? ` (${unit})` : '')
-        }),
-        {}
-      )
+      return makeExportLabel()
     },
     exportedFilename() {
-      let now = moment().format('YYYYMMDDHHmmss')
-      return `tracking-${now}.csv`
+      return makeExportFilename()
     }
   },
   methods: {
