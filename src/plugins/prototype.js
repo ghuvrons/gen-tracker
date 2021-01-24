@@ -1,4 +1,4 @@
-import { config } from "components/js/config";
+import { config } from "components/js/opt/config";
 import _ from "lodash";
 
 export default ({ Vue }) => {

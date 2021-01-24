@@ -46,7 +46,7 @@
 <script>
 import JsonCsv from 'vue-json-csv'
 import moment from 'moment'
-import { Report } from 'components/js/frame'
+import { Report } from 'components/js/report'
 import { devReports } from '../store/db/getter-types'
 import { RESET_DATABASE } from '../store/db/action-types'
 import { TOGGLE_CALIBRATION } from '../store/db/mutation-types'

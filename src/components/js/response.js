@@ -1,62 +1,24 @@
-import { Header } from "components/js/frame";
-import { HexToUnsignedInt, HexToAscii } from "components/js/helper";
+import { RESPONSE_LIST, Response } from "components/js/opt/response";
 
-const RESPONSE_LIST = [
-  {
-    code: 0,
-    name: "error",
-    title: "ERROR",
-    color: "red",
-  },
-  {
-    code: 1,
-    name: "ok",
-    title: "OK",
-    color: "green",
-  },
-  {
-    code: 2,
-    name: "invalid",
-    title: "INVALID",
-    color: "blue",
-  },
-  {
-    code: 256,
-    name: "timeout",
-    title: "TIMEOUT",
-    color: "orange",
-  },
-  {
-    code: 257,
-    name: "unknown",
-    title: "UNKNOWN",
-    color: "purple",
-  },
-];
+const parseResponse = ({ payload, unitID }, hexData) => {
+  let message, resCode;
 
-const Response = [
-  ...Header,
-  {
-    field: "code",
-    title: "Code",
-    required: true,
-    size: 1,
-    format: (val) => HexToUnsignedInt(val),
-    display: (valFormat) => {
-      let res = RESPONSE_LIST.find(({ code }) => code === valFormat);
+  if (hexData) {
+    let data = parseFrame(hexData, Response);
 
-      if (res) return res.title;
-      return RESPONSE_LIST.find(({ name }) => name === "unknown").title;
-    },
-  },
-  {
-    field: "message",
-    title: "Message",
-    required: true,
-    size: 50,
-    format: (val) => HexToAscii(val),
-    display: (valFormat) => valFormat,
-  },
-];
+    resCode = RESPONSE_LIST.find(({ code }) => code === Field(data, "code"));
+    message = Field(data, "message");
+  } else {
+    resCode = RESPONSE_LIST.find(({ name }) => name === "timeout");
+    message = null;
+  }
 
-export { Response, RESPONSE_LIST };
+  return {
+    payload,
+    unitID,
+    resCode,
+    message,
+  };
+};
+
+export { RESPONSE_LIST, Response, parseResponse };

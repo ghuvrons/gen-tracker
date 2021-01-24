@@ -1,4 +1,4 @@
-import { config } from "components/js/config";
+import { config } from "components/js/opt/config";
 import { Field } from "components/js/helper";
 
 const isIndonesia = ({ lng, lat }) => {

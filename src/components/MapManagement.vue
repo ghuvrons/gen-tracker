@@ -26,8 +26,7 @@
 
 <script>
 import { genPosition } from 'components/js/map'
-import { config } from 'components/js/config'
-import { Field } from 'components/js/helper'
+import { config } from 'components/js/opt/config'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
 

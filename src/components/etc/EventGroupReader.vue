@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { EVENT_LIST, parseEvent } from 'components/js/events'
+import { EVENT_LIST, parseEvent } from 'components/js/event'
 import { devEvents } from '../../store/db/getter-types'
 
 export default {

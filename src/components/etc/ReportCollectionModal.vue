@@ -123,7 +123,10 @@ export default {
     EventGroupReader
   },
   props: {
-    data: Object,
+    value: {
+      required: true,
+      type: Boolean
+    },
     height: Number
   },
   data() {
@@ -215,7 +218,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('db', [devReports])
+    ...mapGetters('db', [devReports]),
+    collectionData: {
+      get() {
+        return this.value
+      },
+      set(value) {
+        this.$emit('input', value)
+      }
+    }
   },
   methods: {
     changeChartData({ yData, xData, yLabel, title }) {
@@ -306,11 +317,11 @@ export default {
     },
     stopRender() {
       this.collection.render = false
-      this.$emit('close')
+      this.collectionData = null
     }
   },
   watch: {
-    data: {
+    collectionData: {
       immediate: true,
       handler(data) {
         if (data)

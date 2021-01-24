@@ -1,6 +1,6 @@
 import { groupBy } from "lodash";
 import { Field } from "components/js/helper";
-import { EVENT_LIST, parseEvent } from "components/js/events";
+import { EVENT_LIST, parseEvent } from "components/js/event";
 import * as getters from "./getter-types";
 
 export default {

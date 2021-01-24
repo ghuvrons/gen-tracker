@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { validateFrame } from 'components/js/validator'
+import { validateFrame } from 'components/js/frame'
 import { calibrateTime } from 'components/js/utils'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { Field } from 'components/js/helper'
@@ -18,7 +18,9 @@ import {
   SET_THE_COMMAND,
   CLEAR_THE_COMMAND
 } from './store/db/mutation-types'
-import { parseReport, parseResponse, parseCommand } from 'components/js/parser'
+import { parseReport } from 'components/js/report'
+import { parseResponse } from 'components/js/response'
+import { parseCommand } from 'components/js/command'
 
 export default {
   name: 'App',

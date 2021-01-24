@@ -62,17 +62,14 @@
       </q-alert>
     </q-scroll-area>
 
-    <report-collection-modal
-      :height="height - 210"
-      :data="collectionData"
-      @close="collectionData = null"
-    >
+    <report-collection-modal v-model="collectionData" :height="height - 210">
     </report-collection-modal>
   </div>
 </template>
 
 <script>
 import ReportCollectionModal from 'components/etc/ReportCollectionModal'
+import { requiredReport, optionalReport } from 'components/js/report'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
 
@@ -93,26 +90,15 @@ export default {
     ...mapState('db', ['theReport']),
     ...mapGetters('db', [devReports]),
     requiredReport() {
-      return this.theReport.data.filter(({ required }) => required)
+      return requiredReport(this.theReport)
     },
     optionalReport() {
-      let index = this.devReports.findIndex(
-        ({ hexData }) => hexData === this.theReport.hexData
-      )
-
-      while (index < this.devReports.length) {
-        let previous = this.devReports[index++]
-        if (previous.frameID === this.$config.frame.id.FULL)
-          return previous.data.filter(({ required }) => !required)
-      }
-
-      return []
+      return optionalReport(this.theReport, this.devReports)
     }
   },
   methods: {
     activeField({ field }) {
-      if (this.collectionData) return this.collectionData.field == field
-      return false
+      return this.collectionData && this.collectionData.field == field
     }
   }
 }

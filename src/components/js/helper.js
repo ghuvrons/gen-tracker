@@ -1,24 +1,4 @@
 import _ from "lodash";
-import { Buffer } from "buffer";
-import TABLE from "components/js/mpeg2";
-
-const CRC32 = (buf) => {
-  // split hex string into 32 bit chunk (8 chars)
-  buf = buf
-    .match(/.{1,8}/g)
-    .map((word) => ChangeEndian(word.padEnd(8, "0")))
-    .join("");
-
-  // convert hex string to buffer
-  buf = Buffer.from(buf, "hex");
-
-  // initial value
-  let crc = 0xffffffff;
-  for (let index = 0; index < buf.length; index++)
-    crc = (crc << 8) ^ TABLE[((crc >> 24) ^ buf[index]) & 0xff];
-
-  return (crc >>> 0).toString(16).toUpperCase().padStart(8, "0");
-};
 
 const Dot = (val, digit = 0) => {
   return Number(val).toLocaleString("id", {
@@ -105,10 +85,9 @@ export {
   HexToUnsignedInt,
   HexToSignedInt8,
   HexToSignedInt32,
-  ChangeEndian,
   IntToHex,
   AsciiToHex,
-  CRC32,
+  ChangeEndian,
   FlowFilter,
   Field,
 };

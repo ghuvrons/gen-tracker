@@ -1,3 +1,6 @@
+import { Buffer } from "buffer";
+import { ChangeEndian } from "components/js/helper";
+
 // stolen from https://gist.github.com/Miliox/b86b60b9755faf3bd7cf
 // CRC-32/MPEG-2
 let TABLE = [
@@ -259,4 +262,23 @@ let TABLE = [
   0xb1f740b4,
 ];
 
-export default new Int32Array(TABLE);
+const CRC32 = (buf) => {
+  let table = new Int32Array(TABLE);
+  // split hex string into 32 bit chunk (8 chars)
+  buf = buf
+    .match(/.{1,8}/g)
+    .map((word) => ChangeEndian(word.padEnd(8, "0")))
+    .join("");
+
+  // convert hex string to buffer
+  buf = Buffer.from(buf, "hex");
+
+  // initial value
+  let crc = 0xffffffff;
+  for (let index = 0; index < buf.length; index++)
+    crc = (crc << 8) ^ table[((crc >> 24) ^ buf[index]) & 0xff];
+
+  return (crc >>> 0).toString(16).toUpperCase().padStart(8, "0");
+};
+
+export { CRC32 };
