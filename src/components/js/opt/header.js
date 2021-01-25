@@ -1,8 +1,10 @@
+import { config } from "components/js/opt/config";
 import { CRC32 } from "components/js/crc32-mpeg2";
 import {
   ChangeEndian,
   Dot,
   HexToAscii,
+  AsciiToHex,
   HexToUnsignedInt,
   IntToHex,
 } from "components/js/helper";

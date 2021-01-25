@@ -44,7 +44,9 @@
                 <q-chip dense square color="red">{{ el.type }}</q-chip>
               </q-item-tile>
               <q-item-tile>
-                <q-chip dense square color="green">{{ el.range }}</q-chip>
+                <q-chip dense square color="green">{{
+                  getRange(el.range)
+                }}</q-chip>
               </q-item-tile>
             </q-item-side>
           </q-item>
@@ -83,6 +85,14 @@ export default {
     },
     searchResult() {
       return FlowFilter(this.COMMAND_LIST, this.keyword)
+    }
+  },
+  methods: {
+    getRange(range) {
+      const [min, max] = range
+
+      if (max) return `[ ${min}, ${max} ]`
+      return `[ ${min} ]`
     }
   }
 }

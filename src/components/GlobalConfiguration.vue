@@ -45,11 +45,15 @@
 
 <script>
 import JsonCsv from 'vue-json-csv'
-import { makeExportData, makeExportLabel } from 'components/js/utils'
 import { devReports } from '../store/db/getter-types'
 import { RESET_DATABASE } from '../store/db/action-types'
 import { TOGGLE_CALIBRATION } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import {
+  makeExportData,
+  makeExportLabel,
+  makeExportFilename
+} from 'components/js/utils'
 
 export default {
   // name: 'ComponentName',

@@ -10,11 +10,11 @@ const getField = (arr, fields) => {
     return fields.reduce(
       (carry, _field) => ({
         ...carry,
-        [fields]: arr.find(({ field }) => field === _field).value,
+        [_field]: arr.find(({ field }) => field === _field).value,
       }),
       {}
     );
-  return arr.find(({ field }) => field === _field).value;
+  return arr.find(({ field }) => field === fields).value;
 };
 
 const calibrateTime = (data) => {
@@ -87,6 +87,10 @@ const makeExportFilename = () => {
   return `tracking-${now}.csv`;
 };
 
+const isStr = (myVar) => {
+  return typeof myVar === "string" || myVar instanceof String;
+};
+
 export {
   getField,
   calibrateTime,
@@ -94,4 +98,5 @@ export {
   makeExportData,
   makeExportLabel,
   makeExportFilename,
+  isStr,
 };

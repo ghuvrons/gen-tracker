@@ -1,4 +1,6 @@
 import { COMMAND_LIST, Command } from "components/js/opt/command";
+import { isStr } from "components/js/utils";
+import moment from "moment";
 
 const buildCommand = (cmd) => {
   if (!cmd) return;
@@ -32,15 +34,30 @@ const parseCommand = (payload) => {
   let prop = payload;
   let value = null;
 
-  if (!payload) return;
-
-  // check is has value
+  // get value from payload
   if (payload.indexOf("=") > -1) {
     prop = payload.split("=")[0];
     value = payload.split("=")[1];
   }
 
+  // check is no payload
+  if (!payload) return "Empty payload.";
+
+  // check is command exist
   let cmd = COMMAND_LIST.find(({ command }) => command === prop);
+  if (!cmd) return "Unknown command.";
+
+  // check is value in range
+  if (cmd.range) {
+    if (!value) return "Command need value";
+
+    const [min, max] = cmd.range;
+    if (!isStr(min)) {
+      if (value < min || value > max) return "Value exceeds range";
+    } else if (cmd.command.indexOf("RTC") > -1) {
+      if (!moment(value, "YYMMDDHHmmssE").isValid()) return "Datetime invalid";
+    } else if (value.length != min.length) return "Value length is invalid";
+  } else if (value) return "Command dont need value";
 
   return {
     ...cmd,

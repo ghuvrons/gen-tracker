@@ -122,8 +122,7 @@ export default {
   },
   props: {
     value: {
-      required: true,
-      type: Boolean
+      required: true
     },
     height: Number
   },

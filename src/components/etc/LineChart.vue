@@ -10,7 +10,7 @@ export default {
       required: true
     },
     update: {
-      type: Boolean,
+      // type: Boolean,
       required: true
     }
   },

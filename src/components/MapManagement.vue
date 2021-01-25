@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { genPosition } from 'components/js/map'
+import { genPosition, getHeading } from 'components/js/map'
 import { config } from 'components/js/opt/config'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
@@ -89,7 +89,7 @@ export default {
       immediate: true,
       handler(reports) {
         if (reports.length > 0) {
-          let pos = genPosition(report[0])
+          let pos = genPosition(reports[0])
           if (pos.valid) this.path.push(pos)
         }
       }
@@ -99,11 +99,12 @@ export default {
       handler(report) {
         if (report) {
           this.setPosition(genPosition(report))
-          // if (this.pov)
-          this.updatePov({
-            ...this.pov,
-            heading: getHeading(report)
-          })
+
+          if (this.pov)
+            this.updatePov({
+              ...this.pov,
+              heading: getHeading(report)
+            })
         }
       }
     }

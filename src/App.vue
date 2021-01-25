@@ -6,7 +6,7 @@
 
 <script>
 import { validateFrame } from 'components/js/frame'
-import { getField, calibrateTime } from 'components/js/utils'
+import { getField, calibrateTime, isStr } from 'components/js/utils'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { uniqueReport } from './store/db/getter-types'
 import {
@@ -99,28 +99,21 @@ export default {
 
     cmdTimeout() {
       this.ADD_COMMANDS(parseResponse(this.theCommand, null))
-      this.stopWaitting('Command timeout.', 'negative')
     },
     ignoreCommand() {
       this.stopWaitting('Command ignored.', 'warning')
     },
 
-    invalidCommand(payload, cmd) {
-      let error = null
-
-      if (!payload) error = 'Empty payload.'
-      else if (this.theCommand) error = 'Command busy.'
-      else if (!this.theUnit) error = 'No device.'
-      else if (!cmd.command) error = 'Unknown command.'
-
-      return error
+    parseCommand(payload) {
+      if (!this.theUnit) return 'No device.'
+      if (this.theCommand) return 'Command busy.'
+      return parseCommand(payload)
     },
     executeCommand(payload) {
-      let cmd = parseCommand(payload)
-      let error = invalidCommand(payload, cmd)
+      let cmd = this.parseCommand(payload)
 
-      if (error) {
-        this.$q.notify({ message: error })
+      if (isStr(cmd)) {
+        this.$q.notify({ message: cmd, type: 'negative' })
         return
       }
 
@@ -137,7 +130,7 @@ export default {
   mqtt: {
     'VCU/+/RSP': function (data, topic) {
       let hexData = data.toString('hex').toUpperCase()
-      this.handleFrame(hexData)
+      if (this.theCommand) this.handleFrame(hexData)
     },
     'VCU/+/RPT': function (data, topic) {
       let hexData = data.toString('hex').toUpperCase()
