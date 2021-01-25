@@ -1,15 +1,17 @@
 import { COMMAND_LIST, Command } from "components/js/opt/command";
-import { isStr } from "components/js/utils";
+import { isString } from "components/js/utils";
 import moment from "moment";
 
-const buildCommand = (cmd) => {
+const buildCommand = (cmd, value) => {
   if (!cmd) return;
+
   return Command.reduce((carry, el, idx) => {
     let { field, format } = Command[Command.length - 1 - idx];
 
     switch (field) {
       case "value":
-        carry = format(cmd.value || 0) + carry;
+        if (cmd.hasOwnProperty("format")) carry = cmd.format(value) + carry;
+        else carry = format(value || 0) + carry;
         break;
       case "subCode":
       case "code":
@@ -52,16 +54,16 @@ const parseCommand = (payload) => {
     if (!value) return "Command need value";
 
     const [min, max] = cmd.range;
-    if (!isStr(min)) {
-      if (value < min || value > max) return "Value exceeds range";
-    } else if (cmd.command.indexOf("RTC") > -1) {
-      if (!moment(value, "YYMMDDHHmmssE").isValid()) return "Datetime invalid";
+    if (!isString(min)) {
+      if (value < min || value > max) return "Value not in range";
+    } else if (cmd.command == "REPORT_RTC") {
+      if (!moment(value, "YYMMDDHHmmssEE").isValid()) return "Datetime invalid";
     } else if (value.length != min.length) return "Value length is invalid";
   } else if (value) return "Command dont need value";
 
   return {
     ...cmd,
-    hexData: buildCommand(cmd),
+    hexData: buildCommand(cmd, value),
     value,
   };
 };

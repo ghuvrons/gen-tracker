@@ -58,7 +58,7 @@
 
 <script>
 import { COMMAND_LIST } from 'components/js/command'
-import { FlowFilter } from 'components/js/helper'
+import { flowFilter } from 'components/js/utils'
 
 export default {
   emits: ['select'],
@@ -84,7 +84,7 @@ export default {
       }
     },
     searchResult() {
-      return FlowFilter(this.COMMAND_LIST, this.keyword)
+      return flowFilter(this.COMMAND_LIST, this.keyword)
     }
   },
   methods: {

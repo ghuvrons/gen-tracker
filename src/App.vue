@@ -6,7 +6,7 @@
 
 <script>
 import { validateFrame } from 'components/js/frame'
-import { getField, calibrateTime, isStr } from 'components/js/utils'
+import { getField, calibrateTime, isString } from 'components/js/utils'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { uniqueReport } from './store/db/getter-types'
 import {
@@ -112,7 +112,7 @@ export default {
     executeCommand(payload) {
       let cmd = this.parseCommand(payload)
 
-      if (isStr(cmd)) {
+      if (isString(cmd)) {
         this.$q.notify({ message: cmd, type: 'negative' })
         return
       }
@@ -148,6 +148,7 @@ export default {
 
         this.starWaitting()
         this.$mqtt.publish(`VCU/${unitID}/CMD`, binData)
+        console.log(`COMMAND ${hexData}`)
       }
     },
     reports: function (reports) {

@@ -27,13 +27,13 @@
       />
       <q-tab slot="title" name="tab-3" label="Configuration" />
       <!-- Targets -->
-      <q-tab-pane name="tab-1">
+      <q-tab-pane name="tab-1" keep-alive>
         <report-log :height="paneHeight"></report-log>
       </q-tab-pane>
-      <q-tab-pane name="tab-2">
+      <q-tab-pane name="tab-2" keep-alive>
         <driver-management :height="paneHeight"></driver-management>
       </q-tab-pane>
-      <q-tab-pane name="tab-3">
+      <q-tab-pane name="tab-3" keep-alive>
         <global-configuration></global-configuration>
       </q-tab-pane>
     </q-tabs>

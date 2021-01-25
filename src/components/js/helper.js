@@ -1,18 +1,7 @@
 import _ from "lodash";
 
-const Dot = (val, digit = 0) => {
-  return Number(val).toLocaleString("id", {
-    minimumFractionDigits: digit,
-    maximumFractionDigits: digit,
-  });
-};
-
-const HexToAscii = (hexx) => {
-  let hex = hexx.toString(); // force conversion
-  let str = "";
-  for (let i = 0; i < hex.length && hex.substr(i, 2) !== "00"; i += 2)
-    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-  return str;
+const IntToHex = (num, len) => {
+  return num.toString(16).padStart(len, "0");
 };
 
 const HexToUnsignedInt = (hex) => {
@@ -33,6 +22,28 @@ const HexToSignedInt8 = (hex) => {
   return num;
 };
 
+const HexToAscii = (hexx) => {
+  let hex = hexx.toString(); // force conversion
+  let str = "";
+  for (let i = 0; i < hex.length && hex.substr(i, 2) !== "00"; i += 2)
+    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  return str;
+};
+
+const AsciiToHex = (str) => {
+  let arr = [];
+  for (let n = 0, l = str.length; n < l; n++)
+    arr.push(Number(str.charCodeAt(n)).toString(16));
+  return arr.join("");
+};
+
+const Dot = (val, digit = 0) => {
+  return Number(val).toLocaleString("id", {
+    minimumFractionDigits: digit,
+    maximumFractionDigits: digit,
+  });
+};
+
 const ChangeEndian = (string) => {
   const result = [];
   let len = string.length - 2;
@@ -43,38 +54,13 @@ const ChangeEndian = (string) => {
   return result.join("");
 };
 
-const IntToHex = (num, len) => {
-  return num.toString(16).padStart(len, "0");
-};
-
-const FlowFilter = (array, substr) => {
-  return _.filter(
-    array,
-    _.flow(
-      _.identity,
-      _.values,
-      _.join,
-      _.toLower,
-      _.partialRight(_.includes, substr)
-    )
-  );
-};
-
-const AsciiToHex = (str) => {
-  let arr = [];
-  for (let n = 0, l = str.length; n < l; n++)
-    arr.push(Number(str.charCodeAt(n)).toString(16));
-  return arr.join("");
-};
-
 export {
-  Dot,
-  HexToAscii,
+  IntToHex,
   HexToUnsignedInt,
   HexToSignedInt8,
   HexToSignedInt32,
-  IntToHex,
+  HexToAscii,
   AsciiToHex,
+  Dot,
   ChangeEndian,
-  FlowFilter,
 };

@@ -1,52 +1,35 @@
 import moment from "moment";
+import { startCase } from "lodash";
+import { parseDatetime } from "components/js/utils";
 import { Header } from "components/js/opt/header";
 import {
   ChangeEndian,
-  Dot,
   HexToUnsignedInt,
   HexToSignedInt8,
   HexToSignedInt32,
   IntToHex,
+  Dot,
 } from "components/js/helper";
 
 const VCU = ({ required }) => {
+  const RTC = ["sendDatetime", "logDatetime"];
+
   let fields = [
-    {
-      field: "rtcSendDatetime",
-      title: "RTC Send Datetime",
-      required: true,
-      chartable: true,
-      size: 8,
-      format: (val) => {
-        return Number(
-          moment(
-            HexToUnsignedInt(ChangeEndian(val)).toString(),
-            "YYMMDDHHmmssE"
-          ).format("X")
-        );
-      },
-      display: (valFormat) => {
-        return moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss");
-      },
-    },
-    {
-      field: "rtcLogDatetime",
-      title: "RTC Log Datetime",
-      required: true,
-      chartable: true,
-      size: 8,
-      format: (val) => {
-        return Number(
-          moment(
-            HexToUnsignedInt(ChangeEndian(val)).toString(),
-            "YYMMDDHHmmssE"
-          ).format("X")
-        );
-      },
-      display: (valFormat) => {
-        return moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss");
-      },
-    },
+    ...RTC.reduce((carry, rtc) => {
+      return carry.concat([
+        {
+          field: rtc,
+          title: startCase(rtc),
+          required: true,
+          chartable: true,
+          size: 7,
+          format: (val) =>
+            Number(moment(parseDatetime(val), "YYMMDDHHmmssEE").format("X")),
+          display: (valFormat) =>
+            moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
+        },
+      ]);
+    }, []),
     {
       field: "driverID",
       title: "Driver ID",
@@ -55,9 +38,8 @@ const VCU = ({ required }) => {
       size: 1,
       format: (val) => HexToUnsignedInt(ChangeEndian(val)),
       display: (valFormat) => {
-        if (valFormat === 0xff) {
-          return "NONE";
-        }
+        if (valFormat === 0xff) return "NONE";
+
         return IntToHex(valFormat, 2).toUpperCase();
       },
     },
@@ -114,9 +96,7 @@ const VCU = ({ required }) => {
       chartable: true,
       size: 1,
       format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1,
-      display: (valFormat) => {
-        return Dot(valFormat);
-      },
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "gpsVDOP",
@@ -125,9 +105,7 @@ const VCU = ({ required }) => {
       chartable: true,
       size: 1,
       format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1,
-      display: (valFormat) => {
-        return Dot(valFormat);
-      },
+      display: (valFormat) => Dot(valFormat),
     },
     {
       field: "gpsHeading",
@@ -247,9 +225,8 @@ const BMS = ({ required }) => {
         size: 4,
         format: (val) => HexToUnsignedInt(ChangeEndian(val)),
         display: (valFormat) => {
-          if (valFormat === 0xffffffff) {
-            return "NONE";
-          }
+          if (valFormat === 0xffffffff) return "NONE";
+
           return IntToHex(valFormat, 8).toUpperCase();
         },
       },

@@ -1,5 +1,6 @@
 import { CommandHeader } from "components/js/opt/header";
 import { IntToHex, ChangeEndian } from "components/js/helper";
+import { buildTimestamp } from "components/js/utils";
 
 const COMMAND_LIST = [
   {
@@ -44,7 +45,8 @@ const COMMAND_LIST = [
     code: 1,
     subCode: 0,
     type: "U64",
-    range: ["YYMMDDHHmmssE"],
+    range: ["YYMMDDHHmmssEE"],
+    format: (val) => buildTimestamp(val),
   },
   {
     command: "REPORT_ODOM",

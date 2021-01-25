@@ -86,11 +86,11 @@ export default {
     }
   },
   watch: {
-    theReport(report) {
-      if (report)
-        if (this.devReports[0].hexData === report.hexData)
-          this.$refs.scroller.setScrollPosition(0)
-    },
+    // theReport(report) {
+    //   if (report)
+    //     if (this.devReports[0].hexData === report.hexData)
+    //       this.$refs.scroller.setScrollPosition(0)
+    // },
     devReports: {
       immediate: true,
       handler(reports) {
