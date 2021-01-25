@@ -17,14 +17,14 @@
         >
           <q-list dense>
             <q-item
-              v-for="event in EVENT_LIST"
-              :key="`${name}-${event.seqID}`"
+              v-for="event in devEvents"
+              :key="`${name}-${event.logDatetime}`"
               separator
               dense
             >
               <q-item-main>
                 <q-item-tile sublabel>
-                  {{ event.seqID }}
+                  {{ event.logDatetime }}
                 </q-item-tile>
               </q-item-main>
             </q-item>

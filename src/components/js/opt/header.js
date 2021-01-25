@@ -64,15 +64,6 @@ const Header = [
     format: (val) => HexToUnsignedInt(ChangeEndian(val)),
     display: (valFormat) => valFormat,
   },
-  {
-    field: "sequentialID",
-    title: "Sequential ID",
-    required: true,
-    chartable: true,
-    size: 2,
-    format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-    display: (valFormat) => Dot(valFormat),
-  },
 ];
 
 const CommandHeader = [

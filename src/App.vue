@@ -62,20 +62,19 @@ export default {
         return
       }
 
-      let { unitID, frameID, sequentialID } = getField(header, [
-        'unitID',
-        'frameID',
-        'sequentialID'
-      ])
+      let { unitID, frameID } = getField(header, ['unitID', 'frameID'])
 
       this.ADD_UNITS(unitID)
       if (frameID === this.$config.frame.id.RESPONSE) {
-        console.log(`RESPONSE-${sequentialID} ${hexData}`)
+        console.log(`RESPONSE ${hexData}`)
         this.ADD_COMMANDS(parseResponse(this.theCommand, hexData))
-      } else if (this.uniqueReport(unitID, sequentialID)) {
-        console.log(`REPORT-${sequentialID} ${hexData}`)
-        this.ADD_REPORTS(parseReport(hexData))
-      } else console.warn(`REPORT-${sequentialID} (DUPLICATE) ${hexData}`)
+      } else {
+        let report = parseReport(hexData)
+        if (this.uniqueReport(report)) {
+          console.log(`REPORT ${hexData}`)
+          this.ADD_REPORTS(report)
+        } else console.warn(`REPORT (DUPLICATE) ${hexData}`)
+      }
     },
 
     starWaitting() {

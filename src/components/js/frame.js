@@ -31,14 +31,6 @@ const parseFrame = (hexData, frame) => {
 const validateFrame = (hexData) => {
   let header = parseFrame(hexData, Header);
 
-  let headerSize = Header.map(({ size }) => size).reduce(
-    (sum, val) => sum + val
-  );
-  if (hexData.length < headerSize * 2) {
-    console.warn(`CORRUPT: Bellow minimum size`);
-    return;
-  }
-
   if (getField(header, "prefix") != config.frame.prefix) {
     console.warn(`CORRUPT: Prefix not same`);
     return;
@@ -50,7 +42,13 @@ const validateFrame = (hexData) => {
     return;
   }
 
-  if (getField(header, "size") != (hexData.length - headerSize) / 2) {
+  let headerSize = Header.filter(({ field }) =>
+    ["prefix", "crc", "size"].includes(field)
+  )
+    .map(({ size }) => size)
+    .reduce((sum, val) => sum + val);
+
+  if (getField(header, "size") != hexData.length / 2 - headerSize) {
     console.warn(`CORRUPT: Size not same`);
     return;
   }

@@ -7,11 +7,9 @@ export default {
   [getters.getTotalReports]: ({ reports }) => (unitID) => {
     return reports.filter(({ unitID: _unitID }) => _unitID === unitID).length;
   },
-  [getters.uniqueReport]: ({ reports }) => (unitID, sequentialID) => {
-    return !reports.find(
-      ({ data, unitID: _unitID }) =>
-        _unitID === unitID && sequentialID == getField(data, "sequentialID")
-    );
+  [getters.uniqueReport]: ({ reports }) => (report) => {
+    let _logDatetime = getField(report.data, "logDatetime");
+    return !reports.find(({ logDatetime }) => logDatetime == _logDatetime);
   },
   [getters.devReports]({ reports, theUnit }) {
     let _reports = reports.filter(({ unitID }) => unitID === theUnit);
@@ -24,7 +22,7 @@ export default {
         ...EVENT_LIST.filter(({ bit }) =>
           parseEvent(getField(data, "eventsGroup"), bit)
         ).map(({ name }) => ({
-          seqID: getField(data, "sequentialID"),
+          logDatetime: getField(data, "logDatetime"),
           name,
         }))
       );

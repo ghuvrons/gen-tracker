@@ -192,7 +192,7 @@ export default {
                 },
                 scaleLabel: {
                   display: true,
-                  labelString: 'Sequential ID'
+                  labelString: 'Log Datetime'
                 }
               }
             ],
@@ -245,7 +245,7 @@ export default {
       // find the index
       let minIndex = labels.findIndex((val) => val >= xMin)
       let maxIndex = labels.findIndex((val) => val >= xMax)
-      // sometime the sequentialID is corrupt, so set the nearest greater value
+      // sometime corrupt, so set the nearest greater value
       xMin = labels[minIndex]
       xMax = labels[maxIndex]
       // update value
@@ -297,7 +297,7 @@ export default {
           // insert to datasets
           datasets.push(theField.value)
           // insert the label
-          labels.push(getField(data, 'sequentialID'))
+          labels.push(getField(data, 'logDatetime'))
           // labels.push(datasets.length)
         }
       })

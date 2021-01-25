@@ -42,7 +42,7 @@
             <q-item-side>
               <q-chip color="primary" dense square>
                 <!-- {{devReports.length - index}} -->
-                {{ getSeqID(report.data) }}
+                {{ getDatetime(report.data) }}
               </q-chip>
             </q-item-side>
             <q-item-main :label="report.hexData" class="q-caption" />
@@ -81,8 +81,8 @@ export default {
   },
   methods: {
     ...mapMutations('db', [SET_THE_REPORT]),
-    getSeqID(data) {
-      return getField(data, 'sequentialID')
+    getDatetime(data) {
+      return getField(data, 'logDatetime')
     }
   },
   watch: {
