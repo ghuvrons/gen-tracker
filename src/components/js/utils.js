@@ -1,7 +1,6 @@
 import _ from "lodash";
 import { config } from "components/js/opt/config";
 import { HexToUnsignedInt, IntToHex } from "components/js/helper";
-import { Report } from "components/js/report";
 
 const moment = require("moment-timezone");
 const tzlookup = require("tz-lookup");
@@ -71,40 +70,6 @@ const genFingerID = (devFingers) => {
   return id;
 };
 
-const makeExportData = (devReports) => {
-  return (
-    devReports
-      // .reverse()
-      .map(({ data }) =>
-        data
-          .reverse()
-          .filter(({ chartable }) => chartable)
-          .reduce(
-            (carry, { field, value, output, unit }) => ({
-              ...carry,
-              [field]: output,
-            }),
-            {}
-          )
-      )
-  );
-};
-
-const makeExportLabel = () => {
-  return Report.reduce(
-    (carry, { field, title, unit }) => ({
-      ...carry,
-      [field]: title + (unit ? ` (${unit})` : ""),
-    }),
-    {}
-  );
-};
-
-const makeExportFilename = () => {
-  let now = moment().format("YYYYMMDDHHmmss");
-  return `tracking-${now}.csv`;
-};
-
 const parseDatetime = (hex) => {
   let timestamp = hex.match(/.{1,2}/g);
 
@@ -130,9 +95,6 @@ export {
   getField,
   calibrateTime,
   genFingerID,
-  makeExportData,
-  makeExportLabel,
-  makeExportFilename,
   parseDatetime,
   buildTimestamp,
 };

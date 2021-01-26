@@ -5,7 +5,7 @@
         class="q-ma-xs"
         icon="delete"
         color="negative"
-        label="Clear all data"
+        label="Clear data"
         :disable="units.length == 0"
         @click="clearStore()"
       />
@@ -16,20 +16,22 @@
         icon="stop"
         color="primary"
         label="Ingnore command"
+        :disable="!theCommand"
         @click="$root.$emit('ignoreCommand')"
       />
     </div>
     <div class="col-auto">
       <json-csv
-        :data="exportedData"
-        :labels="exportedLabel"
-        :name="exportedFilename"
+        :data="exported.data"
+        :labels="exported.label"
+        :name="exported.name"
       >
         <q-btn
           class="q-ma-xs"
           icon="cloud_download"
           color="green"
-          label="Download CSV"
+          label="Export CSV"
+          :disable="devReports.length == 0"
         />
       </json-csv>
     </div>
@@ -38,6 +40,7 @@
         v-model="calibrationState"
         label="Time Calibration"
         class="q-ma-xs"
+        :disable="units.length == 0"
       />
     </div>
   </div>
@@ -49,11 +52,7 @@ import { devReports } from '../store/db/getter-types'
 import { RESET_DATABASE } from '../store/db/action-types'
 import { TOGGLE_CALIBRATION } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import {
-  makeExportData,
-  makeExportLabel,
-  makeExportFilename
-} from 'components/js/utils'
+import { makeExport } from 'components/js/exporter'
 
 export default {
   // name: 'ComponentName',
@@ -61,7 +60,7 @@ export default {
     JsonCsv
   },
   computed: {
-    ...mapState('db', ['units', 'calibration']),
+    ...mapState('db', ['units', 'calibration', 'theCommand']),
     ...mapGetters('db', [devReports]),
     calibrationState: {
       get() {
@@ -71,14 +70,9 @@ export default {
         this.TOGGLE_CALIBRATION()
       }
     },
-    exportedData() {
-      return makeExportData(this.devReports)
-    },
-    exportedLabel() {
-      return makeExportLabel()
-    },
-    exportedFilename() {
-      return makeExportFilename()
+    exported() {
+      console.warn(makeExport(this.devReports))
+      return makeExport(this.devReports)
     }
   },
   methods: {

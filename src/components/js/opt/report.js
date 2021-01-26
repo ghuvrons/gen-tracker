@@ -344,6 +344,9 @@ const Report = [
   ...VCU({ required: false }),
   ...BMS({ required: false }),
   ...TEST(),
-];
+].map((el, idx) => ({
+  ...el,
+  no: idx,
+}));
 
 export { Report };

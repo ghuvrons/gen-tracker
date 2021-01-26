@@ -86,46 +86,9 @@ export default {
     }
   },
   watch: {
-    // theReport(report) {
-    //   if (report)
-    //     if (this.devReports[0].hexData === report.hexData)
-    //       this.$refs.scroller.setScrollPosition(0)
-    // },
     devReports: {
       immediate: true,
       handler(reports) {
-        // let newReport = newReports[0]
-        // let trigger = false
-        // let oldReportsLength = 0
-
-        // if (oldReports) oldReportsLength = oldReports.length
-
-        // if (!this.theReport)
-        //   // set for the first time (theReport is null)
-        //   trigger = true
-        // else if (newReport.unitID !== this.theReport.unitID)
-        //   // set again on different unitID
-        //   trigger = true
-
-        // else {
-        //   // only update if got new data
-        //   if (newReports.length !== oldReportsLength) {
-        //     if (this.lock.follow) {
-        //       // same unitID, but lock.follow is active
-        //       trigger = true
-        //       // only follow mapable reports
-        //       if (this.lock.mapable) {
-        //         // find the latest mapable report (it can be other than the report input)
-        //         let reportMapable = newReports.find(
-        //           ({ frameID }) => frameID === this.$config.frame.id.FULL
-        //         )
-        //         if (reportMapable) newReport = reportMapable
-        //       }
-        //     }
-        //   }
-        // }
-        // if (trigger) this.SET_THE_REPORT(newReport)
-
         if (reports.length > 0)
           if (this.lock.follow) {
             let report = reports[0]

@@ -2,6 +2,7 @@ import { config } from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
 import { getField } from "components/js/utils";
 import { Header, parseFrame } from "components/js/frame";
+import { orderBy } from "lodash";
 
 const parseReport = (hexData) => {
   let header = parseFrame(hexData, Header);
@@ -39,4 +40,11 @@ const optionalReport = (theReport, devReports) => {
   return [];
 };
 
-export { Report, parseReport, requiredReport, optionalReport };
+const reportData = (theReport, devReports) => {
+  return orderBy(
+    [...requiredReport(theReport), ...optionalReport(theReport, devReports)],
+    "no"
+  );
+};
+
+export { Report, parseReport, reportData };
