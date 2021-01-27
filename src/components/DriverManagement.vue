@@ -28,7 +28,7 @@
           <q-item v-for="(driver, index) in devFingers" :key="index">
             <q-item-side>
               <q-chip color="primary" square>
-                {{ driver.fingerID }}
+                {{ driver.initial }}
               </q-chip>
             </q-item-side>
             <q-item-main :label="driver.name" />
@@ -62,7 +62,6 @@ import {
 } from '../store/db/mutation-types'
 import { devFingers } from '../store/db/getter-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import { genFingerID } from 'components/js/utils'
 
 export default {
   // name: 'ComponentName',
@@ -76,12 +75,6 @@ export default {
   methods: {
     ...mapMutations('db', [ADD_FINGERS, DELETE_FINGERS, RESET_FINGERS]),
     addFinger() {
-      let id = genFingerID(this.devFingers)
-      if (id < 0) {
-        this.$q.notify({ message: 'Finger full.' })
-        return
-      }
-
       this.$q
         .dialog({
           title: 'Add driver',
@@ -94,8 +87,8 @@ export default {
             type: 'text'
           }
         })
-        .then((data) =>
-          this.$root.$emit('executeCommand', `FINGER_ADD=${id},${data}`)
+        .then((initial) =>
+          this.$root.$emit('executeCommand', `FINGER_ADD=${initial}`)
         )
         .catch(() => {})
     },
@@ -103,12 +96,12 @@ export default {
       this.$q
         .dialog({
           title: 'Confirmation',
-          message: `Are you sure to remove this fingerprint *${driver.name}* ?`,
+          message: `Are you sure to remove this fingerprint *${driver.initial}* ?`,
           preventClose: true,
           cancel: true
         })
         .then(() =>
-          this.$root.$emit('executeCommand', `FINGER_DEL=${driver.fingerID}`)
+          this.$root.$emit('executeCommand', `FINGER_DEL=${driver.initial}`)
         )
         .catch(() => {})
     },
@@ -127,12 +120,12 @@ export default {
   watch: {
     commands: function (commands) {
       if (commands.length > 0) {
-        const { resCode, unitID, command, value: fingerID } = commands[0]
+        const { resCode, unitID, command, value: initial } = commands[0]
 
         if (resCode.title == 'OK') {
-          if (command == 'FINGER_ADD') this.ADD_FINGERS({ fingerID, unitID })
+          if (command == 'FINGER_ADD') this.ADD_FINGERS({ unitID, initial })
           else if (command == 'FINGER_DEL')
-            this.DELETE_FINGERS({ fingerID, unitID })
+            this.DELETE_FINGERS({ unitID, initial })
           else if (command == 'FINGER_RST') this.RESET_FINGERS({ unitID })
         }
       }

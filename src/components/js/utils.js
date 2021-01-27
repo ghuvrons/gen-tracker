@@ -54,22 +54,6 @@ const calibrateTime = (data) => {
     return serverTime.tz(timezone).format("YYMMDDHHmmssEE");
 };
 
-const genFingerID = (devFingers) => {
-  let id = 0;
-  let usedFingerIDs = devFingers.map(({ fingerID }) => parseInt(fingerID));
-
-  // sort id to ascending
-  usedFingerIDs.sort((a, b) => a - b);
-
-  // check the lowest unused id
-  for (let i = 0; i < config.finger.max; i++)
-    if (usedFingerIDs[i] !== id++) break;
-
-  if (id >= this.$config.finger.max) id = -1;
-
-  return id;
-};
-
 const parseDatetime = (hex) => {
   let timestamp = hex.match(/.{1,2}/g);
 
@@ -89,12 +73,31 @@ const buildTimestamp = (ascii) => {
   );
 };
 
+const grabLabelsAndDatasets = (devReports, theField) => {
+  let datasets = [];
+  let labels = [];
+
+  devReports.forEach(({ data }) => {
+    let field = data.find(({ field }) => field === theField);
+
+    if (field) {
+      datasets.push(field.value);
+      labels.push(getField(data, "logDatetime"));
+    }
+  });
+
+  return {
+    datasets: datasets.reverse(),
+    labels: labels.reverse(),
+  };
+};
+
 export {
   flowFilter,
   isString,
   getField,
   calibrateTime,
-  genFingerID,
   parseDatetime,
   buildTimestamp,
+  grabLabelsAndDatasets,
 };

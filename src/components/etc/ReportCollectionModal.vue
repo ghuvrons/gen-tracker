@@ -26,7 +26,7 @@
         <div class="row gutter-sm justify-between">
           <div
             :class="
-              collection.field.field === 'eventsGroup'
+              collectionData.field === 'eventsGroup'
                 ? 'col-sm-12 col-md-7 col-lg-8'
                 : 'col-12'
             "
@@ -40,10 +40,10 @@
             />
             <q-range
               v-model="range.value"
-              :min="range.min"
-              :max="range.max"
+              :min="sample.min"
+              :max="sample.max"
               :disable="range.disable"
-              :drag-range="range.control.drag"
+              :drag-range="control.drag"
               label
               snap
               square
@@ -52,34 +52,31 @@
             <div class="row justify-between items-center content-center">
               <div class="col-auto">
                 <q-toggle
-                  v-model="range.control.beginAtZero"
+                  v-model="control.beginAtZero"
                   label="Begin Zero"
                   class="q-ma-xs"
                 />
                 <q-toggle
-                  v-model="range.control.drag"
-                  label="Lock Sample"
+                  v-model="control.drag"
+                  :disable="control.maximize"
+                  label="Lock Window"
                   class="q-ma-xs"
-                  :disable="
-                    range.control.maximize ||
-                    chart.data.labels.length < sample.min
-                  "
                 />
                 <q-toggle
-                  v-model="range.control.follow"
-                  :disable="range.control.maximize"
+                  v-model="control.follow"
+                  :disable="control.maximize"
                   label="Follow Data"
                   class="q-ma-xs"
                 />
                 <q-toggle
-                  v-model="range.control.maximize"
+                  v-model="control.maximize"
                   label="Max Range"
                   class="q-ma-xs"
                 />
               </div>
               <div class="col-auto">
                 <q-input
-                  v-model="range.sample"
+                  :value="range.sample"
                   type="number"
                   class="q-ma-xs"
                   style="width: 130px"
@@ -93,7 +90,7 @@
           </div>
 
           <div
-            v-if="collection.field.field === 'eventsGroup'"
+            v-if="collectionData.field === 'eventsGroup'"
             class="col-sm-12 col-md-5 col-lg-4"
           >
             <event-group-reader
@@ -108,9 +105,11 @@
 </template>
 
 <script>
-import { getField } from 'components/js/utils'
+import { grabLabelsAndDatasets } from 'components/js/utils'
 import { devReports } from '../../store/db/getter-types'
 import { mapGetters } from 'vuex'
+import { chart } from 'components/js/opt/config'
+import { cloneDeep } from 'lodash'
 import LineChart from 'components/etc/LineChart'
 import EventGroupReader from 'components/etc/EventGroupReader'
 
@@ -130,86 +129,36 @@ export default {
     return {
       currentValue: 0,
       modalOpen: false,
+      chart: cloneDeep(chart),
+      tmp: {
+        max: null,
+        sample: 10,
+        follow: false,
+        drag: false
+      },
       sample: {
-        min: 10,
-        lastValue: 0,
-        lastDragState: false
+        min: 0,
+        max: 10
       },
       range: {
-        control: {
-          beginAtZero: true,
-          follow: true,
-          maximize: false,
-          drag: true
-        },
         disable: false,
         sample: 10,
-        min: 0,
-        max: 10,
         value: {
           min: 0,
           max: 10
         }
       },
+      control: {
+        beginAtZero: false,
+        maximize: true,
+        follow: false,
+        drag: false
+      },
       collection: {
         render: false,
-        field: null,
         update: {
           data: false,
           options: false
-        }
-      },
-      chart: {
-        data: {
-          labels: [],
-          datasets: [
-            {
-              data: [],
-              label: '',
-              backgroundColor: '#f87979',
-              fill: true,
-              showLine: true,
-              pointRadius: 2
-            }
-          ]
-        },
-        options: {
-          animation: {
-            duration: 10
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          legend: {
-            display: true,
-            align: 'end'
-          },
-          scales: {
-            xAxes: [
-              {
-                ticks: {
-                  max: 1,
-                  min: 0
-                },
-                scaleLabel: {
-                  display: true,
-                  labelString: 'Log Datetime'
-                }
-              }
-            ],
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                  max: 1,
-                  min: 0
-                },
-                scaleLabel: {
-                  display: true,
-                  labelString: 'Value'
-                }
-              }
-            ]
-          }
         }
       }
     }
@@ -226,91 +175,106 @@ export default {
     }
   },
   methods: {
-    changeChartData({ yData, xData, yLabel, title }) {
-      this.chart.options.scales.yAxes[0].scaleLabel.labelString = yLabel
-      this.chart.data.labels = xData
-      this.chart.data.datasets[0].data = yData
-      this.chart.data.datasets[0].label = title
+    getMaxLabel() {
+      let { labels } = this.chart.data
 
-      // trigger update
-      this.collection.update.data = !this.collection.update.data
+      let index = labels.length - 1
+      let value = labels[index]
+
+      return { index, value }
     },
-    changeChartOptions({ xMin, xMax, beginAtZero }) {
-      let data = this.chart.data.datasets[0].data
-      let labels = this.chart.data.labels
-      // if null, set default
-      xMin = xMin || this.range.value.min
-      xMax = xMax || this.range.value.max
-      beginAtZero = beginAtZero || this.range.control.beginAtZero
-      // find the index
-      let minIndex = labels.findIndex((val) => val >= xMin)
-      let maxIndex = labels.findIndex((val) => val >= xMax)
-      // sometime corrupt, so set the nearest greater value
-      xMin = labels[minIndex]
-      xMax = labels[maxIndex]
-      // update value
-      this.currentValue = data[maxIndex]
-      // calculate y-axes
-      let dataInRange = data.filter((_, i) => i >= minIndex && i <= maxIndex)
-      let yMax = this.$_.max(dataInRange)
-      let yMin = this.range.control.beginAtZero ? 0 : this.$_.min(dataInRange)
-      // set yMax always greate+1 than yMin
-      if (yMax <= yMin) yMax = yMin + 1
+    getLabel(index) {
+      return this.chart.data.labels[index]
+    },
+    findRange({ min, max }) {
+      let { data } = this.chart.data.datasets[0]
+      let { labels } = this.chart.data
 
-      // apply corrected value
+      // find the index
+      let xiMin = min ? labels.findIndex((val) => val >= min) : 0
+      let xiMax = max
+        ? this.$_.findLastIndex(labels, (val) => val <= max)
+        : labels.length - 1
+
+      let scope = data.filter((_, i) => i >= xiMin && i <= xiMax)
+
+      // calculate x-axes
+      let xMin = labels[xiMin]
+      let xMax = labels[xiMax]
+
+      // calculate y-axes
+      let yMin = this.$_.min(scope)
+      let yMax = this.$_.max(scope)
+
+      // correction
+      if (yMin > 0 && this.control.beginAtZero) yMin = 0
+      if (yMax == yMin) yMax += 1
+
+      return { xMin, xMax, yMin, yMax, xiMin, xiMax }
+    },
+    applyRange({ sample }) {
+      let { xiMin, xiMax, xMax } = this.findRange(this.range.value)
+      let oldSample = xiMax - xiMin
+
+      if (this.control.maximize || this.control.follow) {
+        let maxLabel = this.getMaxLabel()
+        xiMax = maxLabel.index
+        xMax = maxLabel.value
+
+        if (this.control.maximize) xiMin = 0
+      }
+
+      if (!sample) {
+        sample = xiMax - xiMin
+
+        if (this.control.drag) {
+          sample = oldSample
+
+          if (!this.control.follow) xMax = this.getLabel(xiMin + sample)
+        }
+      }
+
+      this.range.sample = sample
+      this.range.value = {
+        min: this.getLabel(xiMax - sample),
+        max: xMax
+      }
+    },
+    scaleChart() {
+      let { xMin, xMax, yMin, yMax } = this.findRange(this.range.value)
+
+      this.currentValue = xMax
       this.chart.options.scales.xAxes[0].ticks.max = xMax
       this.chart.options.scales.xAxes[0].ticks.min = xMin
       this.chart.options.scales.yAxes[0].ticks.max = yMax
       this.chart.options.scales.yAxes[0].ticks.min = yMin
-      this.chart.options.scales.yAxes[0].ticks.beginAtZero = beginAtZero
-      // trigger update
+      this.chart.options.scales.yAxes[0].ticks.beginAtZero = this.control.beginAtZero
+
       this.collection.update.options = !this.collection.update.options
+      this.$nextTick(() => (this.modalOpen = true))
     },
-    readReportCollection(dataField) {
-      this.collection.field = dataField
-      // build the datasets
-      this.buildReportCollection()
-      // calculate min
-      let min = this.range.min
-      if (!this.range.control.maximize)
-        if (this.chart.data.labels.length >= this.range.sample)
-          min = this.range.max - this.range.sample
-      // set initial range value
-      this.range.value = {
-        max: this.range.max,
-        min
-      }
-      // open the chart
-      this.modalOpen = true
+    writeChart() {
+      let { labels, datasets } = grabLabelsAndDatasets(
+        this.devReports,
+        this.collectionData.field
+      )
+
+      this.chart.data.labels = labels
+      this.chart.data.datasets[0].data = datasets
+
+      this.sample.min = this.$_.min(labels)
+      this.sample.max = this.$_.max(labels)
+
+      this.collection.update.data = !this.collection.update.data
     },
-    buildReportCollection() {
-      // reset chart
-      let datasets = []
-      let labels = []
-      // get datasets
-      this.devReports.forEach(({ data }) => {
-        let theField = data.find(
-          ({ field }) => field === this.collection.field.field
-        )
-        // is data-field exist on this report
-        if (theField) {
-          // insert to datasets
-          datasets.push(theField.value)
-          // insert the label
-          labels.push(getField(data, 'logDatetime'))
-          // labels.push(datasets.length)
-        }
-      })
-      // update the datasets
-      this.changeChartData({
-        xData: labels.reverse(),
-        yData: datasets.reverse(),
-        yLabel: this.collection.field.unit || 'Value',
-        title: this.collection.field.title
-      })
-      // set range (always update on data change)
-      this.range.min = this.$_.min(labels)
-      this.range.max = this.$_.max(labels)
+    prepareChart() {
+      let { title, unit } = this.collectionData
+
+      this.chart.data.datasets[0].label = title
+      this.chart.options.scales.yAxes[0].scaleLabel.labelString =
+        unit || 'Value'
+
+      this.collection.update.options = !this.collection.update.options
     },
     stopRender() {
       this.collection.render = false
@@ -319,93 +283,56 @@ export default {
   },
   watch: {
     collectionData: {
-      immediate: true,
       handler(data) {
-        if (data)
-          if (data.chartable && this.devReports.length > 1)
-            this.readReportCollection(data)
+        if (data && data.chartable && this.devReports.length > 1) {
+          this.prepareChart()
+          this.writeChart()
+          this.applyRange({})
+        }
       }
     },
     devReports: {
-      immediate: true,
-      handler(val) {
+      handler(_) {
         if (this.collection.render) {
-          // update datasets
-          this.buildReportCollection()
-          // update follow data
-          if (this.range.control.follow) {
-            let min = this.range.value.min
-            let sample = this.range.max - this.range.min
-            // set drag to true if sample less than sample.min
-            if (!(sample > this.sample.min + 1))
-              this.range.control.drag = sample > this.sample.min
-
-            // update min on range.control.drag
-            if (this.range.control.drag)
-              // update min value on range.control.drag
-              min = this.range.max - this.range.sample
-
-            // update chart range value
-            this.range.value = {
-              max: this.range.max,
-              min
-            }
-          }
+          this.writeChart()
+          this.applyRange({})
         }
       }
     },
-    'range.control.maximize': {
-      immediate: true,
-      handler(state) {
-        let max = this.range.max
-        let min = this.range.min
-        let sample = max - min
-        // check state
-        if (state) {
-          // save previous sample value
-          this.sample.lastValue = this.range.sample
-          // save previous drag state
-          this.sample.lastDragState = this.range.control.drag
-          // enable drag
-          this.range.control.drag = false
-          // follow data enable
-          this.range.control.follow = true
+    'control.maximize': {
+      handler(max) {
+        let sample = null
+        if (max) {
+          // save
+          this.tmp.max = this.range.value.max
+          this.tmp.sample = this.range.sample
+          this.tmp.drag = this.control.drag
+          this.tmp.follow = this.control.follow
+          this.range.disable = true
+
+          this.control.follow = false
+          this.control.drag = false
         } else {
-          // retrieve previous drag state
-          this.range.control.drag = this.sample.lastDragState
-          // retrieve previous sample value
-          if (this.sample.lastValue > this.sample.min)
-            sample = this.sample.lastValue
-          else if (sample > this.sample.min) sample = this.sample.min
+          this.range.disable = false
+          this.control.follow = this.tmp.follow
+          this.control.drag = this.tmp.drag
+          sample = this.tmp.sample
+          this.range.value.max = this.tmp.max
         }
-        // the range bar
-        this.range.disable = state
-        // update range value
-        this.range.value = {
-          max,
-          min: max - sample
-        }
+        this.applyRange({ sample })
       }
     },
     'range.value': {
-      immediate: true,
       deep: true,
-      handler({ min, max }) {
-        // update sample
-        this.range.sample = max - min
-        // update chart
-        this.changeChartOptions({
-          xMin: min,
-          xMax: max
-        })
+      handler(_) {
+        let { xiMin, xiMax } = this.findRange(this.range.value)
+        this.range.sample = xiMax - xiMin
+        this.scaleChart()
       }
     },
-    'range.control.beginAtZero': {
-      immediate: true,
-      handler(beginAtZero) {
-        this.changeChartOptions({
-          beginAtZero
-        })
+    'control.beginAtZero': {
+      handler(_) {
+        this.scaleChart()
       }
     }
   }

@@ -40,4 +40,58 @@ const config = {
   timezone: "Asia/Jakarta",
 };
 
-export { config };
+const chart = {
+  data: {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        label: "",
+        backgroundColor: "#f87979",
+        fill: true,
+        showLine: true,
+        pointRadius: 2,
+      },
+    ],
+  },
+  options: {
+    animation: {
+      duration: 10,
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: {
+      display: true,
+      align: "end",
+    },
+    scales: {
+      xAxes: [
+        {
+          ticks: {
+            max: 1,
+            min: 0,
+          },
+          scaleLabel: {
+            display: true,
+            labelString: "Log Datetime",
+          },
+        },
+      ],
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+            max: 1,
+            min: 0,
+          },
+          scaleLabel: {
+            display: true,
+            labelString: "Value",
+          },
+        },
+      ],
+    },
+  },
+};
+
+export { config, chart };

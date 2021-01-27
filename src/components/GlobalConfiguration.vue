@@ -71,7 +71,6 @@ export default {
       }
     },
     exported() {
-      console.warn(makeExport(this.devReports))
       return makeExport(this.devReports)
     }
   },
