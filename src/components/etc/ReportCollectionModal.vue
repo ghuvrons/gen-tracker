@@ -107,6 +107,7 @@
 <script>
 import { devReports } from '../../store/db/getter-types'
 import { mapGetters } from 'vuex'
+import { getField } from 'components/js/utils'
 import { chart } from 'components/js/opt/config'
 import { cloneDeep } from 'lodash'
 import LineChart from 'components/etc/LineChart'
