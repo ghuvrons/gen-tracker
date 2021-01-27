@@ -28,10 +28,10 @@
           <q-item v-for="(driver, index) in devFingers" :key="index">
             <q-item-side>
               <q-chip color="primary" square>
-                {{ driver.initial }}
+                {{ driver.fingerID }}
               </q-chip>
             </q-item-side>
-            <q-item-main :label="driver.name" />
+            <q-item-main> Mr. {{ index + 1 }}</q-item-main>
             <q-item-side right>
               <q-btn
                 round
@@ -76,32 +76,32 @@ export default {
     ...mapMutations('db', [ADD_FINGERS, DELETE_FINGERS, RESET_FINGERS]),
     addFinger() {
       this.$q
-        .dialog({
-          title: 'Add driver',
-          message: 'Initial Name of driver.',
-          preventClose: true,
-          cancel: false,
-          color: 'secondary',
-          prompt: {
-            model: '',
-            type: 'text'
-          }
-        })
-        .then((initial) =>
-          this.$root.$emit('executeCommand', `FINGER_ADD=${initial}`)
-        )
-        .catch(() => {})
+      // .dialog({
+      //   title: 'Add driver',
+      //   message: 'Initial Name of driver.',
+      //   preventClose: true,
+      //   cancel: false,
+      //   color: 'secondary',
+      //   prompt: {
+      //     model: '',
+      //     type: 'text'
+      //   }
+      // })
+      // .then((initial) =>
+      this.$root.$emit('executeCommand', `FINGER_ADD`)
+      // )
+      // .catch(() => {})
     },
-    deleteFinger(driver) {
+    deleteFinger({ fingerID }) {
       this.$q
         .dialog({
           title: 'Confirmation',
-          message: `Are you sure to remove this fingerprint *${driver.initial}* ?`,
+          message: `Are you sure to remove this fingerprint *${fingerID}* ?`,
           preventClose: true,
           cancel: true
         })
         .then(() =>
-          this.$root.$emit('executeCommand', `FINGER_DEL=${driver.initial}`)
+          this.$root.$emit('executeCommand', `FINGER_DEL=${fingerID}`)
         )
         .catch(() => {})
     },
@@ -120,12 +120,13 @@ export default {
   watch: {
     commands: function (commands) {
       if (commands.length > 0) {
-        const { resCode, unitID, command, value: initial } = commands[0]
+        const { resCode, unitID, command, value, message } = commands[0]
 
         if (resCode.title == 'OK') {
-          if (command == 'FINGER_ADD') this.ADD_FINGERS({ unitID, initial })
+          if (command == 'FINGER_ADD')
+            this.ADD_FINGERS({ unitID, fingerID: message })
           else if (command == 'FINGER_DEL')
-            this.DELETE_FINGERS({ unitID, initial })
+            this.DELETE_FINGERS({ unitID, fingerID: value })
           else if (command == 'FINGER_RST') this.RESET_FINGERS({ unitID })
         }
       }

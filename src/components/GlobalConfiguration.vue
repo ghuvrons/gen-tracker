@@ -30,7 +30,7 @@
           class="q-ma-xs"
           icon="cloud_download"
           color="green"
-          label="Export CSV"
+          label="Export Data"
           :disable="devReports.length == 0"
         />
       </json-csv>

@@ -52,8 +52,8 @@ export default {
   },
   [mutations.DELETE_FINGERS](state, payload) {
     let index = state.fingers.findIndex(
-      ({ unitID, initial }) =>
-        unitID === payload.unitID && initial === payload.initial
+      ({ unitID, fingerID }) =>
+        unitID === payload.unitID && fingerID === payload.fingerID
     );
     state.fingers.splice(index, 1);
   },

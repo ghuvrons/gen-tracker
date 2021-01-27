@@ -105,7 +105,6 @@
 </template>
 
 <script>
-import { grabLabelsAndDatasets } from 'components/js/utils'
 import { devReports } from '../../store/db/getter-types'
 import { mapGetters } from 'vuex'
 import { chart } from 'components/js/opt/config'
@@ -132,20 +131,20 @@ export default {
       chart: cloneDeep(chart),
       tmp: {
         max: null,
-        sample: 10,
+        sample: null,
         follow: false,
         drag: false
       },
       sample: {
         min: 0,
-        max: 10
+        max: null
       },
       range: {
         disable: false,
         sample: 10,
         value: {
           min: 0,
-          max: 10
+          max: null
         }
       },
       control: {
@@ -175,16 +174,28 @@ export default {
     }
   },
   methods: {
-    getMaxLabel() {
-      let { labels } = this.chart.data
-
-      let index = labels.length - 1
-      let value = labels[index]
-
-      return { index, value }
-    },
     getLabel(index) {
       return this.chart.data.labels[index]
+    },
+    grabLabelsAndDatasets() {
+      let datasets = []
+      let labels = []
+
+      this.devReports.forEach(({ data }) => {
+        let field = data.find(
+          ({ field }) => field === this.collectionData.field
+        )
+
+        if (field) {
+          datasets.push(field.value)
+          labels.push(getField(data, 'logDatetime'))
+        }
+      })
+
+      return {
+        datasets: datasets.reverse(),
+        labels: labels.reverse()
+      }
     },
     findRange({ min, max }) {
       let { data } = this.chart.data.datasets[0]
@@ -217,9 +228,8 @@ export default {
       let oldSample = xiMax - xiMin
 
       if (this.control.maximize || this.control.follow) {
-        let maxLabel = this.getMaxLabel()
-        xiMax = maxLabel.index
-        xMax = maxLabel.value
+        xiMax = this.chart.data.labels.length - 1
+        xMax = this.getLabel(xiMax)
 
         if (this.control.maximize) xiMin = 0
       }
@@ -234,7 +244,6 @@ export default {
         }
       }
 
-      this.range.sample = sample
       this.range.value = {
         min: this.getLabel(xiMax - sample),
         max: xMax
@@ -254,10 +263,7 @@ export default {
       this.$nextTick(() => (this.modalOpen = true))
     },
     writeChart() {
-      let { labels, datasets } = grabLabelsAndDatasets(
-        this.devReports,
-        this.collectionData.field
-      )
+      let { labels, datasets } = this.grabLabelsAndDatasets()
 
       this.chart.data.labels = labels
       this.chart.data.datasets[0].data = datasets
@@ -316,8 +322,8 @@ export default {
           this.range.disable = false
           this.control.follow = this.tmp.follow
           this.control.drag = this.tmp.drag
-          sample = this.tmp.sample
           this.range.value.max = this.tmp.max
+          sample = this.tmp.sample
         }
         this.applyRange({ sample })
       }
@@ -326,7 +332,7 @@ export default {
       deep: true,
       handler(_) {
         let { xiMin, xiMax } = this.findRange(this.range.value)
-        this.range.sample = xiMax - xiMin
+        this.range.sample = xiMax - xiMin + 1
         this.scaleChart()
       }
     },

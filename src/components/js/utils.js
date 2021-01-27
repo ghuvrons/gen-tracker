@@ -73,25 +73,6 @@ const buildTimestamp = (ascii) => {
   );
 };
 
-const grabLabelsAndDatasets = (devReports, theField) => {
-  let datasets = [];
-  let labels = [];
-
-  devReports.forEach(({ data }) => {
-    let field = data.find(({ field }) => field === theField);
-
-    if (field) {
-      datasets.push(field.value);
-      labels.push(getField(data, "logDatetime"));
-    }
-  });
-
-  return {
-    datasets: datasets.reverse(),
-    labels: labels.reverse(),
-  };
-};
-
 export {
   flowFilter,
   isString,
@@ -99,5 +80,4 @@ export {
   calibrateTime,
   parseDatetime,
   buildTimestamp,
-  grabLabelsAndDatasets,
 };
