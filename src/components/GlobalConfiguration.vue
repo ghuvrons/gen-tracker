@@ -15,7 +15,7 @@
         class="q-ma-xs"
         icon="stop"
         color="primary"
-        label="Ingnore command"
+        label="Ignore command"
         :disable="!theCommand"
         @click="$root.$emit('ignoreCommand')"
       />

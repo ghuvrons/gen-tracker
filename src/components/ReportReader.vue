@@ -14,10 +14,10 @@
       <q-list separator dense v-if="theReport">
         <q-item
           v-for="data in reportData"
-          :link="devReports.length > 1 && data.chartable"
+          :link="readyCollection(data)"
           :key="data.field"
-          :class="{ 'bg-dark text-white': activeField(data) }"
-          @click.native="collectionData = data"
+          :class="{ 'bg-dark text-white': activeCollectionField(data) }"
+          @click.native="openCollection(data)"
         >
           <q-item-main>
             <q-item-tile label>{{ data.title }}</q-item-tile>
@@ -70,7 +70,16 @@ export default {
     }
   },
   methods: {
-    activeField({ field }) {
+    readyCollection({ field, chartable }) {
+      let related = this.devReports.filter(({ data }) => {
+        return data.some(({ field: _field }) => _field == field)
+      })
+      return chartable && related.length >= 2
+    },
+    openCollection(data) {
+      if (this.readyCollection(data)) this.collectionData = data
+    },
+    activeCollectionField({ field }) {
       return this.collectionData && this.collectionData.field == field
     },
     realtimeField({ required }) {

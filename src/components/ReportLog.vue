@@ -3,14 +3,14 @@
     <div class="col-xs-12 text-right">
       <q-btn
         color="blue"
-        label="MAPABLE"
-        :icon="lock.mapable ? 'layers' : 'layers_clear'"
+        label="FULL ONLY"
+        :icon="lock.full ? 'layers' : 'layers_clear'"
         class="q-ma-xs"
         dense
-        :outline="!lock.mapable"
+        :outline="!lock.full"
         :loading="loading"
         :disable="devReports.length == 0"
-        @click="lock.mapable = !lock.mapable"
+        @click="lock.full = !lock.full"
         v-if="lock.follow"
       />
       <q-btn
@@ -41,11 +41,21 @@
           >
             <q-item-side>
               <q-chip color="primary" dense square>
-                <!-- {{devReports.length - index}} -->
-                {{ getDatetime(report.data) }}
+                {{ getDatetime(report) }}
+              </q-chip>
+              <q-chip
+                class="q-ml-sm"
+                style="width: 50px"
+                :color="getFrameID(report) == 'FULL' ? 'green' : 'orange'"
+                dense
+                square
+              >
+                {{ getFrameID(report) }}
               </q-chip>
             </q-item-side>
-            <q-item-main :label="report.hexData" class="q-caption" />
+            <q-item-main class="q-caption">
+              {{ report.hexData }}
+            </q-item-main>
           </q-item>
         </q-list>
         <q-alert v-else icon="info" color="faded" class="q-ma-xs">
@@ -61,6 +71,7 @@ import { getField } from 'components/js/utils'
 import { devReports } from '../store/db/getter-types'
 import { SET_THE_REPORT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
+import moment from 'moment'
 
 export default {
   // name: 'ComponentName',
@@ -71,7 +82,7 @@ export default {
     return {
       lock: {
         follow: true,
-        mapable: false
+        full: false
       }
     }
   },
@@ -81,8 +92,12 @@ export default {
   },
   methods: {
     ...mapMutations('db', [SET_THE_REPORT]),
-    getDatetime(data) {
-      return getField(data, 'logDatetime')
+    getFrameID({ data }) {
+      return data.find(({ field }) => field === 'frameID').output
+    },
+    getDatetime({ data }) {
+      let unix = getField(data, 'logDatetime')
+      return moment.unix(unix).format('HH:mm:ss')
     }
   },
   watch: {
@@ -93,7 +108,7 @@ export default {
           if (this.lock.follow) {
             let report = reports[0]
 
-            if (this.lock.mapable)
+            if (this.lock.full)
               report = reports.find(
                 ({ frameID }) => frameID === this.$config.frame.id.FULL
               )

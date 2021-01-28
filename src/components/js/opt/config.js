@@ -13,6 +13,7 @@ const config = {
     timeoutMS: 10000,
   },
   frame: {
+    list: ["RESPONSE", "SIMPLE", "FULL"],
     prefix: "@R",
     id: {
       RESPONSE: 0,

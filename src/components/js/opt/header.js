@@ -46,14 +46,9 @@ const Header = [
     header: true,
     required: true,
     chartable: true,
-    unit: "Type",
     size: 1,
     format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-    display: (valFormat) => {
-      let frameIDs = ["Response", "Simple", "Full"];
-
-      return `${valFormat} (${frameIDs[valFormat]})`;
-    },
+    display: (valFormat) => config.frame.list[valFormat],
   },
   {
     field: "unitID",
