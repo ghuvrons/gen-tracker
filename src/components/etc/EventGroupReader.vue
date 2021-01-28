@@ -24,7 +24,7 @@
             >
               <q-item-main>
                 <q-item-tile sublabel>
-                  {{ event.logDatetime }}
+                  {{ getTime(event.logDatetime) }}
                 </q-item-tile>
               </q-item-main>
             </q-item>
@@ -38,6 +38,7 @@
 <script>
 import { EVENT_LIST, parseEvent } from 'components/js/event'
 import { devEvents } from '../../store/db/getter-types'
+import { unix2time } from 'components/js/utils'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -54,6 +55,9 @@ export default {
     ...mapGetters('db', [devEvents])
   },
   methods: {
+    getTime(unix) {
+      return unix2time(unix)
+    },
     activeEvent(_name) {
       let bit = EVENT_LIST.find(({ name }) => name === _name).bit
       return parseEvent(this.currentValue, bit)

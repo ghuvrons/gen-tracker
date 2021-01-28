@@ -73,6 +73,10 @@ const buildTimestamp = (ascii) => {
   );
 };
 
+const unix2time = (unix) => {
+  return moment.unix(unix).format("HH:mm:ss");
+};
+
 export {
   flowFilter,
   isString,
@@ -80,4 +84,5 @@ export {
   calibrateTime,
   parseDatetime,
   buildTimestamp,
+  unix2time,
 };

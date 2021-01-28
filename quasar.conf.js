@@ -83,6 +83,7 @@ module.exports = function (ctx) {
         "QRange",
         "QToggle",
         "QSearch",
+        "QUploader",
       ],
       directives: ["Ripple", "CloseOverlay"],
       // Quasar plugins

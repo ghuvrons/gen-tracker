@@ -23,26 +23,24 @@ const parseReport = (hexData) => {
   };
 };
 
-const requiredReport = (theReport) => {
-  return theReport.data.filter(({ required }) => required);
+const requiredReport = ({ data }) => {
+  return data.filter(({ required }) => required);
 };
 
-const optionalReport = (theReport, devReports) => {
-  let index = devReports.findIndex(
-    ({ hexData }) => hexData === theReport.hexData
-  );
+const optionalReport = (report, reports) => {
+  let index = reports.findIndex(({ hexData }) => hexData === report.hexData);
 
-  while (index < devReports.length) {
-    let previous = devReports[index++];
+  while (index < reports.length) {
+    let previous = reports[index++];
     if (previous.frameID === config.frame.id.FULL)
       return previous.data.filter(({ required }) => !required);
   }
   return [];
 };
 
-const reportData = (theReport, devReports) => {
+const reportData = (report, reports) => {
   return orderBy(
-    [...requiredReport(theReport), ...optionalReport(theReport, devReports)],
+    [...requiredReport(report), ...optionalReport(report, reports)],
     "no"
   );
 };

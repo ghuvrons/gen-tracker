@@ -44,10 +44,8 @@
               :max="sample.max"
               :disable="range.disable"
               :drag-range="control.drag"
-              label
               snap
               square
-              label-always
             />
             <div class="row justify-between items-center content-center">
               <div class="col-auto">
@@ -176,27 +174,10 @@ export default {
   },
   methods: {
     getLabel(index) {
-      return this.chart.data.labels[index]
-    },
-    grabLabelsAndDatasets() {
-      let datasets = []
-      let labels = []
+      let { labels } = this.chart.data
 
-      this.devReports.forEach(({ data }) => {
-        let field = data.find(
-          ({ field }) => field === this.collectionData.field
-        )
-
-        if (field) {
-          datasets.push(field.value)
-          labels.push(getField(data, 'logDatetime'))
-        }
-      })
-
-      return {
-        datasets: datasets.reverse(),
-        labels: labels.reverse()
-      }
+      if (index >= 0) return labels[index]
+      return labels[labels.length - 1]
     },
     findRange({ min, max }) {
       let { data } = this.chart.data.datasets[0]
@@ -263,14 +244,38 @@ export default {
       this.collection.update.options = !this.collection.update.options
       this.$nextTick(() => (this.modalOpen = true))
     },
-    writeChart() {
-      let { labels, datasets } = this.grabLabelsAndDatasets()
+    grabLabelsAndDatasets(reports) {
+      let datasets = []
+      let labels = []
 
-      this.chart.data.labels = labels
-      this.chart.data.datasets[0].data = datasets
+      reports.forEach(({ data }) => {
+        let field = data.find(
+          ({ field }) => field === this.collectionData.field
+        )
 
-      this.sample.min = this.$_.min(labels)
-      this.sample.max = this.$_.max(labels)
+        if (field) {
+          datasets.push(field.value)
+          labels.push(getField(data, 'logDatetime'))
+        }
+      })
+
+      return {
+        datasets: datasets.reverse(),
+        labels: labels.reverse()
+      }
+    },
+    writeChart(reports) {
+      let { labels, datasets } = this.grabLabelsAndDatasets(reports)
+
+      if (reports.length > 1) {
+        this.chart.data.labels = labels
+        this.chart.data.datasets[0].data = datasets
+      } else {
+        this.chart.data.labels.push(labels[0])
+        this.chart.data.datasets[0].data.push(datasets[0])
+      }
+      this.sample.min = this.getLabel(0)
+      this.sample.max = this.getLabel(-1)
 
       this.collection.update.data = !this.collection.update.data
     },
@@ -291,17 +296,17 @@ export default {
   watch: {
     collectionData: {
       handler(data) {
-        if (data && data.chartable && this.devReports.length > 1) {
+        if (data) {
           this.prepareChart()
-          this.writeChart()
+          this.writeChart(this.devReports)
           this.applyRange({})
         }
       }
     },
     devReports: {
-      handler(_) {
+      handler() {
         if (this.collection.render) {
-          this.writeChart()
+          this.writeChart([this.devReports[0]])
           this.applyRange({})
         }
       }

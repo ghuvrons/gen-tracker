@@ -1,3 +1,5 @@
+import { unix2time } from "components/js/utils";
+
 const config = {
   app: {
     version: "1.7",
@@ -69,6 +71,9 @@ const chart = {
       xAxes: [
         {
           ticks: {
+            callback: function (value) {
+              return unix2time(value);
+            },
             max: 1,
             min: 0,
           },

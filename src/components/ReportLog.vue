@@ -67,11 +67,10 @@
 </template>
 
 <script>
-import { getField } from 'components/js/utils'
+import { getField, unix2time } from 'components/js/utils'
 import { devReports } from '../store/db/getter-types'
 import { SET_THE_REPORT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import moment from 'moment'
 
 export default {
   // name: 'ComponentName',
@@ -97,7 +96,7 @@ export default {
     },
     getDatetime({ data }) {
       let unix = getField(data, 'logDatetime')
-      return moment.unix(unix).format('HH:mm:ss')
+      return unix2time(unix)
     }
   },
   watch: {

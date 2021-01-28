@@ -26,10 +26,12 @@ export default {
   created() {
     this.$root.$on('executeCommand', this.executeCommand)
     this.$root.$on('ignoreCommand', this.ignoreCommand)
+    this.$root.$on('importReport', this.importReport)
   },
   destroyed() {
     this.$root.$off('executeCommand', this.executeCommand)
     this.$root.$off('ignoreCommand', this.ignoreCommand)
+    this.$root.$off('importReport', this.importReport)
   },
   data() {
     return {
@@ -55,6 +57,9 @@ export default {
       SET_THE_COMMAND,
       CLEAR_THE_COMMAND
     ]),
+    importReport(hexDatas) {
+      hexDatas.forEach((hexData) => this.handleFrame(hexData))
+    },
     handleFrame(hexData) {
       let header = validateFrame(hexData)
       if (!header) {
