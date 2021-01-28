@@ -1,8 +1,8 @@
 <template>
-  <div class="row gutter-lg">
+  <div class="row">
     <div class="col-12">
-      <div class="row gutter-lg">
-        <div class="col-auto">
+      <div class="row">
+        <div class="col-auto q-ma-sm">
           <q-btn
             class="q-ma-xs"
             icon="delete"
@@ -12,7 +12,7 @@
             @click="clearStore()"
           />
         </div>
-        <div class="col-auto">
+        <div class="col-auto q-ma-sm">
           <q-btn
             class="q-ma-xs"
             icon="stop"
@@ -22,17 +22,9 @@
             @click="$root.$emit('ignoreCommand')"
           />
         </div>
-        <div class="col-auto">
-          <q-toggle
-            v-model="calibrationState"
-            label="Time Calibration"
-            class="q-ma-xs"
-            :disable="units.length == 0"
-          />
-        </div>
       </div>
-      <div class="row gutter-lg">
-        <div class="col-auto">
+      <div class="row">
+        <div class="col-auto q-ma-sm">
           <json-csv
             :data="exported.data"
             :labels="exported.label"
@@ -47,7 +39,7 @@
             />
           </json-csv>
         </div>
-        <div class="col-auto">
+        <div class="col-auto q-ma-sm">
           <q-btn
             class="q-ma-xs"
             icon="cloud_download"
@@ -58,8 +50,8 @@
           />
         </div>
       </div>
-      <div class="row gutter-lg">
-        <div class="col-auto">
+      <div class="row">
+        <div class="col-auto q-ma-sm">
           <q-uploader
             class="q-ma-sm"
             ref="importer"
@@ -69,6 +61,14 @@
             stack-label="Import JSON"
             auto-expand
             hide-upload-progress
+          />
+        </div>
+        <div class="col-auto q-ma-sm" style="height: 70px">
+          <q-toggle
+            class="q-pt-lg"
+            v-model="calibrationState"
+            label="Time Calibration"
+            :disable="units.length == 0"
           />
         </div>
       </div>
