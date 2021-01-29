@@ -3,31 +3,31 @@ import { HexToUnsignedInt, HexToAscii } from "components/js/helper";
 
 const RESPONSE_LIST = [
   {
-    code: 0,
+    resCode: 0,
     name: "error",
     title: "ERROR",
     color: "red",
   },
   {
-    code: 1,
+    resCode: 1,
     name: "ok",
     title: "OK",
     color: "green",
   },
   {
-    code: 2,
+    resCode: 2,
     name: "invalid",
     title: "INVALID",
     color: "blue",
   },
   {
-    code: 256,
+    resCode: 256,
     name: "timeout",
     title: "TIMEOUT",
     color: "orange",
   },
   {
-    code: 257,
+    resCode: 257,
     name: "unknown",
     title: "UNKNOWN",
     color: "purple",
@@ -42,8 +42,24 @@ const Response = [
     required: true,
     size: 1,
     format: (val) => HexToUnsignedInt(val),
+    display: (valFormat) => valFormat,
+  },
+  {
+    field: "subCode",
+    title: "Sub Code",
+    required: true,
+    size: 1,
+    format: (val) => HexToUnsignedInt(val),
+    display: (valFormat) => valFormat,
+  },
+  {
+    field: "resCode",
+    title: "Response Code",
+    required: true,
+    size: 1,
+    format: (val) => HexToUnsignedInt(val),
     display: (valFormat) => {
-      let res = RESPONSE_LIST.find(({ code }) => code === valFormat);
+      let res = RESPONSE_LIST.find(({ resCode }) => resCode === valFormat);
 
       if (res) return res.title;
       return RESPONSE_LIST.find(({ name }) => name === "unknown").title;

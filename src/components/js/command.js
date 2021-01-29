@@ -32,7 +32,7 @@ const buildCommand = (cmd, value) => {
   }, "").toUpperCase();
 };
 
-const parseCommand = (payload) => {
+const extractCommand = (payload) => {
   let prop = payload;
   let value = null;
 
@@ -41,6 +41,12 @@ const parseCommand = (payload) => {
     prop = payload.split("=")[0];
     value = payload.split("=")[1];
   }
+
+  return { prop, value };
+};
+
+const parseCommand = (payload) => {
+  let { prop, value } = extractCommand(payload);
 
   // check is no payload
   if (!payload) return "Empty payload.";
@@ -68,4 +74,4 @@ const parseCommand = (payload) => {
   };
 };
 
-export { COMMAND_LIST, Command, parseCommand };
+export { COMMAND_LIST, Command, parseCommand, extractCommand };

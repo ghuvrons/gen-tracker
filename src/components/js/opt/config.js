@@ -12,7 +12,7 @@ const config = {
   },
   command: {
     prefix: "@C",
-    timeoutMS: 10000,
+    timeoutMS: 15000,
   },
   frame: {
     list: ["RESPONSE", "SIMPLE", "FULL"],

@@ -19,8 +19,8 @@
           <q-item-main>
             <q-item-tile label>{{ cmd.payload }}</q-item-tile>
             <q-item-tile sublabel>
-              <q-chip :color="cmd.resCode.color" dense square>{{
-                cmd.resCode.title
+              <q-chip :color="cmd.res.color" dense square>{{
+                cmd.res.title
               }}</q-chip>
               {{ cmd.message }}
             </q-item-tile>

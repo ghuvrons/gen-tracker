@@ -8,13 +8,13 @@ export default {
     state.calibration = !state.calibration;
   },
   [mutations.CLEAR_ALL](state) {
-    // state.theUnit = null
+    state.theUnit = null;
     state.theReport = null;
 
-    // state.units = []
+    state.units = [];
     state.reports = [];
     state.commands = [];
-    // state.fingers = []
+    state.fingers = [];
   },
   [mutations.SET_THE_UNIT](state, payload) {
     state.theUnit = payload;
@@ -48,7 +48,12 @@ export default {
     state.commands.unshift(payload);
   },
   [mutations.ADD_FINGERS](state, payload) {
-    state.fingers.unshift(payload);
+    let exist = state.fingers.some(
+      ({ unitID, fingerID }) =>
+        unitID === payload.unitID && fingerID === payload.fingerID
+    );
+
+    if (!exist) state.fingers.unshift(payload);
   },
   [mutations.DELETE_FINGERS](state, payload) {
     let index = state.fingers.findIndex(

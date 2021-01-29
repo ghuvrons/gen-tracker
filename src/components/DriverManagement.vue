@@ -2,6 +2,16 @@
   <div class="row gutter-xs">
     <div class="col-xs-12 text-right">
       <q-btn
+        color="purple"
+        label="FETCH"
+        class="q-ma-xs"
+        dense
+        outline
+        :disable="!theUnit"
+        :loading="loading"
+        @click="fetchFinger()"
+      />
+      <q-btn
         color="green"
         label="ADD"
         class="q-ma-xs"
@@ -31,7 +41,7 @@
                 {{ driver.fingerID }}
               </q-chip>
             </q-item-side>
-            <q-item-main> Mr. {{ index + 1 }}</q-item-main>
+            <q-item-main> Mr. {{ name[driver.fingerID - 1] }}</q-item-main>
             <q-item-side right>
               <q-btn
                 round
@@ -60,7 +70,8 @@ import {
   DELETE_FINGERS,
   RESET_FINGERS
 } from '../store/db/mutation-types'
-import { devFingers } from '../store/db/getter-types'
+import { extractCommand } from 'components/js/command'
+import { devFingers, devCommands } from '../store/db/getter-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
@@ -68,29 +79,25 @@ export default {
   props: {
     height: Number
   },
+  data() {
+    return {
+      name: ['One', 'Two', 'Three', 'Four', 'Five']
+    }
+  },
   computed: {
-    ...mapState('db', ['loading', 'theUnit', 'commands']),
-    ...mapGetters('db', [devFingers])
+    ...mapState('db', ['loading', 'theUnit']),
+    ...mapGetters('db', [devFingers, devCommands])
+  },
+  mounted() {
+    if (this.theUnit) this.fetchFinger()
   },
   methods: {
     ...mapMutations('db', [ADD_FINGERS, DELETE_FINGERS, RESET_FINGERS]),
+    fetchFinger() {
+      this.$root.$emit('executeCommand', `FINGER_FETCH`)
+    },
     addFinger() {
-      this.$q
-      // .dialog({
-      //   title: 'Add driver',
-      //   message: 'Initial Name of driver.',
-      //   preventClose: true,
-      //   cancel: false,
-      //   color: 'secondary',
-      //   prompt: {
-      //     model: '',
-      //     type: 'text'
-      //   }
-      // })
-      // .then((initial) =>
       this.$root.$emit('executeCommand', `FINGER_ADD`)
-      // )
-      // .catch(() => {})
     },
     deleteFinger({ fingerID }) {
       this.$q
@@ -118,16 +125,26 @@ export default {
     }
   },
   watch: {
-    commands: function (commands) {
-      if (commands.length > 0) {
-        const { resCode, unitID, command, value, message } = commands[0]
+    devCommands: {
+      deep: true,
+      handler(commands) {
+        if (commands.length > 0) {
+          let { res, payload, unitID, message } = commands[0]
+          let { prop, value } = extractCommand(payload)
 
-        if (resCode.title == 'OK') {
-          if (command == 'FINGER_ADD')
-            this.ADD_FINGERS({ unitID, fingerID: message })
-          else if (command == 'FINGER_DEL')
-            this.DELETE_FINGERS({ unitID, fingerID: value })
-          else if (command == 'FINGER_RST') this.RESET_FINGERS({ unitID })
+          if (res.title == 'OK') {
+            if (prop == 'FINGER_FETCH') {
+              if (message.length > 0) {
+                let ids = message.split(',')
+                for (let i = ids.length - 1; i >= 0; i--)
+                  this.ADD_FINGERS({ unitID, fingerID: ids[i] })
+              }
+            } else if (prop == 'FINGER_ADD')
+              this.ADD_FINGERS({ unitID, fingerID: message })
+            else if (prop == 'FINGER_DEL')
+              this.DELETE_FINGERS({ unitID, fingerID: value })
+            else if (prop == 'FINGER_RST') this.RESET_FINGERS({ unitID })
+          }
         }
       }
     }

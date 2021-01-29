@@ -72,7 +72,8 @@ export default {
       this.ADD_UNITS(unitID)
       if (frameID === this.$config.frame.id.RESPONSE) {
         console.log(`RESPONSE ${hexData}`)
-        this.ADD_COMMANDS(parseResponse(this.theCommand, hexData))
+        let response = parseResponse(this.theCommand, hexData)
+        if (response) this.ADD_COMMANDS(response)
       } else {
         let report = parseReport(hexData)
         if (this.uniqueReport(report)) {
@@ -171,10 +172,10 @@ export default {
     },
     commands: function (commands) {
       if (commands.length > 0) {
-        let { resCode } = commands[0]
-        let ok = resCode.title == 'OK'
+        let { res } = commands[0]
+        let ok = res.title == 'OK'
 
-        let message = ok ? 'Command sent.' : `Command is ${resCode.title}`
+        let message = ok ? 'Command sent.' : `Command is ${res.title}`
         let type = ok ? 'positive' : 'negative'
 
         this.stopWaitting(message, type)
