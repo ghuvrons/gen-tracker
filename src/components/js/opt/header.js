@@ -67,7 +67,7 @@ const CommandHeader = [
     title: "Prefix",
     header: true,
     size: 2,
-    format: () => AsciiToHex(config.command.prefix),
+    format: () => ChangeEndian(AsciiToHex(config.command.prefix)),
   },
   {
     field: "crc",

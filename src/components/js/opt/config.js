@@ -23,9 +23,6 @@ const config = {
       FULL: 2,
     },
   },
-  finger: {
-    max: 5,
-  },
   map: {
     zoom: 3,
     centerIndonesia: {

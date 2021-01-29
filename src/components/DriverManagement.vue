@@ -7,7 +7,7 @@
         class="q-ma-xs"
         dense
         outline
-        :disable="devFingers.length >= $config.finger.max || !theUnit"
+        :disable="!theUnit"
         :loading="loading"
         @click="addFinger()"
       />
