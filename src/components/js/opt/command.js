@@ -113,8 +113,8 @@ const COMMAND_LIST = [
     subCode: 3,
   },
   {
-    command: "KEYLESS_PAIRING",
-    desc: "Pairing Pocket Keyless",
+    command: "REMOTE_PAIRING",
+    desc: "Pairing pocket keyless",
     code: 4,
     subCode: 0,
   },
