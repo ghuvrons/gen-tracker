@@ -14,8 +14,9 @@ const parseResponse = ({ payload, unitID, code, subCode }, hexData) => {
 
     if (!res) return;
 
-    if (getField(data, "code") != code || getField(data, "subCode") != subCode)
-      return;
+    if (getField(data, "code") != code) return;
+
+    if (getField(data, "subCode") != subCode) return;
 
     message = getField(data, "message");
   } else {
