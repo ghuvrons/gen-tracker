@@ -106,9 +106,9 @@ module.exports = function (ctx) {
       // workboxPluginMode: 'InjectManifest',
       // workboxOptions: {},
       manifest: {
-        // name: 'Quasar App',
-        // short_name: 'Quasar-PWA',
-        // description: 'Best PWA App in town!',
+        name: "GEN Tracker",
+        short_name: "GEN-Tracker",
+        description: "GEN motorcycle tracker",
         display: "standalone",
         orientation: "portrait",
         background_color: "#ffffff",
