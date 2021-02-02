@@ -6,9 +6,12 @@ const config = {
     title: "GPS Tracker",
     subTitle: "GEN Indonesia",
   },
-  socket: {
+  mqtt: {
     address: "broker.hivemq.com",
     port: 8000,
+    username:
+      "sLSDwexrmm9JVuS13iGGj6wyOWh5tAkJb2dw6yLgKKPt2xjUEPqLLM9nyeiQCtpB",
+    password: "",
   },
   command: {
     prefix: "@C",
