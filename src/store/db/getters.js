@@ -13,7 +13,6 @@ export default {
   },
   [getters.devReports]({ reports, theUnit }) {
     let _reports = reports.filter(({ unitID }) => unitID === theUnit);
-
     return theUnit ? _reports : [];
   },
   [getters.devEvents](state, getters) {

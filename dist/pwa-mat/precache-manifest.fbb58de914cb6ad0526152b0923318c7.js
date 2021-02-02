@@ -1,10 +1,10 @@
 self.__precacheManifest = [
   {
-    "revision": "cf6613d1adf490972c557a8e318e0868",
-    "url": "fonts/KFOlCnqEu92Fr1MmWUlfBBc-.cf6613d1.woff"
+    "revision": "8c2ade503b34e31430d6c98aa29a52a3",
+    "url": "fonts/KFOlCnqEu92Fr1MmYUtfBBc-.8c2ade50.woff"
   },
   {
-    "revision": "3437252a72d23e5986bd2c3240897b87",
+    "revision": "0d2f0a1d0b532cdc282ac93d2709df22",
     "url": "index.html"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "statics/icons/icon-512x512.png"
   },
   {
-    "revision": "cf2dd225e4f5f636ad60",
-    "url": "js/app.9eb122de.js"
+    "revision": "aa63f4ad14f15d76692b",
+    "url": "js/app.1e3bbf29.js"
   },
   {
     "revision": "66d7719a8ca03c1a591444c013802817",
@@ -52,12 +52,8 @@ self.__precacheManifest = [
     "url": "statics/quasar-logo.png"
   },
   {
-    "revision": "28ba1ab684c919862135",
-    "url": "js/1dfc4db6.f39386ad.js"
-  },
-  {
-    "revision": "efb00e57304380d857603760600da5d5",
-    "url": "statics/icons/favicon-16x16.png"
+    "revision": "eefe2b65ec88566bf513",
+    "url": "js/1dfc4db6.36484046.js"
   },
   {
     "revision": "3020c8ac2c2872dec7741e5948520093",
@@ -66,6 +62,10 @@ self.__precacheManifest = [
   {
     "revision": "2f9d7587924933c1912c342b190b53ca",
     "url": "statics/icons/favicon-32x32.png"
+  },
+  {
+    "revision": "efb00e57304380d857603760600da5d5",
+    "url": "statics/icons/favicon-16x16.png"
   },
   {
     "revision": "8a9a261c8b8dfe90db11f1817a9d22e1",
@@ -80,8 +80,8 @@ self.__precacheManifest = [
     "url": "fonts/KFOmCnqEu92Fr1Mu4mxM.bafb105b.woff"
   },
   {
-    "revision": "8c2ade503b34e31430d6c98aa29a52a3",
-    "url": "fonts/KFOlCnqEu92Fr1MmYUtfBBc-.8c2ade50.woff"
+    "revision": "cf6613d1adf490972c557a8e318e0868",
+    "url": "fonts/KFOlCnqEu92Fr1MmWUlfBBc-.cf6613d1.woff"
   },
   {
     "revision": "a1471d1d6431c893582a5f6a250db3f9",
@@ -100,11 +100,11 @@ self.__precacheManifest = [
     "url": "css/bc44146a.b0dd95d0.css"
   },
   {
-    "revision": "cf2dd225e4f5f636ad60",
+    "revision": "aa63f4ad14f15d76692b",
     "url": "css/app.ddcd6bde.css"
   },
   {
-    "revision": "28ba1ab684c919862135",
-    "url": "css/1dfc4db6.7894e543.css"
+    "revision": "eefe2b65ec88566bf513",
+    "url": "css/1dfc4db6.3d83c599.css"
   }
 ];

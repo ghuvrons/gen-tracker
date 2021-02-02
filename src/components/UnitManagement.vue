@@ -1,6 +1,6 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none bg-primary text-white">
+    <p class="q-pa-sm q-mb-none bg-info text-white">
       Unit Management
       <q-chip color="negative" dense square v-if="units.length > 0">
         {{ units.length }}

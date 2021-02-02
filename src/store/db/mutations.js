@@ -52,6 +52,7 @@ export default {
   [mutations.ADD_COMMANDS](state, payload) {
     state.commands.unshift(payload);
   },
+
   [mutations.ADD_FINGERS](state, payload) {
     let exist = state.fingers.some(
       ({ unitID, fingerID }) =>

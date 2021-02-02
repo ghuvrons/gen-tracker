@@ -1,11 +1,12 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none bg-primary text-white">
+    <p class="q-pa-sm q-mb-none bg-info text-white">
       Report Reader
       <q-chip
         :color="fullFrame ? 'green' : 'light-green'"
         dense
         square
+        class="shadow-1"
         v-if="theReport"
       >
         {{ fullFrame ? "FULL" : "SIMPLE" }}
