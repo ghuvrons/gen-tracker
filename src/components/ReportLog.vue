@@ -52,7 +52,7 @@
               <q-chip
                 class="q-ml-sm"
                 style="width: 50px"
-                :color="getFrameID(report) == 'FULL' ? 'green' : 'orange'"
+                :color="getFrameID(report) == 'FULL' ? 'green' : 'green-7'"
                 dense
                 square
               >

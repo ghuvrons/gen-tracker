@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "statics/icons/favicon-16x16.png"
   },
   {
-    "revision": "0a24c41ff26470c40ed43c124b108d4a",
+    "revision": "a6de8f6968f1ae67af97554720cd2e73",
     "url": "index.html"
   },
   {
@@ -16,32 +16,32 @@ self.__precacheManifest = [
     "url": "statics/icons/icon-512x512.png"
   },
   {
-    "revision": "44d23d097a2a7606aa2b",
-    "url": "js/app.2d6ac7c2.js"
-  },
-  {
-    "revision": "8c4120b4e88276badbc808e518572fad",
-    "url": "statics/icons/icon-192x192.png"
-  },
-  {
-    "revision": "9844314bf21025d3c358",
-    "url": "js/bc44146a.d23e7d69.js"
-  },
-  {
-    "revision": "dcc281ccc60ddd75a183",
-    "url": "js/vendor.9ef2639f.js"
+    "revision": "468e01a0ac953c8ce265",
+    "url": "js/app.9443cc5b.js"
   },
   {
     "revision": "66d7719a8ca03c1a591444c013802817",
     "url": "statics/icons/icon-384x384.png"
   },
   {
+    "revision": "421f5e47fce205f64ed3",
+    "url": "js/bc44146a.9f13e740.js"
+  },
+  {
+    "revision": "dcc281ccc60ddd75a183",
+    "url": "js/vendor.9ef2639f.js"
+  },
+  {
+    "revision": "3020c8ac2c2872dec7741e5948520093",
+    "url": "statics/quasar-logo.png"
+  },
+  {
     "revision": "ed12d10fd0407eea42ccaf7af7991146",
     "url": "statics/icons/ms-icon-144x144.png"
   },
   {
-    "revision": "187aee0847e84dc3c7c2",
-    "url": "js/1dfc4db6.0ff2a17e.js"
+    "revision": "5896af42daf487aec926",
+    "url": "js/1dfc4db6.bc98c514.js"
   },
   {
     "revision": "3020c8ac2c2872dec7741e5948520093",
@@ -52,12 +52,12 @@ self.__precacheManifest = [
     "url": "statics/icons/favicon-32x32.png"
   },
   {
-    "revision": "3020c8ac2c2872dec7741e5948520093",
-    "url": "statics/quasar-logo.png"
-  },
-  {
     "revision": "da2b422e2895b9b9c1782a71b6be9d63",
     "url": "statics/icons/apple-icon-152x152.png"
+  },
+  {
+    "revision": "8c4120b4e88276badbc808e518572fad",
+    "url": "statics/icons/icon-192x192.png"
   },
   {
     "revision": "20c6420ccf16a07d9d56538e30a6b524",
@@ -72,15 +72,15 @@ self.__precacheManifest = [
     "url": "fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.c38ebd3c.woff"
   },
   {
-    "revision": "9844314bf21025d3c358",
+    "revision": "421f5e47fce205f64ed3",
     "url": "css/bc44146a.7ebbe753.css"
   },
   {
-    "revision": "44d23d097a2a7606aa2b",
+    "revision": "468e01a0ac953c8ce265",
     "url": "css/app.feb65ec6.css"
   },
   {
-    "revision": "187aee0847e84dc3c7c2",
+    "revision": "5896af42daf487aec926",
     "url": "css/1dfc4db6.65492f20.css"
   }
 ];

@@ -28,7 +28,7 @@
           </q-item-main>
           <q-item-side
             right
-            :color="realtimeField(data) ? 'green' : 'red'"
+            :color="realtimeField(data) ? 'green' : 'green-7'"
             :icon="realtimeField(data) ? 'cloud_download' : 'cloud_off'"
           />
         </q-item>
