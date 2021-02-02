@@ -20,6 +20,7 @@ importScripts(
 workbox.core.setCacheNameDetails({prefix: "gen-gps-tracker"});
 
 workbox.skipWaiting();
+workbox.clientsClaim();
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to

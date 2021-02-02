@@ -104,7 +104,7 @@ module.exports = function (ctx) {
     },
     pwa: {
       // workboxPluginMode: 'InjectManifest',
-      workboxOptions: { skipWaiting: true },
+      workboxOptions: { skipWaiting: true, clientsClaim: true },
       manifest: {
         name: "GEN Tracker",
         short_name: "GEN-Tracker",
