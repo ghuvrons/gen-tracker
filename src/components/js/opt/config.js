@@ -20,8 +20,8 @@ const config = {
     timeoutMS: 15000,
   },
   frame: {
-    list: ["RESPONSE", "SIMPLE", "FULL"],
     prefix: "@R",
+    name: ["RESPONSE", "SIMPLE", "FULL"],
     id: {
       RESPONSE: 0,
       SIMPLE: 1,

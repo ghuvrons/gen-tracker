@@ -48,7 +48,7 @@ const Header = [
     chartable: true,
     size: 1,
     format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-    display: (valFormat) => config.frame.list[valFormat],
+    display: (valFormat) => config.frame.name[valFormat],
   },
   {
     field: "unitID",

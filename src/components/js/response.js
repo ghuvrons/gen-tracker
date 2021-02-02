@@ -1,4 +1,4 @@
-import { getField } from "components/js/utils";
+import { getValue } from "components/js/utils";
 import { parseFrame } from "components/js/frame";
 import { RESPONSE_LIST, Response } from "components/js/opt/response";
 
@@ -9,16 +9,16 @@ const parseResponse = ({ payload, unitID, code, subCode }, hexData) => {
     let data = parseFrame(hexData, Response);
 
     res = RESPONSE_LIST.find(
-      ({ resCode }) => resCode === getField(data, "resCode")
+      ({ resCode }) => resCode === getValue(data, "resCode")
     );
 
     if (!res) return;
 
-    if (getField(data, "code") != code) return;
+    if (getValue(data, "code") != code) return;
 
-    if (getField(data, "subCode") != subCode) return;
+    if (getValue(data, "subCode") != subCode) return;
 
-    message = getField(data, "message");
+    message = getValue(data, "message");
   } else {
     res = RESPONSE_LIST.find(({ name }) => name === "timeout");
     message = null;

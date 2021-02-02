@@ -52,11 +52,13 @@
               <q-chip
                 class="q-ml-sm"
                 style="width: 60px"
-                :color="getFrameID(report) == 'FULL' ? 'green' : 'light-green'"
+                :color="
+                  getFrameName(report) == 'FULL' ? 'green' : 'light-green'
+                "
                 dense
                 square
               >
-                {{ getFrameID(report) }}
+                {{ getFrameName(report) }}
               </q-chip>
             </q-item-side>
             <q-item-main class="q-caption">
@@ -73,7 +75,7 @@
 </template>
 
 <script>
-import { getField, unix2time } from 'components/js/utils'
+import { getValue, unix2time } from 'components/js/utils'
 import { devReports } from '../store/db/getter-types'
 import { SET_THE_REPORT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
@@ -99,12 +101,11 @@ export default {
   },
   methods: {
     ...mapMutations('db', [SET_THE_REPORT]),
-    getFrameID({ data }) {
-      return data.find(({ field }) => field === 'frameID').output
+    getFrameName({ frameID }) {
+      return this.$config.frame.name[frameID]
     },
-    getDatetime({ data }) {
-      let unix = getField(data, 'logDatetime')
-      return unix2time(unix)
+    getDatetime({ logDatetime }) {
+      return unix2time(logDatetime)
     }
   },
   watch: {

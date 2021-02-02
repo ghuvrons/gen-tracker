@@ -22,23 +22,32 @@ const flowFilter = (array, substr) => {
   );
 };
 
-const getField = (arr, fields) => {
+const getField = (arr, fields, target) => {
+  let result = arr.find(({ field }) => field === fields);
   if (Array.isArray(fields))
-    return fields.reduce(
-      (carry, _field) => ({
+    return fields.reduce((carry, _field) => {
+      result = arr.find(({ field }) => field === _field);
+      return {
         ...carry,
-        [_field]: arr.find(({ field }) => field === _field).value,
-      }),
-      {}
-    );
-  return arr.find(({ field }) => field === fields).value;
+        [_field]: target ? result[target] : result,
+      };
+    }, {});
+  return target ? result[target] : result;
+};
+
+const getValue = (arr, fields) => {
+  return getField(arr, fields, "value");
+};
+
+const getOutput = (arr, fields) => {
+  return getField(arr, fields, "output");
 };
 
 const calibrateTime = (data) => {
   let timezone = _.clone(config.timezone);
-  let lat = getField(data, "gpsLatitude");
-  let lng = getField(data, "gpsLongitude");
-  let sendTime = getField(data, "sendDatetime");
+  let lat = getValue(data, "gpsLatitude");
+  let lng = getValue(data, "gpsLongitude");
+  let sendTime = getValue(data, "sendDatetime");
 
   // correct timestamp if not sync with server
   if (lat && lng) timezone = tzlookup(lat, lng);
@@ -81,6 +90,8 @@ export {
   flowFilter,
   isString,
   getField,
+  getValue,
+  getOutput,
   calibrateTime,
   parseDatetime,
   buildTimestamp,

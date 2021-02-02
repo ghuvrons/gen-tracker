@@ -6,9 +6,8 @@
 
 <script>
 import { validateFrame } from 'components/js/frame'
-import { getField, calibrateTime, isString } from 'components/js/utils'
-import { mapState, mapGetters, mapMutations } from 'vuex'
-import { uniqueReport } from './store/db/getter-types'
+import { getValue, calibrateTime, isString } from 'components/js/utils'
+import { mapState, mapMutations } from 'vuex'
 import {
   SET_LOADING,
   ADD_UNITS,
@@ -20,9 +19,11 @@ import {
 import { parseReport } from 'components/js/report'
 import { parseResponse } from 'components/js/response'
 import { parseCommand } from 'components/js/command'
+import DummyMixin from 'components/mixins/DummyMixin'
 
 export default {
   name: 'App',
+  mixins: [DummyMixin],
   created() {
     this.$root.$on('executeCommand', this.executeCommand)
     this.$root.$on('ignoreCommand', this.ignoreCommand)
@@ -39,14 +40,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('db', [
-      'theCommand',
-      'commands',
-      'reports',
-      'theUnit',
-      'calibration'
-    ]),
-    ...mapGetters('db', [uniqueReport])
+    ...mapState('db', ['theCommand', 'commands', 'reports', 'theUnit'])
   },
   methods: {
     ...mapMutations('db', [
@@ -67,7 +61,7 @@ export default {
         return
       }
 
-      let { unitID, frameID } = getField(header, ['unitID', 'frameID'])
+      let { unitID, frameID } = getValue(header, ['unitID', 'frameID'])
 
       this.ADD_UNITS(unitID)
       if (frameID === this.$config.frame.id.RESPONSE) {
@@ -76,10 +70,17 @@ export default {
         if (response) this.ADD_COMMANDS(response)
       } else {
         let report = parseReport(hexData)
-        if (this.uniqueReport(report)) {
+
+        if (
+          this.reports.some(
+            ({ logDatetime }) => logDatetime == report.logDatetime
+          )
+        )
+          console.warn(`REPORT (DUPLICATE) ${hexData}`)
+        else {
           console.log(`REPORT ${hexData}`)
           this.ADD_REPORTS(report)
-        } else console.warn(`REPORT (DUPLICATE) ${hexData}`)
+        }
       }
     },
 
@@ -129,6 +130,9 @@ export default {
       })
     }
   },
+  timers: {
+    cmdTimeout: { time: 0 }
+  },
   mounted() {
     this.$mqtt.subscribe('VCU/#')
   },
@@ -142,9 +146,6 @@ export default {
       this.handleFrame(hexData)
     }
   },
-  timers: {
-    cmdTimeout: { time: 0 }
-  },
   watch: {
     theCommand: function (cmd) {
       if (cmd) {
@@ -154,20 +155,6 @@ export default {
         this.starWaitting()
         this.$mqtt.publish(`VCU/${unitID}/CMD`, binData)
         console.log(`COMMAND ${hexData}`)
-      }
-    },
-    reports: function (reports) {
-      if (reports.length > 0) {
-        let { frameID, data } = reports[0]
-
-        if (this.calibration)
-          if (frameID === this.$config.frame.id.FULL) {
-            let validTime = calibrateTime(data)
-            if (validTime) {
-              this.$root.$emit('executeCommand', `REPORT_RTC=${validTime}`)
-              this.$q.notify({ message: 'Calibrating device time..' })
-            }
-          }
       }
     },
     commands: function (commands) {

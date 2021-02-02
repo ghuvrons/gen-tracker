@@ -93,6 +93,8 @@ import { RESET_DATABASE } from '../store/db/action-types'
 import { TOGGLE_CALIBRATION, TOGGLE_DARKER } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { makeExportCSV, makeExportJSON } from 'components/js/exporter'
+import { calibrateTime } from 'components/js/utils'
+import { parseReportData } from 'components/js/report'
 import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
@@ -155,6 +157,23 @@ export default {
         })
         .then(() => this.RESET_DATABASE())
         .catch(() => {})
+    }
+  },
+  watch: {
+    reports: function (reports) {
+      if (reports.length > 0) {
+        let { frameID, hexData } = reports[0]
+
+        if (this.calibration)
+          if (frameID === this.$config.frame.id.FULL) {
+            let data = parseReportData(hexData)
+            let validTime = calibrateTime(data)
+            if (validTime) {
+              this.$root.$emit('executeCommand', `REPORT_RTC=${validTime}`)
+              this.$q.notify({ message: 'Calibrating device time..' })
+            }
+          }
+      }
     }
   }
 }

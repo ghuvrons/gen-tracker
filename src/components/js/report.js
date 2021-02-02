@@ -1,29 +1,41 @@
 import { config } from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
-import { getField } from "components/js/utils";
+import { getValue } from "components/js/utils";
 import { Header, parseFrame } from "components/js/frame";
 import { orderBy } from "lodash";
 
-const parseReport = (hexData) => {
+const parseReportData = (hexData) => {
+  let { frame } = config;
   let header = parseFrame(hexData, Header);
-  let { frameID, unitID } = getField(header, ["frameID", "unitID"]);
+  let { frameID } = getValue(header, ["unitID", "frameID"]);
 
-  let report = Report.filter((el) => {
-    let { frame } = config;
-    return (
-      frameID == frame.id.FULL || (frameID == frame.id.SIMPLE && el.required)
-    );
-  });
+  let report = Report.filter(
+    ({ required }) =>
+      frameID == frame.id.FULL || (frameID == frame.id.SIMPLE && required)
+  );
+
+  return parseFrame(hexData, report);
+};
+
+const parseReport = (hexData) => {
+  let data = parseReportData(hexData);
+
+  let { unitID, frameID, logDatetime } = getValue(data, [
+    "unitID",
+    "frameID",
+    "logDatetime",
+  ]);
 
   return {
     unitID,
     frameID,
+    logDatetime,
     hexData,
-    data: parseFrame(hexData, report),
   };
 };
 
-const requiredReport = ({ data }) => {
+const requiredReport = ({ hexData }) => {
+  let data = parseReportData(hexData);
   return data.filter(({ required }) => required);
 };
 
@@ -31,9 +43,11 @@ const optionalReport = (report, reports) => {
   let index = reports.findIndex(({ hexData }) => hexData === report.hexData);
 
   while (index < reports.length) {
-    let previous = reports[index++];
-    if (previous.frameID === config.frame.id.FULL)
-      return previous.data.filter(({ required }) => !required);
+    let prev = reports[index++];
+    if (prev.frameID === config.frame.id.FULL) {
+      let data = parseReportData(prev.hexData);
+      return data.filter(({ required }) => !required);
+    }
   }
   return [];
 };
@@ -45,4 +59,4 @@ const reportData = (report, reports) => {
   );
 };
 
-export { Report, parseReport, reportData };
+export { Report, parseReport, parseReportData, reportData };

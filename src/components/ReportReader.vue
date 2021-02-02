@@ -52,9 +52,10 @@
 
 <script>
 import ReportCollectionModal from 'components/etc/ReportCollectionModal'
-import { reportData } from 'components/js/report'
+import { parseReportData, reportData } from 'components/js/report'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
+import { getField } from 'components/js/utils'
 import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
@@ -83,8 +84,9 @@ export default {
   },
   methods: {
     readyCollection({ field, chartable }) {
-      let related = this.devReports.filter(({ data }) => {
-        return data.some(({ field: _field }) => _field == field)
+      let related = this.devReports.filter(({ hexData }) => {
+        let data = parseReportData(hexData)
+        return getField(data, field)
       })
       return chartable && related.length >= 2
     },

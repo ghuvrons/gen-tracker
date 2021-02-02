@@ -1,9 +1,10 @@
-import { Report } from "components/js/report";
+import { Report, parseReportData } from "components/js/report";
 import moment from "moment";
 import exportFromJSON from "export-from-json";
 
 const makeExportData = (reports) => {
-  return reports.map(({ data }) => {
+  return reports.map(({ hexData }) => {
+    let data = parseReportData(hexData);
     let empty = Report.reduce((carry, { no }) => ({ ...carry, [no]: "" }), {});
     let filled = data
       .filter(({ chartable }) => chartable)

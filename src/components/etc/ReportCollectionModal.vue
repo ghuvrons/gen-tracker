@@ -111,9 +111,10 @@
 <script>
 import { devReports } from '../../store/db/getter-types'
 import { mapGetters } from 'vuex'
-import { getField } from 'components/js/utils'
+import { getField, getValue } from 'components/js/utils'
 import { chart } from 'components/js/opt/config'
 import { cloneDeep } from 'lodash'
+import { parseReportData } from 'components/js/report'
 import LineChart from 'components/etc/LineChart'
 import EventGroupReader from 'components/etc/EventGroupReader'
 import CommonMixin from 'components/mixins/CommonMixin'
@@ -256,14 +257,13 @@ export default {
       let datasets = []
       let labels = []
 
-      reports.forEach(({ data }) => {
-        let field = data.find(
-          ({ field }) => field === this.collectionData.field
-        )
+      reports.forEach(({ hexData }) => {
+        let data = parseReportData(hexData)
+        let field = getField(data, this.collectionData.field)
 
         if (field) {
           datasets.push(field.value)
-          labels.push(getField(data, 'logDatetime'))
+          labels.push(getValue(data, 'logDatetime'))
         }
       })
 

@@ -28,6 +28,7 @@
 import { genPosition, getHeading } from 'components/js/map'
 import { config } from 'components/js/opt/config'
 import { devReports } from '../store/db/getter-types'
+import { parseReportData } from 'components/js/report'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -73,23 +74,15 @@ export default {
       }
       this.position = { ...location, valid }
     }
-    // setPath(reports) {
-    //   this.path = []
-    //   if (reports.length > 0) {
-    //     let paths = reports
-    //       .filter((report) => genPosition(report).valid)
-    //       .reduce((carry, report) => carry.concat(genPosition(report)), [])
-    //     this.path.push(...paths)
-    //     this.setPosition(genPosition(this.theReport))
-    //   }
-    // }
   },
   watch: {
     devReports: {
       immediate: true,
       handler(reports) {
         if (reports.length > 0) {
-          let pos = genPosition(reports[0])
+          let { frameID, hexData } = reports[0]
+          let data = parseReportData(hexData)
+          let pos = genPosition(frameID, data)
           if (pos.valid) this.path.push(pos)
         }
       }
@@ -98,12 +91,14 @@ export default {
       immediate: true,
       handler(report) {
         if (report) {
-          this.setPosition(genPosition(report))
+          let { frameID, hexData } = report
+          let data = parseReportData(hexData)
+          this.setPosition(genPosition(frameID, data))
 
           if (this.pov)
             this.updatePov({
               ...this.pov,
-              heading: getHeading(report)
+              heading: getHeading(frameID, data)
             })
         }
       }
