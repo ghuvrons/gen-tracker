@@ -111,7 +111,7 @@ module.exports = function (ctx) {
         description: "GEN motorcycle tracker",
         display: "standalone",
         orientation: "portrait",
-        background_color: "#ffffff",
+        background_color: "#000000",
         theme_color: "#027be3",
         icons: [
           {
