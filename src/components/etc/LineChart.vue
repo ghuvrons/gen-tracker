@@ -10,8 +10,12 @@ export default {
       required: true
     },
     update: {
-      // type: Boolean,
+      type: Object,
       required: true
+    },
+    dark: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {

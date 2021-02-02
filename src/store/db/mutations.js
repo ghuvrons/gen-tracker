@@ -7,6 +7,9 @@ export default {
   [mutations.TOGGLE_CALIBRATION](state) {
     state.calibration = !state.calibration;
   },
+  [mutations.TOGGLE_DARKER](state) {
+    state.darker = !state.darker;
+  },
   [mutations.CLEAR_ALL](state) {
     state.theUnit = null;
     state.theReport = null;

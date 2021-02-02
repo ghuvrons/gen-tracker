@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-1">
+  <div class="shadow-1" :class="darkerClass">
     <p class="q-pa-sm q-mb-none">
       Report Reader
       <q-chip color="negative" dense square v-if="theReport">
@@ -8,16 +8,17 @@
     </p>
 
     <q-scroll-area
-      class="bg-white"
+      :class="darkerClass"
       :style="{ height: (height < 150 ? 150 : height) + 'px' }"
     >
-      <q-list separator dense v-if="theReport">
+      <q-list separator dense v-if="theReport" :dark="darker">
         <q-item
           v-for="data in reportData"
           :link="readyCollection(data)"
           :key="data.field"
-          :class="{ 'bg-dark text-white': activeCollectionField(data) }"
+          :active="activeCollectionField(data)"
           @click.native="openCollection(data)"
+          :dark="darker"
         >
           <q-item-main>
             <q-item-tile label>{{ data.title }}</q-item-tile>
@@ -48,14 +49,16 @@ import ReportCollectionModal from 'components/etc/ReportCollectionModal'
 import { reportData } from 'components/js/report'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   // name: 'ComponentName',
-  components: {
-    ReportCollectionModal
-  },
   props: {
     height: Number
+  },
+  mixins: [CommonMixin],
+  components: {
+    ReportCollectionModal
   },
   data() {
     return {

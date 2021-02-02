@@ -7,7 +7,7 @@
         :icon="lock.full ? 'layers' : 'layers_clear'"
         class="q-ma-xs"
         dense
-        :outline="!lock.full"
+        :flat="!lock.full"
         :loading="loading"
         :disable="devReports.length == 0"
         @click="lock.full = !lock.full"
@@ -30,13 +30,19 @@
         :style="{ height: (height < 150 ? 150 : height) + 'px' }"
         ref="scroller"
       >
-        <q-list highlight link dense separator v-if="devReports.length > 0">
+        <q-list
+          :dark="darker"
+          highlight
+          link
+          dense
+          separator
+          v-if="devReports.length > 0"
+        >
           <q-item
             v-for="(report, index) in devReports"
             :key="index"
-            :class="{
-              'bg-dark text-white': report.hexData === theReport.hexData,
-            }"
+            :active="report.hexData === theReport.hexData"
+            :dark="darker"
             @click.native="SET_THE_REPORT(report)"
           >
             <q-item-side>
@@ -71,12 +77,14 @@ import { getField, unix2time } from 'components/js/utils'
 import { devReports } from '../store/db/getter-types'
 import { SET_THE_REPORT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   // name: 'ComponentName',
   props: {
     height: Number
   },
+  mixins: [CommonMixin],
   data() {
     return {
       lock: {
@@ -86,7 +94,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('db', ['loading', 'theUnit', 'theReport']),
+    ...mapState('db', ['theUnit', 'theReport']),
     ...mapGetters('db', [devReports])
   },
   methods: {

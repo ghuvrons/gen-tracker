@@ -1,11 +1,11 @@
 <template>
-  <div class="shadow-1">
+  <div class="shadow-1" :class="darkerClass">
     <p class="q-pa-sm q-mb-none">
       Command Management
       <q-btn
         v-if="COMMAND_LIST.length > 0"
         icon="info"
-        color="primary"
+        :color="darker ? 'light' : 'primary'"
         dense
         round
         flat
@@ -13,14 +13,16 @@
       ></q-btn>
     </p>
     <q-field
-      class="q-pa-sm bg-white"
+      class="q-pa-sm"
       helper="Press ENTER to send, or see the docs."
+      :dark="darker"
     >
       <q-input
         v-model="commandBuffer"
         stack-label="Input Command:"
         upper-case
         type="text"
+        :dark="darker"
         :disable="loading || !theUnit"
         :readonly="loading"
         :loading="loading"
@@ -48,10 +50,12 @@
 import { COMMAND_LIST } from 'components/js/command'
 import { SET_COMMAND_BUFFER } from '../store/db/mutation-types'
 import { mapState, mapMutations } from 'vuex'
-import CommandListModal from 'components/etc/CommandListModal.vue'
+import CommandListModal from 'components/etc/CommandListModal'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   // name: 'ComponentName',
+  mixins: [CommonMixin],
   components: {
     CommandListModal
   },
@@ -62,7 +66,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('db', ['loading', 'theUnit', 'cmdBuffer']),
+    ...mapState('db', ['theUnit', 'cmdBuffer']),
     commandBuffer: {
       get() {
         return this.cmdBuffer

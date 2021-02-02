@@ -3,7 +3,7 @@
     v-model="modalOpen"
     :content-css="{ minWidth: '80vw', minHeight: '80vh' }"
   >
-    <q-modal-layout>
+    <q-modal-layout :class="darkerClass">
       <q-toolbar slot="header">
         <q-btn flat round dense v-close-overlay icon="keyboard_arrow_left" />
         <q-toolbar-title>
@@ -29,11 +29,12 @@
       </q-toolbar>
 
       <div class="layout-padding">
-        <q-list link separator>
+        <q-list :dark="darker" link separator>
           <q-item
             v-for="(el, i) in searchResult"
             :key="i"
             @click.native="$emit('select', el.command)"
+            :dark="darker"
           >
             <q-item-main>
               <q-item-tile label>{{ el.command }}</q-item-tile>
@@ -59,6 +60,7 @@
 <script>
 import { COMMAND_LIST } from 'components/js/command'
 import { flowFilter } from 'components/js/utils'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   emits: ['select'],
@@ -68,6 +70,7 @@ export default {
       type: Boolean
     }
   },
+  mixins: [CommonMixin],
   data() {
     return {
       COMMAND_LIST: this.$_.cloneDeep(COMMAND_LIST),

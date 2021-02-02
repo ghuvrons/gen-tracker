@@ -4,11 +4,14 @@ import actions from "./actions";
 
 const state = {
   loading: false,
+  darker: false,
   calibration: false,
+
   theUnit: null,
   theReport: null,
   theCommand: null,
   cmdBuffer: null,
+
   units: [],
   reports: [],
   commands: [],

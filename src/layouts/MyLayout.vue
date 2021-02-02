@@ -4,11 +4,7 @@
     <q-window-resize-observable @resize="onResize" />
 
     <q-layout-header>
-      <q-toolbar
-        color="primary"
-        :glossy="$q.theme === 'mat'"
-        :inverted="$q.theme === 'ios'"
-      >
+      <q-toolbar color="primary">
         <q-btn flat dense round @click="drawerOpen.left = !drawerOpen.left">
           <q-icon name="menu" />
         </q-btn>
@@ -38,12 +34,9 @@
       </q-toolbar>
     </q-layout-header>
 
-    <q-layout-drawer
-      v-model="drawerOpen.left"
-      :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
-    >
+    <q-layout-drawer v-model="drawerOpen.left" :class="darkerClass">
       <unit-management :height="height.top"></unit-management>
-      <report-reader :height="height.bottom - 70"></report-reader>
+      <report-reader :height="height.bottom - 68"></report-reader>
     </q-layout-drawer>
 
     <q-layout-drawer
@@ -52,7 +45,7 @@
       :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
     >
       <command-management></command-management>
-      <response-log :height="height.bottom - 90"></response-log>
+      <response-log :height="height.bottom - 87"></response-log>
     </q-layout-drawer>
 
     <q-page-container>
@@ -66,9 +59,11 @@ import ReportReader from 'components/ReportReader'
 import UnitManagement from 'components/UnitManagement'
 import ResponseLog from 'components/ResponseLog'
 import CommandManagement from 'components/CommandManagement'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   name: 'MyLayout',
+  mixins: [CommonMixin],
   components: {
     ReportReader,
     UnitManagement,

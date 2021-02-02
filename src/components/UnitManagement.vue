@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-1">
+  <div class="shadow-1" :class="darkerClass">
     <p class="q-pa-sm q-mb-none">
       Unit Management
       <q-chip color="negative" dense square v-if="units.length > 0">
@@ -7,17 +7,22 @@
       </q-chip>
     </p>
     <q-scroll-area
-      class="bg-white"
+      :class="darkerClass"
       :style="{ height: (height < 90 ? 90 : height) + 'px' }"
     >
-      <q-list highlight link separator dense v-if="units.length > 0 && theUnit">
+      <q-list
+        v-if="units.length > 0 && theUnit"
+        :dark="darker"
+        link
+        separator
+        dense
+      >
         <q-item
           v-for="(unitID, index) in units"
           :key="index"
           @click.native="setTheUnit(unitID)"
-          :class="{
-            'bg-dark text-white': unitID === theUnit,
-          }"
+          :active="unitID === theUnit"
+          :dark="darker"
         >
           <q-item-main :label="unitID.toString()" />
           <q-item-side right>
@@ -38,14 +43,16 @@
 import { getTotalReports } from '../store/db/getter-types'
 import { SET_THE_UNIT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   // name: 'ComponentName',
   props: {
     height: Number
   },
+  mixins: [CommonMixin],
   computed: {
-    ...mapState('db', ['units', 'theUnit', 'loading']),
+    ...mapState('db', ['units', 'theUnit']),
     ...mapGetters('db', [getTotalReports])
   },
   methods: {

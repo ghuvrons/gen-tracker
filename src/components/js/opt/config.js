@@ -3,7 +3,7 @@ import { unix2time } from "components/js/utils";
 const config = {
   app: {
     version: "3.1.3",
-    title: "GPS Tracker",
+    title: "GEN Tracker",
     subTitle: "GEN Indonesia",
   },
   mqtt: {
@@ -68,6 +68,9 @@ const chart = {
     legend: {
       display: true,
       align: "end",
+      labels: {
+        fontColor: "#666",
+      },
     },
     scales: {
       xAxes: [
@@ -78,10 +81,17 @@ const chart = {
             },
             max: 1,
             min: 0,
+            fontColor: "#666",
           },
           scaleLabel: {
             display: true,
             labelString: "Log Datetime",
+            fontColor: "#666",
+          },
+          gridLines: {
+            display: true,
+            lineWidth: 0.3,
+            color: "#666",
           },
         },
       ],
@@ -91,10 +101,17 @@ const chart = {
             beginAtZero: true,
             max: 1,
             min: 0,
+            fontColor: "#666",
           },
           scaleLabel: {
             display: true,
             labelString: "Value",
+            fontColor: "#666",
+          },
+          gridLines: {
+            display: true,
+            lineWidth: 0.3,
+            color: "#666",
           },
         },
       ],

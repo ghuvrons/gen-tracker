@@ -1,7 +1,6 @@
 <template>
-  <q-list dense>
+  <q-list :dark="darker" dense>
     <q-scroll-area
-      class="bg-white"
       :style="{
         height: (height < 150 ? 150 : height) + 110 + 'px',
       }"
@@ -12,13 +11,15 @@
           :label="`${name} `"
           :sublabel="`(${events.length}) times`"
           :header-class="`text-${activeEvent(name) ? 'green' : 'grey'}`"
+          :dark="darker"
           separator
           dense
         >
-          <q-list dense>
+          <q-list :dark="darker" dense>
             <q-item
               v-for="event in devEvents"
               :key="`${name}-${event.logDatetime}`"
+              :dark="darker"
               separator
               dense
             >
@@ -40,12 +41,14 @@ import { EVENT_LIST, parseEvent } from 'components/js/event'
 import { devEvents } from '../../store/db/getter-types'
 import { unix2time } from 'components/js/utils'
 import { mapGetters } from 'vuex'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   props: {
     height: Number,
     currentValue: Number
   },
+  mixins: [CommonMixin],
   data() {
     return {
       EVENT_LIST: this.$_.cloneDeep(EVENT_LIST)

@@ -6,7 +6,6 @@
         label="FETCH"
         class="q-ma-xs"
         dense
-        outline
         :disable="!theUnit"
         :loading="loading"
         @click="fetchFinger()"
@@ -16,7 +15,6 @@
         label="ADD"
         class="q-ma-xs"
         dense
-        outline
         :disable="!theUnit"
         :loading="loading"
         @click="addFinger()"
@@ -26,7 +24,6 @@
         label="RESET"
         class="q-ma-xs"
         dense
-        outline
         :disable="loading || !theUnit"
         :loading="loading"
         @click="resetFinger()"
@@ -34,8 +31,19 @@
     </div>
     <div class="col-xs-12">
       <q-scroll-area :style="{ height: (height < 150 ? 150 : height) + 'px' }">
-        <q-list highlight separator dense link v-if="devFingers.length > 0">
-          <q-item v-for="(driver, index) in devFingers" :key="index">
+        <q-list
+          :dark="darker"
+          highlight
+          separator
+          dense
+          link
+          v-if="devFingers.length > 0"
+        >
+          <q-item
+            v-for="(driver, index) in devFingers"
+            :key="index"
+            :dark="darker"
+          >
             <q-item-side>
               <q-chip color="primary" square>
                 {{ driver.fingerID }}
@@ -45,7 +53,6 @@
             <q-item-side right>
               <q-btn
                 round
-                outline
                 dense
                 color="red"
                 size="sm"
@@ -73,19 +80,21 @@ import {
 import { extractCommand } from 'components/js/command'
 import { devFingers, devCommands } from '../store/db/getter-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   // name: 'ComponentName',
   props: {
     height: Number
   },
+  mixins: [CommonMixin],
   data() {
     return {
       name: ['One', 'Two', 'Three', 'Four', 'Five']
     }
   },
   computed: {
-    ...mapState('db', ['loading', 'theUnit']),
+    ...mapState('db', ['theUnit']),
     ...mapGetters('db', [devFingers, devCommands])
   },
   mounted() {

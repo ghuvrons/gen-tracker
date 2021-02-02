@@ -1,5 +1,6 @@
 export const SET_LOADING = "SET_LOADING";
 export const TOGGLE_CALIBRATION = "TOGGLE_CALIBRATION";
+export const TOGGLE_DARKER = "TOGGLE_DARKER";
 export const CLEAR_ALL = "CLEAR_ALL";
 
 export const SET_THE_UNIT = "SET_THE_UNIT";

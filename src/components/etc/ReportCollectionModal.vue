@@ -5,7 +5,7 @@
     @hide="stopRender()"
     :content-css="{ minWidth: '90vw', minHeight: '95vh' }"
   >
-    <q-modal-layout>
+    <q-modal-layout :class="darkerClass">
       <q-toolbar slot="header">
         <q-btn flat round dense v-close-overlay icon="keyboard_arrow_left" />
         <q-toolbar-title>
@@ -37,6 +37,7 @@
               }"
               :param="chart"
               :update="collection.update"
+              :dark="darker"
             />
             <q-range
               v-model="range.value"
@@ -53,23 +54,27 @@
                   v-model="control.beginAtZero"
                   label="Begin Zero"
                   class="q-ma-xs"
+                  :dark="darker"
                 />
                 <q-toggle
                   v-model="control.drag"
                   :disable="control.maximize"
                   label="Lock Window"
                   class="q-ma-xs"
+                  :dark="darker"
                 />
                 <q-toggle
                   v-model="control.follow"
                   :disable="control.maximize"
                   label="Follow Data"
                   class="q-ma-xs"
+                  :dark="darker"
                 />
                 <q-toggle
                   v-model="control.maximize"
                   label="Max Range"
                   class="q-ma-xs"
+                  :dark="darker"
                 />
               </div>
               <div class="col-auto">
@@ -82,6 +87,7 @@
                   inverted
                   align="right"
                   disable
+                  :dark="darker"
                 />
               </div>
             </div>
@@ -110,18 +116,20 @@ import { chart } from 'components/js/opt/config'
 import { cloneDeep } from 'lodash'
 import LineChart from 'components/etc/LineChart'
 import EventGroupReader from 'components/etc/EventGroupReader'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   // name: 'ComponentName',
-  components: {
-    LineChart,
-    EventGroupReader
-  },
   props: {
     value: {
       required: true
     },
     height: Number
+  },
+  mixins: [CommonMixin],
+  components: {
+    LineChart,
+    EventGroupReader
   },
   data() {
     return {
@@ -291,6 +299,15 @@ export default {
     stopRender() {
       this.collection.render = false
       this.collectionData = null
+    },
+    changeColor(color) {
+      this.chart.options.legend.labels.fontColor = color
+      this.chart.options.scales.xAxes[0].ticks.fontColor = color
+      this.chart.options.scales.xAxes[0].scaleLabel.fontColor = color
+      this.chart.options.scales.xAxes[0].gridLines.color = color
+      this.chart.options.scales.yAxes[0].ticks.fontColor = color
+      this.chart.options.scales.yAxes[0].scaleLabel.fontColor = color
+      this.chart.options.scales.yAxes[0].gridLines.color = color
     }
   },
   watch: {
@@ -345,6 +362,13 @@ export default {
     'control.beginAtZero': {
       handler(_) {
         this.scaleChart()
+      }
+    },
+    darker: {
+      immediate: true,
+      handler(dark) {
+        this.changeColor(dark ? '#FFF' : '#666')
+        this.collection.update.options = !this.collection.update.options
       }
     }
   }

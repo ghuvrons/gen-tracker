@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-xs">
+  <q-page :class="darkerClass">
     <!--
           we listen for size changes on this above
           <element>, so we place the observer as direct child:
@@ -11,7 +11,7 @@
     <map-management :height="mapHeight" :pageWidth="pageWidth">
     </map-management>
 
-    <q-tabs v-model="selectedTab" inverted animated swipeable>
+    <q-tabs v-model="selectedTab" animated swipeable>
       <!-- Tabs - notice slot="title" -->
       <q-tab
         :count="devReports.length"
@@ -49,9 +49,11 @@ import DriverManagement from 'components/DriverManagement'
 import GlobalConfiguration from 'components/GlobalConfiguration'
 import { devReports, devFingers } from '../store/db/getter-types'
 import { mapGetters } from 'vuex'
+import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   // name: 'PageIndex',
+  mixins: [CommonMixin],
   components: {
     MapManagement,
     ReportLog,
