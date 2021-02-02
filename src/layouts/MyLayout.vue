@@ -36,7 +36,7 @@
 
     <q-layout-drawer v-model="drawerOpen.left" :class="darkerClass">
       <unit-management :height="height.top"></unit-management>
-      <report-reader :height="height.bottom - 68"></report-reader>
+      <report-reader :height="height.bottom - 70"></report-reader>
     </q-layout-drawer>
 
     <q-layout-drawer
@@ -45,7 +45,7 @@
       :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
     >
       <command-management></command-management>
-      <response-log :height="height.bottom - 87"></response-log>
+      <response-log :height="height.bottom - 75"></response-log>
     </q-layout-drawer>
 
     <q-page-container>

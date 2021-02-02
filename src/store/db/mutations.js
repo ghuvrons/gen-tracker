@@ -19,6 +19,7 @@ export default {
     state.commands = [];
     state.fingers = [];
   },
+
   [mutations.SET_THE_UNIT](state, payload) {
     state.theUnit = payload;
   },
@@ -38,6 +39,7 @@ export default {
   [mutations.CLEAR_THE_COMMAND](state) {
     state.theCommand = null;
   },
+
   [mutations.ADD_UNITS](state, payload) {
     let unit = state.units.find((unitID) => unitID === payload);
 

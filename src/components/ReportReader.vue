@@ -1,6 +1,6 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none">
+    <p class="q-pa-sm q-mb-none bg-primary text-white">
       Report Reader
       <q-chip
         :color="fullFrame ? 'green' : 'light-green'"

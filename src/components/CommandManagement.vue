@@ -1,16 +1,14 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none">
+    <p class="q-pa-sm q-mb-none bg-primary text-white">
       Command Management
-      <q-btn
+      <q-icon
         v-if="COMMAND_LIST.length > 0"
-        icon="info"
-        :color="darker ? 'light' : 'primary'"
-        dense
-        round
-        flat
-        @click="modalOpen = true"
-      ></q-btn>
+        @click.native="modalOpen = true"
+        style="cursor: pointer"
+        name="info"
+      >
+      </q-icon>
     </p>
     <q-field
       class="q-pa-sm"

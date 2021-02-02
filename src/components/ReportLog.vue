@@ -51,7 +51,7 @@
               </q-chip>
               <q-chip
                 class="q-ml-sm"
-                style="width: 50px"
+                style="width: 60px"
                 :color="getFrameID(report) == 'FULL' ? 'green' : 'light-green'"
                 dense
                 square

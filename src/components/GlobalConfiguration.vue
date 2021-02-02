@@ -62,7 +62,8 @@
             hide-upload-progress
           />
         </div>
-
+      </div>
+      <div class="row">
         <div class="col-auto q-ma-sm">
           <q-toggle
             :dark="darker"
