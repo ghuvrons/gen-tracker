@@ -16,7 +16,7 @@
         <q-toolbar-title>
           {{ $config.app.title }}
           <div slot="subtitle">
-            Rev.{{ $config.app.version }} &copy; {{ $config.app.subTitle }}
+            v.{{ $config.app.version }} &copy; {{ $config.app.subTitle }}
           </div>
         </q-toolbar-title>
 

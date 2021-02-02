@@ -2,7 +2,7 @@ import { unix2time } from "components/js/utils";
 
 const config = {
   app: {
-    version: "1.7",
+    version: "3.1.3",
     title: "GPS Tracker",
     subTitle: "GEN Indonesia",
   },
