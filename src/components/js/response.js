@@ -2,11 +2,11 @@ import { getValue } from "components/js/utils";
 import { parseFrame } from "components/js/frame";
 import { RESPONSE_LIST, Response } from "components/js/opt/response";
 
-const parseResponse = ({ payload, unitID, code, subCode }, hexData) => {
+const parseResponse = ({ payload, unitID, code, subCode }, hex) => {
   let message, res;
 
-  if (hexData) {
-    let data = parseFrame(hexData, Response);
+  if (hex) {
+    let data = parseFrame(hex, Response);
 
     res = RESPONSE_LIST.find(
       ({ resCode }) => resCode === getValue(data, "resCode")

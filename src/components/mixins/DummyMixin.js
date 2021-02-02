@@ -3,12 +3,12 @@ const dummyData = require("assets/tracking-20210202144918.json");
 export default {
   data() {
     return {
-      dummyIndex: 0,
+      dummyIndex: dummyData.length - 1,
     };
   },
   methods: {
     dummyImport() {
-      this.importReport([dummyData[this.dummyIndex++]]);
+      if (this.dummyIndex) this.importReport([dummyData[this.dummyIndex--]]);
     },
   },
   timers: {

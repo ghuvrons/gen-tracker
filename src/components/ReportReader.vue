@@ -1,6 +1,6 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none bg-info text-white">
+    <p class="q-pa-sm q-mb-none bg-purple text-white">
       Report Reader
       <q-chip
         :color="fullFrame ? 'green' : 'light-green'"
@@ -19,23 +19,24 @@
     >
       <q-list separator dense v-if="theReport" :dark="darker">
         <q-item
-          v-for="data in reportData"
-          :link="readyCollection(data)"
-          :key="data.field"
-          :active="activeCollectionField(data)"
-          @click.native="openCollection(data)"
+          v-for="field in reportFields"
+          :key="field"
+          :link="readyCollection(field)"
+          :active="collectionField == field"
+          @click.native="openCollection(field)"
           :dark="darker"
         >
           <q-item-main>
-            <q-item-tile label>{{ data.title }}</q-item-tile>
+            <q-item-tile label>{{ getSubField(field, "title") }}</q-item-tile>
             <q-item-tile sublabel
-              >{{ data.output }} {{ data.unit }}</q-item-tile
+              >{{ theReport[field].out }}
+              {{ getSubField(field, "unit") }}</q-item-tile
             >
           </q-item-main>
           <q-item-side
             right
-            :color="realtimeField(data) ? 'green' : 'red'"
-            :icon="realtimeField(data) ? 'cloud_download' : 'cloud_off'"
+            :color="realtimeField(field) ? 'green' : 'red'"
+            :icon="realtimeField(field) ? 'cloud_download' : 'cloud_off'"
           />
         </q-item>
       </q-list>
@@ -45,14 +46,14 @@
       </q-alert>
     </q-scroll-area>
 
-    <report-collection-modal v-model="collectionData" :height="height - 210">
+    <report-collection-modal v-model="collectionField" :height="height - 210">
     </report-collection-modal>
   </div>
 </template>
 
 <script>
 import ReportCollectionModal from 'components/etc/ReportCollectionModal'
-import { parseReportData, reportData } from 'components/js/report'
+import { Report } from 'components/js/report'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
 import { getField } from 'components/js/utils'
@@ -69,35 +70,37 @@ export default {
   },
   data() {
     return {
-      collectionData: null
+      collectionField: null
     }
   },
   computed: {
     ...mapState('db', ['theReport']),
     ...mapGetters('db', [devReports]),
-    reportData() {
-      return reportData(this.theReport, this.devReports)
+    reportFields() {
+      return Object.keys(this.$_.omit(this.theReport, 'hex'))
     },
     fullFrame() {
-      return this.theReport.frameID === this.$config.frame.id.FULL
+      return this.theReport.frameID.val === this.$config.frame.id.FULL
     }
   },
   methods: {
-    readyCollection({ field, chartable }) {
-      let related = this.devReports.filter(({ hexData }) => {
-        let data = parseReportData(hexData)
-        return getField(data, field)
-      })
+    openCollection(field) {
+      if (this.readyCollection(field)) this.collectionField = field
+    },
+    readyCollection(field) {
+      let { chartable } = getField(Report, field)
+
+      let related = this.devReports.filter(({ [field]: _field }) => _field)
       return chartable && related.length >= 2
     },
-    openCollection(data) {
-      if (this.readyCollection(data)) this.collectionData = data
+    realtimeField(field) {
+      let { required } = getField(Report, field)
+      return (
+        this.theReport.frameID.val === this.$config.frame.id.FULL || required
+      )
     },
-    activeCollectionField({ field }) {
-      return this.collectionData && this.collectionData.field == field
-    },
-    realtimeField({ required }) {
-      return this.theReport.frameID === this.$config.frame.id.FULL || required
+    getSubField(field, subField) {
+      return getField(Report, field)[subField]
     }
   }
 }

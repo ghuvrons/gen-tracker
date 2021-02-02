@@ -1,20 +1,19 @@
-import { Report, parseReportData } from "components/js/report";
+import { Report } from "components/js/report";
 import moment from "moment";
 import exportFromJSON from "export-from-json";
 
 const makeExportData = (reports) => {
-  return reports.map(({ hexData }) => {
-    let data = parseReportData(hexData);
+  return reports.map((report) => {
     let empty = Report.reduce((carry, { no }) => ({ ...carry, [no]: "" }), {});
-    let filled = data
-      .filter(({ chartable }) => chartable)
-      .reduce(
-        (carry, { output, no }) => ({
+    let filled = Report.filter(({ chartable }) => chartable).reduce(
+      (carry, { field, no }) => {
+        return {
           ...carry,
-          [no]: output,
-        }),
-        {}
-      );
+          [no]: report[field] && report[field].out,
+        };
+      },
+      {}
+    );
 
     return {
       ...empty,
@@ -47,7 +46,7 @@ const makeExportCSV = (reports) => {
 };
 
 const makeExportJSON = (reports) => {
-  const data = reports.map(({ hexData }) => hexData);
+  const data = reports.map(({ hex }) => hex);
   const fileName = makeExportName();
   const exportType = "json";
 

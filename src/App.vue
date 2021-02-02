@@ -23,7 +23,7 @@ import DummyMixin from 'components/mixins/DummyMixin'
 
 export default {
   name: 'App',
-  mixins: [DummyMixin],
+  // mixins: [DummyMixin],
   created() {
     this.$root.$on('executeCommand', this.executeCommand)
     this.$root.$on('ignoreCommand', this.ignoreCommand)
@@ -51,13 +51,13 @@ export default {
       SET_THE_COMMAND,
       CLEAR_THE_COMMAND
     ]),
-    importReport(hexDatas) {
-      hexDatas.forEach((hexData) => this.handleFrame(hexData))
+    importReport(hexs) {
+      hexs.forEach((hex) => this.handleFrame(hex))
     },
-    handleFrame(hexData) {
-      let header = validateFrame(hexData)
+    handleFrame(hex) {
+      let header = validateFrame(hex)
       if (!header) {
-        console.error(`CORRUPT ${hexData}`)
+        console.error(`CORRUPT ${hex}`)
         return
       }
 
@@ -65,20 +65,20 @@ export default {
 
       this.ADD_UNITS(unitID)
       if (frameID === this.$config.frame.id.RESPONSE) {
-        console.log(`RESPONSE ${hexData}`)
-        let response = parseResponse(this.theCommand, hexData)
+        console.log(`RESPONSE ${hex}`)
+        let response = parseResponse(this.theCommand, hex)
         if (response) this.ADD_COMMANDS(response)
       } else {
-        let report = parseReport(hexData)
+        let report = parseReport(hex)
 
         if (
           this.reports.some(
-            ({ logDatetime }) => logDatetime == report.logDatetime
+            ({ logDatetime }) => logDatetime.val == report.logDatetime.val
           )
         )
-          console.warn(`REPORT (DUPLICATE) ${hexData}`)
+          console.warn(`REPORT (DUPLICATE) ${hex}`)
         else {
-          console.log(`REPORT ${hexData}`)
+          console.log(`REPORT ${hex}`)
           this.ADD_REPORTS(report)
         }
       }
@@ -138,23 +138,23 @@ export default {
   },
   mqtt: {
     'VCU/+/RSP': function (data, topic) {
-      let hexData = data.toString('hex').toUpperCase()
-      if (this.theCommand) this.handleFrame(hexData)
+      let hex = data.toString('hex').toUpperCase()
+      if (this.theCommand) this.handleFrame(hex)
     },
     'VCU/+/RPT': function (data, topic) {
-      let hexData = data.toString('hex').toUpperCase()
-      this.handleFrame(hexData)
+      let hex = data.toString('hex').toUpperCase()
+      this.handleFrame(hex)
     }
   },
   watch: {
     theCommand: function (cmd) {
       if (cmd) {
-        let { unitID, hexData } = cmd
-        let binData = Buffer.from(hexData, 'hex')
+        let { unitID, hex } = cmd
+        let binData = Buffer.from(hex, 'hex')
 
         this.starWaitting()
         this.$mqtt.publish(`VCU/${unitID}/CMD`, binData)
-        console.log(`COMMAND ${hexData}`)
+        console.log(`COMMAND ${hex}`)
       }
     },
     commands: function (commands) {

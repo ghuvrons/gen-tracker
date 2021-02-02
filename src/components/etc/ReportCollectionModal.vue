@@ -26,7 +26,7 @@
         <div class="row gutter-sm justify-between">
           <div
             :class="
-              collectionData.field === 'eventsGroup'
+              collectionField === 'eventsGroup'
                 ? 'col-sm-12 col-md-7 col-lg-8'
                 : 'col-12'
             "
@@ -94,7 +94,7 @@
           </div>
 
           <div
-            v-if="collectionData.field === 'eventsGroup'"
+            v-if="collectionField === 'eventsGroup'"
             class="col-sm-12 col-md-5 col-lg-4"
           >
             <event-group-reader
@@ -111,10 +111,10 @@
 <script>
 import { devReports } from '../../store/db/getter-types'
 import { mapGetters } from 'vuex'
-import { getField, getValue } from 'components/js/utils'
+import { getField } from 'components/js/utils'
 import { chart } from 'components/js/opt/config'
 import { cloneDeep } from 'lodash'
-import { parseReportData } from 'components/js/report'
+import { Report } from 'components/js/report'
 import LineChart from 'components/etc/LineChart'
 import EventGroupReader from 'components/etc/EventGroupReader'
 import CommonMixin from 'components/mixins/CommonMixin'
@@ -172,7 +172,7 @@ export default {
   },
   computed: {
     ...mapGetters('db', [devReports]),
-    collectionData: {
+    collectionField: {
       get() {
         return this.value
       },
@@ -257,13 +257,10 @@ export default {
       let datasets = []
       let labels = []
 
-      reports.forEach(({ hexData }) => {
-        let data = parseReportData(hexData)
-        let field = getField(data, this.collectionData.field)
-
-        if (field) {
-          datasets.push(field.value)
-          labels.push(getValue(data, 'logDatetime'))
+      reports.forEach((report) => {
+        if (report[this.collectionField]) {
+          datasets.push(report[this.collectionField].val)
+          labels.push(report.logDatetime.val)
         }
       })
 
@@ -288,7 +285,7 @@ export default {
       this.collection.update.data = !this.collection.update.data
     },
     prepareChart() {
-      let { title, unit } = this.collectionData
+      let { title, unit } = getField(Report, this.collectionField)
 
       this.chart.data.datasets[0].label = title
       this.chart.options.scales.yAxes[0].scaleLabel.labelString =
@@ -298,7 +295,7 @@ export default {
     },
     stopRender() {
       this.collection.render = false
-      this.collectionData = null
+      this.collectionField = null
     },
     changeColor(color) {
       this.chart.options.legend.labels.fontColor = color
@@ -311,9 +308,9 @@ export default {
     }
   },
   watch: {
-    collectionData: {
-      handler(data) {
-        if (data) {
+    collectionField: {
+      handler(field) {
+        if (field) {
           this.prepareChart()
           this.writeChart(this.devReports)
           this.applyRange({})

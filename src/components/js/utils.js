@@ -43,17 +43,14 @@ const getOutput = (arr, fields) => {
   return getField(arr, fields, "output");
 };
 
-const calibrateTime = (data) => {
+const calibrateTime = ({ lat, lng, datetime }) => {
   let timezone = _.clone(config.timezone);
-  let lat = getValue(data, "gpsLatitude");
-  let lng = getValue(data, "gpsLongitude");
-  let sendTime = getValue(data, "sendDatetime");
 
   // correct timestamp if not sync with server
   if (lat && lng) timezone = tzlookup(lat, lng);
 
   let serverTime = moment(new Date());
-  let deviceTime = moment(sendTime, "X");
+  let deviceTime = moment(datetime, "X");
   let difference = Math.abs(
     moment.duration(serverTime.diff(deviceTime)).as("seconds")
   );

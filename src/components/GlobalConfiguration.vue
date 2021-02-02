@@ -22,7 +22,7 @@
             @click="$root.$emit('ignoreCommand')"
           />
         </div>
-        <div class="col-auto q-ma-sm">
+        <!-- <div class="col-auto q-ma-sm">
           <json-csv
             :data="exported.data"
             :labels="exported.label"
@@ -36,7 +36,7 @@
               :disable="reports.length == 0"
             />
           </json-csv>
-        </div>
+        </div> -->
         <div class="col-auto q-ma-sm">
           <q-btn
             class="q-ma-xs"
@@ -94,7 +94,6 @@ import { TOGGLE_CALIBRATION, TOGGLE_DARKER } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { makeExportCSV, makeExportJSON } from 'components/js/exporter'
 import { calibrateTime } from 'components/js/utils'
-import { parseReportData } from 'components/js/report'
 import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
@@ -121,10 +120,10 @@ export default {
       set(value) {
         this.TOGGLE_DARKER()
       }
-    },
-    exported() {
-      return makeExportCSV(this.devReports)
     }
+    // exported() {
+    //   return makeExportCSV(this.devReports)
+    // }
   },
   methods: {
     ...mapMutations('db', [TOGGLE_CALIBRATION, TOGGLE_DARKER]),
@@ -136,7 +135,10 @@ export default {
       let reader = new FileReader()
       reader.onload = (e) => {
         if (this.reports.length == 0) {
-          this.$root.$emit('importReport', JSON.parse(e.target.result))
+          this.$root.$emit(
+            'importReport',
+            JSON.parse(e.target.result).reverse()
+          )
           this.$refs.importer.reset()
         } else {
           this.$q.notify({
@@ -162,12 +164,15 @@ export default {
   watch: {
     reports: function (reports) {
       if (reports.length > 0) {
-        let { frameID, hexData } = reports[0]
+        let { frameID, gpsLatitude, gpsLongitude, sendDatetime } = reports[0]
 
         if (this.calibration)
-          if (frameID === this.$config.frame.id.FULL) {
-            let data = parseReportData(hexData)
-            let validTime = calibrateTime(data)
+          if (frameID.val === this.$config.frame.id.FULL) {
+            let validTime = calibrateTime({
+              lat: gpsLatitude.val,
+              lng: gpsLongitude.val,
+              datetime: sendDatetime.val
+            })
             if (validTime) {
               this.$root.$emit('executeCommand', `REPORT_RTC=${validTime}`)
               this.$q.notify({ message: 'Calibrating device time..' })

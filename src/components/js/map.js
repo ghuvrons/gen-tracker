@@ -1,6 +1,4 @@
 import { config } from "components/js/opt/config";
-import { getValue } from "components/js/utils";
-import { parseReport } from "components/js/report";
 
 const isIndonesia = ({ lng, lat }) => {
   let { borderIndonesia } = config.map;
@@ -12,23 +10,23 @@ const isIndonesia = ({ lng, lat }) => {
   );
 };
 
-const genPosition = (frameID, data) => {
+const genPosition = ({ frameID, lat, lng }) => {
   let pos = {
     ...config.map.centerIndonesia,
     valid: false,
   };
 
   if (frameID === config.frame.id.FULL) {
-    pos.lng = getValue(data, "gpsLongitude");
-    pos.lat = getValue(data, "gpsLatitude");
+    pos.lat = lat;
+    pos.lng = lng;
     pos.valid = isIndonesia(pos);
   }
 
   return pos;
 };
 
-const getHeading = (frameID, data) => {
-  if (frameID === config.frame.id.FULL) return getValue(data, "gpsHeading");
+const getHeading = ({ frameID, heading }) => {
+  if (frameID === config.frame.id.FULL) return heading;
   return 0;
 };
 

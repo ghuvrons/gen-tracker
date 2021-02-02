@@ -41,8 +41,8 @@
           <q-item
             v-for="(report, index) in devReports"
             :key="index"
-            :active="report.hexData === theReport.hexData"
             :dark="darker"
+            :active="report.hex === theReport.hex"
             @click.native="SET_THE_REPORT(report)"
           >
             <q-item-side>
@@ -52,17 +52,15 @@
               <q-chip
                 class="q-ml-sm"
                 style="width: 60px"
-                :color="
-                  getFrameName(report) == 'FULL' ? 'green' : 'light-green'
-                "
+                :color="report.frameID.out == 'FULL' ? 'green' : 'light-green'"
                 dense
                 square
               >
-                {{ getFrameName(report) }}
+                {{ report.frameID.out }}
               </q-chip>
             </q-item-side>
             <q-item-main class="q-caption">
-              {{ report.hexData }}
+              {{ report.hex }}
             </q-item-main>
           </q-item>
         </q-list>
@@ -75,7 +73,7 @@
 </template>
 
 <script>
-import { getValue, unix2time } from 'components/js/utils'
+import { unix2time } from 'components/js/utils'
 import { devReports } from '../store/db/getter-types'
 import { SET_THE_REPORT } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
@@ -101,11 +99,8 @@ export default {
   },
   methods: {
     ...mapMutations('db', [SET_THE_REPORT]),
-    getFrameName({ frameID }) {
-      return this.$config.frame.name[frameID]
-    },
     getDatetime({ logDatetime }) {
-      return unix2time(logDatetime)
+      return unix2time(logDatetime.val)
     }
   },
   watch: {
@@ -118,7 +113,7 @@ export default {
 
             if (this.lock.full)
               report = reports.find(
-                ({ frameID }) => frameID === this.$config.frame.id.FULL
+                ({ frameID }) => frameID.val === this.$config.frame.id.FULL
               )
             this.SET_THE_REPORT(report)
           }

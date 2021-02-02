@@ -28,7 +28,6 @@
 import { genPosition, getHeading } from 'components/js/map'
 import { config } from 'components/js/opt/config'
 import { devReports } from '../store/db/getter-types'
-import { parseReportData } from 'components/js/report'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -80,9 +79,12 @@ export default {
       immediate: true,
       handler(reports) {
         if (reports.length > 0) {
-          let { frameID, hexData } = reports[0]
-          let data = parseReportData(hexData)
-          let pos = genPosition(frameID, data)
+          let { frameID, gpsLatitude, gpsLongitude } = reports[0]
+          let pos = genPosition({
+            frameID: frameID.val,
+            lat: gpsLatitude && gpsLatitude.val,
+            lng: gpsLongitude && gpsLongitude.val
+          })
           if (pos.valid) this.path.push(pos)
         }
       }
@@ -91,14 +93,22 @@ export default {
       immediate: true,
       handler(report) {
         if (report) {
-          let { frameID, hexData } = report
-          let data = parseReportData(hexData)
-          this.setPosition(genPosition(frameID, data))
+          let { frameID, gpsLatitude, gpsLongitude, gpsHeading } = report
+          this.setPosition(
+            genPosition({
+              frameID: frameID.val,
+              lat: gpsLatitude && gpsLatitude.val,
+              lng: gpsLongitude && gpsLongitude.val
+            })
+          )
 
           if (this.pov)
             this.updatePov({
               ...this.pov,
-              heading: getHeading(frameID, data)
+              heading: getHeading({
+                frameID: frameID.val,
+                heading: gpsHeading && gpsHeading.val
+              })
             })
         }
       }

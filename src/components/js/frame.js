@@ -3,19 +3,19 @@ import { getValue, getOutput } from "components/js/utils";
 import { Header } from "components/js/opt/header";
 import { config } from "components/js/opt/config";
 
-const calculateCRC32 = (hexData) => {
+const calculateCRC32 = (hex) => {
   let crcSize = Header.filter(({ field }) => ["prefix", "crc"].includes(field))
     .map(({ size }) => size)
     .reduce((sum, val) => sum + val);
 
-  return CRC32(hexData.substring(crcSize * 2));
+  return CRC32(hex.substring(crcSize * 2));
 };
 
-const parseFrame = (hexData, frame) => {
+const parseFrame = (hex, frame) => {
   let cursor = 0;
 
   return frame.reduce((carry, el) => {
-    let formatted = el.format(hexData.substr(cursor, el.size * 2));
+    let formatted = el.format(hex.substr(cursor, el.size * 2));
     cursor += el.size * 2;
 
     return carry.concat([
@@ -28,8 +28,8 @@ const parseFrame = (hexData, frame) => {
   }, []);
 };
 
-const validateFrame = (hexData) => {
-  let header = parseFrame(hexData, Header);
+const validateFrame = (hex) => {
+  let header = parseFrame(hex, Header);
 
   if (getValue(header, "prefix") != config.frame.prefix) {
     console.warn(`CORRUPT: Prefix not same`);
@@ -37,7 +37,7 @@ const validateFrame = (hexData) => {
   }
 
   let crc = getOutput(header, "crc");
-  if (crc != calculateCRC32(hexData)) {
+  if (crc != calculateCRC32(hex)) {
     console.warn(`CORRUPT: CRC not valid`);
     return;
   }
@@ -48,7 +48,7 @@ const validateFrame = (hexData) => {
     .map(({ size }) => size)
     .reduce((sum, val) => sum + val);
 
-  if (getValue(header, "size") != hexData.length / 2 - headerSize) {
+  if (getValue(header, "size") != hex.length / 2 - headerSize) {
     console.warn(`CORRUPT: Size not same`);
     return;
   }

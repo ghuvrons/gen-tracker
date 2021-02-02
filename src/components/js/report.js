@@ -4,59 +4,56 @@ import { getValue } from "components/js/utils";
 import { Header, parseFrame } from "components/js/frame";
 import { orderBy } from "lodash";
 
-const parseReportData = (hexData) => {
+const parseReportData = (hex) => {
   let { frame } = config;
-  let header = parseFrame(hexData, Header);
-  let { frameID } = getValue(header, ["unitID", "frameID"]);
+  let frameID = getValue(parseFrame(hex, Header), "frameID");
 
   let report = Report.filter(
     ({ required }) =>
       frameID == frame.id.FULL || (frameID == frame.id.SIMPLE && required)
   );
 
-  return parseFrame(hexData, report);
+  return parseFrame(hex, report);
 };
 
-const parseReport = (hexData) => {
-  let data = parseReportData(hexData);
+const parseReport = (hex) => {
+  let data = parseReportData(hex);
 
-  let { unitID, frameID, logDatetime } = getValue(data, [
-    "unitID",
-    "frameID",
-    "logDatetime",
-  ]);
-
-  return {
-    unitID,
-    frameID,
-    logDatetime,
-    hexData,
-  };
-};
-
-const requiredReport = ({ hexData }) => {
-  let data = parseReportData(hexData);
-  return data.filter(({ required }) => required);
-};
-
-const optionalReport = (report, reports) => {
-  let index = reports.findIndex(({ hexData }) => hexData === report.hexData);
-
-  while (index < reports.length) {
-    let prev = reports[index++];
-    if (prev.frameID === config.frame.id.FULL) {
-      let data = parseReportData(prev.hexData);
-      return data.filter(({ required }) => !required);
-    }
-  }
-  return [];
-};
-
-const reportData = (report, reports) => {
-  return orderBy(
-    [...requiredReport(report), ...optionalReport(report, reports)],
-    "no"
+  return data.reduce(
+    (carry, { field, value, output }) => ({
+      ...carry,
+      [field]: {
+        val: value,
+        out: output,
+      },
+    }),
+    { hex }
   );
 };
 
-export { Report, parseReport, parseReportData, reportData };
+// const requiredReport = ({ hex }) => {
+//   let data = parseReportData(hex);
+//   return data.filter(({ required }) => required);
+// };
+
+// const optionalReport = (report, reports) => {
+//   let index = reports.findIndex(({ hex }) => hex === report.hex);
+
+//   while (index < reports.length) {
+//     let prev = reports[index++];
+//     if (prev.frameID === config.frame.id.FULL) {
+//       let data = parseReportData(prev.hex);
+//       return data.filter(({ required }) => !required);
+//     }
+//   }
+//   return [];
+// };
+
+// const reportData = (report, reports) => {
+//   return orderBy(
+//     [...requiredReport(report), ...optionalReport(report, reports)],
+//     "no"
+//   );
+// };
+
+export { Report, parseReport, parseReportData };

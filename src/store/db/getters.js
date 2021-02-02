@@ -1,24 +1,22 @@
 import { groupBy } from "lodash";
-import { getValue } from "components/js/utils";
 import { EVENT_LIST, parseEvent } from "components/js/event";
 import * as getters from "./getter-types";
 
 export default {
-  [getters.getTotalReports]: ({ reports }) => (unitID) => {
-    return reports.filter(({ unitID: _unitID }) => _unitID === unitID).length;
+  [getters.getTotalReports]: ({ reports }) => (theUnit) => {
+    return reports.filter(({ unitID }) => unitID.val === theUnit).length;
   },
   [getters.devReports]({ reports, theUnit }) {
-    // let _reports = reports.filter(({ unitID }) => unitID === theUnit);
-    // return theUnit ? _reports : [];
-    return [];
+    let _reports = reports.filter(({ unitID }) => unitID.val === theUnit);
+    return theUnit ? _reports : [];
   },
   [getters.devEvents](state, getters) {
-    let events = getters.devReports.reduce((carry, { data }) => {
+    let events = getters.devReports.reduce((carry, report) => {
       return carry.concat(
         ...EVENT_LIST.filter(({ bit }) =>
-          parseEvent(getValue(data, "eventsGroup"), bit)
+          parseEvent(report.eventsGroup.val, bit)
         ).map(({ name }) => ({
-          logDatetime: getValue(data, "logDatetime"),
+          logDatetime: report.logDatetime.val,
           name,
         }))
       );

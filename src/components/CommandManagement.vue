@@ -1,6 +1,6 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none bg-info text-white">
+    <p class="q-pa-sm q-mb-none bg-purple text-white">
       Command Management
       <q-icon
         v-if="COMMAND_LIST.length > 0"
