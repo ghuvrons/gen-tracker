@@ -14,10 +14,12 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.c46926f3b9282de29b966b76b9f3372e.js"
+  "precache-manifest.f2131c8b97ce8b4bdd4297cd35935012.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "gen-gps-tracker"});
+
+workbox.skipWaiting();
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
