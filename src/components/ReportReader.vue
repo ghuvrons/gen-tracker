@@ -2,8 +2,13 @@
   <div class="shadow-1" :class="darkerClass">
     <p class="q-pa-sm q-mb-none">
       Report Reader
-      <q-chip color="negative" dense square v-if="theReport">
-        {{ theReport.frameID === $config.frame.id.FULL ? "FULL" : "SIMPLE" }}
+      <q-chip
+        :color="fullFrame ? 'green' : 'light-green'"
+        dense
+        square
+        v-if="theReport"
+      >
+        {{ fullFrame ? "FULL" : "SIMPLE" }}
       </q-chip>
     </p>
 
@@ -28,7 +33,7 @@
           </q-item-main>
           <q-item-side
             right
-            :color="realtimeField(data) ? 'green' : 'green-7'"
+            :color="realtimeField(data) ? 'green' : 'red'"
             :icon="realtimeField(data) ? 'cloud_download' : 'cloud_off'"
           />
         </q-item>
@@ -70,6 +75,9 @@ export default {
     ...mapGetters('db', [devReports]),
     reportData() {
       return reportData(this.theReport, this.devReports)
+    },
+    fullFrame() {
+      return this.theReport.frameID === this.$config.frame.id.FULL
     }
   },
   methods: {
