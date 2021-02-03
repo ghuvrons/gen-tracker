@@ -97,6 +97,7 @@ const COMMAND_LIST = [
     desc: "Add new fingerprint",
     code: 3,
     subCode: 1,
+    timeout: 20000,
   },
   {
     command: "FINGER_DEL",

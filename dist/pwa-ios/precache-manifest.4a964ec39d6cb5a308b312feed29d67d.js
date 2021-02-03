@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "statics/icons/favicon-16x16.png"
   },
   {
-    "revision": "e6115e1f8ef0a256abd0b4c9585d6758",
+    "revision": "7841d6884eaaf6b9662d913ed1816b3a",
     "url": "index.html"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "statics/icons/icon-512x512.png"
   },
   {
-    "revision": "9ff285db89557c51bd33",
-    "url": "js/app.552812d1.js"
+    "revision": "b5265517a1c98c0c8719",
+    "url": "js/app.840d2f36.js"
   },
   {
     "revision": "66d7719a8ca03c1a591444c013802817",
@@ -36,8 +36,8 @@ self.__precacheManifest = [
     "url": "statics/icons/ms-icon-144x144.png"
   },
   {
-    "revision": "20c6420ccf16a07d9d56538e30a6b524",
-    "url": "statics/icons/icon-256x256.png"
+    "revision": "8c4120b4e88276badbc808e518572fad",
+    "url": "statics/icons/icon-192x192.png"
   },
   {
     "revision": "cd639f0ce0d635253ab4",
@@ -60,8 +60,8 @@ self.__precacheManifest = [
     "url": "statics/icons/apple-icon-152x152.png"
   },
   {
-    "revision": "8c4120b4e88276badbc808e518572fad",
-    "url": "statics/icons/icon-192x192.png"
+    "revision": "20c6420ccf16a07d9d56538e30a6b524",
+    "url": "statics/icons/icon-256x256.png"
   },
   {
     "revision": "8a9a261c8b8dfe90db11f1817a9d22e1",
@@ -76,7 +76,7 @@ self.__precacheManifest = [
     "url": "css/d8ce87bc.75f04901.css"
   },
   {
-    "revision": "9ff285db89557c51bd33",
+    "revision": "b5265517a1c98c0c8719",
     "url": "css/app.0bdb6c99.css"
   },
   {
