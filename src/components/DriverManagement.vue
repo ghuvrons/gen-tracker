@@ -79,7 +79,7 @@ import {
 } from '../store/db/mutation-types'
 import { extractCommand } from 'components/js/command'
 import { parseResCode } from 'components/js/response'
-import { devFingers, devCommands } from '../store/db/getter-types'
+import { devFingers } from '../store/db/getter-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import CommonMixin from 'components/mixins/CommonMixin'
 
@@ -95,8 +95,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('db', ['theUnit']),
-    ...mapGetters('db', [devFingers, devCommands])
+    ...mapState('db', ['theUnit', 'commands']),
+    ...mapGetters('db', [devFingers])
   },
   mounted() {
     if (this.theUnit) this.fetchFinger()

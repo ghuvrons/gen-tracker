@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "statics/icons/favicon-16x16.png"
   },
   {
-    "revision": "dbb4875c6eb9def30fef1d9c6ba46bc5",
+    "revision": "e6115e1f8ef0a256abd0b4c9585d6758",
     "url": "index.html"
   },
   {
@@ -16,16 +16,16 @@ self.__precacheManifest = [
     "url": "statics/icons/icon-512x512.png"
   },
   {
-    "revision": "f2afd116557fd662f6b7",
-    "url": "js/app.2eee3230.js"
+    "revision": "9ff285db89557c51bd33",
+    "url": "js/app.552812d1.js"
   },
   {
     "revision": "66d7719a8ca03c1a591444c013802817",
     "url": "statics/icons/icon-384x384.png"
   },
   {
-    "revision": "9f42936dfd18ed790b87",
-    "url": "js/d8ce87bc.0c7b5a00.js"
+    "revision": "6ca0e7e9472ba422159b",
+    "url": "js/d8ce87bc.013591f2.js"
   },
   {
     "revision": "4d4ad6c11f1e19e4a11d",
@@ -72,11 +72,11 @@ self.__precacheManifest = [
     "url": "fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.c38ebd3c.woff"
   },
   {
-    "revision": "9f42936dfd18ed790b87",
+    "revision": "6ca0e7e9472ba422159b",
     "url": "css/d8ce87bc.75f04901.css"
   },
   {
-    "revision": "f2afd116557fd662f6b7",
+    "revision": "9ff285db89557c51bd33",
     "url": "css/app.0bdb6c99.css"
   },
   {
