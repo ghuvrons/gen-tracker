@@ -22,21 +22,16 @@
             @click="$root.$emit('ignoreCommand')"
           />
         </div>
-        <!-- <div class="col-auto q-ma-sm">
-          <json-csv
-            :data="exported.data"
-            :labels="exported.label"
-            :name="exported.name"
-          >
-            <q-btn
-              class="q-ma-xs"
-              icon="cloud_download"
-              color="green"
-              label="Export CSV"
-              :disable="reports.length == 0"
-            />
-          </json-csv>
-        </div> -->
+        <div class="col-auto q-ma-sm">
+          <q-btn
+            class="q-ma-xs"
+            icon="cloud_download"
+            color="green"
+            label="Export CSV"
+            :disable="reports.length == 0"
+            @click.native="exportCSV()"
+          />
+        </div>
         <div class="col-auto q-ma-sm">
           <q-btn
             class="q-ma-xs"
@@ -44,7 +39,7 @@
             color="purple"
             label="Export JSON"
             :disable="reports.length == 0"
-            @click.native="exportJson()"
+            @click.native="exportJSON()"
           />
         </div>
       </div>
@@ -54,7 +49,7 @@
             class="q-ma-sm"
             ref="importer"
             :dark="darker"
-            :upload-factory="importJson"
+            :upload-factory="importJSON"
             url=""
             extensions=".json"
             stack-label="Import JSON"
@@ -87,21 +82,17 @@
 </template>
 
 <script>
-import JsonCsv from 'vue-json-csv'
 import { devReports } from '../store/db/getter-types'
 import { RESET_DATABASE } from '../store/db/action-types'
 import { TOGGLE_CALIBRATION, TOGGLE_DARKER } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import { makeExportCSV, makeExportJSON } from 'components/js/exporter'
+import { exportCSV, exportJSON } from 'components/js/exporter'
 import { calibrateTime } from 'components/js/utils'
 import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
-  components: {
-    JsonCsv
-  },
   computed: {
     ...mapState('db', ['units', 'calibration', 'theCommand', 'reports']),
     ...mapGetters('db', [devReports]),
@@ -121,33 +112,33 @@ export default {
         this.TOGGLE_DARKER()
       }
     }
-    // exported() {
-    //   return makeExportCSV(this.devReports)
-    // }
   },
   methods: {
     ...mapMutations('db', [TOGGLE_CALIBRATION, TOGGLE_DARKER]),
     ...mapActions('db', [RESET_DATABASE]),
-    exportJson() {
-      makeExportJSON(this.devReports)
+    exportJSON() {
+      exportJSON(this.reports)
     },
-    importJson(file, updateProgress) {
-      let reader = new FileReader()
-      reader.onload = (e) => {
-        if (this.reports.length == 0) {
+    exportCSV() {
+      exportCSV(this.reports)
+    },
+    importJSON(file, updateProgress) {
+      if (this.reports.length == 0) {
+        let reader = new FileReader()
+        reader.onload = (e) => {
           this.$root.$emit(
             'importReport',
             JSON.parse(e.target.result).reverse()
           )
           this.$refs.importer.reset()
-        } else {
-          this.$q.notify({
-            message: 'Database should empty',
-            type: 'negative'
-          })
         }
+        reader.readAsText(file)
+      } else {
+        this.$q.notify({
+          message: 'Database should empty',
+          type: 'negative'
+        })
       }
-      reader.readAsText(file)
     },
     clearStore() {
       this.$q
