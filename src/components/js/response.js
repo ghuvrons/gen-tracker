@@ -10,16 +10,13 @@ const parseResponse = ({ payload, unitID, code, subCode }, hex) => {
 
     if (getValue(data, "unitID") != unitID) return;
 
-    res = RESPONSE_LIST.find(
-      ({ resCode }) => resCode === getValue(data, "resCode")
-    );
-
-    if (!res) return;
-
     if (getValue(data, "code") != code) return;
 
     if (getValue(data, "subCode") != subCode) return;
 
+    res = RESPONSE_LIST.find(
+      ({ resCode }) => resCode === getValue(data, "resCode")
+    );
     message = getValue(data, "message");
   } else {
     res = RESPONSE_LIST.find(({ name }) => name === "timeout");

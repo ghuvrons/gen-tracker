@@ -2,7 +2,7 @@ import { config } from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
 import { getValue } from "components/js/utils";
 import { Header, parseFrame } from "components/js/frame";
-import { orderBy } from "lodash";
+import { omit, orderBy } from "lodash";
 
 const parseReportData = (hex) => {
   let { frame } = config;
@@ -31,29 +31,16 @@ const parseReport = (hex) => {
   );
 };
 
-// const requiredReport = ({ hex }) => {
-//   let data = parseReportData(hex);
-//   return data.filter(({ required }) => required);
-// };
+const lastFullReport = (report, reports) => {
+  let index = reports.findIndex(({ hex }) => hex === report.hex);
 
-// const optionalReport = (report, reports) => {
-//   let index = reports.findIndex(({ hex }) => hex === report.hex);
+  if (index >= 0) {
+    while (index < reports.length) {
+      let prev = reports[index++];
+      if (prev.frameID.val === config.frame.id.FULL) return prev;
+    }
+  }
+  return;
+};
 
-//   while (index < reports.length) {
-//     let prev = reports[index++];
-//     if (prev.frameID === config.frame.id.FULL) {
-//       let data = parseReportData(prev.hex);
-//       return data.filter(({ required }) => !required);
-//     }
-//   }
-//   return [];
-// };
-
-// const reportData = (report, reports) => {
-//   return orderBy(
-//     [...requiredReport(report), ...optionalReport(report, reports)],
-//     "no"
-//   );
-// };
-
-export { Report, parseReport, parseReportData };
+export { Report, parseReport, parseReportData, lastFullReport };

@@ -17,7 +17,7 @@
       :class="darkerClass"
       :style="{ height: (height < 150 ? 150 : height) + 'px' }"
     >
-      <q-list separator dense v-if="theReport" :dark="darker">
+      <q-list v-if="theReport" separator dense :dark="darker">
         <q-item
           v-for="field in reportFields"
           :key="field"
@@ -29,7 +29,7 @@
           <q-item-main>
             <q-item-tile label>{{ getSubField(field, "title") }}</q-item-tile>
             <q-item-tile sublabel
-              >{{ theReport[field].out }}
+              >{{ theReportData[field].out }}
               {{ getSubField(field, "unit") }}</q-item-tile
             >
           </q-item-main>
@@ -53,7 +53,7 @@
 
 <script>
 import ReportCollectionModal from 'components/etc/ReportCollectionModal'
-import { Report } from 'components/js/report'
+import { Report, lastFullReport } from 'components/js/report'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
 import { getField } from 'components/js/utils'
@@ -76,8 +76,14 @@ export default {
   computed: {
     ...mapState('db', ['theReport']),
     ...mapGetters('db', [devReports]),
+    theReportData() {
+      return {
+        ...lastFullReport(this.theReport, this.devReports),
+        ...this.theReport
+      }
+    },
     reportFields() {
-      return Object.keys(this.$_.omit(this.theReport, 'hex'))
+      return Object.keys(this.$_.omit(this.theReportData, 'hex'))
     },
     fullFrame() {
       return this.theReport.frameID.val === this.$config.frame.id.FULL
