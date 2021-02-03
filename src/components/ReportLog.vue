@@ -2,18 +2,6 @@
   <div class="row gutter-xs">
     <div class="col-xs-12 text-right">
       <q-btn
-        color="blue"
-        label="FULL ONLY"
-        :icon="lock.full ? 'layers' : 'layers_clear'"
-        class="q-ma-xs"
-        dense
-        :flat="!lock.full"
-        :loading="loading"
-        :disable="devReports.length == 0"
-        @click="lock.full = !lock.full"
-        v-if="lock.follow"
-      />
-      <q-btn
         color="green"
         label="FOLLOW"
         :icon="lock.follow ? 'lock' : 'lock_open'"
@@ -88,8 +76,7 @@ export default {
   data() {
     return {
       lock: {
-        follow: true,
-        full: false
+        follow: true
       }
     }
   },
@@ -108,15 +95,7 @@ export default {
       immediate: true,
       handler(reports) {
         if (reports.length > 0)
-          if (this.lock.follow) {
-            let report = reports[0]
-
-            if (this.lock.full)
-              report = reports.find(
-                ({ frameID }) => frameID.val === this.$config.frame.id.FULL
-              )
-            this.SET_THE_REPORT(report)
-          }
+          if (this.lock.follow) this.SET_THE_REPORT(reports[0])
       }
     }
   }

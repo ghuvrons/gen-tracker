@@ -162,11 +162,10 @@ export default {
     }
   },
   watch: {
-    reports: function (reports) {
+    devReports: function (reports) {
       if (reports.length > 0) {
-        let { frameID, gpsLatitude, gpsLongitude, sendDatetime } = reports[0]
-
-        if (this.calibration)
+        if (this.calibration) {
+          let { frameID, gpsLatitude, gpsLongitude, sendDatetime } = reports[0]
           if (frameID.val === this.$config.frame.id.FULL) {
             let validTime = calibrateTime({
               lat: gpsLatitude.val,
@@ -178,6 +177,7 @@ export default {
               this.$q.notify({ message: 'Calibrating device time..' })
             }
           }
+        }
       }
     }
   }

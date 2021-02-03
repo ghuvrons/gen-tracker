@@ -41,8 +41,8 @@
             />
             <q-range
               v-model="range.value"
-              :min="sample.min"
-              :max="sample.max"
+              :min="range.min"
+              :max="range.max"
               :disable="range.disable"
               :drag-range="control.drag"
               snap
@@ -79,7 +79,7 @@
               </div>
               <div class="col-auto">
                 <q-input
-                  :value="range.sample"
+                  :value="rangeSample"
                   type="number"
                   class="q-ma-xs"
                   style="width: 130px"
@@ -143,13 +143,11 @@ export default {
         follow: false,
         drag: false
       },
-      sample: {
-        min: 0,
-        max: null
-      },
       range: {
         disable: false,
         sample: 10,
+        min: 0,
+        max: null,
         value: {
           min: 0,
           max: null
@@ -179,6 +177,10 @@ export default {
       set(value) {
         this.$emit('input', value)
       }
+    },
+    rangeSample() {
+      let { xiMin, xiMax } = this.findRange(this.range.value)
+      return xiMax - xiMin + 1
     }
   },
   methods: {
@@ -214,7 +216,7 @@ export default {
 
       return { xMin, xMax, yMin, yMax, xiMin, xiMax }
     },
-    applyRange({ sample }) {
+    applyRange(sample) {
       let { xiMin, xiMax, xMax } = this.findRange(this.range.value)
       let oldSample = xiMax - xiMin
 
@@ -233,7 +235,7 @@ export default {
 
           if (!this.control.follow) xMax = this.getLabel(xiMin + sample)
         }
-      }
+      } else sample--
 
       this.range.value = {
         min: this.getLabel(xiMax - sample),
@@ -279,8 +281,8 @@ export default {
         this.chart.data.labels.push(labels[0])
         this.chart.data.datasets[0].data.push(datasets[0])
       }
-      this.sample.min = this.getLabel(0)
-      this.sample.max = this.getLabel(-1)
+      this.range.min = this.getLabel(0)
+      this.range.max = this.getLabel(-1)
 
       this.collection.update.data = !this.collection.update.data
     },
@@ -313,7 +315,7 @@ export default {
         if (field) {
           this.prepareChart()
           this.writeChart(this.devReports)
-          this.applyRange({})
+          this.applyRange()
         }
       }
     },
@@ -321,17 +323,17 @@ export default {
       handler() {
         if (this.collection.render) {
           this.writeChart([this.devReports[0]])
-          this.applyRange({})
+          this.applyRange()
         }
       }
     },
     'control.maximize': {
+      immediate: true,
       handler(max) {
         let sample = null
         if (max) {
-          // save
           this.tmp.max = this.range.value.max
-          this.tmp.sample = this.range.sample
+          this.tmp.sample = this.rangeSample
           this.tmp.drag = this.control.drag
           this.tmp.follow = this.control.follow
           this.range.disable = true
@@ -345,14 +347,13 @@ export default {
           this.range.value.max = this.tmp.max
           sample = this.tmp.sample
         }
-        this.applyRange({ sample })
+        console.warn(sample)
+        this.applyRange(sample)
       }
     },
     'range.value': {
       deep: true,
       handler(_) {
-        let { xiMin, xiMax } = this.findRange(this.range.value)
-        this.range.sample = xiMax - xiMin + 1
         this.scaleChart()
       }
     },

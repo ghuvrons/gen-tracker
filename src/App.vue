@@ -147,16 +147,6 @@ export default {
     }
   },
   watch: {
-    theCommand: function (cmd) {
-      if (cmd) {
-        let { unitID, hex } = cmd
-        let binData = Buffer.from(hex, 'hex')
-
-        this.starWaitting()
-        this.$mqtt.publish(`VCU/${unitID}/CMD`, binData)
-        console.log(`COMMAND ${hex}`)
-      }
-    },
     commands: function (commands) {
       if (commands.length > 0) {
         let { resCode } = commands[0]
@@ -167,6 +157,16 @@ export default {
         let type = ok ? 'positive' : 'negative'
 
         this.stopWaitting(message, type)
+      }
+    },
+    theCommand: function (cmd) {
+      if (cmd) {
+        let { unitID, hex } = cmd
+        let binData = Buffer.from(hex, 'hex')
+
+        this.starWaitting()
+        this.$mqtt.publish(`VCU/${unitID}/CMD`, binData)
+        console.log(`COMMAND ${hex}`)
       }
     }
   }

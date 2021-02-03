@@ -135,15 +135,16 @@ export default {
     }
   },
   watch: {
-    devCommands: {
+    commands: {
       deep: true,
       handler(commands) {
         if (commands.length > 0) {
           let { resCode, payload, unitID, message } = commands[0]
-          let { prop, value } = extractCommand(payload)
           let res = parseResCode(resCode)
 
           if (res.title == 'OK') {
+            let { prop, value } = extractCommand(payload)
+
             if (prop == 'FINGER_FETCH') {
               if (message.length > 0) {
                 let ids = message.split(',')
