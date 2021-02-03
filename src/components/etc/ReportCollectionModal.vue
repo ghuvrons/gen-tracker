@@ -347,7 +347,6 @@ export default {
           this.range.value.max = this.tmp.max
           sample = this.tmp.sample
         }
-        console.warn(sample)
         this.applyRange(sample)
       }
     },

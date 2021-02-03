@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "statics/icons/favicon-16x16.png"
   },
   {
-    "revision": "8386c0980763000c626497047f0b1f62",
+    "revision": "dbb4875c6eb9def30fef1d9c6ba46bc5",
     "url": "index.html"
   },
   {
@@ -12,16 +12,16 @@ self.__precacheManifest = [
     "url": "js/6afd57c4.d9cff741.js"
   },
   {
+    "revision": "a13b2bd5261e2df374128df1aab93001",
+    "url": "statics/icons/icon-512x512.png"
+  },
+  {
+    "revision": "f2afd116557fd662f6b7",
+    "url": "js/app.2eee3230.js"
+  },
+  {
     "revision": "66d7719a8ca03c1a591444c013802817",
     "url": "statics/icons/icon-384x384.png"
-  },
-  {
-    "revision": "5b82ea39fe488616e060",
-    "url": "js/app.322705aa.js"
-  },
-  {
-    "revision": "ed12d10fd0407eea42ccaf7af7991146",
-    "url": "statics/icons/ms-icon-144x144.png"
   },
   {
     "revision": "9f42936dfd18ed790b87",
@@ -32,16 +32,16 @@ self.__precacheManifest = [
     "url": "js/vendor.07a5dac1.js"
   },
   {
-    "revision": "a13b2bd5261e2df374128df1aab93001",
-    "url": "statics/icons/icon-512x512.png"
+    "revision": "ed12d10fd0407eea42ccaf7af7991146",
+    "url": "statics/icons/ms-icon-144x144.png"
   },
   {
-    "revision": "8c4120b4e88276badbc808e518572fad",
-    "url": "statics/icons/icon-192x192.png"
+    "revision": "20c6420ccf16a07d9d56538e30a6b524",
+    "url": "statics/icons/icon-256x256.png"
   },
   {
-    "revision": "60d7533dc696fabb3e80",
-    "url": "js/2f394bab.b501a8f1.js"
+    "revision": "cd639f0ce0d635253ab4",
+    "url": "js/2f394bab.56afcbd2.js"
   },
   {
     "revision": "2f9d7587924933c1912c342b190b53ca",
@@ -60,8 +60,8 @@ self.__precacheManifest = [
     "url": "statics/icons/apple-icon-152x152.png"
   },
   {
-    "revision": "20c6420ccf16a07d9d56538e30a6b524",
-    "url": "statics/icons/icon-256x256.png"
+    "revision": "8c4120b4e88276badbc808e518572fad",
+    "url": "statics/icons/icon-192x192.png"
   },
   {
     "revision": "8a9a261c8b8dfe90db11f1817a9d22e1",
@@ -76,11 +76,11 @@ self.__precacheManifest = [
     "url": "css/d8ce87bc.75f04901.css"
   },
   {
-    "revision": "5b82ea39fe488616e060",
+    "revision": "f2afd116557fd662f6b7",
     "url": "css/app.0bdb6c99.css"
   },
   {
-    "revision": "60d7533dc696fabb3e80",
-    "url": "css/2f394bab.d7d763c3.css"
+    "revision": "cd639f0ce0d635253ab4",
+    "url": "css/2f394bab.f5f620ab.css"
   }
 ];
