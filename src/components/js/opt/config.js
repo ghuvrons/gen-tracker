@@ -7,12 +7,10 @@ const config = {
     subTitle: "GEN Indonesia",
   },
   mqtt: {
-    // address: "broker.hivemq.com",
-    // port: 8000,
-    address: "mqtt.flespi.io",
+    address: "mqtt.eclipseprojects.io",
     port: 443,
-    username:
-      "sLSDwexrmm9JVuS13iGGj6wyOWh5tAkJb2dw6yLgKKPt2xjUEPqLLM9nyeiQCtpB",
+    path: "/mqtt",
+    username: "",
     password: "",
   },
   command: {

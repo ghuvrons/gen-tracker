@@ -2,7 +2,7 @@
   <div class="shadow-1" :class="darkerClass">
     <p class="q-pa-sm q-mb-none bg-purple text-white">
       Response Log
-      <q-chip color="negative" dense square v-if="devCommands.length > 0">
+      <q-chip v-if="devCommands.length > 0" color="negative" dense square>
         {{ devCommands.length }}
       </q-chip>
     </p>
@@ -10,18 +10,18 @@
       :class="darkerClass"
       :style="{ height: (height < 150 ? 150 : height) + 'px' }"
     >
-      <q-list :dark="darker" link dense separator v-if="devCommands.length > 0">
+      <q-list v-if="devCommands.length > 0" :dark="darker" link dense separator>
         <q-item
           v-for="(cmd, index) in devCommands"
           :key="index"
-          @click.native="applyCommand(cmd.payload)"
           :dark="darker"
+          @click.native="applyCommand(cmd.payload)"
         >
           <q-item-main>
             <q-item-tile label>{{ cmd.payload }}</q-item-tile>
             <q-item-tile sublabel>
-              <q-chip :color="cmd.res.color" dense square>{{
-                cmd.res.title
+              <q-chip :color="parseResCode(cmd.resCode).color" dense square>{{
+                parseResCode(cmd.resCode).title
               }}</q-chip>
               {{ cmd.message }}
             </q-item-tile>
@@ -39,6 +39,7 @@
 import { devCommands } from '../store/db/getter-types'
 import { SET_COMMAND_BUFFER } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
+import { parseResCode } from 'components/js/response'
 import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
@@ -55,6 +56,9 @@ export default {
     ...mapMutations('db', [SET_COMMAND_BUFFER]),
     applyCommand(payload) {
       if (!this.loading) this.SET_COMMAND_BUFFER(payload)
+    },
+    parseResCode(code) {
+      return parseResCode(code)
     }
   }
 }

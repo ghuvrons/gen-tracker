@@ -17,7 +17,7 @@ import {
   CLEAR_THE_COMMAND
 } from './store/db/mutation-types'
 import { parseReport } from 'components/js/report'
-import { parseResponse } from 'components/js/response'
+import { parseResponse, parseResCode } from 'components/js/response'
 import { parseCommand } from 'components/js/command'
 import DummyMixin from 'components/mixins/DummyMixin'
 
@@ -159,7 +159,8 @@ export default {
     },
     commands: function (commands) {
       if (commands.length > 0) {
-        let { res } = commands[0]
+        let { resCode } = commands[0]
+        let res = parseResCode(resCode)
         let ok = res.title == 'OK'
 
         let message = ok ? 'Command sent.' : `Command is ${res.title}`

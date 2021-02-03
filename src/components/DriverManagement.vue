@@ -78,6 +78,7 @@ import {
   RESET_FINGERS
 } from '../store/db/mutation-types'
 import { extractCommand } from 'components/js/command'
+import { parseResCode } from 'components/js/response'
 import { devFingers, devCommands } from '../store/db/getter-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import CommonMixin from 'components/mixins/CommonMixin'
@@ -138,8 +139,9 @@ export default {
       deep: true,
       handler(commands) {
         if (commands.length > 0) {
-          let { res, payload, unitID, message } = commands[0]
+          let { resCode, payload, unitID, message } = commands[0]
           let { prop, value } = extractCommand(payload)
+          let res = parseResCode(resCode)
 
           if (res.title == 'OK') {
             if (prop == 'FINGER_FETCH') {

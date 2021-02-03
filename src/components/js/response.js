@@ -8,6 +8,8 @@ const parseResponse = ({ payload, unitID, code, subCode }, hex) => {
   if (hex) {
     let data = parseFrame(hex, Response);
 
+    if (getValue(data, "unitID") != unitID) return;
+
     res = RESPONSE_LIST.find(
       ({ resCode }) => resCode === getValue(data, "resCode")
     );
@@ -27,9 +29,13 @@ const parseResponse = ({ payload, unitID, code, subCode }, hex) => {
   return {
     payload,
     unitID,
-    res,
+    resCode: res.resCode,
     message,
   };
 };
 
-export { RESPONSE_LIST, Response, parseResponse };
+const parseResCode = (code) => {
+  return RESPONSE_LIST.find(({ resCode }) => resCode == code);
+};
+
+export { RESPONSE_LIST, Response, parseResponse, parseResCode };
