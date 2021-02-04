@@ -93,10 +93,7 @@
             </div>
           </div>
 
-          <div
-            v-if="collectionField === 'eventsGroup'"
-            class="col-xs-12 col-sm-12 col-md-5 col-lg-4"
-          >
+          <div v-if="collectionField === 'eventsGroup'" class="col">
             <event-group-reader
               :height="height"
               :current-value="currentValue"
