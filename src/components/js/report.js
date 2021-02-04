@@ -2,7 +2,6 @@ import { config } from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
 import { getValue } from "components/js/utils";
 import { Header, parseFrame } from "components/js/frame";
-import { omit, orderBy } from "lodash";
 
 const parseReportData = (hex) => {
   let { frame } = config;

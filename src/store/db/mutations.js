@@ -1,4 +1,5 @@
 import * as mutations from "./mutation-types";
+import { LocalStorage } from "quasar";
 
 export default {
   [mutations.SET_LOADING](state, payload) {
@@ -9,6 +10,7 @@ export default {
   },
   [mutations.TOGGLE_DARKER](state) {
     state.darker = !state.darker;
+    LocalStorage.set("darker", state.darker);
   },
   [mutations.CLEAR_ALL](state) {
     state.theUnit = null;

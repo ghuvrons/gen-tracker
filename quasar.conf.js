@@ -84,10 +84,12 @@ module.exports = function (ctx) {
         "QToggle",
         "QSearch",
         "QUploader",
+        "QFab",
+        "QFabAction",
       ],
       directives: ["Ripple", "CloseOverlay"],
       // Quasar plugins
-      plugins: ["Notify", "Dialog", "Loading", "AppFullscreen"],
+      plugins: ["Notify", "Dialog", "Loading", "AppFullscreen", "LocalStorage"],
 
       config: {
         notify: {

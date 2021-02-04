@@ -26,7 +26,8 @@ const VCU = ({ required }) => {
           format: (val) =>
             Number(moment(parseDatetime(val), "YYMMDDHHmmssEE").format("X")),
           display: (valFormat) =>
-            moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
+            // moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
+            moment(valFormat, "X").format("DD MMM YYYY, HH:mm:ss"),
         },
       ]);
     }, []),
@@ -55,7 +56,7 @@ const VCU = ({ required }) => {
     {
       field: "vehicleState",
       title: "Vehicle State",
-      required: false,
+      required: true,
       chartable: true,
       size: 1,
       format: (val) => HexToSignedInt8(ChangeEndian(val)),

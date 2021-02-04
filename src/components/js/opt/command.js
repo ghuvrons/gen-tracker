@@ -26,20 +26,6 @@ const COMMAND_LIST = [
     range: [1, 3],
   },
   {
-    command: "GEN_FOTA_VCU",
-    desc: "Upgrade VCU firmware",
-    code: 0,
-    subCode: 3,
-    timeout: 5 * 60000,
-  },
-  {
-    command: "GEN_FOTA_HMI",
-    desc: "Upgrade HMI firmware",
-    code: 0,
-    subCode: 4,
-    timeout: 10 * 60000,
-  },
-  {
     command: "REPORT_RTC",
     desc: "Set RTC value ( E start from 1=Monday )",
     code: 1,
@@ -118,6 +104,20 @@ const COMMAND_LIST = [
     desc: "Pairing pocket keyless",
     code: 4,
     subCode: 0,
+  },
+  {
+    command: "FOTA_VCU",
+    desc: "Upgrade VCU firmware",
+    code: 5,
+    subCode: 0,
+    timeout: 5 * 60000,
+  },
+  {
+    command: "FOTA_HMI",
+    desc: "Upgrade HMI firmware",
+    code: 5,
+    subCode: 1,
+    timeout: 10 * 60000,
   },
 ];
 

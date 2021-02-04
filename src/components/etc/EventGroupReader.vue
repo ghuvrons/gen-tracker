@@ -5,11 +5,11 @@
         height: (height < 150 ? 150 : height) + 110 + 'px',
       }"
     >
-      <template v-for="(events, name) in devEvents">
+      <template v-for="(event, name) in devEvents">
         <q-collapsible
           :key="name"
           :label="`${name} `"
-          :sublabel="`(${events.length}) times`"
+          :sublabel="`(${event.length}) times`"
           :header-class="`text-${activeEvent(name) ? 'green' : 'grey'}`"
           :dark="darker"
           separator
@@ -17,15 +17,15 @@
         >
           <q-list :dark="darker" dense>
             <q-item
-              v-for="event in devEvents"
-              :key="`${name}-${event.logDatetime}`"
+              v-for="evt in event"
+              :key="`${name}-${evt.time}`"
               :dark="darker"
               separator
               dense
             >
               <q-item-main>
                 <q-item-tile sublabel>
-                  {{ getTime(event.logDatetime) }}
+                  {{ evt.time }}
                 </q-item-tile>
               </q-item-main>
             </q-item>
@@ -39,7 +39,6 @@
 <script>
 import { EVENT_LIST, parseEvent } from 'components/js/event'
 import { devEvents } from '../../store/db/getter-types'
-import { unix2time } from 'components/js/utils'
 import { mapGetters } from 'vuex'
 import CommonMixin from 'components/mixins/CommonMixin'
 
@@ -58,9 +57,6 @@ export default {
     ...mapGetters('db', [devEvents])
   },
   methods: {
-    getTime(unix) {
-      return unix2time(unix)
-    },
     activeEvent(_name) {
       let bit = EVENT_LIST.find(({ name }) => name === _name).bit
       return parseEvent(this.currentValue, bit)

@@ -1,5 +1,6 @@
 import { groupBy } from "lodash";
 import { EVENT_LIST, parseEvent } from "components/js/event";
+import { unix2time } from "components/js/utils";
 import * as getters from "./getter-types";
 
 export default {
@@ -11,16 +12,19 @@ export default {
     return theUnit ? _reports : [];
   },
   [getters.devEvents](state, getters) {
-    let events = getters.devReports.reduce((carry, report) => {
-      return carry.concat(
-        ...EVENT_LIST.filter(({ bit }) =>
-          parseEvent(report.eventsGroup.val, bit)
-        ).map(({ name }) => ({
-          logDatetime: report.logDatetime.val,
-          name,
-        }))
-      );
-    }, []);
+    let events = getters.devReports.reduce(
+      (carry, { eventsGroup, logDatetime }) => {
+        return carry.concat(
+          ...EVENT_LIST.filter(({ bit }) =>
+            parseEvent(eventsGroup.val, bit)
+          ).map(({ name }) => ({
+            time: unix2time(logDatetime.val),
+            name,
+          }))
+        );
+      },
+      []
+    );
 
     return groupBy(events, "name");
   },

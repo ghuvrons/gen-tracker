@@ -23,11 +23,11 @@
       </q-toolbar>
 
       <div class="layout-padding" v-if="collection.render">
-        <div class="row gutter-sm justify-between">
+        <div class="row gutter-xs">
           <div
             :class="
               collectionField === 'eventsGroup'
-                ? 'col-sm-12 col-md-7 col-lg-8'
+                ? 'col-xs-12 col-sm-12 col-md-7 col-lg-8'
                 : 'col-12'
             "
           >
@@ -95,7 +95,7 @@
 
           <div
             v-if="collectionField === 'eventsGroup'"
-            class="col-sm-12 col-md-5 col-lg-4"
+            class="col-xs-12 col-sm-12 col-md-5 col-lg-4"
           >
             <event-group-reader
               :height="height"

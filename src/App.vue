@@ -6,7 +6,7 @@
 
 <script>
 import { validateFrame } from 'components/js/frame'
-import { getValue, calibrateTime, isString } from 'components/js/utils'
+import { getValue, isString } from 'components/js/utils'
 import { mapState, mapMutations } from 'vuex'
 import {
   SET_LOADING,
@@ -19,6 +19,7 @@ import {
 import { parseReport } from 'components/js/report'
 import { parseResponse, parseResCode } from 'components/js/response'
 import { parseCommand } from 'components/js/command'
+import moment from 'moment'
 import DummyMixin from 'components/mixins/DummyMixin'
 
 export default {
@@ -53,35 +54,6 @@ export default {
     ]),
     importReport(hexs) {
       hexs.forEach((hex) => this.handleFrame(hex))
-    },
-    handleFrame(hex) {
-      let header = validateFrame(hex)
-      if (!header) {
-        console.error(`CORRUPT ${hex}`)
-        return
-      }
-
-      let { unitID, frameID } = getValue(header, ['unitID', 'frameID'])
-
-      this.ADD_UNITS(unitID)
-      if (frameID === this.$config.frame.id.RESPONSE) {
-        console.log(`RESPONSE ${hex}`)
-        let response = parseResponse(this.theCommand, hex)
-        if (response) this.ADD_COMMANDS(response)
-      } else {
-        let report = parseReport(hex)
-
-        if (
-          this.reports.some(
-            ({ logDatetime }) => logDatetime.val == report.logDatetime.val
-          )
-        )
-          console.warn(`REPORT (DUPLICATE) ${hex}`)
-        else {
-          console.log(`REPORT ${hex}`)
-          this.ADD_REPORTS(report)
-        }
-      }
     },
 
     starWaitting() {
@@ -128,6 +100,39 @@ export default {
         unitID: this.theUnit,
         payload
       })
+    },
+    handleFrame(hex) {
+      let header = validateFrame(hex)
+      if (!header) {
+        console.error(`CORRUPT ${hex}`)
+        return
+      }
+
+      let { unitID, frameID } = getValue(header, ['unitID', 'frameID'])
+
+      this.ADD_UNITS(unitID)
+      if (frameID === this.$config.frame.id.RESPONSE) {
+        console.log(`RESPONSE ${hex}`)
+        let response = parseResponse(this.theCommand, hex)
+        if (response) this.ADD_COMMANDS(response)
+      } else {
+        let report = parseReport(hex)
+
+        let difference = moment().diff(moment(report.logDatetime.val, 'X'))
+        let duration = moment.duration(difference).as('months')
+
+        if (duration > 1) console.warn(`REPORT (EXPIRED) ${hex}`)
+        else if (
+          this.reports.some(
+            ({ logDatetime }) => logDatetime.val == report.logDatetime.val
+          )
+        )
+          console.warn(`REPORT (DUPLICATE) ${hex}`)
+        else {
+          console.log(`REPORT ${hex}`)
+          this.ADD_REPORTS(report)
+        }
+      }
     }
   },
   timers: {
