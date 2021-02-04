@@ -258,10 +258,12 @@ export default {
 
       reports.forEach((report) => {
         if (report[this.collectionField]) {
+          console.warn(report)
           datasets.push(report[this.collectionField].val)
           labels.push(report.logDatetime.val)
         }
       })
+      console.error(reports)
 
       return {
         datasets: datasets.reverse(),
@@ -321,7 +323,7 @@ export default {
         if (this.collection.render) {
           let report = reports[0]
           if (report[this.collectionField]) {
-            this.writeChart([reports])
+            this.writeChart([report])
             this.applyRange()
           }
         }

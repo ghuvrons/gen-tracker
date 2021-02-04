@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.7fea14642bf43a988c1848886ac5cafd.js"
+  "precache-manifest.8a3d328b744f0b2618722a52b24962f6.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "gen-gps-tracker"});
