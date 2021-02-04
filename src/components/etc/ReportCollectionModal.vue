@@ -317,10 +317,13 @@ export default {
       }
     },
     devReports: {
-      handler() {
+      handler(reports) {
         if (this.collection.render) {
-          this.writeChart([this.devReports[0]])
-          this.applyRange()
+          let report = reports[0]
+          if (report[this.collectionField]) {
+            this.writeChart([reports])
+            this.applyRange()
+          }
         }
       }
     },
