@@ -20,14 +20,20 @@
     </q-tabs>
 
     <!-- Targets -->
-    <q-tab-panels v-model="selectedTab" :class="darkerClass" animated swipeable>
-      <q-tab-panel name="tab-1" keep-alive>
+    <q-tab-panels
+      v-model="selectedTab"
+      :class="darkerClass"
+      keep-alive
+      animated
+      swipeable
+    >
+      <q-tab-panel name="tab-1">
         <report-log :height="paneHeight"></report-log>
       </q-tab-panel>
-      <q-tab-panel name="tab-2" keep-alive>
+      <q-tab-panel name="tab-2">
         <driver-management :height="paneHeight"></driver-management>
       </q-tab-panel>
-      <q-tab-panel name="tab-3" keep-alive>
+      <q-tab-panel name="tab-3">
         <global-configuration></global-configuration>
       </q-tab-panel>
     </q-tab-panels>
@@ -37,13 +43,13 @@
 <style></style>
 
 <script>
-import MapManagement from 'components/MapManagement'
-import ReportLog from 'components/ReportLog'
-import DriverManagement from 'components/DriverManagement'
-import GlobalConfiguration from 'components/GlobalConfiguration'
-import { devReports, devFingers } from '../store/db/getter-types'
-import { mapGetters } from 'vuex'
-import CommonMixin from 'components/mixins/CommonMixin'
+import MapManagement from "components/MapManagement";
+import ReportLog from "components/ReportLog";
+import DriverManagement from "components/DriverManagement";
+import GlobalConfiguration from "components/GlobalConfiguration";
+import { devReports, devFingers } from "../store/db/getter-types";
+import { mapGetters } from "vuex";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'PageIndex',
@@ -52,34 +58,34 @@ export default {
     MapManagement,
     ReportLog,
     DriverManagement,
-    GlobalConfiguration
+    GlobalConfiguration,
   },
   data() {
     return {
-      selectedTab: 'tab-1',
+      selectedTab: "tab-1",
       mapHeight: 300,
       paneHeight: 0,
-      pageWidth: 0
-    }
+      pageWidth: 0,
+    };
   },
   computed: {
-    ...mapGetters('db', [devReports, devFingers])
+    ...mapGetters("db", [devReports, devFingers]),
   },
   methods: {
-    onResize(height ) {
-      this.paneHeight = height - this.mapHeight - 180
+    onResize(height) {
+      this.paneHeight = height - this.mapHeight - 180;
     },
     onResizePage({ width }) {
-      this.pageWidth = width
-    }
+      this.pageWidth = width;
+    },
   },
   watch: {
-    '$q.screen.height':{
+    "$q.screen.height": {
       immediate: true,
       handler(h) {
-        this.onResize(h)
-      }
-    }
-  }
-}
+        this.onResize(h);
+      },
+    },
+  },
+};
 </script>

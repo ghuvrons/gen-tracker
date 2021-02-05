@@ -52,6 +52,7 @@
             class="q-ma-sm"
             accept=".json"
             label="Import JSON"
+            @finish="finish"
           />
         </div>
       </div>
@@ -79,98 +80,104 @@
 </template>
 
 <script>
-import { devReports } from '../store/db/getter-types'
-import { RESET_DATABASE } from '../store/db/action-types'
-import { TOGGLE_CALIBRATION, TOGGLE_DARKER } from '../store/db/mutation-types'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import { exportCSV, exportJSON } from 'components/js/exporter'
-import { calibrateTime } from 'components/js/utils'
-import CommonMixin from 'components/mixins/CommonMixin'
+import { devReports } from "../store/db/getter-types";
+import { RESET_DATABASE } from "../store/db/action-types";
+import { TOGGLE_CALIBRATION, TOGGLE_DARKER } from "../store/db/mutation-types";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { exportCSV, exportJSON } from "components/js/exporter";
+import { calibrateTime } from "components/js/utils";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
   computed: {
-    ...mapState('db', ['units', 'calibration', 'theCommand', 'reports']),
-    ...mapGetters('db', [devReports]),
+    ...mapState("db", ["units", "calibration", "theCommand", "reports"]),
+    ...mapGetters("db", [devReports]),
     calibrationState: {
       get() {
-        return this.calibration
+        return this.calibration;
       },
       set(value) {
-        this.TOGGLE_CALIBRATION()
-      }
+        this.TOGGLE_CALIBRATION();
+      },
     },
     darkState: {
       get() {
-        return this.darker
+        return this.darker;
       },
       set(value) {
-        this.TOGGLE_DARKER()
-      }
-    }
+        this.TOGGLE_DARKER();
+      },
+    },
   },
   methods: {
-    ...mapMutations('db', [TOGGLE_CALIBRATION, TOGGLE_DARKER]),
-    ...mapActions('db', [RESET_DATABASE]),
+    ...mapMutations("db", [TOGGLE_CALIBRATION, TOGGLE_DARKER]),
+    ...mapActions("db", [RESET_DATABASE]),
+    finish() {
+      this.$refs.importer.reset();
+    },
     exportJSON() {
-      exportJSON(this.reports)
+      exportJSON(this.reports);
     },
     exportCSV() {
-      exportCSV(this.reports)
+      exportCSV(this.reports);
     },
     importJSON(files) {
-      if (this.reports.length == 0) {
-        let reader = new FileReader()
-        reader.onload = (e) => {
-          this.$root.$emit(
-            'importReport',
-            JSON.parse(e.target.result).reverse()
-          )
-          this.$refs.importer.reset()
+      return new Promise((resolve, reject) => {
+        if (this.reports.length == 0) {
+          let reader = new FileReader();
+          reader.onload = (e) => {
+            this.$root.$emit(
+              "importReport",
+              JSON.parse(e.target.result).reverse()
+            );
+
+            resolve();
+          };
+          reader.readAsText(files[0]);
+        } else {
+          this.$q.notify({
+            message: "Database should empty",
+            type: "negative",
+          });
+          reject();
         }
-        reader.readAsText(files[0])
-      } else {
-        this.$refs.importer.reset()
-        this.$q.notify({
-          message: 'Database should empty',
-          type: 'negative'
-        })
-      }
+      });
     },
     clearStore() {
       this.$q
         .dialog({
-          title: 'Confirmation',
+          title: "Confirmation",
           message: `Are you sure to remove all data?`,
           dark: this.darker,
           preventClose: true,
-          cancel: true
+          cancel: true,
         })
-        .onOk(() => this.RESET_DATABASE())
-    }
+        .onOk(() => this.RESET_DATABASE());
+    },
   },
   watch: {
     devReports: function (reports) {
       if (reports.length > 0) {
         if (this.calibration) {
-          let { frameID, gpsLatitude, gpsLongitude, sendDatetime } = reports[0]
+          let { frameID, gpsLatitude, gpsLongitude, sendDatetime } = reports[0];
           if (frameID.val === this.$config.frame.id.FULL) {
             let validTime = calibrateTime({
               lat: gpsLatitude.val,
               lng: gpsLongitude.val,
-              datetime: sendDatetime.val
-            })
+              datetime: sendDatetime.val,
+            });
             if (validTime) {
-              this.$root.$emit('executeCommand', `REPORT_RTC=${validTime}`)
-              this.$q.notify({ message: 'Calibrating device time..' })
+              this.$root.$emit("executeCommand", `REPORT_RTC=${validTime}`);
+              this.$q.notify({ message: "Calibrating device time.." });
             }
           }
         }
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style></style>

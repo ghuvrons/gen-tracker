@@ -13,16 +13,20 @@
       </q-chip>
     </div>
 
-    <q-scroll-area :style="{ height: (height < 150 ? 150 : height) + 'px' }">
-      <q-list v-if="theReport" :dark="darker" separator>
+    <q-virtual-scroll
+      v-if="theReport"
+      :style="{ height: (height < 150 ? 150 : height) + 'px' }"
+      :items="reportFields"
+      separator
+    >
+      <template v-slot="{ item: field, index }">
         <q-item
-          v-for="field in reportFields"
           :key="field"
           @click="openHistory(field)"
-          :clickable="readyHistory(field)"
-          :focused="historyField == field"
+          :clickable="hasHistory(field)"
+          :active="historyField == field"
+          active-class="bg-primary text-white"
           :dark="darker"
-          manual-focus
         >
           <q-item-section>
             <q-item-label lines="1">
@@ -41,79 +45,85 @@
             </q-icon>
           </q-item-section>
         </q-item>
-      </q-list>
+        <!-- </q-list> -->
+      </template>
+    </q-virtual-scroll>
 
-      <q-banner v-else :dark="darker">
-        <template v-slot:avatar>
-          <q-icon name="info"></q-icon>
-        </template>
-        No active report yet
-      </q-banner>
-    </q-scroll-area>
+    <q-banner v-else :dark="darker">
+      <template v-slot:avatar>
+        <q-icon name="info"></q-icon>
+      </template>
+      No active report yet
+    </q-banner>
 
-    <report-history-modal v-model="historyField" :height="height - 210">
+    <report-history-modal
+      v-if="historyField"
+      @close="historyField = null"
+      :field="historyField"
+      :height="height - 210"
+    >
     </report-history-modal>
   </div>
 </template>
 
 <script>
-import ReportHistoryModal from 'components/etc/ReportHistoryModal'
-import { Report, lastFullReport } from 'components/js/report'
-import { devReports } from '../store/db/getter-types'
-import { mapState, mapGetters } from 'vuex'
-import { getField } from 'components/js/utils'
-import CommonMixin from 'components/mixins/CommonMixin'
+import ReportHistoryModal from "components/etc/ReportHistoryModal";
+import { Report, lastFullReport } from "components/js/report";
+import { devReports } from "../store/db/getter-types";
+import { mapState, mapGetters } from "vuex";
+import { getField } from "components/js/utils";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
   props: {
-    height: Number
+    height: Number,
   },
   mixins: [CommonMixin],
   components: {
-    ReportHistoryModal
+    ReportHistoryModal,
   },
   data() {
     return {
-      historyField: null
-    }
+      historyField: null,
+    };
   },
   computed: {
-    ...mapState('db', ['theReport']),
-    ...mapGetters('db', [devReports]),
+    ...mapState("db", ["theReport"]),
+    ...mapGetters("db", [devReports]),
     theReportData() {
       return {
         ...lastFullReport(this.theReport, this.devReports),
-        ...this.theReport
-      }
+        ...this.theReport,
+      };
     },
     reportFields() {
-      return Object.keys(this.$_.omit(this.theReportData, 'hex'))
+      return Object.keys(this.$_.omit(this.theReportData, "hex"));
     },
     fullFrame() {
-      return this.theReport.frameID.val === this.$config.frame.id.FULL
-    }
+      return this.theReport.frameID.val === this.$config.frame.id.FULL;
+    },
   },
   methods: {
     openHistory(field) {
-      if (this.readyHistory(field)) this.historyField = field
+      if (this.hasHistory(field)) this.historyField = field;
     },
-    readyHistory(field) {
-      let { chartable } = getField(Report, field)
-      let related = this.devReports.filter(({ [field]: _field }) => _field)
-      return chartable && related.length >= 2
+    hasHistory(field) {
+      let { chartable } = getField(Report, field);
+      let related = this.devReports.filter(({ [field]: _field }) => _field);
+      return chartable && related.length >= 2;
     },
     realtimeField(field) {
-      let { required } = getField(Report, field)
+      let { required } = getField(Report, field);
       return (
         this.theReport.frameID.val === this.$config.frame.id.FULL || required
-      )
+      );
     },
     getSubField(field, subField) {
-      return getField(Report, field)[subField]
-    }
-  }
-}
+      return getField(Report, field)[subField];
+    },
+  },
+};
 </script>
 
 <style></style>

@@ -1,13 +1,13 @@
 <template>
   <q-dialog
     v-model="modalOpen"
-    @show="history.render = true"
-    @hide="stopRender()"
+    @hide="$emit('close')"
+    :maximized="$q.platform.is.mobile"
     full-width
   >
-    <q-card v-if="history.render" :dark="darker">
+    <q-card :dark="darker">
       <q-card-section class="bg-primary text-white">
-        REPORT HISTORY
+        REPORT HISTORY - {{ this.theField.title }}
         <q-chip v-if="chart.data" dark dense square>
           {{ chart.data.labels.length }}
         </q-chip>
@@ -108,28 +108,28 @@
 </template>
 
 <script>
-import { devReports, devEvents } from '../../store/db/getter-types'
-import { mapGetters } from 'vuex'
-import { getField } from 'components/js/utils'
-import { chart } from 'components/js/opt/config'
-import { cloneDeep } from 'lodash'
-import { Report } from 'components/js/report'
-import LineChart from 'components/etc/LineChart'
-import EventGroupReader from 'components/etc/EventGroupReader'
-import CommonMixin from 'components/mixins/CommonMixin'
+import { devReports, devEvents } from "../../store/db/getter-types";
+import { mapGetters } from "vuex";
+import { getField } from "components/js/utils";
+import { chart } from "components/js/opt/config";
+import { cloneDeep } from "lodash";
+import { Report } from "components/js/report";
+import LineChart from "components/etc/LineChart";
+import EventGroupReader from "components/etc/EventGroupReader";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
   props: {
-    value: {
-      required: true
+    field: {
+      required: true,
     },
-    height: Number
+    height: Number,
   },
   mixins: [CommonMixin],
   components: {
     LineChart,
-    EventGroupReader
+    EventGroupReader,
   },
   data() {
     return {
@@ -140,7 +140,7 @@ export default {
         max: null,
         sample: null,
         follow: false,
-        drag: false
+        drag: false,
       },
       range: {
         disable: false,
@@ -149,249 +149,233 @@ export default {
         max: null,
         value: {
           min: 0,
-          max: null
-        }
+          max: null,
+        },
       },
       control: {
         beginAtZero: false,
         maximize: true,
         follow: false,
-        drag: false
+        drag: false,
       },
       history: {
-        render: false,
         update: {
           data: false,
-          options: false
-        }
-      }
-    }
+          options: false,
+        },
+      },
+    };
   },
   computed: {
-    ...mapGetters('db', [devReports, devEvents]),
-    historyField: {
-      get() {
-        return this.value
-      },
-      set(value) {
-        this.$emit('input', value)
-      }
+    ...mapGetters("db", [devReports, devEvents]),
+    theField() {
+      return getField(Report, this.field);
     },
     eventGroup() {
-      return this.historyField === 'eventsGroup' && this.devEvents
+      return this.field === "eventsGroup" && this.devEvents;
     },
     rangeSample() {
-      let { xiMin, xiMax } = this.findRange(this.range.value)
-      return xiMax - xiMin + 1
-    }
+      let { xiMin, xiMax } = this.findRange(this.range.value);
+      return xiMax - xiMin + 1;
+    },
   },
   methods: {
     getLabel(index) {
-      let { labels } = this.chart.data
+      let { labels } = this.chart.data;
 
-      if (index >= 0) return labels[index]
-      return labels[labels.length - 1]
+      if (index >= 0) return labels[index];
+      return labels[labels.length - 1];
     },
     findRange({ min, max }) {
-      let { labels } = this.chart.data
+      let { labels } = this.chart.data;
 
       // find the index
-      let xiMin = min ? labels.findIndex((val) => val >= min) : 0
+      let xiMin = min ? labels.findIndex((val) => val >= min) : 0;
       let xiMax = max
         ? this.$_.findLastIndex(labels, (val) => val <= max)
-        : labels.length - 1
+        : labels.length - 1;
 
-      return { xiMin, xiMax }
+      return { xiMin, xiMax };
     },
     findRangeX({ xiMin, xiMax }) {
-      let { labels } = this.chart.data
+      let { labels } = this.chart.data;
 
       // calculate x-axes
-      let xMin = labels[xiMin]
-      let xMax = labels[xiMax]
+      let xMin = labels[xiMin];
+      let xMax = labels[xiMax];
 
-      return { xMin, xMax }
+      return { xMin, xMax };
     },
     findRangeY({ xiMin, xiMax }) {
-      let { data } = this.chart.data.datasets[0]
+      let { data } = this.chart.data.datasets[0];
 
       // calculate y-axes
-      let scope = data.filter((_, i) => i >= xiMin && i <= xiMax)
-      let yMin = this.$_.min(scope)
-      let yMax = this.$_.max(scope)
+      let scope = data.filter((_, i) => i >= xiMin && i <= xiMax);
+      let yMin = this.$_.min(scope);
+      let yMax = this.$_.max(scope);
 
       // correction
       if (this.control.beginAtZero) {
-        if (yMin > 0) yMin = 0
-        else yMax = 0
+        if (yMin > 0) yMin = 0;
+        else yMax = 0;
       }
       if (yMax == yMin) {
-        if (yMin >= 0) yMax += 1
-        else yMin -= 1
+        if (yMin >= 0) yMax += 1;
+        else yMin -= 1;
       }
 
-      return { yMin, yMax }
+      return { yMin, yMax };
     },
     applyRange(sample) {
-      let { xiMin, xiMax } = this.findRange(this.range.value)
-      let { xMax } = this.findRangeX({ xiMin, xiMax })
-      let oldSample = xiMax - xiMin
+      let { xiMin, xiMax } = this.findRange(this.range.value);
+      let { xMax } = this.findRangeX({ xiMin, xiMax });
+      let oldSample = xiMax - xiMin;
 
       if (this.control.maximize || this.control.follow) {
-        xiMax = this.chart.data.labels.length - 1
-        xMax = this.getLabel(xiMax)
+        xiMax = this.chart.data.labels.length - 1;
+        xMax = this.getLabel(xiMax);
 
-        if (this.control.maximize) xiMin = 0
+        if (this.control.maximize) xiMin = 0;
       }
 
       if (!sample) {
-        sample = xiMax - xiMin
+        sample = xiMax - xiMin;
 
         if (this.control.drag) {
-          sample = oldSample
+          sample = oldSample;
 
-          if (!this.control.follow) xMax = this.getLabel(xiMin + sample)
+          if (!this.control.follow) xMax = this.getLabel(xiMin + sample);
         }
-      } else sample--
+      } else sample--;
 
       this.range.value = {
         min: this.getLabel(xiMax - sample),
-        max: xMax
-      }
+        max: xMax,
+      };
     },
     scaleChart() {
-      let { xiMin, xiMax } = this.findRange(this.range.value)
-      let { xMin, xMax } = this.findRangeX({ xiMin, xiMax })
-      let { yMin, yMax } = this.findRangeY({ xiMin, xiMax })
+      let { xiMin, xiMax } = this.findRange(this.range.value);
+      let { xMin, xMax } = this.findRangeX({ xiMin, xiMax });
+      let { yMin, yMax } = this.findRangeY({ xiMin, xiMax });
 
-      this.currentValue = xMax
-      this.chart.options.scales.xAxes[0].ticks.max = xMax
-      this.chart.options.scales.xAxes[0].ticks.min = xMin
-      this.chart.options.scales.yAxes[0].ticks.max = yMax
-      this.chart.options.scales.yAxes[0].ticks.min = yMin
-      this.chart.options.scales.yAxes[0].ticks.beginAtZero = this.control.beginAtZero
+      this.currentValue = xMax;
+      this.chart.options.scales.xAxes[0].ticks.max = xMax;
+      this.chart.options.scales.xAxes[0].ticks.min = xMin;
+      this.chart.options.scales.yAxes[0].ticks.max = yMax;
+      this.chart.options.scales.yAxes[0].ticks.min = yMin;
+      this.chart.options.scales.yAxes[0].ticks.beginAtZero = this.control.beginAtZero;
 
-      this.history.update.options = !this.history.update.options
-      this.$nextTick(() => (this.modalOpen = true))
+      this.history.update.options = !this.history.update.options;
+      this.$nextTick(() => (this.modalOpen = true));
     },
     grabLabelsAndDatasets(reports) {
-      let datasets = []
-      let labels = []
+      let datasets = [];
+      let labels = [];
 
       reports.forEach((report) => {
-        if (report[this.historyField]) {
-          datasets.push(report[this.historyField].val)
-          labels.push(report.logDatetime.val)
+        if (report[this.field]) {
+          datasets.push(report[this.field].val);
+          labels.push(report.logDatetime.val);
         }
-      })
+      });
 
       return {
         datasets: datasets.reverse(),
-        labels: labels.reverse()
-      }
+        labels: labels.reverse(),
+      };
     },
     writeChart(reports) {
-      let { labels, datasets } = this.grabLabelsAndDatasets(reports)
+      let { labels, datasets } = this.grabLabelsAndDatasets(reports);
 
       if (reports.length > 1) {
-        this.chart.data.labels = labels
-        this.chart.data.datasets[0].data = datasets
+        this.chart.data.labels = labels;
+        this.chart.data.datasets[0].data = datasets;
       } else {
-        this.chart.data.labels.push(labels[0])
-        this.chart.data.datasets[0].data.push(datasets[0])
+        this.chart.data.labels.push(labels[0]);
+        this.chart.data.datasets[0].data.push(datasets[0]);
       }
-      this.range.min = this.getLabel(0)
-      this.range.max = this.getLabel(-1)
+      this.range.min = this.getLabel(0);
+      this.range.max = this.getLabel(-1);
 
-      this.history.update.data = !this.history.update.data
+      this.history.update.data = !this.history.update.data;
     },
     prepareChart() {
-      let { title, unit } = getField(Report, this.historyField)
+      let { title, unit } = this.theField;
 
-      this.chart.data.datasets[0].label = title
+      this.chart.data.datasets[0].label = title;
       this.chart.options.scales.yAxes[0].scaleLabel.labelString =
-        unit || 'Value'
+        unit || "Value";
 
-      this.history.update.options = !this.history.update.options
-    },
-    stopRender() {
-      this.history.render = false
-      this.historyField = null
+      this.history.update.options = !this.history.update.options;
     },
     changeColor(color) {
-      this.chart.options.legend.labels.fontColor = color
-      this.chart.options.scales.xAxes[0].ticks.fontColor = color
-      this.chart.options.scales.xAxes[0].scaleLabel.fontColor = color
-      this.chart.options.scales.xAxes[0].gridLines.color = color
-      this.chart.options.scales.yAxes[0].ticks.fontColor = color
-      this.chart.options.scales.yAxes[0].scaleLabel.fontColor = color
-      this.chart.options.scales.yAxes[0].gridLines.color = color
-    }
+      this.chart.options.legend.labels.fontColor = color;
+      this.chart.options.scales.xAxes[0].ticks.fontColor = color;
+      this.chart.options.scales.xAxes[0].scaleLabel.fontColor = color;
+      this.chart.options.scales.xAxes[0].gridLines.color = color;
+      this.chart.options.scales.yAxes[0].ticks.fontColor = color;
+      this.chart.options.scales.yAxes[0].scaleLabel.fontColor = color;
+      this.chart.options.scales.yAxes[0].gridLines.color = color;
+    },
+  },
+  mounted() {
+    this.prepareChart();
+    this.writeChart(this.devReports);
+    this.applyRange();
   },
   watch: {
-    historyField: {
-      handler(field) {
-        if (field) {
-          this.prepareChart()
-          this.writeChart(this.devReports)
-          this.applyRange()
-        }
-      }
-    },
     devReports: {
       handler(reports) {
-        if (this.history.render) {
-          let report = reports[0]
-          if (report[this.historyField]) {
-            this.writeChart([report])
-            this.applyRange()
-          }
+        let report = reports[0];
+        if (report[this.field]) {
+          this.writeChart([report]);
+          this.applyRange();
         }
-      }
+      },
     },
-    'control.maximize': {
+    "control.maximize": {
       immediate: true,
       handler(max) {
-        let sample = null
+        let sample = null;
         if (max) {
-          this.tmp.max = this.range.value.max
-          this.tmp.sample = this.rangeSample
-          this.tmp.drag = this.control.drag
-          this.tmp.follow = this.control.follow
-          this.range.disable = true
+          this.tmp.max = this.range.value.max;
+          this.tmp.sample = this.rangeSample;
+          this.tmp.drag = this.control.drag;
+          this.tmp.follow = this.control.follow;
+          this.range.disable = true;
 
-          this.control.follow = false
-          this.control.drag = false
+          this.control.follow = false;
+          this.control.drag = false;
         } else {
-          this.range.disable = false
-          this.control.follow = this.tmp.follow
-          this.control.drag = this.tmp.drag
-          this.range.value.max = this.tmp.max
-          sample = this.tmp.sample
+          this.range.disable = false;
+          this.control.follow = this.tmp.follow;
+          this.control.drag = this.tmp.drag;
+          this.range.value.max = this.tmp.max;
+          sample = this.tmp.sample;
         }
-        this.applyRange(sample)
-      }
+        this.applyRange(sample);
+      },
     },
-    'range.value': {
+    "range.value": {
       deep: true,
       handler(_) {
-        this.scaleChart()
-      }
+        this.scaleChart();
+      },
     },
-    'control.beginAtZero': {
+    "control.beginAtZero": {
       handler(_) {
-        this.scaleChart()
-      }
+        this.scaleChart();
+      },
     },
     darker: {
       immediate: true,
       handler(dark) {
-        this.changeColor(dark ? '#FFF' : '#666')
-        this.history.update.options = !this.history.update.options
-      }
-    }
-  }
-}
+        this.changeColor(dark ? "#FFF" : "#666");
+        this.history.update.options = !this.history.update.options;
+      },
+    },
+  },
+};
 </script>
 
 <style></style>

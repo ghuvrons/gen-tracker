@@ -1,6 +1,7 @@
 import { Report } from "components/js/report";
 import { ExportToCsv } from "export-to-csv";
 import exportFromJSON from "export-from-json";
+import moment from "moment";
 
 const makeExportData = (reports) => {
   return reports.map((report) => ({
@@ -20,6 +21,11 @@ const makeExportLabel = () => {
       carry.concat([title + (unit ? ` (${unit})` : "")]),
     []
   );
+};
+
+const makeExportName = () => {
+  let now = moment().format("YYYYMMDDHHmmss");
+  return `tracking-${now}`;
 };
 
 const exportCSV = (reports) => {

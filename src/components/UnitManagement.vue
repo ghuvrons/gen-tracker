@@ -12,10 +12,10 @@
           v-for="(unitID, index) in units"
           :key="index"
           @click="setTheUnit(unitID)"
-          :focused="unitID === theUnit"
+          :active="unitID === theUnit"
+          active-class="bg-primary text-white"
           :dark="darker"
           clickable
-          manual-focus
         >
           <q-item-section>
             <q-item-label class="text-subtitle2">
@@ -40,28 +40,28 @@
 </template>
 
 <script>
-import { getTotalReports } from '../store/db/getter-types'
-import { SET_THE_UNIT } from '../store/db/mutation-types'
-import { mapState, mapGetters, mapMutations } from 'vuex'
-import CommonMixin from 'components/mixins/CommonMixin'
+import { getTotalReports } from "../store/db/getter-types";
+import { SET_THE_UNIT } from "../store/db/mutation-types";
+import { mapState, mapGetters, mapMutations } from "vuex";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
   props: {
-    height: Number
+    height: Number,
   },
   mixins: [CommonMixin],
   computed: {
-    ...mapState('db', ['units', 'theUnit']),
-    ...mapGetters('db', [getTotalReports])
+    ...mapState("db", ["units", "theUnit"]),
+    ...mapGetters("db", [getTotalReports]),
   },
   methods: {
-    ...mapMutations('db', [SET_THE_UNIT]),
+    ...mapMutations("db", [SET_THE_UNIT]),
     setTheUnit(unitID) {
-      if (!this.loading) this.SET_THE_UNIT(unitID)
-    }
-  }
-}
+      if (!this.loading) this.SET_THE_UNIT(unitID);
+    },
+  },
+};
 </script>
 
 <style></style>

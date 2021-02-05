@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="modalOpen" full-width>
+  <q-dialog v-model="modalOpen" :maximized="$q.platform.is.mobile" full-width>
     <q-card :dark="darker">
       <q-card-section class="bg-primary text-white">
         COMMAND LIST
@@ -23,12 +23,12 @@
               <q-item-label lines="2" caption>{{ el.desc }}</q-item-label>
             </q-item-section>
             <q-item-section v-if="el.type" side>
-              <q-item-label>
+              <q-item-label lines="1">
                 <q-chip dark dense square color="red">
                   {{ el.type }}
                 </q-chip>
               </q-item-label>
-              <q-item-label>
+              <q-item-label lines="2">
                 <q-chip dark dense square color="green">
                   {{ getRange(el.range) }}
                 </q-chip>
@@ -47,47 +47,47 @@
 </template>
 
 <script>
-import { COMMAND_LIST } from 'components/js/command'
-import { flowFilter } from 'components/js/utils'
-import CommonMixin from 'components/mixins/CommonMixin'
+import { COMMAND_LIST } from "components/js/command";
+import { flowFilter } from "components/js/utils";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
-  emits: ['select'],
+  emits: ["select"],
   props: {
     value: {
       required: true,
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   mixins: [CommonMixin],
   data() {
     return {
       COMMAND_LIST: this.$_.cloneDeep(COMMAND_LIST),
-      keyword: ''
-    }
+      keyword: "",
+    };
   },
   computed: {
     modalOpen: {
       get() {
-        return this.value
+        return this.value;
       },
       set(value) {
-        this.$emit('input', value)
-      }
+        this.$emit("input", value);
+      },
     },
     searchResult() {
-      return flowFilter(this.COMMAND_LIST, this.keyword)
-    }
+      return flowFilter(this.COMMAND_LIST, this.keyword);
+    },
   },
   methods: {
     getRange(range) {
-      const [min, max] = range
+      const [min, max] = range;
 
-      if (max) return `[ ${min}, ${max} ]`
-      return `[ ${min} ]`
-    }
-  }
-}
+      if (max) return `[ ${min}, ${max} ]`;
+      return `[ ${min} ]`;
+    },
+  },
+};
 </script>
 
 <style>

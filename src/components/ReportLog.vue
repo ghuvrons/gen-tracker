@@ -21,16 +21,15 @@
         :items="devReports"
         separator
       >
-        <!-- <q-list  :dark="darker" dense separator> -->
         <template v-slot="{ item: report, index }">
           <q-item
             :key="index"
             :dark="darker"
-            :focused="report.hex === theReport.hex"
+            :active="report.hex === theReport.hex"
+            active-class="bg-primary text-white"
             @click="SET_THE_REPORT(report)"
             clickable
             dense
-            manual-focus
           >
             <q-item-section avatar>
               <div>
@@ -54,12 +53,11 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label class="ellipsis" caption>
+              <q-item-label class="ellipsis">
                 {{ report.hex }}
               </q-item-label>
             </q-item-section>
           </q-item>
-          <!-- </q-list> -->
         </template>
       </q-virtual-scroll>
       <q-banner v-else :dark="darker">
@@ -73,45 +71,45 @@
 </template>
 
 <script>
-import { unix2time } from 'components/js/utils'
-import { devReports } from '../store/db/getter-types'
-import { SET_THE_REPORT } from '../store/db/mutation-types'
-import { mapState, mapGetters, mapMutations } from 'vuex'
-import CommonMixin from 'components/mixins/CommonMixin'
+import { unix2time } from "components/js/utils";
+import { devReports } from "../store/db/getter-types";
+import { SET_THE_REPORT } from "../store/db/mutation-types";
+import { mapState, mapGetters, mapMutations } from "vuex";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
   props: {
-    height: Number
+    height: Number,
   },
   mixins: [CommonMixin],
   data() {
     return {
       lock: {
-        follow: true
-      }
-    }
+        follow: true,
+      },
+    };
   },
   computed: {
-    ...mapState('db', ['theUnit', 'theReport']),
-    ...mapGetters('db', [devReports])
+    ...mapState("db", ["theUnit", "theReport"]),
+    ...mapGetters("db", [devReports]),
   },
   methods: {
-    ...mapMutations('db', [SET_THE_REPORT]),
+    ...mapMutations("db", [SET_THE_REPORT]),
     getDatetime({ logDatetime }) {
-      return unix2time(logDatetime.val)
-    }
+      return unix2time(logDatetime.val);
+    },
   },
   watch: {
     devReports: {
       immediate: true,
       handler(reports) {
         if (reports.length > 0)
-          if (this.lock.follow) this.SET_THE_REPORT(reports[0])
-      }
-    }
-  }
-}
+          if (this.lock.follow) this.SET_THE_REPORT(reports[0]);
+      },
+    },
+  },
+};
 </script>
 
 <style></style>

@@ -39,7 +39,7 @@ const config = {
       latMax: 5.90713,
     },
   },
-  timediff: 60,
+  timediff: 5 * 60,
   timezone: "Asia/Jakarta",
   maxStorage: {
     units: 10,
@@ -69,7 +69,7 @@ const chart = {
     responsive: true,
     maintainAspectRatio: false,
     legend: {
-      display: true,
+      display: false,
       align: "end",
       labels: {
         fontColor: "#666",
