@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "fonts/KFOlCnqEu92Fr1MmYUtfBBc-.8c2ade50.woff"
   },
   {
-    "revision": "860de21ac58088f8b692ce96e7aa2267",
+    "revision": "d47ce556d76150c6400683565efeae1e",
     "url": "index.html"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "statics/icons/icon-512x512.png"
   },
   {
-    "revision": "094c4c559e164d885602",
-    "url": "js/app.f70d876e.js"
+    "revision": "1af118bbe3b20f5461b5",
+    "url": "js/app.d350d935.js"
   },
   {
     "revision": "66d7719a8ca03c1a591444c013802817",
@@ -30,10 +30,6 @@ self.__precacheManifest = [
   {
     "revision": "4ce7213f1ef2eece75d1",
     "url": "js/vendor.d450909d.js"
-  },
-  {
-    "revision": "3020c8ac2c2872dec7741e5948520093",
-    "url": "statics/quasar-logo.png"
   },
   {
     "revision": "ed12d10fd0407eea42ccaf7af7991146",
@@ -52,16 +48,20 @@ self.__precacheManifest = [
     "url": "statics/icons/apple-icon-152x152.png"
   },
   {
+    "revision": "3020c8ac2c2872dec7741e5948520093",
+    "url": "statics/quasar-logo.png"
+  },
+  {
     "revision": "c26ab498b96002e114ba",
     "url": "js/2f394bab.f7b5ccba.js"
   },
   {
-    "revision": "2f9d7587924933c1912c342b190b53ca",
-    "url": "statics/icons/favicon-32x32.png"
-  },
-  {
     "revision": "3020c8ac2c2872dec7741e5948520093",
     "url": "statics/icons/icon-128x128.png"
+  },
+  {
+    "revision": "2f9d7587924933c1912c342b190b53ca",
+    "url": "statics/icons/favicon-32x32.png"
   },
   {
     "revision": "efb00e57304380d857603760600da5d5",
@@ -100,7 +100,7 @@ self.__precacheManifest = [
     "url": "css/d8ce87bc.4ceeae0d.css"
   },
   {
-    "revision": "094c4c559e164d885602",
+    "revision": "1af118bbe3b20f5461b5",
     "url": "css/app.d9c58ad6.css"
   },
   {

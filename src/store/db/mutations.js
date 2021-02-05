@@ -1,5 +1,8 @@
 import * as mutations from "./mutation-types";
+import { config } from "components/js/opt/config";
 // import { LocalStorage } from "quasar";
+
+const { maxStorage } = config;
 
 export default {
   [mutations.SET_LOADING](state, payload) {
@@ -47,15 +50,15 @@ export default {
 
     if (!state.theUnit) state.theUnit = payload;
     if (!unit) state.units.unshift(payload);
-    if (state.units.length > 10) state.units.pop();
+    if (state.units.length > maxStorage.units) state.units.pop();
   },
   [mutations.ADD_REPORTS](state, payload) {
     state.reports.unshift(payload);
-    if (state.reports.length > 1000) state.reports.pop();
+    if (state.reports.length > maxStorage.reports) state.reports.pop();
   },
   [mutations.ADD_COMMANDS](state, payload) {
     state.commands.unshift(payload);
-    if (state.commands.length > 100) state.commands.pop();
+    if (state.commands.length > maxStorage.commands) state.commands.pop();
   },
 
   [mutations.ADD_FINGERS](state, payload) {

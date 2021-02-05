@@ -41,6 +41,11 @@ const config = {
   },
   timediff: 60,
   timezone: "Asia/Jakarta",
+  maxStorage: {
+    units: 10,
+    reports: 1000,
+    commands: 100,
+  },
 };
 
 const chart = {
