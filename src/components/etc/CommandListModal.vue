@@ -39,7 +39,10 @@
       </q-card-section>
       <q-separator></q-separator>
 
-      <q-card-actions class="bg-primary text-white">
+      <q-card-actions
+        :class="{ 'absolute-bottom': $q.platform.is.mobile }"
+        class="bg-primary text-white"
+      >
         <q-btn unelevated @click="modalOpen = false" label="Close" />
       </q-card-actions>
     </q-card>
