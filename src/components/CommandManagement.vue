@@ -46,7 +46,7 @@
 
 <script>
 import { COMMAND_LIST } from 'components/js/command'
-import { SET_COMMAND_BUFFER } from '../store/db/mutation-types'
+import { SET_THE_CMD_BUFFER } from '../store/db/mutation-types'
 import { mapState, mapMutations } from 'vuex'
 import CommandListModal from 'components/etc/CommandListModal'
 import CommonMixin from 'components/mixins/CommonMixin'
@@ -64,21 +64,21 @@ export default {
     }
   },
   computed: {
-    ...mapState('db', ['theUnit', 'cmdBuffer']),
+    ...mapState('db', ['theUnit', 'theCmdBuffer']),
     commandBuffer: {
       get() {
-        return this.cmdBuffer
+        return this.theCmdBuffer
       },
       set(value) {
-        this.SET_COMMAND_BUFFER(value)
+        this.SET_THE_CMD_BUFFER(value)
       }
     }
   },
   methods: {
-    ...mapMutations('db', [SET_COMMAND_BUFFER]),
+    ...mapMutations('db', [SET_THE_CMD_BUFFER]),
     selectCommand(payload) {
       this.modalOpen = false
-      this.SET_COMMAND_BUFFER(payload)
+      this.SET_THE_CMD_BUFFER(payload)
     },
     execCommand() {
       this.$root.$emit('executeCommand', this.commandBuffer)

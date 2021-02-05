@@ -11,6 +11,22 @@ import {
   Dot,
 } from "components/js/helper";
 
+const VEHICLE_STATES = {
+  UNKNOWN: -3,
+  LOST: -2,
+  BACKUP: -1,
+  NORMAL: 0,
+  STANDBY: 1,
+  READY: 2,
+  RUN: 3,
+};
+
+const getVehicleState = (state) => {
+  return Object.keys(VEHICLE_STATES)[
+    Object.values(VEHICLE_STATES).findIndex((v) => v === parseInt(state))
+  ];
+};
+
 const VCU = ({ required }) => {
   const RTC = ["sendDatetime", "logDatetime"];
 
@@ -60,7 +76,7 @@ const VCU = ({ required }) => {
       chartable: true,
       size: 1,
       format: (val) => HexToSignedInt8(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      display: (valFormat) => getVehicleState(valFormat),
     },
     {
       field: "gpsLongitude",
@@ -350,4 +366,4 @@ const Report = [
   no: idx,
 }));
 
-export { Report };
+export { VEHICLE_STATES, Report };

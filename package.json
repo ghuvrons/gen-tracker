@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
-    "build:pwa": "quasar build -m pwa -t ios",
+    "build:pwa": "quasar build -m pwa -t mat",
     "build:windows": "quasar build -m electron -t ios -T win32",
     "build:linux": "quasar build -m electron -t mat -b builder"
   },

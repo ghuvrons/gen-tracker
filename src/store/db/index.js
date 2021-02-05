@@ -1,17 +1,18 @@
 import getters from "./getters";
 import mutations from "./mutations";
 import actions from "./actions";
-import { LocalStorage } from "quasar";
+// import { LocalStorage } from "quasar";
 
 const state = {
   loading: false,
-  darker: LocalStorage.get.item("darker") || false,
+  // darker: LocalStorage.get.item("darker") || false,
+  darker: false,
   calibration: true,
+  theCmdBuffer: null,
 
   theUnit: null,
   theReport: null,
   theCommand: null,
-  cmdBuffer: null,
 
   units: [],
   reports: [],

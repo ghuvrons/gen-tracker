@@ -79,7 +79,8 @@ import {
 } from '../store/db/mutation-types'
 import { extractCommand } from 'components/js/command'
 import { parseResCode } from 'components/js/response'
-import { devFingers } from '../store/db/getter-types'
+import { VEHICLE_STATES } from 'components/js/opt/report'
+import { devFingers, devReports } from '../store/db/getter-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import CommonMixin from 'components/mixins/CommonMixin'
 
@@ -96,10 +97,12 @@ export default {
   },
   computed: {
     ...mapState('db', ['theUnit', 'commands']),
-    ...mapGetters('db', [devFingers])
+    ...mapGetters('db', [devFingers, devReports])
   },
   mounted() {
-    if (this.theUnit) this.fetchFinger()
+    if (this.devReports.length > 0)
+      if (this.devReports[0].vehicleState.out >= VEHICLE_STATES['STANDBY'])
+        this.fetchFinger()
   },
   methods: {
     ...mapMutations('db', [ADD_FINGERS, DELETE_FINGERS, RESET_FINGERS]),

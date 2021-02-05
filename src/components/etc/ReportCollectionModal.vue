@@ -26,9 +26,7 @@
         <div class="row gutter-xs">
           <div
             :class="
-              collectionField === 'eventsGroup'
-                ? 'col-xs-12 col-sm-12 col-md-7 col-lg-8'
-                : 'col-12'
+              eventGroup ? 'col-xs-12 col-sm-12 col-md-7 col-lg-8' : 'col-12'
             "
           >
             <line-chart
@@ -93,7 +91,7 @@
             </div>
           </div>
 
-          <div v-if="collectionField === 'eventsGroup'" class="col">
+          <div v-if="eventGroup" class="col">
             <event-group-reader
               :height="height"
               :current-value="currentValue"
@@ -106,7 +104,7 @@
 </template>
 
 <script>
-import { devReports } from '../../store/db/getter-types'
+import { devReports, devEvents } from '../../store/db/getter-types'
 import { mapGetters } from 'vuex'
 import { getField } from 'components/js/utils'
 import { chart } from 'components/js/opt/config'
@@ -166,7 +164,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('db', [devReports]),
+    ...mapGetters('db', [devReports, devEvents]),
     collectionField: {
       get() {
         return this.value
@@ -174,6 +172,9 @@ export default {
       set(value) {
         this.$emit('input', value)
       }
+    },
+    eventGroup() {
+      return this.collectionField === 'eventsGroup' && this.devEvents.length > 0
     },
     rangeSample() {
       let { xiMin, xiMax } = this.findRange(this.range.value)
@@ -188,7 +189,6 @@ export default {
       return labels[labels.length - 1]
     },
     findRange({ min, max }) {
-      let { data } = this.chart.data.datasets[0]
       let { labels } = this.chart.data
 
       // find the index
@@ -197,24 +197,40 @@ export default {
         ? this.$_.findLastIndex(labels, (val) => val <= max)
         : labels.length - 1
 
-      let scope = data.filter((_, i) => i >= xiMin && i <= xiMax)
+      return { xiMin, xiMax }
+    },
+    findRangeX({ xiMin, xiMax }) {
+      let { labels } = this.chart.data
 
       // calculate x-axes
       let xMin = labels[xiMin]
       let xMax = labels[xiMax]
 
+      return { xMin, xMax }
+    },
+    findRangeY({ xiMin, xiMax }) {
+      let { data } = this.chart.data.datasets[0]
+
       // calculate y-axes
+      let scope = data.filter((_, i) => i >= xiMin && i <= xiMax)
       let yMin = this.$_.min(scope)
       let yMax = this.$_.max(scope)
 
       // correction
-      if (yMin > 0 && this.control.beginAtZero) yMin = 0
-      if (yMax == yMin) yMax += 1
+      if (this.control.beginAtZero) {
+        if (yMin > 0) yMin = 0
+        else yMax = 0
+      }
+      if (yMax == yMin) {
+        if (yMin >= 0) yMax += 1
+        else yMin -= 1
+      }
 
-      return { xMin, xMax, yMin, yMax, xiMin, xiMax }
+      return { yMin, yMax }
     },
     applyRange(sample) {
-      let { xiMin, xiMax, xMax } = this.findRange(this.range.value)
+      let { xiMin, xiMax } = this.findRange(this.range.value)
+      let { xMax } = this.findRangeX({ xiMin, xiMax })
       let oldSample = xiMax - xiMin
 
       if (this.control.maximize || this.control.follow) {
@@ -240,7 +256,9 @@ export default {
       }
     },
     scaleChart() {
-      let { xMin, xMax, yMin, yMax } = this.findRange(this.range.value)
+      let { xiMin, xiMax } = this.findRange({ min, max })
+      let { xMin, xMax } = this.findRangeX({ xiMin, xiMax })
+      let { yMin, yMax } = this.findRangeY({ xiMin, xiMax })
 
       this.currentValue = xMax
       this.chart.options.scales.xAxes[0].ticks.max = xMax

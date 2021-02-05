@@ -1,5 +1,5 @@
 import * as mutations from "./mutation-types";
-import { LocalStorage } from "quasar";
+// import { LocalStorage } from "quasar";
 
 export default {
   [mutations.SET_LOADING](state, payload) {
@@ -10,12 +10,12 @@ export default {
   },
   [mutations.TOGGLE_DARKER](state) {
     state.darker = !state.darker;
-    LocalStorage.set("darker", state.darker);
+    // LocalStorage.set("darker", state.darker);
   },
   [mutations.CLEAR_ALL](state) {
     state.theUnit = null;
     state.theReport = null;
-
+    state.theCommand = null;
     state.units = [];
     state.reports = [];
     state.commands = [];
@@ -28,14 +28,14 @@ export default {
   [mutations.SET_THE_REPORT](state, payload) {
     state.theReport = payload;
   },
-  [mutations.SET_COMMAND_BUFFER](state, data) {
-    state.cmdBuffer = data;
+  [mutations.SET_THE_CMD_BUFFER](state, data) {
+    state.theCmdBuffer = data;
   },
-  [mutations.CLEAR_COMMAND_BUFFER](state) {
-    state.cmdBuffer = null;
+  [mutations.CLEAR_THE_CMD_BUFFER](state) {
+    state.theCmdBuffer = null;
   },
   [mutations.SET_THE_COMMAND](state, data) {
-    state.cmdBuffer = data.payload;
+    state.theCmdBuffer = data.payload;
     state.theCommand = data;
   },
   [mutations.CLEAR_THE_COMMAND](state) {
@@ -45,14 +45,17 @@ export default {
   [mutations.ADD_UNITS](state, payload) {
     let unit = state.units.find((unitID) => unitID === payload);
 
-    if (!unit) state.units.unshift(payload);
     if (!state.theUnit) state.theUnit = payload;
+    if (!unit) state.units.unshift(payload);
+    if (state.units.length > 10) state.units.pop();
   },
   [mutations.ADD_REPORTS](state, payload) {
     state.reports.unshift(payload);
+    if (state.reports.length > 1000) state.reports.pop();
   },
   [mutations.ADD_COMMANDS](state, payload) {
     state.commands.unshift(payload);
+    if (state.commands.length > 100) state.commands.pop();
   },
 
   [mutations.ADD_FINGERS](state, payload) {

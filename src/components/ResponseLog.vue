@@ -37,7 +37,7 @@
 
 <script>
 import { devCommands } from '../store/db/getter-types'
-import { SET_COMMAND_BUFFER } from '../store/db/mutation-types'
+import { SET_THE_CMD_BUFFER } from '../store/db/mutation-types'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { parseResCode } from 'components/js/response'
 import CommonMixin from 'components/mixins/CommonMixin'
@@ -53,9 +53,9 @@ export default {
     ...mapGetters('db', [devCommands])
   },
   methods: {
-    ...mapMutations('db', [SET_COMMAND_BUFFER]),
+    ...mapMutations('db', [SET_THE_CMD_BUFFER]),
     applyCommand(payload) {
-      if (!this.loading) this.SET_COMMAND_BUFFER(payload)
+      if (!this.loading) this.SET_THE_CMD_BUFFER(payload)
     },
     parseResCode(code) {
       return parseResCode(code)
