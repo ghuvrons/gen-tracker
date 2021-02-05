@@ -256,7 +256,7 @@ export default {
       }
     },
     scaleChart() {
-      let { xiMin, xiMax } = this.findRange({ min, max })
+      let { xiMin, xiMax } = this.findRange(this.range.value)
       let { xMin, xMax } = this.findRangeX({ xiMin, xiMax })
       let { yMin, yMax } = this.findRangeY({ xiMin, xiMax })
 
@@ -276,12 +276,10 @@ export default {
 
       reports.forEach((report) => {
         if (report[this.collectionField]) {
-          console.warn(report)
           datasets.push(report[this.collectionField].val)
           labels.push(report.logDatetime.val)
         }
       })
-      console.error(reports)
 
       return {
         datasets: datasets.reverse(),
