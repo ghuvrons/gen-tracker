@@ -1,40 +1,40 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none bg-purple text-white">
+    <div class="q-pa-xs bg-purple text-white text-subtitle1">
       Unit Management
-      <q-chip color="negative" dense square v-if="units.length > 0">
+      <q-badge v-if="units.length > 0" color="red" align="top">
         {{ units.length }}
-      </q-chip>
-    </p>
-    <q-scroll-area
-      :class="darkerClass"
-      :style="{ height: (height < 90 ? 90 : height) + 'px' }"
-    >
-      <q-list
-        v-if="units.length > 0 && theUnit"
-        :dark="darker"
-        link
-        separator
-        dense
-      >
+      </q-badge>
+    </div>
+    <q-scroll-area :style="{ height: (height < 90 ? 90 : height) + 'px' }">
+      <q-list v-if="units.length > 0 && theUnit" :dark="darker" dense separator>
         <q-item
           v-for="(unitID, index) in units"
           :key="index"
-          @click.native="setTheUnit(unitID)"
-          :active="unitID === theUnit"
+          @click="setTheUnit(unitID)"
+          :focused="unitID === theUnit"
           :dark="darker"
+          clickable
+          manual-focus
         >
-          <q-item-main :label="unitID.toString()" />
-          <q-item-side right>
-            <q-chip color="primary" dense square>
+          <q-item-section>
+            <q-item-label class="text-subtitle2">
+              {{ unitID.toString() }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-chip :dark="!darker" dense square>
               {{ getTotalReports(unitID) }}
             </q-chip>
-          </q-item-side>
+          </q-item-section>
         </q-item>
       </q-list>
-      <q-alert v-else icon="info" color="faded" class="q-ma-xs">
+      <q-banner v-else :dark="darker">
+        <template v-slot:avatar>
+          <q-icon name="info"></q-icon>
+        </template>
         No unit yet
-      </q-alert>
+      </q-banner>
     </q-scroll-area>
   </div>
 </template>

@@ -1,60 +1,49 @@
 <template>
-  <q-modal
-    v-model="modalOpen"
-    :content-css="{ minWidth: '80vw', minHeight: '80vh' }"
-  >
-    <q-modal-layout :class="darkerClass">
-      <q-toolbar slot="header">
-        <q-btn flat round dense v-close-overlay icon="keyboard_arrow_left" />
-        <q-toolbar-title>
-          Command List
-          <q-chip color="red" dense square>{{ COMMAND_LIST.length }}</q-chip>
-        </q-toolbar-title>
-      </q-toolbar>
+  <q-dialog v-model="modalOpen" full-width>
+    <q-card :dark="darker">
+      <q-card-section class="bg-primary text-white">
+        COMMAND LIST
+        <q-badge v-if="COMMAND_LIST.length > 0" color="red" align="top">
+          {{ COMMAND_LIST.length }}
+        </q-badge>
+      </q-card-section>
+      <q-separator></q-separator>
 
-      <q-toolbar slot="header">
-        <q-search
-          class="fit"
-          inverted
-          autofocus
-          v-model="keyword"
-          color="none"
-        />
-      </q-toolbar>
-
-      <q-toolbar slot="footer">
-        <q-toolbar-title class="q-pa-xs">
-          <q-btn color="primary" @click="modalOpen = false" label="Close" />
-        </q-toolbar-title>
-      </q-toolbar>
-
-      <div class="layout-padding">
-        <q-list :dark="darker" link separator>
+      <q-card-section class="scroll" style="max-height: 70vh">
+        <q-list :dark="darker" separator>
           <q-item
             v-for="(el, i) in searchResult"
             :key="i"
-            @click.native="$emit('select', el.command)"
+            @click="$emit('select', el.command)"
             :dark="darker"
+            clickable
           >
-            <q-item-main>
-              <q-item-tile label>{{ el.command }}</q-item-tile>
-              <q-item-tile sublabel>{{ el.desc }}</q-item-tile>
-            </q-item-main>
-            <q-item-side right v-if="el.type">
-              <q-item-tile>
-                <q-chip dense square color="red">{{ el.type }}</q-chip>
-              </q-item-tile>
-              <q-item-tile>
-                <q-chip dense square color="green">{{
-                  getRange(el.range)
-                }}</q-chip>
-              </q-item-tile>
-            </q-item-side>
+            <q-item-section>
+              <q-item-label lines="1">{{ el.command }}</q-item-label>
+              <q-item-label lines="2" caption>{{ el.desc }}</q-item-label>
+            </q-item-section>
+            <q-item-section v-if="el.type" side>
+              <q-item-label>
+                <q-chip dark dense square color="red">
+                  {{ el.type }}
+                </q-chip>
+              </q-item-label>
+              <q-item-label>
+                <q-chip dark dense square color="green">
+                  {{ getRange(el.range) }}
+                </q-chip>
+              </q-item-label>
+            </q-item-section>
           </q-item>
         </q-list>
-      </div>
-    </q-modal-layout>
-  </q-modal>
+      </q-card-section>
+      <q-separator></q-separator>
+
+      <q-card-actions class="bg-primary text-white">
+        <q-btn unelevated @click="modalOpen = false" label="Close" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>

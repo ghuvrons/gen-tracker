@@ -1,58 +1,63 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none bg-purple text-white">
+    <div class="q-pa-xs bg-purple text-white text-subtitle1">
       Report Reader
       <q-chip
+        v-if="theReport"
         :color="fullFrame ? 'green' : 'light-green'"
+        dark
         dense
         square
-        class="shadow-1"
-        v-if="theReport"
       >
         {{ fullFrame ? "FULL" : "SIMPLE" }}
       </q-chip>
-    </p>
+    </div>
 
-    <q-scroll-area
-      :class="darkerClass"
-      :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-    >
-      <q-list v-if="theReport" separator dense :dark="darker">
+    <q-scroll-area :style="{ height: (height < 150 ? 150 : height) + 'px' }">
+      <q-list v-if="theReport" :dark="darker" separator>
         <q-item
           v-for="field in reportFields"
           :key="field"
-          :link="readyCollection(field)"
-          :active="collectionField == field"
-          @click.native="openCollection(field)"
+          @click="openHistory(field)"
+          :clickable="readyHistory(field)"
+          :focused="historyField == field"
           :dark="darker"
+          manual-focus
         >
-          <q-item-main>
-            <q-item-tile label>{{ getSubField(field, "title") }}</q-item-tile>
-            <q-item-tile sublabel
-              >{{ theReportData[field].out }}
-              {{ getSubField(field, "unit") }}</q-item-tile
+          <q-item-section>
+            <q-item-label lines="1">
+              {{ getSubField(field, "title") }}
+            </q-item-label>
+            <q-item-label lines="2" caption>
+              {{ theReportData[field].out }}
+              {{ getSubField(field, "unit") }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-icon
+              :name="realtimeField(field) ? 'cloud_download' : 'cloud_off'"
+              :color="realtimeField(field) ? 'green' : 'red'"
             >
-          </q-item-main>
-          <q-item-side
-            right
-            :color="realtimeField(field) ? 'green' : 'red'"
-            :icon="realtimeField(field) ? 'cloud_download' : 'cloud_off'"
-          />
+            </q-icon>
+          </q-item-section>
         </q-item>
       </q-list>
 
-      <q-alert v-else icon="info" color="faded" class="q-ma-xs">
+      <q-banner v-else :dark="darker">
+        <template v-slot:avatar>
+          <q-icon name="info"></q-icon>
+        </template>
         No active report yet
-      </q-alert>
+      </q-banner>
     </q-scroll-area>
 
-    <report-collection-modal v-model="collectionField" :height="height - 210">
-    </report-collection-modal>
+    <report-history-modal v-model="historyField" :height="height - 210">
+    </report-history-modal>
   </div>
 </template>
 
 <script>
-import ReportCollectionModal from 'components/etc/ReportCollectionModal'
+import ReportHistoryModal from 'components/etc/ReportHistoryModal'
 import { Report, lastFullReport } from 'components/js/report'
 import { devReports } from '../store/db/getter-types'
 import { mapState, mapGetters } from 'vuex'
@@ -66,11 +71,11 @@ export default {
   },
   mixins: [CommonMixin],
   components: {
-    ReportCollectionModal
+    ReportHistoryModal
   },
   data() {
     return {
-      collectionField: null
+      historyField: null
     }
   },
   computed: {
@@ -90,12 +95,11 @@ export default {
     }
   },
   methods: {
-    openCollection(field) {
-      if (this.readyCollection(field)) this.collectionField = field
+    openHistory(field) {
+      if (this.readyHistory(field)) this.historyField = field
     },
-    readyCollection(field) {
+    readyHistory(field) {
       let { chartable } = getField(Report, field)
-
       let related = this.devReports.filter(({ [field]: _field }) => _field)
       return chartable && related.length >= 2
     },

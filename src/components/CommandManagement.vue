@@ -1,41 +1,38 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none bg-purple text-white">
+    <div class="q-pa-xs bg-purple text-white text-subtitle1">
       Command Management
-      <q-icon
+      <q-badge
         v-if="COMMAND_LIST.length > 0"
         @click.native="modalOpen = true"
-        style="cursor: pointer"
-        name="info"
+        align="top"
+        color="red"
       >
-      </q-icon>
-    </p>
-    <q-field
-      class="q-pa-sm"
-      helper="Press ENTER to send, or see the docs."
-      :dark="darker"
-    >
+        <q-icon class="cursor-pointer" name="info"> </q-icon>
+      </q-badge>
+    </div>
+    <div class="q-pa-sm">
       <q-input
         v-model="commandBuffer"
-        stack-label="Input Command:"
-        upper-case
+        @keyup.enter="execCommand()"
+        label="Input Command:"
+        hint="Press ENTER to send."
         type="text"
+        stack-label
         :dark="darker"
         :disable="loading || !theUnit"
         :readonly="loading"
         :loading="loading"
-        @keyup.enter="execCommand()"
-        :after="[
-          {
-            icon: 'send',
-            content: true,
-            handler() {
-              execCommand();
-            },
-          },
-        ]"
-      />
-    </q-field>
+      >
+        <template v-slot:append>
+          <q-icon
+            name="send"
+            class="cursor-pointer"
+            @click="execCommand()"
+          ></q-icon>
+        </template>
+      </q-input>
+    </div>
 
     <command-list-modal
       v-model="modalOpen"
@@ -70,7 +67,7 @@ export default {
         return this.theCmdBuffer
       },
       set(value) {
-        this.SET_THE_CMD_BUFFER(value)
+        this.SET_THE_CMD_BUFFER(value.toUpperCase())
       }
     }
   },

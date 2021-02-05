@@ -4,39 +4,33 @@
           we listen for size changes on this above
           <element>, so we place the observer as direct child:
         -->
-    <q-resize-observable @resize="onResizePage" />
-    <!--can be placed anywhere within your template -->
-    <q-window-resize-observable @resize="onResize" />
+    <q-resize-observer @resize="onResizePage" />
 
     <map-management :height="mapHeight" :pageWidth="pageWidth">
     </map-management>
 
-    <q-tabs v-model="selectedTab" animated swipeable>
-      <!-- Tabs - notice slot="title" -->
-      <q-tab
-        :count="devReports.length"
-        slot="title"
-        name="tab-1"
-        label="Report Log"
-      />
-      <q-tab
-        :count="devFingers.length"
-        slot="title"
-        name="tab-2"
-        label="Driver Management"
-      />
-      <q-tab slot="title" name="tab-3" label="Configuration" />
-      <!-- Targets -->
-      <q-tab-pane name="tab-1" keep-alive>
-        <report-log :height="paneHeight"></report-log>
-      </q-tab-pane>
-      <q-tab-pane name="tab-2" keep-alive>
-        <driver-management :height="paneHeight"></driver-management>
-      </q-tab-pane>
-      <q-tab-pane name="tab-3" keep-alive>
-        <global-configuration></global-configuration>
-      </q-tab-pane>
+    <q-tabs v-model="selectedTab" class="bg-primary text-white">
+      <q-tab name="tab-1" label="Report Log">
+        <q-badge color="red" floating>{{ devReports.length }}</q-badge>
+      </q-tab>
+      <q-tab name="tab-2" label="Driver Management">
+        <q-badge color="red" floating>{{ devFingers.length }}</q-badge>
+      </q-tab>
+      <q-tab name="tab-3" label="Configuration" />
     </q-tabs>
+
+    <!-- Targets -->
+    <q-tab-panels v-model="selectedTab" :class="darkerClass" animated swipeable>
+      <q-tab-panel name="tab-1" keep-alive>
+        <report-log :height="paneHeight"></report-log>
+      </q-tab-panel>
+      <q-tab-panel name="tab-2" keep-alive>
+        <driver-management :height="paneHeight"></driver-management>
+      </q-tab-panel>
+      <q-tab-panel name="tab-3" keep-alive>
+        <global-configuration></global-configuration>
+      </q-tab-panel>
+    </q-tab-panels>
   </q-page>
 </template>
 
@@ -72,11 +66,19 @@ export default {
     ...mapGetters('db', [devReports, devFingers])
   },
   methods: {
-    onResize({ height }) {
+    onResize(height ) {
       this.paneHeight = height - this.mapHeight - 180
     },
     onResizePage({ width }) {
       this.pageWidth = width
+    }
+  },
+  watch: {
+    '$q.screen.height':{
+      immediate: true,
+      handler(h) {
+        this.onResize(h)
+      }
     }
   }
 }

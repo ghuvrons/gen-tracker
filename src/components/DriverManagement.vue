@@ -1,11 +1,12 @@
 <template>
-  <div class="row gutter-xs">
+  <div class="row q-gutter-xs">
     <div class="col-xs-12 text-right">
       <q-btn
         color="purple"
         label="FETCH"
         class="q-ma-xs"
         dense
+        unelevated
         :disable="!theUnit"
         :loading="loading"
         @click="fetchFinger()"
@@ -15,6 +16,7 @@
         label="ADD"
         class="q-ma-xs"
         dense
+        unelevated
         :disable="!theUnit"
         :loading="loading"
         @click="addFinger()"
@@ -24,6 +26,7 @@
         label="RESET"
         class="q-ma-xs"
         dense
+        unelevated
         :disable="loading || !theUnit"
         :loading="loading"
         @click="resetFinger()"
@@ -31,41 +34,39 @@
     </div>
     <div class="col-xs-12">
       <q-scroll-area :style="{ height: (height < 150 ? 150 : height) + 'px' }">
-        <q-list
-          :dark="darker"
-          highlight
-          separator
-          dense
-          link
-          v-if="devFingers.length > 0"
-        >
+        <q-list v-if="devFingers.length > 0" :dark="darker" separator dense>
           <q-item
             v-for="(driver, index) in devFingers"
             :key="index"
             :dark="darker"
           >
-            <q-item-side>
-              <q-chip color="primary" square>
+            <q-item-section avatar>
+              <q-chip color="primary" dark square>
                 {{ driver.fingerID }}
               </q-chip>
-            </q-item-side>
-            <q-item-main> Mr. {{ name[driver.fingerID - 1] }}</q-item-main>
-            <q-item-side right>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label> Mr. {{ name[driver.fingerID - 1] }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
               <q-btn
-                round
-                dense
+                @click="deleteFinger(driver)"
+                :loading="loading"
                 color="red"
                 size="sm"
                 icon="delete"
-                @click="deleteFinger(driver)"
-                :loading="loading"
+                unelevated
+                round
               />
-            </q-item-side>
+            </q-item-section>
           </q-item>
         </q-list>
-        <q-alert v-else class="q-ma-xs" icon="info" color="faded">
+        <q-banner v-else :dark="darker">
+          <template v-slot:avatar>
+            <q-icon name="info"></q-icon>
+          </template>
           No finger driver yet
-        </q-alert>
+        </q-banner>
       </q-scroll-area>
     </div>
   </div>
@@ -117,24 +118,24 @@ export default {
         .dialog({
           title: 'Confirmation',
           message: `Are you sure to remove this fingerprint *${fingerID}* ?`,
+          dark: this.darker,
           preventClose: true,
           cancel: true
         })
-        .then(() =>
+        .onOk(() =>
           this.$root.$emit('executeCommand', `FINGER_DEL=${fingerID}`)
         )
-        .catch(() => {})
     },
     resetFinger() {
       this.$q
         .dialog({
           title: 'Confirmation',
           message: `Are you sure to remove all fingerprints  ?`,
+          dark: this.darker,
           preventClose: true,
           cancel: true
         })
-        .then(() => this.$root.$emit('executeCommand', `FINGER_RST`))
-        .catch(() => {})
+        .onOk(() => this.$root.$emit('executeCommand', `FINGER_RST`))
     }
   },
   watch: {

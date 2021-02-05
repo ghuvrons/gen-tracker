@@ -1,10 +1,8 @@
 <template>
   <q-layout view="lHr LpR lFr">
     <!--can be placed anywhere within your template -->
-    <q-window-resize-observable @resize="onResize" />
-
-    <q-layout-header>
-      <q-toolbar color="primary">
+    <q-header>
+      <q-toolbar class="bg-primary text-white">
         <q-btn flat dense round @click="drawerOpen.left = !drawerOpen.left">
           <q-icon name="menu" />
         </q-btn>
@@ -32,21 +30,17 @@
           <q-icon name="apps" />
         </q-btn>
       </q-toolbar>
-    </q-layout-header>
+    </q-header>
 
-    <q-layout-drawer v-model="drawerOpen.left" :class="darkerClass">
+    <q-drawer v-model="drawerOpen.left" bordered>
       <unit-management :height="height.top"></unit-management>
-      <report-reader :height="height.bottom - 70"></report-reader>
-    </q-layout-drawer>
+      <report-reader :height="height.bottom - 73"></report-reader>
+    </q-drawer>
 
-    <q-layout-drawer
-      side="right"
-      v-model="drawerOpen.right"
-      :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
-    >
+    <q-drawer side="right" v-model="drawerOpen.right" bordered>
       <command-management></command-management>
-      <response-log :height="height.bottom - 75"></response-log>
-    </q-layout-drawer>
+      <response-log :height="height.bottom - 73"></response-log>
+    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -83,8 +77,16 @@ export default {
     }
   },
   methods: {
-    onResize({ height }) {
+    onResize(height) {
       this.height.bottom = height - this.height.top
+    }
+  },
+  watch: {
+    '$q.screen.height':{
+      immediate: true,
+      handler(h) {
+        this.onResize(h)
+      }
     }
   }
 }

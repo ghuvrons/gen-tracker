@@ -46,34 +46,31 @@
       <div class="row">
         <div class="col-auto q-ma-sm">
           <q-uploader
-            class="q-ma-sm"
             ref="importer"
+            :factory="importJSON"
             :dark="darker"
-            :upload-factory="importJSON"
-            url=""
-            extensions=".json"
-            stack-label="Import JSON"
-            auto-expand
-            hide-upload-progress
+            class="q-ma-sm"
+            accept=".json"
+            label="Import JSON"
           />
         </div>
       </div>
       <div class="row">
         <div class="col-auto q-ma-sm">
           <q-toggle
+            v-model="darkState"
             :dark="darker"
             class="q-pt-lg"
-            v-model="darkState"
             label="Dark Mode"
           />
         </div>
         <div class="col-auto q-ma-sm">
           <q-toggle
+            v-model="calibrationState"
+            :disable="units.length == 0"
             :dark="darker"
             class="q-pt-lg"
-            v-model="calibrationState"
             label="Time Calibration"
-            :disable="units.length == 0"
           />
         </div>
       </div>
@@ -122,7 +119,7 @@ export default {
     exportCSV() {
       exportCSV(this.reports)
     },
-    importJSON(file, updateProgress) {
+    importJSON(files) {
       if (this.reports.length == 0) {
         let reader = new FileReader()
         reader.onload = (e) => {
@@ -132,8 +129,9 @@ export default {
           )
           this.$refs.importer.reset()
         }
-        reader.readAsText(file)
+        reader.readAsText(files[0])
       } else {
+        this.$refs.importer.reset()
         this.$q.notify({
           message: 'Database should empty',
           type: 'negative'
@@ -145,11 +143,11 @@ export default {
         .dialog({
           title: 'Confirmation',
           message: `Are you sure to remove all data?`,
+          dark: this.darker,
           preventClose: true,
           cancel: true
         })
-        .then(() => this.RESET_DATABASE())
-        .catch(() => {})
+        .onOk(() => this.RESET_DATABASE())
     }
   },
   watch: {

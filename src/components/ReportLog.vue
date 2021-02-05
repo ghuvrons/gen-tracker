@@ -1,5 +1,5 @@
 <template>
-  <div class="row gutter-xs">
+  <div class="row q-gutter-xs">
     <div class="col-xs-12 text-right">
       <q-btn
         color="green"
@@ -7,6 +7,7 @@
         :icon="lock.follow ? 'lock' : 'lock_open'"
         class="q-ma-xs"
         dense
+        unelevated
         :outline="!lock.follow"
         :loading="loading"
         :disable="devReports.length == 0"
@@ -14,48 +15,59 @@
       />
     </div>
     <div class="col-xs-12">
-      <q-scroll-area
+      <q-virtual-scroll
+        v-if="devReports.length > 0"
         :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-        ref="scroller"
+        :items="devReports"
+        separator
       >
-        <q-list
-          :dark="darker"
-          highlight
-          link
-          dense
-          separator
-          v-if="devReports.length > 0"
-        >
+        <!-- <q-list  :dark="darker" dense separator> -->
+        <template v-slot="{ item: report, index }">
           <q-item
-            v-for="(report, index) in devReports"
             :key="index"
             :dark="darker"
-            :active="report.hex === theReport.hex"
-            @click.native="SET_THE_REPORT(report)"
+            :focused="report.hex === theReport.hex"
+            @click="SET_THE_REPORT(report)"
+            clickable
+            dense
+            manual-focus
           >
-            <q-item-side>
-              <q-chip color="primary" dense square>
-                {{ getDatetime(report) }}
-              </q-chip>
-              <q-chip
-                class="q-ml-sm"
-                style="width: 60px"
-                :color="report.frameID.out == 'FULL' ? 'green' : 'light-green'"
-                dense
-                square
-              >
-                {{ report.frameID.out }}
-              </q-chip>
-            </q-item-side>
-            <q-item-main class="q-caption">
-              {{ report.hex }}
-            </q-item-main>
+            <q-item-section avatar>
+              <div>
+                <q-chip
+                  :color="
+                    report.frameID.out == 'FULL' ? 'green' : 'light-green'
+                  "
+                  class="q-ml-sm text-center"
+                  style="width: 60px"
+                  dark
+                  dense
+                  square
+                >
+                  {{ report.frameID.out }}
+                </q-chip>
+
+                <q-chip color="primary" dark dense square>
+                  {{ getDatetime(report) }}
+                </q-chip>
+              </div>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label class="ellipsis" caption>
+                {{ report.hex }}
+              </q-item-label>
+            </q-item-section>
           </q-item>
-        </q-list>
-        <q-alert v-else icon="info" color="faded" class="q-ma-xs">
-          No report yet
-        </q-alert>
-      </q-scroll-area>
+          <!-- </q-list> -->
+        </template>
+      </q-virtual-scroll>
+      <q-banner v-else :dark="darker">
+        <template v-slot:avatar>
+          <q-icon name="info"></q-icon>
+        </template>
+        No report yet
+      </q-banner>
     </div>
   </div>
 </template>

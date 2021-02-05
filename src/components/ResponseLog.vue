@@ -1,36 +1,40 @@
 <template>
   <div class="shadow-1" :class="darkerClass">
-    <p class="q-pa-sm q-mb-none bg-purple text-white">
+    <div class="q-pa-xs bg-purple text-white text-subtitle1">
       Response Log
-      <q-chip v-if="devCommands.length > 0" color="negative" dense square>
+      <q-badge v-if="devCommands.length > 0" color="red" align="top">
         {{ devCommands.length }}
-      </q-chip>
-    </p>
-    <q-scroll-area
-      :class="darkerClass"
-      :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-    >
-      <q-list v-if="devCommands.length > 0" :dark="darker" link dense separator>
+      </q-badge>
+    </div>
+    <q-scroll-area :style="{ height: (height < 150 ? 150 : height) + 'px' }">
+      <q-list v-if="devCommands.length > 0" :dark="darker" separator>
         <q-item
           v-for="(cmd, index) in devCommands"
+          @click="applyCommand(cmd.payload)"
           :key="index"
           :dark="darker"
-          @click.native="applyCommand(cmd.payload)"
+          clickable
         >
-          <q-item-main>
-            <q-item-tile label>{{ cmd.payload }}</q-item-tile>
-            <q-item-tile sublabel>
-              <q-chip :color="parseResCode(cmd.resCode).color" dense square>{{
-                parseResCode(cmd.resCode).title
-              }}</q-chip>
+          <q-item-section>
+            <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
+            <q-item-label lines="2" caption>
               {{ cmd.message }}
-            </q-item-tile>
-          </q-item-main>
+            </q-item-label>
+          </q-item-section>
+
+          <q-item-section side>
+            <q-chip :color="parseResCode(cmd.resCode).color" dark dense square>
+              {{ parseResCode(cmd.resCode).title }}
+            </q-chip>
+          </q-item-section>
         </q-item>
       </q-list>
-      <q-alert v-else icon="info" color="faded" class="q-ma-xs">
+      <q-banner v-else :dark="darker">
+        <template v-slot:avatar>
+          <q-icon name="info"></q-icon>
+        </template>
         No response yet
-      </q-alert>
+      </q-banner>
     </q-scroll-area>
   </div>
 </template>

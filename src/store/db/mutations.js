@@ -1,6 +1,5 @@
 import * as mutations from "./mutation-types";
 import { config } from "components/js/opt/config";
-// import { LocalStorage } from "quasar";
 
 const { maxStorage } = config;
 
@@ -13,7 +12,6 @@ export default {
   },
   [mutations.TOGGLE_DARKER](state) {
     state.darker = !state.darker;
-    // LocalStorage.set("darker", state.darker);
   },
   [mutations.CLEAR_ALL](state) {
     state.theUnit = null;

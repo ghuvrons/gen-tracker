@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export HOSTING_PATH=/home/genmotor/tracker.genmotorcycles.com/
-    - /bin/rsync -vr --exclude '.git/' dist/pwa-mat/ $HOSTING_PATH
+    - /bin/rsync -vr --exclude '.git/' dist/pwa/ $HOSTING_PATH

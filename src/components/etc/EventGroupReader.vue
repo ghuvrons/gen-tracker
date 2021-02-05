@@ -1,38 +1,28 @@
 <template>
-  <q-list :dark="darker" dense>
-    <q-scroll-area
-      :style="{
-        height: (height < 150 ? 150 : height) + 110 + 'px',
-      }"
+  <q-list :dark="darker" bordered>
+    <q-expansion-item
+      v-for="(event, name) in devEvents"
+      :key="name"
+      :label="`${name} `"
+      :caption="`(${event.length}) times`"
+      :header-class="`text-${activeEvent(name) ? 'green' : 'grey'}`"
+      :dark="darker"
+      expand-separator
     >
-      <template v-for="(event, name) in devEvents">
-        <q-collapsible
-          :key="name"
-          :label="`${name} `"
-          :sublabel="`(${event.length}) times`"
-          :header-class="`text-${activeEvent(name) ? 'green' : 'grey'}`"
+      <q-list :dark="darker" separator dense bordered>
+        <q-item
+          v-for="evt in event"
+          :key="`${name}-${evt.time}`"
           :dark="darker"
-          separator
-          dense
         >
-          <q-list :dark="darker" dense>
-            <q-item
-              v-for="evt in event"
-              :key="`${name}-${evt.time}`"
-              :dark="darker"
-              separator
-              dense
-            >
-              <q-item-main>
-                <q-item-tile sublabel>
-                  {{ evt.time }}
-                </q-item-tile>
-              </q-item-main>
-            </q-item>
-          </q-list>
-        </q-collapsible>
-      </template>
-    </q-scroll-area>
+          <q-item-section>
+            <q-item-label caption>
+              {{ evt.time }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-expansion-item>
   </q-list>
 </template>
 
@@ -44,7 +34,6 @@ import CommonMixin from 'components/mixins/CommonMixin'
 
 export default {
   props: {
-    height: Number,
     currentValue: Number
   },
   mixins: [CommonMixin],
