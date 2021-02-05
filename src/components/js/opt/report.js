@@ -40,7 +40,7 @@ const VCU = ({ required }) => {
           chartable: true,
           size: 7,
           format: (val) =>
-            Number(moment(parseDatetime(val), "YYMMDDHHmmssEE").format("X")),
+            Number(moment(parseDatetime(val), "YYMMDDHHmmss0E").format("X")),
           display: (valFormat) =>
             // moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
             moment(valFormat, "X").format("DD MMM YYYY, HH:mm:ss"),

@@ -57,7 +57,7 @@ const calibrateTime = ({ lat, lng, datetime }) => {
 
   //  (at least more n minutes different)
   if (!deviceTime.isValid() || difference > config.timediff)
-    return serverTime.tz(timezone).format("YYMMDDHHmmssEE");
+    return serverTime.tz(timezone).format("YYMMDDHHmmss0E");
 };
 
 const parseDatetime = (hex) => {

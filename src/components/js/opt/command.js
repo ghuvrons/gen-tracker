@@ -31,7 +31,7 @@ const COMMAND_LIST = [
     code: 1,
     subCode: 0,
     type: "U64",
-    range: ["YYMMDDHHmmssEE"],
+    range: ["YYMMDDHHmmss0E"],
     format: (val) => buildTimestamp(val),
   },
   {

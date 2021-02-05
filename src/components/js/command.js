@@ -63,7 +63,7 @@ const parseCommand = (payload) => {
     if (!isString(min)) {
       if (value < min || value > max) return "Value not in range";
     } else if (cmd.command == "REPORT_RTC") {
-      if (!moment(value, "YYMMDDHHmmssEE").isValid()) return "Datetime invalid";
+      if (!moment(value, "YYMMDDHHmmss0E").isValid()) return "Datetime invalid";
     } else if (value.length != min.length) return "Value length is invalid";
   } else if (value) return "Command dont need value";
 
