@@ -27,7 +27,7 @@
           >
             <div class="q-pa-sm">
               <line-chart
-                style="height: calc(100vh - 360px)"
+                style="height: 300px"
                 :param="chart"
                 :update="history.update"
                 :dark="darker"
