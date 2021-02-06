@@ -9,9 +9,9 @@
 
         <q-toolbar-title>
           {{ $config.app.title }}
-          <div slot="subtitle">
-            v.{{ $config.app.version }} &copy; {{ $config.app.subTitle }}
-          </div>
+          <q-item-label class="text-white" caption>
+            {{ $config.app.subTitle }} v.{{ $config.app.version }}
+          </q-item-label>
         </q-toolbar-title>
 
         <q-btn

@@ -7,11 +7,7 @@
       </q-badge>
     </div>
 
-    <q-virtual-scroll
-      :items="devCommands"
-      style="height: calc(100vh - 440px)"
-      separator
-    >
+    <q-virtual-scroll :items="devCommands" class="fill-height" separator>
       <template v-slot="{ item: cmd, index }">
         <q-item
           :key="index"

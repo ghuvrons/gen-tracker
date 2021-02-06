@@ -15,10 +15,7 @@
       </q-card-section>
       <q-separator></q-separator>
 
-      <q-card-section
-        class="scroll q-ma-sm"
-        style="height: calc(100vh - 177px)"
-      >
+      <q-card-section class="scroll q-ma-sm fill-height">
         <div class="row">
           <div
             :class="
