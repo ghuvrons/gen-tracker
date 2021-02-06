@@ -1,17 +1,17 @@
 <template>
-  <div class="shadow-1">
-    <div class="q-pa-xs bg-purple text-white text-subtitle1">
-      Report Reader
-      <q-chip
-        v-if="theReport"
-        :color="fullFrame ? 'green' : 'light-green'"
-        dark
-        dense
-        square
-      >
-        {{ fullFrame ? "FULL" : "SIMPLE" }}
-      </q-chip>
-    </div>
+  <div>
+    <q-bar class="bg-blue text-white">
+      <q-toolbar-title class="text-subtitle1">
+        Response Reader
+        <q-badge
+          v-if="theReport"
+          :color="fullFrame ? 'green' : 'light-green'"
+          align="top"
+        >
+          {{ fullFrame ? "FULL" : "SIMPLE" }}
+        </q-badge>
+      </q-toolbar-title>
+    </q-bar>
 
     <q-virtual-scroll :items="reportFields" class="fill-height" separator>
       <template v-slot="{ item: field, index }">

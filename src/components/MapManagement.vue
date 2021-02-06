@@ -53,7 +53,7 @@ export default {
         streetViewControl: false,
         rotateControl: false,
         fullscreenControl: true,
-        disableDefaultUi: false,
+        disableDefaultUi: true,
       },
     };
   },

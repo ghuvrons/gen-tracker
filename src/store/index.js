@@ -20,6 +20,9 @@ export default function (/* { ssrContext } */) {
       db,
     },
     plugins: [vuexLocal.plugin],
+    // enable strict mode (adds overhead!)
+    // for dev mode only
+    strict: process.env.DEBUGGING,
   });
 
   return Store;

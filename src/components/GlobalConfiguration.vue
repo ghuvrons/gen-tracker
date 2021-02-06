@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: calc(100vh - 50vh - 50px - 50px)">
     <div class="row">
       <div class="col-auto q-ma-sm">
         <q-btn

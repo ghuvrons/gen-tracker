@@ -1,12 +1,12 @@
 <template>
   <q-page :class="darkerClass">
-    <q-splitter :value="40" style="height: calc(100vh - 50px)" horizontal>
+    <q-splitter :value="50" style="height: calc(100vh - 50px)" horizontal>
       <template v-slot:before>
         <map-management> </map-management>
       </template>
 
       <template v-slot:after>
-        <q-tabs v-model="selectedTab" class="bg-primary text-white">
+        <q-tabs v-model="selectedTab" class="bg-primary text-white" dense>
           <q-tab name="tab-1" label="Report Log">
             <q-badge color="red" floating>{{ devReports.length }}</q-badge>
           </q-tab>

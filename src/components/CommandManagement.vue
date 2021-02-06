@@ -1,15 +1,19 @@
 <template>
-  <div class="shadow-1">
-    <div class="q-pa-xs bg-purple text-white text-subtitle1">
-      Command Management
-      <q-icon
+  <div>
+    <q-bar class="bg-blue text-white">
+      <q-toolbar-title class="text-subtitle1">
+        Command Management
+      </q-toolbar-title>
+      <q-btn
         v-if="COMMAND_LIST.length > 0"
         @click.native="modalOpen = true"
-        class="cursor-pointer"
-        name="info"
+        icon="info"
+        size="xs"
+        round
+        dense
       >
-      </q-icon>
-    </div>
+      </q-btn>
+    </q-bar>
 
     <div class="q-pa-sm">
       <q-input

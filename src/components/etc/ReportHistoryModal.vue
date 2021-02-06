@@ -2,107 +2,110 @@
   <q-dialog
     v-model="modalOpen"
     @hide="$emit('close')"
-    :maximized="$q.platform.is.mobile"
+    :maximized="$q.screen.lt.md"
     full-height
     full-width
   >
-    <q-card :dark="darker">
-      <q-card-section class="bg-primary text-white">
-        REPORT HISTORY - {{ this.theField.title }}
-        <q-chip v-if="chart.data" dark dense square>
-          {{ chart.data.labels.length }}
-        </q-chip>
-      </q-card-section>
-      <q-separator></q-separator>
+    <q-layout view="Lhh lpR fff" :class="darkerClass" container>
+      <q-header class="bg-primary">
+        <q-toolbar>
+          <q-toolbar-title>
+            <span class="text-weight-bold">REPORT HISTORY</span>
+            <q-item-label class="text-white" caption>
+              {{ this.theField.title }}
+              <q-chip v-if="chart.data" dark dense square>
+                {{ chart.data.labels.length }}
+              </q-chip>
+            </q-item-label>
+          </q-toolbar-title>
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
+      </q-header>
 
-      <q-card-section
-        class="scroll q-ma-sm"
-        style="height: calc(100vh - 177px)"
-      >
-        <div class="row">
-          <div
-            :class="
-              eventGroup ? 'col-xs-12 col-sm-12 col-md-8 col-lg-9' : 'col-12'
-            "
-          >
-            <div class="q-pa-sm">
-              <line-chart
-                style="height: 300px"
-                :param="chart"
-                :update="history.update"
-                :dark="darker"
-              />
-              <q-range
-                v-model="range.value"
-                :min="range.min"
-                :max="range.max"
-                :disable="range.disable"
-                :drag-range="control.drag"
-                snap
-                square
-              />
-              <div class="row justify-between items-center content-center">
-                <div class="col-auto">
-                  <q-toggle
-                    v-model="control.beginAtZero"
-                    label="Begin Zero"
-                    class="q-ma-xs"
-                    :dark="darker"
-                  />
-                  <q-toggle
-                    v-model="control.drag"
-                    :disable="control.maximize"
-                    label="Lock Window"
-                    class="q-ma-xs"
-                    :dark="darker"
-                  />
-                  <q-toggle
-                    v-model="control.follow"
-                    :disable="control.maximize"
-                    label="Follow Data"
-                    class="q-ma-xs"
-                    :dark="darker"
-                  />
-                  <q-toggle
-                    v-model="control.maximize"
-                    label="Max Range"
-                    class="q-ma-xs"
-                    :dark="darker"
-                  />
-                </div>
-                <div class="col-auto">
-                  <q-input
-                    :value="rangeSample"
-                    :dark="darker"
-                    type="number"
-                    class="q-ma-xs"
-                    style="width: 130px"
-                    prefix="Sample :"
-                    disable
-                    hide-bottom-space
-                    filled
-                    dense
-                  />
+      <q-page-container>
+        <q-page padding>
+          <div class="row">
+            <div
+              :class="
+                eventGroup ? 'col-xs-12 col-sm-12 col-md-8 col-lg-9' : 'col-12'
+              "
+            >
+              <div class="q-pa-sm">
+                <line-chart
+                  style="height: 60vh"
+                  :param="chart"
+                  :update="history.update"
+                  :dark="darker"
+                />
+                <q-range
+                  v-model="range.value"
+                  :min="range.min"
+                  :max="range.max"
+                  :disable="range.disable"
+                  :drag-range="control.drag"
+                  snap
+                  square
+                />
+                <div class="row justify-between items-center content-center">
+                  <div class="col-auto">
+                    <q-toggle
+                      v-model="control.beginAtZero"
+                      label="Begin Zero"
+                      class="q-ma-xs"
+                      :dark="darker"
+                    />
+                    <q-toggle
+                      v-model="control.drag"
+                      :disable="control.maximize"
+                      label="Lock Window"
+                      class="q-ma-xs"
+                      :dark="darker"
+                    />
+                    <q-toggle
+                      v-model="control.follow"
+                      :disable="control.maximize"
+                      label="Follow Data"
+                      class="q-ma-xs"
+                      :dark="darker"
+                    />
+                    <q-toggle
+                      v-model="control.maximize"
+                      label="Max Range"
+                      class="q-ma-xs"
+                      :dark="darker"
+                    />
+                  </div>
+                  <div class="col-auto">
+                    <q-input
+                      :value="rangeSample"
+                      :dark="darker"
+                      type="number"
+                      class="q-ma-xs"
+                      style="width: 130px"
+                      prefix="Sample :"
+                      disable
+                      hide-bottom-space
+                      filled
+                      dense
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div v-if="eventGroup" class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
-            <div class="q-pa-sm scroll" style="max-height: calc(100vh - 210px)">
-              <event-group-reader
-                :current-value="currentValue"
-              ></event-group-reader>
+            <div
+              v-if="eventGroup"
+              class="col-xs-12 col-sm-12 col-md-4 col-lg-3"
+            >
+              <div class="q-pa-sm scroll">
+                <event-group-reader :current-value="currentValue">
+                </event-group-reader>
+              </div>
             </div>
           </div>
-        </div>
-      </q-card-section>
-      <q-separator></q-separator>
-
-      <q-card-actions class="bg-primary text-white absolute-bottom">
-        <q-btn unelevated @click="modalOpen = false" label="Close" />
-      </q-card-actions>
-    </q-card>
+        </q-page>
+      </q-page-container>
+    </q-layout>
   </q-dialog>
 </template>
 

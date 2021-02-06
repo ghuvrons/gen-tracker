@@ -17,6 +17,7 @@ import { INSERT_REPORTS, INSERT_COMMANDS } from "./store/db/action-types";
 import { parseReport } from "components/js/report";
 import { parseResponse, parseResCode } from "components/js/response";
 import { parseCommand } from "components/js/command";
+import { QSpinnerGears } from "quasar";
 import moment from "moment";
 // import DummyMixin from "components/mixins/DummyMixin";
 
@@ -45,18 +46,27 @@ export default {
     ...mapMutations("db", [SET_LOADING, SET_THE_COMMAND, CLEAR_THE_COMMAND]),
     ...mapActions("db", [INSERT_COMMANDS, INSERT_REPORTS]),
     importData(reports) {
-      reports.forEach((hex, i) => {
-        // console.info(i, hex);
-        this.$nextTick(() => {
-          console.info(`Importing ${((i + 1) * 100) / reports.length}%`);
-          this.handleFrame(hex);
-        });
+      const dialog = this.$q.dialog({
+        title: "Importing...",
+        dark: this.darker,
+        message: "0%",
+        progress: {
+          spinner: QSpinnerGears,
+          color: "primary",
+        },
+        persistent: true,
+        ok: false,
       });
 
-      this.$q.notify({
-        message: "Import data done.",
-        type: "positive",
+      let percentage = 0;
+      reports.forEach((hex, i) => {
+        percentage = ((i + 1) * 100) / reports.length;
+        this.$nextTick(() => {
+          this.handleFrame(hex);
+          dialog.update({ message: `${percentage}%` });
+        });
       });
+      dialog.hide();
     },
 
     starWaitting() {

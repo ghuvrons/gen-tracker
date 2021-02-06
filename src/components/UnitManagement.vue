@@ -1,11 +1,13 @@
 <template>
-  <div class="shadow-1">
-    <div class="q-pa-xs bg-purple text-white text-subtitle1">
-      Unit Management
-      <q-badge v-if="units.length > 0" color="red" align="top">
-        {{ units.length }}
-      </q-badge>
-    </div>
+  <div>
+    <q-bar class="bg-blue text-white">
+      <q-toolbar-title class="text-subtitle1">
+        Unit Management
+        <q-badge v-if="units.length > 0" color="red" align="top">
+          {{ units.length }}
+        </q-badge>
+      </q-toolbar-title>
+    </q-bar>
 
     <q-virtual-scroll :items="units" class="fill-height" separator>
       <template v-slot="{ item: unitID, index }">

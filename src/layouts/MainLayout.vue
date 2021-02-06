@@ -1,10 +1,15 @@
 <template>
   <q-layout view="lHr LpR lFr">
-    <!--can be placed anywhere within your template -->
-    <q-header>
+    <q-header elevated>
       <q-toolbar class="bg-primary text-white">
-        <q-btn flat dense round @click="drawerOpen.left = !drawerOpen.left">
-          <q-icon name="menu" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          @click="drawerOpen.left = !drawerOpen.left"
+        >
         </q-btn>
 
         <q-toolbar-title>
@@ -18,21 +23,29 @@
           flat
           dense
           round
+          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
           v-if="$q.fullscreen.isCapable"
           @click="$q.fullscreen.toggle()"
         >
-          <q-icon
-            :name="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-          />
         </q-btn>
 
-        <q-btn flat dense round @click="drawerOpen.right = !drawerOpen.right">
-          <q-icon name="more_vert" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="more_vert"
+          @click="drawerOpen.right = !drawerOpen.right"
+        >
         </q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="drawerOpen.left" :content-class="darkerClass" bordered>
+    <q-drawer
+      v-model="drawerOpen.left"
+      :content-class="darkerClass"
+      show-if-above
+      bordered
+    >
       <q-splitter :value="150" style="height: 100vh" unit="px" horizontal>
         <template v-slot:before>
           <unit-management></unit-management>
@@ -47,9 +60,10 @@
       side="right"
       v-model="drawerOpen.right"
       :content-class="darkerClass"
+      show-if-above
       bordered
     >
-      <q-splitter :value="128" style="height: 100vh" unit="px" horizontal>
+      <q-splitter :value="125" style="height: 100vh" unit="px" horizontal>
         <template v-slot:before>
           <command-management></command-management>
         </template>
