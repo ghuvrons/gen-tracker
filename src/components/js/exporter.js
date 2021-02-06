@@ -3,7 +3,7 @@ import { ExportToCsv } from "export-to-csv";
 import exportFromJSON from "export-from-json";
 import moment from "moment";
 
-const makeExportData = (reports) => {
+const makeDataCSV = (reports) => {
   return reports.map((report) => ({
     ...Report.reduce(
       (carry, { field, no }) => ({
@@ -15,17 +15,12 @@ const makeExportData = (reports) => {
   }));
 };
 
-const makeExportLabel = () => {
+const makeLabelCSV = () => {
   return Report.reduce(
     (carry, { title, unit }) =>
       carry.concat([title + (unit ? ` (${unit})` : "")]),
     []
   );
-};
-
-const makeExportName = () => {
-  let now = moment().format("YYYYMMDDHHmmss");
-  return `tracking-${now}`;
 };
 
 const exportCSV = (reports) => {
@@ -39,15 +34,19 @@ const exportCSV = (reports) => {
     useTextFile: false,
     useBom: true,
     useKeysAsHeaders: false,
-    headers: makeExportLabel(),
+    headers: makeLabelCSV(),
   });
 
-  csvExporter.generateCsv(makeExportData(reports));
+  csvExporter.generateCsv(makeDataCSV(reports));
+};
+
+const makeDataJSON = (reports) => {
+  return reports ? reports.reverse().map(({ hex }) => hex) : [];
 };
 
 const exportJSON = (reports) => {
-  const data = reports.map(({ hex }) => hex);
-  const fileName = makeExportName();
+  const fileName = `tracking-${moment().format("YYMMDDHHmmss")}`;
+  const data = makeDataJSON(reports);
   const exportType = "json";
 
   exportFromJSON({ data, fileName, exportType });

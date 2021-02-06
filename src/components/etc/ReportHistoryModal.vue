@@ -178,8 +178,8 @@ export default {
       return this.field === "eventsGroup" && this.devEvents;
     },
     rangeSample() {
-      let { xiMin, xiMax } = this.findRange(this.range.value);
-      return xiMax - xiMin + 1;
+      let { iMin, iMax } = this.findRange(this.range.value);
+      return iMax - iMin + 1;
     },
   },
   methods: {
@@ -193,27 +193,27 @@ export default {
       let { labels } = this.chart.data;
 
       // find the index
-      let xiMin = min ? labels.findIndex((val) => val >= min) : 0;
-      let xiMax = max
+      let iMin = min ? labels.findIndex((val) => val >= min) : 0;
+      let iMax = max
         ? this.$_.findLastIndex(labels, (val) => val <= max)
         : labels.length - 1;
 
-      return { xiMin, xiMax };
+      return { iMin, iMax };
     },
-    findRangeX({ xiMin, xiMax }) {
+    findRangeX({ iMin, iMax }) {
       let { labels } = this.chart.data;
 
       // calculate x-axes
-      let xMin = labels[xiMin];
-      let xMax = labels[xiMax];
+      let xMin = labels[iMin];
+      let xMax = labels[iMax];
 
       return { xMin, xMax };
     },
-    findRangeY({ xiMin, xiMax }) {
+    findRangeY({ iMin, iMax }) {
       let { data } = this.chart.data.datasets[0];
 
       // calculate y-axes
-      let scope = data.filter((_, i) => i >= xiMin && i <= xiMax);
+      let scope = data.filter((_, i) => i >= iMin && i <= iMax);
       let yMin = this.$_.min(scope);
       let yMax = this.$_.max(scope);
 
@@ -230,36 +230,36 @@ export default {
       return { yMin, yMax };
     },
     applyRange(sample) {
-      let { xiMin, xiMax } = this.findRange(this.range.value);
-      let { xMax } = this.findRangeX({ xiMin, xiMax });
-      let oldSample = xiMax - xiMin;
+      let { iMin, iMax } = this.findRange(this.range.value);
+      let { xMax } = this.findRangeX({ iMin, iMax });
+      let oldSample = iMax - iMin;
 
       if (this.control.maximize || this.control.follow) {
-        xiMax = this.chart.data.labels.length - 1;
-        xMax = this.getLabel(xiMax);
+        iMax = this.chart.data.labels.length - 1;
+        xMax = this.getLabel(iMax);
 
-        if (this.control.maximize) xiMin = 0;
+        if (this.control.maximize) iMin = 0;
       }
 
       if (!sample) {
-        sample = xiMax - xiMin;
+        sample = iMax - iMin;
 
         if (this.control.drag) {
           sample = oldSample;
 
-          if (!this.control.follow) xMax = this.getLabel(xiMin + sample);
+          if (!this.control.follow) xMax = this.getLabel(iMin + sample);
         }
       } else sample--;
 
       this.range.value = {
-        min: this.getLabel(xiMax - sample),
+        min: this.getLabel(iMax - sample),
         max: xMax,
       };
     },
     scaleChart() {
-      let { xiMin, xiMax } = this.findRange(this.range.value);
-      let { xMin, xMax } = this.findRangeX({ xiMin, xiMax });
-      let { yMin, yMax } = this.findRangeY({ xiMin, xiMax });
+      let { iMin, iMax } = this.findRange(this.range.value);
+      let { xMin, xMax } = this.findRangeX({ iMin, iMax });
+      let { yMin, yMax } = this.findRangeY({ iMin, iMax });
 
       this.currentValue = xMax;
       this.chart.options.scales.xAxes[0].ticks.max = xMax;

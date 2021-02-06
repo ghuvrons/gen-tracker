@@ -32,12 +32,17 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="drawerOpen.left" bordered>
+    <q-drawer v-model="drawerOpen.left" :content-class="darkerClass" bordered>
       <unit-management :height="height.top"></unit-management>
-      <report-reader :height="height.bottom - 73"></report-reader>
+      <report-reader :height="height.bottom - 72"></report-reader>
     </q-drawer>
 
-    <q-drawer side="right" v-model="drawerOpen.right" bordered>
+    <q-drawer
+      side="right"
+      v-model="drawerOpen.right"
+      :content-class="darkerClass"
+      bordered
+    >
       <command-management></command-management>
       <response-log :height="height.bottom - 73"></response-log>
     </q-drawer>
@@ -49,47 +54,47 @@
 </template>
 
 <script>
-import ReportReader from 'components/ReportReader'
-import UnitManagement from 'components/UnitManagement'
-import ResponseLog from 'components/ResponseLog'
-import CommandManagement from 'components/CommandManagement'
-import CommonMixin from 'components/mixins/CommonMixin'
+import ReportReader from "components/ReportReader";
+import UnitManagement from "components/UnitManagement";
+import ResponseLog from "components/ResponseLog";
+import CommandManagement from "components/CommandManagement";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
-  name: 'MyLayout',
+  name: "MyLayout",
   mixins: [CommonMixin],
   components: {
     ReportReader,
     UnitManagement,
     ResponseLog,
-    CommandManagement
+    CommandManagement,
   },
   data() {
     return {
       drawerOpen: {
         left: this.$q.platform.is.desktop,
-        right: false
+        right: false,
       },
       height: {
         top: 90,
-        bottom: 0
-      }
-    }
+        bottom: 0,
+      },
+    };
   },
   methods: {
     onResize(height) {
-      this.height.bottom = height - this.height.top
-    }
+      this.height.bottom = height - this.height.top;
+    },
   },
   watch: {
-    '$q.screen.height':{
+    "$q.screen.height": {
       immediate: true,
       handler(h) {
-        this.onResize(h)
-      }
-    }
-  }
-}
+        this.onResize(h);
+      },
+    },
+  },
+};
 </script>
 
 <style></style>

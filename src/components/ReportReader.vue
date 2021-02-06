@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-1" :class="darkerClass">
+  <div class="shadow-1">
     <div class="q-pa-xs bg-purple text-white text-subtitle1">
       Report Reader
       <q-chip
@@ -14,9 +14,8 @@
     </div>
 
     <q-virtual-scroll
-      v-if="theReport"
       :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-      :items="reportFields"
+      :items="reportFields ? reportFields : []"
       separator
     >
       <template v-slot="{ item: field, index }">
@@ -45,16 +44,16 @@
             </q-icon>
           </q-item-section>
         </q-item>
-        <!-- </q-list> -->
+      </template>
+      <template v-slot:after>
+        <q-banner v-if="reportFields.length == 0" :dark="darker">
+          <template v-slot:avatar>
+            <q-icon name="info"></q-icon>
+          </template>
+          No active report yet
+        </q-banner>
       </template>
     </q-virtual-scroll>
-
-    <q-banner v-else :dark="darker">
-      <template v-slot:avatar>
-        <q-icon name="info"></q-icon>
-      </template>
-      No active report yet
-    </q-banner>
 
     <report-history-modal
       v-if="historyField"

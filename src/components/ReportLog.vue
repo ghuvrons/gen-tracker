@@ -16,9 +16,8 @@
     </div>
     <div class="col-xs-12">
       <q-virtual-scroll
-        v-if="devReports.length > 0"
         :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-        :items="devReports"
+        :items="devReports ? devReports : []"
         separator
       >
         <template v-slot="{ item: report, index }">
@@ -59,13 +58,15 @@
             </q-item-section>
           </q-item>
         </template>
-      </q-virtual-scroll>
-      <q-banner v-else :dark="darker">
-        <template v-slot:avatar>
-          <q-icon name="info"></q-icon>
+        <template v-slot:after>
+          <q-banner v-if="devReports.length == 0" :dark="darker">
+            <template v-slot:avatar>
+              <q-icon name="info"></q-icon>
+            </template>
+            No report yet
+          </q-banner>
         </template>
-        No report yet
-      </q-banner>
+      </q-virtual-scroll>
     </div>
   </div>
 </template>

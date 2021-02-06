@@ -1,17 +1,21 @@
 <template>
-  <div class="shadow-1" :class="darkerClass">
+  <div class="shadow-1">
     <div class="q-pa-xs bg-purple text-white text-subtitle1">
       Response Log
       <q-badge v-if="devCommands.length > 0" color="red" align="top">
         {{ devCommands.length }}
       </q-badge>
     </div>
-    <q-scroll-area :style="{ height: (height < 150 ? 150 : height) + 'px' }">
-      <q-list v-if="devCommands.length > 0" :dark="darker" separator>
+
+    <q-virtual-scroll
+      :style="{ height: (height < 150 ? 150 : height) + 'px' }"
+      :items="devCommands ? devCommands : []"
+      separator
+    >
+      <template v-slot="{ item: cmd, index }">
         <q-item
-          v-for="(cmd, index) in devCommands"
-          @click="applyCommand(cmd.payload)"
           :key="index"
+          @click="applyCommand(cmd.payload)"
           :dark="darker"
           clickable
         >
@@ -28,44 +32,46 @@
             </q-chip>
           </q-item-section>
         </q-item>
-      </q-list>
-      <q-banner v-else :dark="darker">
-        <template v-slot:avatar>
-          <q-icon name="info"></q-icon>
-        </template>
-        No response yet
-      </q-banner>
-    </q-scroll-area>
+      </template>
+      <template v-slot:after>
+        <q-banner v-if="devCommands.length == 0" :dark="darker">
+          <template v-slot:avatar>
+            <q-icon name="info"></q-icon>
+          </template>
+          No response yet
+        </q-banner>
+      </template>
+    </q-virtual-scroll>
   </div>
 </template>
 
 <script>
-import { devCommands } from '../store/db/getter-types'
-import { SET_THE_CMD_BUFFER } from '../store/db/mutation-types'
-import { mapState, mapGetters, mapMutations } from 'vuex'
-import { parseResCode } from 'components/js/response'
-import CommonMixin from 'components/mixins/CommonMixin'
+import { devCommands } from "../store/db/getter-types";
+import { SET_THE_CMD_BUFFER } from "../store/db/mutation-types";
+import { mapState, mapGetters, mapMutations } from "vuex";
+import { parseResCode } from "components/js/response";
+import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
   props: {
-    height: Number
+    height: Number,
   },
   mixins: [CommonMixin],
   computed: {
-    ...mapState('db', ['loading']),
-    ...mapGetters('db', [devCommands])
+    ...mapState("db", ["loading"]),
+    ...mapGetters("db", [devCommands]),
   },
   methods: {
-    ...mapMutations('db', [SET_THE_CMD_BUFFER]),
+    ...mapMutations("db", [SET_THE_CMD_BUFFER]),
     applyCommand(payload) {
-      if (!this.loading) this.SET_THE_CMD_BUFFER(payload)
+      if (!this.loading) this.SET_THE_CMD_BUFFER(payload);
     },
     parseResCode(code) {
-      return parseResCode(code)
-    }
-  }
-}
+      return parseResCode(code);
+    },
+  },
+};
 </script>
 
 <style>

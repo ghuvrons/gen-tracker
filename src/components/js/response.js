@@ -2,11 +2,12 @@ import { getValue } from "components/js/utils";
 import { parseFrame } from "components/js/frame";
 import { RESPONSE_LIST, Response } from "components/js/opt/response";
 
-const parseResponse = ({ payload, unitID, code, subCode }, hex) => {
-  let message, res;
+const parseResponse = ({ payload, unitID, code, subCode, hexCmd }, hexRes) => {
+  let res = RESPONSE_LIST.find(({ name }) => name === "timeout");
+  let message = null;
 
-  if (hex) {
-    let data = parseFrame(hex, Response);
+  if (hexRes) {
+    let data = parseFrame(hexRes, Response);
 
     if (getValue(data, "unitID") != unitID) return;
 
@@ -18,14 +19,13 @@ const parseResponse = ({ payload, unitID, code, subCode }, hex) => {
       ({ resCode }) => resCode === getValue(data, "resCode")
     );
     message = getValue(data, "message");
-  } else {
-    res = RESPONSE_LIST.find(({ name }) => name === "timeout");
-    message = null;
   }
 
   return {
-    payload,
+    hexCmd,
+    hexRes,
     unitID,
+    payload,
     resCode: res.resCode,
     message,
   };

@@ -42,7 +42,6 @@ const config = {
   timediff: 5 * 60,
   timezone: "Asia/Jakarta",
   maxStorage: {
-    units: 10,
     reports: 1000,
     commands: 100,
   },

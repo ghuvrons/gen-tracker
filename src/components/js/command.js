@@ -69,7 +69,7 @@ const parseCommand = (payload) => {
 
   return {
     ...cmd,
-    hex: buildCommand(cmd, value),
+    hexCmd: buildCommand(cmd, value),
     value,
   };
 };

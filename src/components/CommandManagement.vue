@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-1" :class="darkerClass">
+  <div class="shadow-1">
     <div class="q-pa-xs bg-purple text-white text-subtitle1">
       Command Management
       <q-icon

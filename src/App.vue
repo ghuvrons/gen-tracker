@@ -7,20 +7,18 @@
 <script>
 import { validateFrame } from "components/js/frame";
 import { getValue, isString } from "components/js/utils";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import {
   SET_LOADING,
-  ADD_UNITS,
-  ADD_REPORTS,
-  ADD_COMMANDS,
   SET_THE_COMMAND,
   CLEAR_THE_COMMAND,
 } from "./store/db/mutation-types";
+import { INSERT_REPORTS, INSERT_COMMANDS } from "./store/db/action-types";
 import { parseReport } from "components/js/report";
 import { parseResponse, parseResCode } from "components/js/response";
 import { parseCommand } from "components/js/command";
 import moment from "moment";
-import DummyMixin from "components/mixins/DummyMixin";
+// import DummyMixin from "components/mixins/DummyMixin";
 
 export default {
   name: "App",
@@ -28,12 +26,12 @@ export default {
   created() {
     this.$root.$on("executeCommand", this.executeCommand);
     this.$root.$on("ignoreCommand", this.ignoreCommand);
-    this.$root.$on("importReport", this.importReport);
+    this.$root.$on("importData", this.importData);
   },
   destroyed() {
     this.$root.$off("executeCommand", this.executeCommand);
     this.$root.$off("ignoreCommand", this.ignoreCommand);
-    this.$root.$off("importReport", this.importReport);
+    this.$root.$off("importData", this.importData);
   },
   data() {
     return {
@@ -44,16 +42,14 @@ export default {
     ...mapState("db", ["theCommand", "commands", "reports", "theUnit"]),
   },
   methods: {
-    ...mapMutations("db", [
-      SET_LOADING,
-      ADD_UNITS,
-      ADD_REPORTS,
-      ADD_COMMANDS,
-      SET_THE_COMMAND,
-      CLEAR_THE_COMMAND,
-    ]),
-    importReport(hexs) {
-      hexs.forEach((hex) => this.handleFrame(hex));
+    ...mapMutations("db", [SET_LOADING, SET_THE_COMMAND, CLEAR_THE_COMMAND]),
+    ...mapActions("db", [INSERT_COMMANDS, INSERT_REPORTS]),
+    importData(reports) {
+      reports.forEach((hex, i) => {
+        // console.info(i, hex);
+        this.$nextTick(() => this.handleFrame(hex));
+      });
+
       this.$q.notify({
         message: "Import data done.",
         type: "positive",
@@ -70,20 +66,20 @@ export default {
         this.theCommand.timeout || this.$config.command.timeoutMS;
       this.$timer.start("cmdTimeout");
     },
-    stopWaitting(message, type) {
+    stopWaitting(type, message) {
       this.dismiss();
       this.CLEAR_THE_COMMAND();
       this.SET_LOADING(false);
       if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
 
-      this.$q.notify({ message, type });
+      this.$q.notify({ type, message });
     },
 
     cmdTimeout() {
-      this.ADD_COMMANDS(parseResponse(this.theCommand, null));
+      this.INSERT_COMMANDS(parseResponse(this.theCommand, null));
     },
     ignoreCommand() {
-      this.stopWaitting("Command ignored.", "warning");
+      this.stopWaitting("warning", "Command ignored.");
     },
 
     parseCommand(payload) {
@@ -112,20 +108,18 @@ export default {
         return;
       }
 
-      let { unitID, frameID } = getValue(header, ["unitID", "frameID"]);
+      let frameID = getValue(header, "frameID");
 
-      this.ADD_UNITS(unitID);
       if (frameID === this.$config.frame.id.RESPONSE) {
         console.log(`RESPONSE ${hex}`);
         let response = parseResponse(this.theCommand, hex);
-        if (response) this.ADD_COMMANDS(response);
+        if (response) this.INSERT_COMMANDS(response);
       } else {
         let report = parseReport(hex);
-
         let difference = moment().diff(moment(report.logDatetime.val, "X"));
-        let duration = moment.duration(difference).as("months");
 
-        if (duration > 1) console.warn(`REPORT (EXPIRED) ${hex}`);
+        if (moment.duration(difference).as("months") > 1)
+          console.warn(`REPORT (EXPIRED) ${hex}`);
         else if (
           this.reports.some(
             ({ logDatetime }) => logDatetime.val == report.logDatetime.val
@@ -134,7 +128,7 @@ export default {
           console.warn(`REPORT (DUPLICATE) ${hex}`);
         else {
           console.log(`REPORT ${hex}`);
-          this.ADD_REPORTS(report);
+          this.INSERT_REPORTS(report);
         }
       }
     },
@@ -153,6 +147,11 @@ export default {
     "VCU/+/RPT": function (data, topic) {
       let hex = data.toString("hex").toUpperCase();
       this.handleFrame(hex);
+
+      if (this.theCommand && this.theCommand.payload.includes("FOTA")) {
+        this.stopWaitting("negative", "Command is lost");
+        this.cmdTimeout();
+      }
     },
   },
   watch: {
@@ -162,20 +161,20 @@ export default {
         let res = parseResCode(resCode);
         let ok = res.title == "OK";
 
-        let message = ok ? "Command sent." : `Command is ${res.title}`;
         let type = ok ? "positive" : "negative";
+        let message = ok ? "Command sent." : `Command is ${res.title}`;
 
-        this.stopWaitting(message, type);
+        this.stopWaitting(type, message);
       }
     },
     theCommand: function (cmd) {
       if (cmd) {
-        let { unitID, hex } = cmd;
-        let binData = Buffer.from(hex, "hex");
+        let { unitID, hexCmd } = cmd;
+        let binData = Buffer.from(hexCmd, "hex");
 
         this.starWaitting();
         this.$mqtt.publish(`VCU/${unitID}/CMD`, binData);
-        console.log(`COMMAND ${hex}`);
+        console.log(`COMMAND ${hexCmd}`);
       }
     },
   },

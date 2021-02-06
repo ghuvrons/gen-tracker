@@ -92,7 +92,13 @@ export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
   computed: {
-    ...mapState("db", ["units", "calibration", "theCommand", "reports"]),
+    ...mapState("db", [
+      "units",
+      "calibration",
+      "theCommand",
+      "reports",
+      "commands",
+    ]),
     ...mapGetters("db", [devReports]),
     calibrationState: {
       get() {
@@ -128,11 +134,7 @@ export default {
         if (this.reports.length == 0) {
           let reader = new FileReader();
           reader.onload = (e) => {
-            this.$root.$emit(
-              "importReport",
-              JSON.parse(e.target.result).reverse()
-            );
-
+            this.$root.$emit("importData", JSON.parse(e.target.result));
             resolve();
           };
           reader.readAsText(files[0]);

@@ -8,7 +8,7 @@ export default {
   },
   methods: {
     dummyImport() {
-      if (this.dummyIndex) this.importReport([dummyData[this.dummyIndex--]]);
+      if (this.dummyIndex) this.importData([dummyData[this.dummyIndex--]]);
     },
   },
   timers: {

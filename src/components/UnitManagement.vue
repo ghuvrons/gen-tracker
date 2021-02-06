@@ -1,21 +1,26 @@
 <template>
-  <div class="shadow-1" :class="darkerClass">
+  <div class="shadow-1">
     <div class="q-pa-xs bg-purple text-white text-subtitle1">
       Unit Management
       <q-badge v-if="units.length > 0" color="red" align="top">
         {{ units.length }}
       </q-badge>
     </div>
-    <q-scroll-area :style="{ height: (height < 90 ? 90 : height) + 'px' }">
-      <q-list v-if="units.length > 0 && theUnit" :dark="darker" dense separator>
+
+    <q-virtual-scroll
+      :style="{ height: (height < 90 ? 90 : height) + 'px' }"
+      :items="units"
+      separator
+    >
+      <template v-slot="{ item: unitID, index }">
         <q-item
-          v-for="(unitID, index) in units"
           :key="index"
           @click="setTheUnit(unitID)"
           :active="unitID === theUnit"
           active-class="bg-primary text-white"
           :dark="darker"
           clickable
+          dense
         >
           <q-item-section>
             <q-item-label class="text-subtitle2">
@@ -28,14 +33,16 @@
             </q-chip>
           </q-item-section>
         </q-item>
-      </q-list>
-      <q-banner v-else :dark="darker">
-        <template v-slot:avatar>
-          <q-icon name="info"></q-icon>
-        </template>
-        No unit yet
-      </q-banner>
-    </q-scroll-area>
+      </template>
+      <template v-slot:after>
+        <q-banner v-if="units.length == 0" :dark="darker">
+          <template v-slot:avatar>
+            <q-icon name="info"></q-icon>
+          </template>
+          No unit yet
+        </q-banner>
+      </template>
+    </q-virtual-scroll>
   </div>
 </template>
 

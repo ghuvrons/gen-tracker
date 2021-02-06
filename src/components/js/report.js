@@ -31,12 +31,14 @@ const parseReport = (hex) => {
 };
 
 const lastFullReport = (report, reports) => {
-  let index = reports.findIndex(({ hex }) => hex === report.hex);
+  if (report) {
+    let index = reports.findIndex(({ hex }) => hex === report.hex);
 
-  if (index >= 0) {
-    while (index < reports.length) {
-      let prev = reports[index++];
-      if (prev.frameID.val === config.frame.id.FULL) return prev;
+    if (index >= 0) {
+      while (index < reports.length) {
+        let prev = reports[index++];
+        if (prev.frameID.val === config.frame.id.FULL) return prev;
+      }
     }
   }
   return;

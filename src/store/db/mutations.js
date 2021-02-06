@@ -46,9 +46,8 @@ export default {
   [mutations.ADD_UNITS](state, payload) {
     let unit = state.units.find((unitID) => unitID === payload);
 
-    if (!state.theUnit) state.theUnit = payload;
     if (!unit) state.units.unshift(payload);
-    if (state.units.length > maxStorage.units) state.units.pop();
+    if (!state.theUnit) state.theUnit = payload;
   },
   [mutations.ADD_REPORTS](state, payload) {
     state.reports.unshift(payload);
