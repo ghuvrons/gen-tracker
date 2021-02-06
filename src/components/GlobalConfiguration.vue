@@ -1,9 +1,8 @@
 <template>
   <div :style="`height: calc(100vh - ${height}vh - 105px)`">
-    <div class="row">
-      <div class="col-auto q-ma-sm">
+    <div class="row q-gutter-xs">
+      <div class="col-auto">
         <q-btn
-          class="q-ma-xs"
           icon="delete"
           color="negative"
           label="Clear data"
@@ -11,9 +10,8 @@
           @click="clearStore()"
         />
       </div>
-      <div class="col-auto q-ma-sm">
+      <div class="col-auto">
         <q-btn
-          class="q-ma-xs"
           icon="stop"
           color="primary"
           label="Ignore command"
@@ -21,9 +19,8 @@
           @click="$root.$emit('ignoreCommand')"
         />
       </div>
-      <div class="col-auto q-ma-sm">
+      <div class="col-auto">
         <q-btn
-          class="q-ma-xs"
           icon="cloud_download"
           color="green"
           label="Export CSV"
@@ -31,9 +28,8 @@
           @click.native="exportCSV()"
         />
       </div>
-      <div class="col-auto q-ma-sm">
+      <div class="col-auto">
         <q-btn
-          class="q-ma-xs"
           icon="cloud_download"
           color="purple"
           label="Export JSON"
@@ -42,34 +38,27 @@
         />
       </div>
     </div>
-    <div class="row">
-      <div class="col-auto q-ma-sm">
+    <div class="row q-gutter-xs q-mt-xs">
+      <div class="col-auto">
         <q-uploader
           ref="importer"
           :factory="importJSON"
           :dark="darker"
-          class="q-ma-sm"
           accept=".json"
           label="Import JSON"
           @finish="finish"
         />
       </div>
     </div>
-    <div class="row">
-      <div class="col-auto q-ma-sm">
-        <q-toggle
-          v-model="darkState"
-          :dark="darker"
-          class="q-pt-lg"
-          label="Dark Mode"
-        />
+    <div class="row q-gutter-xs q-mt-xs">
+      <div class="col-auto">
+        <q-toggle v-model="darkState" :dark="darker" label="Dark Mode" />
       </div>
-      <div class="col-auto q-ma-sm">
+      <div class="col-auto">
         <q-toggle
           v-model="calibrationState"
           :disable="units.length == 0"
           :dark="darker"
-          class="q-pt-lg"
           label="Time Calibration"
         />
       </div>

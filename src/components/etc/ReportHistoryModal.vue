@@ -10,18 +10,11 @@
       <q-header class="bg-primary">
         <q-toolbar>
           <q-toolbar-title>
-            <span class="text-weight-bold">HISTORY</span>
-
+            <span v-if="$q.screen.gt.sm" class="text-weight-bold">HISTORY</span>
             {{ this.theField.title }}
             <q-chip v-if="chart.data" dark dense square>
               {{ chart.data.labels.length }}
             </q-chip>
-            <!-- <q-item-label class="text-white" caption>
-              {{ this.theField.title }}
-              <q-chip v-if="chart.data" dark dense square>
-                {{ chart.data.labels.length }}
-              </q-chip>
-            </q-item-label> -->
           </q-toolbar-title>
           <q-btn flat round dense icon="close" v-close-popup />
         </q-toolbar>
