@@ -47,7 +47,10 @@ export default {
     importData(reports) {
       reports.forEach((hex, i) => {
         // console.info(i, hex);
-        this.$nextTick(() => this.handleFrame(hex));
+        this.$nextTick(() => {
+          console.info(`Importing ${((i + 1) * 100) / reports.length}%`);
+          this.handleFrame(hex);
+        });
       });
 
       this.$q.notify({
@@ -67,9 +70,9 @@ export default {
       this.$timer.start("cmdTimeout");
     },
     stopWaitting(type, message) {
-      this.dismiss();
       this.CLEAR_THE_COMMAND();
       this.SET_LOADING(false);
+      if (this.dismiss) this.dismiss();
       if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
 
       this.$q.notify({ type, message });

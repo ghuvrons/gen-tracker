@@ -13,11 +13,7 @@
       </q-chip>
     </div>
 
-    <q-virtual-scroll
-      :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-      :items="reportFields ? reportFields : []"
-      separator
-    >
+    <q-virtual-scroll :items="reportFields" class="fill-height" separator>
       <template v-slot="{ item: field, index }">
         <q-item
           :key="field"
@@ -59,7 +55,6 @@
       v-if="historyField"
       @close="historyField = null"
       :field="historyField"
-      :height="height - 210"
     >
     </report-history-modal>
   </div>
@@ -75,9 +70,6 @@ import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
-  props: {
-    height: Number,
-  },
   mixins: [CommonMixin],
   components: {
     ReportHistoryModal,

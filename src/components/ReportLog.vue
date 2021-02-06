@@ -1,6 +1,6 @@
 <template>
-  <div class="row q-gutter-xs">
-    <div class="col-xs-12 text-right">
+  <div class="row">
+    <div class="col-12 text-right">
       <q-btn
         color="green"
         label="FOLLOW"
@@ -14,10 +14,10 @@
         @click="lock.follow = !lock.follow"
       />
     </div>
-    <div class="col-xs-12">
+    <div class="col-12">
       <q-virtual-scroll
-        :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-        :items="devReports ? devReports : []"
+        :items="devReports"
+        style="height: calc(100vh - 440px)"
         separator
       >
         <template v-slot="{ item: report, index }">
@@ -80,9 +80,6 @@ import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
-  props: {
-    height: Number,
-  },
   mixins: [CommonMixin],
   data() {
     return {

@@ -1,18 +1,6 @@
 # GEN-Tracker
 
-- GEN Server & GEN Client should be executed from same machine (the server).
-
-  Or change the **socket.address** in **GEN-Client/src/components/js/opt/config.js**
-
-## GEN-Tracker Client
-
-![gen-tracker-server](gen-tracker-2020-02-05_10.51.37.gif)
-
-- Use socket.io-client _(for bi-directional communication with GEN-Server)_.
-
-  Parse HEX string to readable data format.
-
-- Run: **quasar dev**
+![gen-tracker-client](gen-tracker-2020-02-05_10.51.37.gif)
 
 ## Todo Progress
 
@@ -73,19 +61,21 @@
 - [x] ReportReader should change based on ReportLog, some parameter not changed
 - [x] Change Y-axes label from 'value' to 'unit name'
 - [x] Fix back Odometer and Speed to km and km/h
-- [ ] make auto focus on command reference search bar
-- [ ] add driver name to the report log (if any)
-- [x] ~~simulate reports every 5 second for faker~~
+- [x] ~~make auto focus on command reference search bar~~
+- [x] ~~add driver name to the report log (if any)~~
+- [x] simulate reports every 5 second for faker
 - [x] ~~move faker to server~~
-- [ ] Use GPS heading for StreetView
-  - <https://developers.google.com/maps/documentation/javascript/streetview?hl=id>
-- [ ] Bugs: FullData can be clicked when it's only 1, make the chart error
-- [ ] Fix "intervention" error log when scrolling command list
-- [ ] Group ReportReader parameter based on VCU, BMS & MCU
-- [ ] Fix, When FollowButton clicked, it is not automatically scrolled to the last data
-- [ ] Add keyboard (up & down) control to ReportLog
-- [ ] Re-check "Generate Unit" compatibility
-- [ ] Move communication handler to backend, not client
-- [ ] Fix y-axis chart when its bigger
-- [ ] change axes range unit (K, M, G)
-- [ ] Fix RepsonseLog not sync with command sent
+- [x] Use GPS heading for StreetView
+- [x] Bugs: FullData can be clicked when it's only 1, make the chart error
+- [x] Fix "intervention" error log when scrolling command list
+- [x] ~~Group ReportReader parameter based on VCU, BMS & MCU~~
+- [x] Fix, When FollowButton clicked, it is not automatically scrolled to the last data
+- [x] ~~Add keyboard (up & down) control to ReportLog~~
+- [x] ~~Re-check "Generate Unit" compatibility~~
+- [x] Move communication handler to backend, not client
+- [x] Fix y-axis chart when its bigger
+- [x] Fix RepsonseLog not sync with command sent
+- [x] Upgrade to quasar v.1.x.x (stable)
+- [x] Remove gen-server, use MQTT broker instead
+- [ ] Use dynamic height
+- [ ] Change axes range unit (K, M, G)

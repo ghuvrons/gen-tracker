@@ -3,6 +3,7 @@
     v-model="modalOpen"
     @hide="$emit('close')"
     :maximized="$q.platform.is.mobile"
+    full-height
     full-width
   >
     <q-card :dark="darker">
@@ -12,8 +13,12 @@
           {{ chart.data.labels.length }}
         </q-chip>
       </q-card-section>
+      <q-separator></q-separator>
 
-      <q-card-section class="scroll q-ma-sm" style="max-height: 70vh">
+      <q-card-section
+        class="scroll q-ma-sm"
+        style="height: calc(100vh - 177px)"
+      >
         <div class="row">
           <div
             :class="
@@ -22,9 +27,7 @@
           >
             <div class="q-pa-sm">
               <line-chart
-                :styles="{
-                  height: (height < 200 ? 200 : height) + 'px',
-                }"
+                style="height: calc(100vh - 360px)"
                 :param="chart"
                 :update="history.update"
                 :dark="darker"
@@ -86,12 +89,7 @@
           </div>
 
           <div v-if="eventGroup" class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
-            <div
-              class="q-pa-sm scroll"
-              :style="{
-                height: (height < 150 ? 150 : height) + 100 + 'px',
-              }"
-            >
+            <div class="q-pa-sm scroll" style="max-height: calc(100vh - 210px)">
               <event-group-reader
                 :current-value="currentValue"
               ></event-group-reader>
@@ -99,11 +97,9 @@
           </div>
         </div>
       </q-card-section>
+      <q-separator></q-separator>
 
-      <q-card-actions
-        :class="{ 'absolute-bottom': $q.platform.is.mobile }"
-        class="bg-primary text-white"
-      >
+      <q-card-actions class="bg-primary text-white absolute-bottom">
         <q-btn unelevated @click="modalOpen = false" label="Close" />
       </q-card-actions>
     </q-card>
@@ -127,7 +123,6 @@ export default {
     field: {
       required: true,
     },
-    height: Number,
   },
   mixins: [CommonMixin],
   components: {
@@ -175,7 +170,9 @@ export default {
       return getField(Report, this.field);
     },
     eventGroup() {
-      return this.field === "eventsGroup" && this.devEvents;
+      return (
+        this.field === "eventsGroup" && Object.keys(this.devEvents).length > 0
+      );
     },
     rangeSample() {
       let { iMin, iMax } = this.findRange(this.range.value);

@@ -10,6 +10,7 @@
       >
       </q-icon>
     </div>
+
     <div class="q-pa-sm">
       <q-input
         v-model="commandBuffer"

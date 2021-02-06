@@ -1,5 +1,10 @@
 <template>
-  <q-dialog v-model="modalOpen" :maximized="$q.platform.is.mobile" full-width>
+  <q-dialog
+    v-model="modalOpen"
+    :maximized="$q.platform.is.mobile"
+    full-width
+    full-height
+  >
     <q-card :dark="darker">
       <q-card-section class="bg-primary text-white">
         COMMAND LIST
@@ -9,40 +14,38 @@
       </q-card-section>
       <q-separator></q-separator>
 
-      <q-card-section class="scroll" style="max-height: 70vh">
-        <q-list :dark="darker" separator>
-          <q-item
-            v-for="(el, i) in searchResult"
-            :key="i"
-            @click="$emit('select', el.command)"
-            :dark="darker"
-            clickable
-          >
-            <q-item-section>
-              <q-item-label lines="1">{{ el.command }}</q-item-label>
-              <q-item-label lines="2" caption>{{ el.desc }}</q-item-label>
-            </q-item-section>
-            <q-item-section v-if="el.type" side>
-              <q-item-label lines="1">
-                <q-chip dark dense square color="red">
-                  {{ el.type }}
-                </q-chip>
-              </q-item-label>
-              <q-item-label lines="2">
-                <q-chip dark dense square color="green">
-                  {{ getRange(el.range) }}
-                </q-chip>
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
+      <q-card-section class="scroll" style="height: calc(100vh - 155px)">
+        <q-virtual-scroll :items="searchResult" class="fill-height" separator>
+          <template v-slot="{ item: cmd, index }">
+            <q-item
+              :key="index"
+              @click="$emit('select', cmd.command)"
+              :dark="darker"
+              clickable
+            >
+              <q-item-section>
+                <q-item-label lines="1">{{ cmd.command }}</q-item-label>
+                <q-item-label lines="2" caption>{{ cmd.desc }}</q-item-label>
+              </q-item-section>
+              <q-item-section v-if="cmd.type" side>
+                <q-item-label lines="1">
+                  <q-chip dark dense square color="red">
+                    {{ cmd.type }}
+                  </q-chip>
+                </q-item-label>
+                <q-item-label lines="2">
+                  <q-chip dark dense square color="green">
+                    {{ getRange(cmd.range) }}
+                  </q-chip>
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-virtual-scroll>
       </q-card-section>
       <q-separator></q-separator>
 
-      <q-card-actions
-        :class="{ 'absolute-bottom': $q.platform.is.mobile }"
-        class="bg-primary text-white"
-      >
+      <q-card-actions class="absolute-bottom bg-primary text-white">
         <q-btn unelevated @click="modalOpen = false" label="Close" />
       </q-card-actions>
     </q-card>

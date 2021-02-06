@@ -12,7 +12,7 @@ export default {
     commit(mutations.ADD_REPORTS, payload);
   },
   [actions.INSERT_COMMANDS]({ commit }, payload) {
-    commit(mutations.ADD_UNITS, payload.unitID.val);
+    commit(mutations.ADD_UNITS, payload.unitID);
     commit(mutations.ADD_COMMANDS, payload);
   },
 };

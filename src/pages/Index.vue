@@ -1,42 +1,41 @@
 <template>
   <q-page :class="darkerClass">
-    <!--
-          we listen for size changes on this above
-          <element>, so we place the observer as direct child:
-        -->
-    <q-resize-observer @resize="onResizePage" />
+    <q-splitter :value="40" style="height: calc(100vh - 50px)" horizontal>
+      <template v-slot:before>
+        <map-management> </map-management>
+      </template>
 
-    <map-management :height="mapHeight" :pageWidth="pageWidth">
-    </map-management>
+      <template v-slot:after>
+        <q-tabs v-model="selectedTab" class="bg-primary text-white">
+          <q-tab name="tab-1" label="Report Log">
+            <q-badge color="red" floating>{{ devReports.length }}</q-badge>
+          </q-tab>
+          <q-tab name="tab-2" label="Driver Management">
+            <q-badge color="red" floating>{{ devFingers.length }}</q-badge>
+          </q-tab>
+          <q-tab name="tab-3" label="Configuration" />
+        </q-tabs>
 
-    <q-tabs v-model="selectedTab" class="bg-primary text-white">
-      <q-tab name="tab-1" label="Report Log">
-        <q-badge color="red" floating>{{ devReports.length }}</q-badge>
-      </q-tab>
-      <q-tab name="tab-2" label="Driver Management">
-        <q-badge color="red" floating>{{ devFingers.length }}</q-badge>
-      </q-tab>
-      <q-tab name="tab-3" label="Configuration" />
-    </q-tabs>
-
-    <!-- Targets -->
-    <q-tab-panels
-      v-model="selectedTab"
-      :class="darkerClass"
-      keep-alive
-      animated
-      swipeable
-    >
-      <q-tab-panel name="tab-1">
-        <report-log :height="paneHeight"></report-log>
-      </q-tab-panel>
-      <q-tab-panel name="tab-2">
-        <driver-management :height="paneHeight"></driver-management>
-      </q-tab-panel>
-      <q-tab-panel name="tab-3">
-        <global-configuration></global-configuration>
-      </q-tab-panel>
-    </q-tab-panels>
+        <!-- Targets -->
+        <q-tab-panels
+          v-model="selectedTab"
+          :class="darkerClass"
+          keep-alive
+          animated
+          swipeable
+        >
+          <q-tab-panel name="tab-1">
+            <report-log></report-log>
+          </q-tab-panel>
+          <q-tab-panel name="tab-2">
+            <driver-management></driver-management>
+          </q-tab-panel>
+          <q-tab-panel name="tab-3">
+            <global-configuration></global-configuration>
+          </q-tab-panel>
+        </q-tab-panels>
+      </template>
+    </q-splitter>
   </q-page>
 </template>
 
@@ -70,22 +69,6 @@ export default {
   },
   computed: {
     ...mapGetters("db", [devReports, devFingers]),
-  },
-  methods: {
-    onResize(height) {
-      this.paneHeight = height - this.mapHeight - 180;
-    },
-    onResizePage({ width }) {
-      this.pageWidth = width;
-    },
-  },
-  watch: {
-    "$q.screen.height": {
-      immediate: true,
-      handler(h) {
-        this.onResize(h);
-      },
-    },
   },
 };
 </script>

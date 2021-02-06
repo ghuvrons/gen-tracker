@@ -8,8 +8,8 @@
     </div>
 
     <q-virtual-scroll
-      :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-      :items="devCommands ? devCommands : []"
+      :items="devCommands"
+      style="height: calc(100vh - 440px)"
       separator
     >
       <template v-slot="{ item: cmd, index }">
@@ -54,9 +54,6 @@ import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
-  props: {
-    height: Number,
-  },
   mixins: [CommonMixin],
   computed: {
     ...mapState("db", ["loading"]),

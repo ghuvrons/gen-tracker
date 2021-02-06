@@ -34,8 +34,8 @@
     </div>
     <div class="col-xs-12">
       <q-virtual-scroll
-        :style="{ height: (height < 150 ? 150 : height) + 'px' }"
-        :items="devFingers ? devFingers : []"
+        :items="devFingers"
+        style="height: calc(100vh - 450px)"
         separator
       >
         <template v-slot="{ item: driver, index }">
@@ -89,9 +89,6 @@ import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
-  props: {
-    height: Number,
-  },
   mixins: [CommonMixin],
   data() {
     return {

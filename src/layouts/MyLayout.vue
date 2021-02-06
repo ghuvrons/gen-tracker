@@ -27,14 +27,20 @@
         </q-btn>
 
         <q-btn flat dense round @click="drawerOpen.right = !drawerOpen.right">
-          <q-icon name="apps" />
+          <q-icon name="more_vert" />
         </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="drawerOpen.left" :content-class="darkerClass" bordered>
-      <unit-management :height="height.top"></unit-management>
-      <report-reader :height="height.bottom - 72"></report-reader>
+      <q-splitter :value="150" style="height: 100vh" unit="px" horizontal>
+        <template v-slot:before>
+          <unit-management></unit-management>
+        </template>
+        <template v-slot:after>
+          <report-reader></report-reader>
+        </template>
+      </q-splitter>
     </q-drawer>
 
     <q-drawer
@@ -43,8 +49,14 @@
       :content-class="darkerClass"
       bordered
     >
-      <command-management></command-management>
-      <response-log :height="height.bottom - 73"></response-log>
+      <q-splitter :value="128" style="height: 100vh" unit="px" horizontal>
+        <template v-slot:before>
+          <command-management></command-management>
+        </template>
+        <template v-slot:after>
+          <response-log></response-log>
+        </template>
+      </q-splitter>
     </q-drawer>
 
     <q-page-container>
@@ -75,24 +87,7 @@ export default {
         left: this.$q.platform.is.desktop,
         right: false,
       },
-      height: {
-        top: 90,
-        bottom: 0,
-      },
     };
-  },
-  methods: {
-    onResize(height) {
-      this.height.bottom = height - this.height.top;
-    },
-  },
-  watch: {
-    "$q.screen.height": {
-      immediate: true,
-      handler(h) {
-        this.onResize(h);
-      },
-    },
   },
 };
 </script>
