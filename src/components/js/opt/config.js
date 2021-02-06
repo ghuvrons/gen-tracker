@@ -2,7 +2,7 @@ import { unix2time } from "components/js/utils";
 
 const config = {
   app: {
-    version: "1.22",
+    version: "1.23",
     title: "GEN Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -15,7 +15,7 @@ const config = {
   },
   command: {
     prefix: "@C",
-    timeoutMS: 15000,
+    timeoutMS: 5000,
   },
   frame: {
     prefix: "@R",

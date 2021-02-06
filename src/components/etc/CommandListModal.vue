@@ -38,7 +38,7 @@
                       {{ cmd.type }}
                     </q-chip>
                   </q-item-label>
-                  <q-item-label lines="2">
+                  <q-item-label v-if="cmd.range" lines="2">
                     <q-chip dark dense square color="green">
                       {{ getRange(cmd.range) }}
                     </q-chip>
