@@ -9,13 +9,11 @@
       :dark="darker"
       expand-separator
     >
-      <q-virtual-scroll :items="event" class="fill-height" separator>
+      <q-virtual-scroll :items="event" style="max-height:80vh" separator>
         <template v-slot="{ item: evt, index }">
           <q-item :key="`${name}-${evt.time}`" :dark="darker">
             <q-item-section>
-              <q-item-label caption>
-                {{ evt.time }}
-              </q-item-label>
+              <q-item-label caption>{{ evt.time }}</q-item-label>
             </q-item-section>
           </q-item>
         </template>

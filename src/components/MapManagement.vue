@@ -1,16 +1,9 @@
 <template>
   <q-splitter :value="showStreetView ? 50 : 100">
     <template v-slot:before>
-      <gmap-map
-        class="fit"
-        :center="center"
-        :zoom="zoom"
-        :options="options"
-        map-type-id="roadmap"
-      >
+      <gmap-map class="fit" :center="center" :zoom="zoom" :options="options" map-type-id="roadmap">
         <gmap-marker v-if="position.valid" :position="position"></gmap-marker>
-        <gmap-polyline v-if="path.length > 0" :path="path" ref="polyline">
-        </gmap-polyline>
+        <gmap-polyline v-if="path.length > 0" :path="path" ref="polyline"></gmap-polyline>
       </gmap-map>
     </template>
     <template v-if="showStreetView" v-slot:separator>
@@ -30,8 +23,7 @@
         :zoom="1"
         @pano_changed="updatePano"
         @pov_changed="updatePov"
-      >
-      </gmap-street-view-panorama>
+      ></gmap-street-view-panorama>
     </template>
   </q-splitter>
 </template>
@@ -70,7 +62,7 @@ export default {
     ...mapState("db", ["theReport"]),
     ...mapGetters("db", [devReports]),
     showStreetView() {
-      return this.$q.screen.gt.sm;
+      return this.$q.screen.gt.xs;
     },
   },
   methods: {
