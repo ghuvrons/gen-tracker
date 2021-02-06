@@ -1,10 +1,22 @@
 <template>
   <q-page :class="darkerClass">
-    <q-splitter :value="50" style="height: calc(100vh - 50px)" horizontal>
+    <q-splitter
+      v-model="splitter"
+      style="height: calc(100vh - 50px)"
+      horizontal
+    >
       <template v-slot:before>
         <map-management> </map-management>
       </template>
-
+      <template v-slot:separator>
+        <q-avatar
+          color="secondary"
+          class="text-right"
+          text-color="white"
+          size="20px"
+          icon="drag_indicator"
+        />
+      </template>
       <template v-slot:after>
         <q-tabs v-model="selectedTab" class="bg-primary text-white" dense>
           <q-tab name="tab-1" label="Report Log">
@@ -25,13 +37,13 @@
           swipeable
         >
           <q-tab-panel name="tab-1">
-            <report-log></report-log>
+            <report-log :height="splitter"></report-log>
           </q-tab-panel>
           <q-tab-panel name="tab-2">
-            <driver-management></driver-management>
+            <driver-management :height="splitter"></driver-management>
           </q-tab-panel>
           <q-tab-panel name="tab-3">
-            <global-configuration></global-configuration>
+            <global-configuration :height="splitter"></global-configuration>
           </q-tab-panel>
         </q-tab-panels>
       </template>
@@ -65,6 +77,7 @@ export default {
       mapHeight: 300,
       paneHeight: 0,
       pageWidth: 0,
+      splitter: 50,
     };
   },
   computed: {

@@ -8,7 +8,6 @@ const COMMAND_LIST = [
     desc: "Get VCU firmware information",
     code: 0,
     subCode: 0,
-    type: "void",
   },
   {
     command: "GEN_LED",
@@ -56,7 +55,6 @@ const COMMAND_LIST = [
     desc: "Set beep the audio module",
     code: 2,
     subCode: 0,
-    type: "void",
   },
   {
     command: "AUDIO_MUTE",
@@ -79,7 +77,7 @@ const COMMAND_LIST = [
     desc: "Get all registered id",
     code: 3,
     subCode: 0,
-    type: "void",
+
     timeout: 10000,
   },
   {
@@ -87,7 +85,7 @@ const COMMAND_LIST = [
     desc: "Add new fingerprint",
     code: 3,
     subCode: 1,
-    type: "void",
+
     timeout: 20000,
   },
   {
@@ -104,7 +102,7 @@ const COMMAND_LIST = [
     desc: "Reset all saved fingerprint ID",
     code: 3,
     subCode: 3,
-    type: "void",
+
     timeout: 10000,
   },
   {
@@ -112,14 +110,13 @@ const COMMAND_LIST = [
     desc: "Pairing pocket keyless",
     code: 4,
     subCode: 0,
-    type: "void",
   },
   {
     command: "FOTA_VCU",
     desc: "Upgrade VCU firmware",
     code: 5,
     subCode: 0,
-    type: "void",
+
     timeout: 5 * 60000,
   },
   {
@@ -127,7 +124,7 @@ const COMMAND_LIST = [
     desc: "Upgrade HMI firmware",
     code: 5,
     subCode: 1,
-    type: "void",
+
     timeout: 10 * 60000,
   },
 ];

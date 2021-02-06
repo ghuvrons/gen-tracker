@@ -8,7 +8,7 @@
           round
           icon="menu"
           aria-label="Menu"
-          @click="drawerOpen.left = !drawerOpen.left"
+          @click="drawer.left = !drawer.left"
         >
         </q-btn>
 
@@ -34,43 +34,46 @@
           dense
           round
           icon="more_vert"
-          @click="drawerOpen.right = !drawerOpen.right"
+          @click="drawer.right = !drawer.right"
         >
         </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      v-model="drawerOpen.left"
+      v-model="drawer.left"
       :content-class="darkerClass"
       show-if-above
       bordered
     >
-      <q-splitter :value="150" style="height: 100vh" unit="px" horizontal>
+      <q-splitter v-model="splitter" style="height: 100vh" unit="px" horizontal>
         <template v-slot:before>
-          <unit-management></unit-management>
+          <unit-management :height="splitter"></unit-management>
+        </template>
+        <template v-slot:separator>
+          <q-avatar
+            color="secondary"
+            class="text-right"
+            text-color="white"
+            size="20px"
+            icon="drag_indicator"
+          />
         </template>
         <template v-slot:after>
-          <report-reader></report-reader>
+          <report-reader :height="splitter"></report-reader>
         </template>
       </q-splitter>
     </q-drawer>
 
     <q-drawer
       side="right"
-      v-model="drawerOpen.right"
+      v-model="drawer.right"
       :content-class="darkerClass"
       show-if-above
       bordered
     >
-      <q-splitter :value="125" style="height: 100vh" unit="px" horizontal>
-        <template v-slot:before>
-          <command-management></command-management>
-        </template>
-        <template v-slot:after>
-          <response-log></response-log>
-        </template>
-      </q-splitter>
+      <command-management style="height: 120px"></command-management>
+      <response-log :height="120"></response-log>
     </q-drawer>
 
     <q-page-container>
@@ -97,10 +100,11 @@ export default {
   },
   data() {
     return {
-      drawerOpen: {
+      drawer: {
         left: this.$q.platform.is.desktop,
         right: false,
       },
+      splitter: 150,
     };
   },
 };

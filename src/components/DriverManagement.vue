@@ -1,5 +1,5 @@
 <template>
-  <div style="height: calc(100vh - 50vh - 50px - 50px)">
+  <div :style="`height: calc(100vh - ${height}vh - 105px)`">
     <q-virtual-scroll :items="devFingers" separator>
       <template v-slot="{ item: driver, index }">
         <q-item :key="index" :dark="darker">
@@ -93,6 +93,11 @@ import CommonMixin from "components/mixins/CommonMixin";
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
+  props: {
+    height: {
+      required: true,
+    },
+  },
   data() {
     return {
       name: ["One", "Two", "Three", "Four", "Five"],

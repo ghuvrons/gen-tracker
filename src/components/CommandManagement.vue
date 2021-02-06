@@ -38,10 +38,8 @@
       </q-input>
     </div>
 
-    <command-list-modal
-      v-model="modalOpen"
-      @select="selectCommand"
-    ></command-list-modal>
+    <command-list-modal v-model="modalOpen" @select="selectCommand">
+    </command-list-modal>
   </div>
 </template>
 

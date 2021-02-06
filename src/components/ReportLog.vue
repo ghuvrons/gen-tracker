@@ -1,5 +1,5 @@
 <template>
-  <div style="height: calc(100vh - 50vh - 50px - 50px)">
+  <div :style="`height: calc(100vh - ${height}vh - 105px)`">
     <q-virtual-scroll :items="devReports" separator>
       <template v-slot="{ item: report, index }">
         <q-item
@@ -74,6 +74,11 @@ import CommonMixin from "components/mixins/CommonMixin";
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
+  props: {
+    height: {
+      required: true,
+    },
+  },
   data() {
     return {
       lock: {
@@ -92,6 +97,9 @@ export default {
     },
   },
   watch: {
+    height: function (h) {
+      console.warn(h);
+    },
     devReports: {
       immediate: true,
       handler(reports) {

@@ -34,12 +34,12 @@
                 </q-item-section>
                 <q-item-section v-if="cmd.type" side>
                   <q-item-label lines="1">
-                    <q-chip dark dense square color="red">
+                    <q-chip dark dense square color="grey">
                       {{ cmd.type }}
                     </q-chip>
                   </q-item-label>
                   <q-item-label v-if="cmd.range" lines="2">
-                    <q-chip dark dense square color="green">
+                    <q-chip dark dense square color="primary">
                       {{ getRange(cmd.range) }}
                     </q-chip>
                   </q-item-label>

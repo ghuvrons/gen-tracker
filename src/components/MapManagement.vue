@@ -13,6 +13,15 @@
         </gmap-polyline>
       </gmap-map>
     </template>
+    <template v-if="showStreetView" v-slot:separator>
+      <q-avatar
+        color="secondary"
+        class="text-right"
+        text-color="white"
+        size="20px"
+        icon="drag_indicator"
+      />
+    </template>
     <template v-if="showStreetView" v-slot:after>
       <gmap-street-view-panorama
         class="fit"

@@ -3,17 +3,17 @@
     <q-bar class="bg-blue text-white">
       <q-toolbar-title class="text-subtitle1">
         Response Reader
-        <q-badge
-          v-if="theReport"
-          :color="fullFrame ? 'green' : 'light-green'"
-          align="top"
-        >
-          {{ fullFrame ? "FULL" : "SIMPLE" }}
-        </q-badge>
       </q-toolbar-title>
+      <q-badge v-if="theReport" :color="fullFrame ? 'green' : 'light-green'">
+        {{ fullFrame ? "FULL" : "SIMPLE" }}
+      </q-badge>
     </q-bar>
 
-    <q-virtual-scroll :items="reportFields" class="fill-height" separator>
+    <q-virtual-scroll
+      :items="reportFields"
+      :style="`height: calc(100vh - ${height}px - 34px)`"
+      separator
+    >
       <template v-slot="{ item: field, index }">
         <q-item
           :key="field"
@@ -71,6 +71,11 @@ import CommonMixin from "components/mixins/CommonMixin";
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
+  props: {
+    height: {
+      required: true,
+    },
+  },
   components: {
     ReportHistoryModal,
   },

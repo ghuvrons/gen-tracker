@@ -9,7 +9,11 @@
       </q-toolbar-title>
     </q-bar>
 
-    <q-virtual-scroll :items="devCommands" class="fill-height" separator>
+    <q-virtual-scroll
+      :items="devCommands"
+      :style="`height: calc(100vh - ${height}px - 33px)`"
+      separator
+    >
       <template v-slot="{ item: cmd, index }">
         <q-item
           :key="index"
@@ -53,6 +57,11 @@ import CommonMixin from "components/mixins/CommonMixin";
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
+  props: {
+    height: {
+      required: true,
+    },
+  },
   computed: {
     ...mapState("db", ["loading"]),
     ...mapGetters("db", [devCommands]),

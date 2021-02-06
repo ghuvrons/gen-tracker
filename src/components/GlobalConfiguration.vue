@@ -1,5 +1,5 @@
 <template>
-  <div style="height: calc(100vh - 50vh - 50px - 50px)">
+  <div :style="`height: calc(100vh - ${height}vh - 105px)`">
     <div class="row">
       <div class="col-auto q-ma-sm">
         <q-btn
@@ -89,6 +89,11 @@ import CommonMixin from "components/mixins/CommonMixin";
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
+  props: {
+    height: {
+      required: true,
+    },
+  },
   computed: {
     ...mapState("db", [
       "units",
