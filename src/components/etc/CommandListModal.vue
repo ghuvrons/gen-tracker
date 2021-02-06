@@ -14,7 +14,7 @@
       </q-card-section>
       <q-separator></q-separator>
 
-      <q-card-section class="scroll fill-height">
+      <q-card-section class="scroll" style="height: calc(100vh - 155px)">
         <q-virtual-scroll :items="searchResult" class="fill-height" separator>
           <template v-slot="{ item: cmd, index }">
             <q-item
