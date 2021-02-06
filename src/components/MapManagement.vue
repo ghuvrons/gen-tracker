@@ -1,7 +1,13 @@
 <template>
   <q-splitter :value="showStreetView ? 50 : 100">
     <template v-slot:before>
-      <gmap-map class="fit" :center="center" :zoom="zoom" map-type-id="roadmap">
+      <gmap-map
+        class="fit"
+        :center="center"
+        :zoom="zoom"
+        :options="options"
+        map-type-id="roadmap"
+      >
         <gmap-marker v-if="position.valid" :position="position"></gmap-marker>
         <gmap-polyline v-if="path.length > 0" :path="path" ref="polyline">
         </gmap-polyline>
@@ -40,6 +46,15 @@ export default {
       pov: null,
       pano: null,
       path: [],
+      options: {
+        zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: true,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: true,
+        disableDefaultUi: false,
+      },
     };
   },
   computed: {
