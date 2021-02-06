@@ -1,79 +1,77 @@
 <template>
-  <div class="row">
-    <div class="col-12">
-      <div class="row">
-        <div class="col-auto q-ma-sm">
-          <q-btn
-            class="q-ma-xs"
-            icon="delete"
-            color="negative"
-            label="Clear data"
-            :disable="units.length == 0"
-            @click="clearStore()"
-          />
-        </div>
-        <div class="col-auto q-ma-sm">
-          <q-btn
-            class="q-ma-xs"
-            icon="stop"
-            color="primary"
-            label="Ignore command"
-            :disable="!theCommand"
-            @click="$root.$emit('ignoreCommand')"
-          />
-        </div>
-        <div class="col-auto q-ma-sm">
-          <q-btn
-            class="q-ma-xs"
-            icon="cloud_download"
-            color="green"
-            label="Export CSV"
-            :disable="reports.length == 0"
-            @click.native="exportCSV()"
-          />
-        </div>
-        <div class="col-auto q-ma-sm">
-          <q-btn
-            class="q-ma-xs"
-            icon="cloud_download"
-            color="purple"
-            label="Export JSON"
-            :disable="reports.length == 0"
-            @click.native="exportJSON()"
-          />
-        </div>
+  <div>
+    <div class="row">
+      <div class="col-auto q-ma-sm">
+        <q-btn
+          class="q-ma-xs"
+          icon="delete"
+          color="negative"
+          label="Clear data"
+          :disable="units.length == 0"
+          @click="clearStore()"
+        />
       </div>
-      <div class="row">
-        <div class="col-auto q-ma-sm">
-          <q-uploader
-            ref="importer"
-            :factory="importJSON"
-            :dark="darker"
-            class="q-ma-sm"
-            accept=".json"
-            label="Import JSON"
-            @finish="finish"
-          />
-        </div>
+      <div class="col-auto q-ma-sm">
+        <q-btn
+          class="q-ma-xs"
+          icon="stop"
+          color="primary"
+          label="Ignore command"
+          :disable="!theCommand"
+          @click="$root.$emit('ignoreCommand')"
+        />
       </div>
-      <div class="row">
-        <div class="col-auto q-ma-sm">
-          <q-toggle
-            v-model="darkState"
-            :dark="darker"
-            class="q-pt-lg"
-            label="Dark Mode"
-          />
-        </div>
-        <div class="col-auto q-ma-sm">
-          <q-toggle
-            v-model="calibrationState"
-            :disable="units.length == 0"
-            :dark="darker"
-            class="q-pt-lg"
-            label="Time Calibration"
-          />
-        </div>
+      <div class="col-auto q-ma-sm">
+        <q-btn
+          class="q-ma-xs"
+          icon="cloud_download"
+          color="green"
+          label="Export CSV"
+          :disable="reports.length == 0"
+          @click.native="exportCSV()"
+        />
+      </div>
+      <div class="col-auto q-ma-sm">
+        <q-btn
+          class="q-ma-xs"
+          icon="cloud_download"
+          color="purple"
+          label="Export JSON"
+          :disable="reports.length == 0"
+          @click.native="exportJSON()"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-auto q-ma-sm">
+        <q-uploader
+          ref="importer"
+          :factory="importJSON"
+          :dark="darker"
+          class="q-ma-sm"
+          accept=".json"
+          label="Import JSON"
+          @finish="finish"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-auto q-ma-sm">
+        <q-toggle
+          v-model="darkState"
+          :dark="darker"
+          class="q-pt-lg"
+          label="Dark Mode"
+        />
+      </div>
+      <div class="col-auto q-ma-sm">
+        <q-toggle
+          v-model="calibrationState"
+          :disable="units.length == 0"
+          :dark="darker"
+          class="q-pt-lg"
+          label="Time Calibration"
+        />
       </div>
     </div>
   </div>
