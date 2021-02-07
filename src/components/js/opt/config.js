@@ -2,7 +2,7 @@ import { unix2time } from "components/js/utils";
 
 const config = {
   app: {
-    version: "1.26",
+    version: "1.27",
     title: "GEN Tracker",
     subTitle: "GEN Indonesia",
   },

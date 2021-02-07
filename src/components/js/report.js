@@ -19,7 +19,7 @@ const parseReport = (hex) => {
   let data = parseReportData(hex);
 
   return data.reduce(
-    (carry, { field, value, output }) => ({
+    (carry, { field, value, output, unit }) => ({
       ...carry,
       [field]: {
         val: value,

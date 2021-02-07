@@ -11,6 +11,7 @@ import {
 
 const Header = [
   {
+    group: "packet",
     field: "prefix",
     title: "Prefix",
     header: true,
@@ -20,6 +21,7 @@ const Header = [
     display: (valFormat) => valFormat,
   },
   {
+    group: "packet",
     field: "crc",
     title: "CRC",
     header: true,
@@ -30,6 +32,7 @@ const Header = [
     display: (valFormat) => IntToHex(valFormat, 8).toUpperCase(),
   },
   {
+    group: "packet",
     field: "size",
     title: "Size",
     header: true,
@@ -41,6 +44,7 @@ const Header = [
     display: (valFormat) => Dot(valFormat),
   },
   {
+    group: "packet",
     field: "frameID",
     title: "Frame ID",
     header: true,
@@ -51,6 +55,7 @@ const Header = [
     display: (valFormat) => config.frame.name[valFormat],
   },
   {
+    group: "packet",
     field: "unitID",
     title: "Unit ID",
     header: true,

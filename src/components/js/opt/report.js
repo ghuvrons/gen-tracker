@@ -34,6 +34,7 @@ const VCU = ({ required }) => {
     ...RTC.reduce((carry, rtc) => {
       return carry.concat([
         {
+          group: "packet.datetime",
           field: rtc,
           title: startCase(rtc),
           required: true,
@@ -42,12 +43,13 @@ const VCU = ({ required }) => {
           format: (val) =>
             Number(moment(parseDatetime(val), "YYMMDDHHmmss0E").format("X")),
           display: (valFormat) =>
-            // moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
-            moment(valFormat, "X").format("DD MMM YYYY, HH:mm:ss"),
+            moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
+          // moment(valFormat, "X").format("DD MMM YYYY, HH:mm:ss"),
         },
       ]);
     }, []),
     {
+      group: "vcu",
       field: "driverID",
       title: "Driver ID",
       required: true,
@@ -61,6 +63,7 @@ const VCU = ({ required }) => {
       },
     },
     {
+      group: "vcu",
       field: "eventsGroup",
       title: "Events Group",
       required: true,
@@ -70,6 +73,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => IntToHex(valFormat, 16).toUpperCase(),
     },
     {
+      group: "vcu",
       field: "vehicleState",
       title: "Vehicle State",
       required: true,
@@ -79,6 +83,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => getVehicleState(valFormat),
     },
     {
+      group: "vcu.gps",
       field: "gpsLongitude",
       title: "GPS Longitude",
       required: false,
@@ -88,6 +93,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => parseFloat(valFormat.toFixed(7)),
     },
     {
+      group: "vcu.gps",
       field: "gpsLatitude",
       title: "GPS Latitude",
       required: false,
@@ -97,6 +103,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => parseFloat(valFormat.toFixed(7)),
     },
     {
+      group: "vcu.gps",
       field: "gpsAltitude",
       title: "GPS Altitude",
       required: false,
@@ -107,6 +114,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => parseFloat(valFormat.toFixed(2)),
     },
     {
+      group: "vcu.gps",
       field: "gpsHDOP",
       title: "GPS HDOP",
       required: false,
@@ -116,6 +124,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu.gps",
       field: "gpsVDOP",
       title: "GPS VDOP",
       required: false,
@@ -125,6 +134,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu.gps",
       field: "gpsHeading",
       title: "GPS Heading",
       required: false,
@@ -135,6 +145,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu.gps",
       field: "gpsSatInUse",
       title: "GPS Sat. in use",
       required: false,
@@ -145,6 +156,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu",
       field: "speed",
       title: "Vehicle Speed",
       required: false,
@@ -155,6 +167,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu.trip",
       field: "odometer",
       title: "Odometer",
       required: false,
@@ -165,6 +178,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu",
       field: "signal",
       title: "Signal Quality",
       required: false,
@@ -175,6 +189,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu",
       field: "batVoltage",
       title: "Battery Voltage",
       required: false,
@@ -185,8 +200,9 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
-      field: "rangeApproximation",
-      title: "Range Approximation",
+      group: "vcu.estimation",
+      field: "rangeEstimation",
+      title: "Range Estimation",
       required: false,
       chartable: true,
       unit: "Km",
@@ -195,8 +211,9 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
-      field: "batteryEfficiency",
-      title: "Battery Efficiency",
+      group: "vcu.estimation",
+      field: "batteryEstimation",
+      title: "Battery Estimation",
       required: false,
       chartable: true,
       unit: "Km/kWh",
@@ -205,6 +222,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu.trip",
       field: "tripA",
       title: "Trip A",
       required: false,
@@ -215,6 +233,7 @@ const VCU = ({ required }) => {
       display: (valFormat) => Dot(valFormat),
     },
     {
+      group: "vcu.trip",
       field: "tripB",
       title: "Trip B",
       required: false,
@@ -236,6 +255,7 @@ const BMS = ({ required }) => {
   for (let i = 1; i <= BMSCount; i++) {
     let tmp = [
       {
+        group: `bms.${i}`,
         field: `BMSId${i}`,
         title: `BMS-${i} ID`,
         required: true,
@@ -248,6 +268,7 @@ const BMS = ({ required }) => {
         },
       },
       {
+        group: `bms.${i}`,
         field: `BMSVoltage${i}`,
         title: `BMS-${i} Voltage`,
         required: true,
@@ -258,6 +279,7 @@ const BMS = ({ required }) => {
         display: (valFormat) => valFormat.toFixed(2),
       },
       {
+        group: `bms.${i}`,
         field: `BMSCurrent${i}`,
         title: `BMS-${i} Current`,
         required: true,
@@ -268,6 +290,7 @@ const BMS = ({ required }) => {
         display: (valFormat) => valFormat.toFixed(2),
       },
       {
+        group: `bms.${i}`,
         field: `BMSSoc${i}`,
         title: `BMS-${i} SoC`,
         required: false,
@@ -278,6 +301,7 @@ const BMS = ({ required }) => {
         display: (valFormat) => Dot(valFormat),
       },
       {
+        group: `bms.${i}`,
         field: `BMSTemperature${i}`,
         title: `BMS-${i} Temperature`,
         required: false,
@@ -316,6 +340,7 @@ const TEST = () => {
     ...TASK_LIST.reduce((carry, task) => {
       return carry.concat([
         {
+          group: `vcu.task.wakeup`,
           field: `${task}-wakeup`,
           title: `${task} wakeup`,
           required: false,
@@ -326,6 +351,7 @@ const TEST = () => {
           display: (valFormat) => Dot(valFormat),
         },
         {
+          group: `vcu.task.stack`,
           field: `${task}-stack`,
           title: `${task} stack`,
           required: false,
@@ -340,8 +366,9 @@ const TEST = () => {
     ...GYRO_LIST.reduce((carry, gyro) => {
       return carry.concat([
         {
-          field: `motion${gyro}`,
-          title: `Motion ${gyro}`,
+          group: `vcu.gyro`,
+          field: `gyro${gyro}`,
+          title: `Gyro ${gyro}`,
           required: false,
           chartable: true,
           unit: "Degree",

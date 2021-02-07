@@ -83,6 +83,24 @@ const unix2time = (unix) => {
   return moment.unix(unix).format("HH:mm:ss");
 };
 
+const toArrayTree = (obj, data) => {
+  return Object.keys(obj).map((key) => {
+    return typeof obj[key] === "object"
+      ? { label: key, children: toArrayTree(obj[key], data) }
+      : {
+          label: key,
+          data: data && data[key].out,
+        };
+  });
+};
+
+const removeWords = (str, arr) => {
+  return arr.reduce((acc, val) => {
+    const regex = new RegExp(`${val}`, "gi");
+    return acc.replace(regex, "");
+  }, str);
+};
+
 export {
   flowFilter,
   isString,
@@ -93,4 +111,6 @@ export {
   parseDatetime,
   buildTimestamp,
   unix2time,
+  toArrayTree,
+  removeWords,
 };
