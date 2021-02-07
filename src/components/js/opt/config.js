@@ -2,8 +2,8 @@ import { unix2time } from "components/js/utils";
 
 const config = {
   app: {
-    version: "1.29",
-    title: "GEN Tracker",
+    version: "1.30",
+    title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
   mqtt: {

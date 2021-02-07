@@ -149,7 +149,7 @@ module.exports = function (/* ctx */) {
       workboxPluginMode: "GenerateSW", // 'GenerateSW' or 'InjectManifest'
       workboxOptions: { skipWaiting: true, clientsClaim: true }, // only for GenerateSW
       manifest: {
-        name: "GEN Tracker",
+        name: "eBike Tracker",
         short_name: "GEN-Tracker",
         description: "GEN motorcycle tracker",
         display: "standalone",
