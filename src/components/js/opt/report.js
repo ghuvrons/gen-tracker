@@ -257,7 +257,7 @@ const BMS = ({ required }) => {
       {
         group: `bms.${i}`,
         field: `BMSId${i}`,
-        title: `BMS-${i} ID`,
+        title: `BMS${i} ID`,
         required: true,
         size: 4,
         format: (val) => HexToUnsignedInt(ChangeEndian(val)),
@@ -270,7 +270,7 @@ const BMS = ({ required }) => {
       {
         group: `bms.${i}`,
         field: `BMSVoltage${i}`,
-        title: `BMS-${i} Voltage`,
+        title: `BMS${i} Voltage`,
         required: true,
         chartable: true,
         unit: "Volt",
@@ -281,7 +281,7 @@ const BMS = ({ required }) => {
       {
         group: `bms.${i}`,
         field: `BMSCurrent${i}`,
-        title: `BMS-${i} Current`,
+        title: `BMS${i} Current`,
         required: true,
         chartable: true,
         unit: "Ampere",
@@ -292,7 +292,7 @@ const BMS = ({ required }) => {
       {
         group: `bms.${i}`,
         field: `BMSSoc${i}`,
-        title: `BMS-${i} SoC`,
+        title: `BMS${i} SoC`,
         required: false,
         chartable: true,
         unit: "%",
@@ -303,7 +303,7 @@ const BMS = ({ required }) => {
       {
         group: `bms.${i}`,
         field: `BMSTemperature${i}`,
-        title: `BMS-${i} Temperature`,
+        title: `BMS${i} Temperature`,
         required: false,
         chartable: true,
         unit: "Celcius",

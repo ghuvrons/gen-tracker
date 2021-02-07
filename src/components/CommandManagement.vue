@@ -1,17 +1,17 @@
 <template>
   <div>
     <q-bar class="bg-blue text-white">
-      <q-toolbar-title class="text-subtitle1">
-        Command Management
-      </q-toolbar-title>
+      <q-toolbar-title class="text-subtitle1">Command Management</q-toolbar-title>
       <q-btn
         v-if="COMMAND_LIST.length > 0"
         @click.native="modalOpen = true"
+        color="primary"
         icon="info"
-        size="xs"
-        round
         dense
+        push
+        unelevated
       >
+        <q-tooltip anchor="center left" self="center right">List</q-tooltip>
       </q-btn>
     </q-bar>
 
@@ -29,17 +29,12 @@
         :loading="loading"
       >
         <template v-slot:append>
-          <q-icon
-            name="send"
-            class="cursor-pointer"
-            @click="execCommand()"
-          ></q-icon>
+          <q-icon name="send" class="cursor-pointer" @click="execCommand()"></q-icon>
         </template>
       </q-input>
     </div>
 
-    <command-list-modal v-model="modalOpen" @select="selectCommand">
-    </command-list-modal>
+    <command-list-modal v-model="modalOpen" @select="selectCommand"></command-list-modal>
   </div>
 </template>
 

@@ -7,11 +7,14 @@ export default {
   [mutations.SET_LOADING](state, payload) {
     state.loading = payload;
   },
-  [mutations.TOGGLE_CALIBRATION](state) {
-    state.calibration = !state.calibration;
+  [mutations.SET_CALIBRATION](state, value) {
+    state.calibration = value;
   },
-  [mutations.TOGGLE_DARKER](state) {
-    state.darker = !state.darker;
+  [mutations.SET_DARKER](state, value) {
+    state.darker = value;
+  },
+  [mutations.SET_TREE](state, value) {
+    state.tree = value;
   },
   [mutations.CLEAR_ALL](state) {
     state.theUnit = null;

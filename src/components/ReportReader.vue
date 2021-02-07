@@ -8,14 +8,16 @@
           :color="fullFrame ? 'green' : 'light-green'"
         >{{ fullFrame ? "FULL" : "SIMPLE" }}</q-badge>
       </q-toolbar-title>
-      <q-btn-group outline>
-        <q-btn @click="tree = false" icon="list" :color="!tree ? 'primary' : ''" dense>
-          <q-tooltip anchor="top middle" self="bottom middle">List</q-tooltip>
-        </q-btn>
-        <q-btn @click="tree = true" icon="account_tree" :color="tree ? 'primary' : ''" dense>
-          <q-tooltip anchor="top middle" self="bottom middle">Tree</q-tooltip>
-        </q-btn>
-      </q-btn-group>
+      <q-btn
+        @click="treeState = !treeState"
+        :icon="treeState ? 'list' : 'account_tree'"
+        color="primary"
+        unelevated
+        push
+        dense
+      >
+        <q-tooltip anchor="center left" self="center right">{{treeState ? 'List' : 'Tree'}}</q-tooltip>
+      </q-btn>
     </q-bar>
 
     <q-banner v-if="reportFields.length == 0" :dark="darker">
@@ -25,11 +27,12 @@
       No active report yet
     </q-banner>
     <template v-else>
-      <template v-if="tree">
+      <template v-if="treeState">
         <q-input v-model="filter" label="Filter" :dark="darker" clearable dense></q-input>
         <q-scroll-area :style="`height: calc(100vh - ${height}px - 73px)`">
           <q-tree
-            :selected.sync="selected"
+            :selected="historyField"
+            @update:selected="openHistory"
             :nodes="nodes"
             :filter="filter"
             :dark="darker"
@@ -40,7 +43,7 @@
             <template v-slot:default-header="prop">
               <span class="text-weight-bold">{{ getFieldNodeTitle(prop.node.label) }}</span>
               <span
-                v-if="isDefined(prop.node.data)"
+                v-if="defined(prop.node.data)"
               >: {{ prop.node.data }} {{ getSubField(prop.node.label, 'unit') }}</span>
             </template>
           </q-tree>
@@ -87,9 +90,10 @@
 import ReportHistoryModal from "components/etc/ReportHistoryModal";
 import { Report, lastFullReport } from "components/js/report";
 import { devReports } from "../store/db/getter-types";
-import { mapState, mapGetters } from "vuex";
+import { SET_TREE } from "../store/db/mutation-types";
+import { mapState, mapGetters, mapMutations } from "vuex";
 import { getField, toArrayTree, removeWords } from "components/js/utils";
-import { groupBy, set } from "lodash";
+import { groupBy, set, omit } from "lodash";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -106,9 +110,7 @@ export default {
   data() {
     return {
       historyField: null,
-      tree: false,
       filter: "",
-      selected: null,
       simple: [
         {
           label: "Satisfied customers (with avatar)",
@@ -143,25 +145,35 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["theReport"]),
+    ...mapState("db", ["theReport", "tree"]),
     ...mapGetters("db", [devReports]),
+    treeState: {
+      get() {
+        return this.tree;
+      },
+      set(value) {
+        this.SET_TREE(value);
+      },
+    },
     theReportData() {
-      return {
+      let data = {
         ...lastFullReport(this.theReport, this.devReports),
         ...this.theReport,
       };
+      if (Object.keys(data).length > 0) return data;
+      return;
     },
     reportFields() {
-      return Object.keys(this.$_.omit(this.theReportData, "hex"));
+      return Object.keys(omit(this.theReportData, "hex"));
     },
     fullFrame() {
       return this.theReport.frameID.val === this.$config.frame.id.FULL;
     },
     nodes() {
-      if (Object.keys(this.theReportData).length == 0) return [];
+      if (!this.theReportData) return [];
 
       let group = groupBy(Report, "group");
-      let tree = toArrayTree(
+      return toArrayTree(
         Object.keys(groupBy(Report, "group")).reduce(
           (o, key) =>
             set(
@@ -173,18 +185,17 @@ export default {
         ),
         this.theReportData
       );
-
-      return tree;
     },
   },
   methods: {
+    ...mapMutations("db", [SET_TREE]),
     openHistory(field) {
-      if (this.hasHistory(field)) this.historyField = field;
+      if (field && this.hasHistory(field)) this.historyField = field;
     },
     hasHistory(field) {
-      let { chartable } = getField(Report, field);
+      let theField = getField(Report, field);
       let related = this.devReports.filter(({ [field]: _field }) => _field);
-      return chartable && related.length >= 2;
+      return theField && theField.chartable && related.length >= 2;
     },
     realtimeField(field) {
       let { required } = getField(Report, field);
@@ -192,7 +203,7 @@ export default {
         this.theReport.frameID.val === this.$config.frame.id.FULL || required
       );
     },
-    isDefined(prop) {
+    defined(prop) {
       return typeof prop !== "undefined";
     },
     getFieldNodeTitle(field) {
@@ -204,18 +215,11 @@ export default {
       return field.toUpperCase();
     },
     getSubField(field, subField) {
-      let theField = getField(Report, field);
-      if (theField) return theField[subField];
-      return field;
+      return getField(Report, field)[subField];
     },
     resetField() {
       this.historyField = null;
       this.selected = null;
-    },
-  },
-  watch: {
-    selected: function (field) {
-      if (field) this.openHistory(field);
     },
   },
 };

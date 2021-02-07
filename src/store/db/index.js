@@ -5,7 +5,9 @@ import actions from "./actions";
 const state = {
   loading: false,
   darker: false,
+  tree: false,
   calibration: false,
+
   theCmdBuffer: null,
 
   theUnit: null,

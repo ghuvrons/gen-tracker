@@ -69,7 +69,7 @@
 <script>
 import { devReports } from "../store/db/getter-types";
 import { RESET_DATABASE } from "../store/db/action-types";
-import { TOGGLE_CALIBRATION, TOGGLE_DARKER } from "../store/db/mutation-types";
+import { SET_CALIBRATION, SET_DARKER } from "../store/db/mutation-types";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { exportCSV, exportJSON } from "components/js/exporter";
 import { calibrateTime } from "components/js/utils";
@@ -97,7 +97,7 @@ export default {
         return this.calibration;
       },
       set(value) {
-        this.TOGGLE_CALIBRATION();
+        this.SET_CALIBRATION(value);
       },
     },
     darkState: {
@@ -105,12 +105,12 @@ export default {
         return this.darker;
       },
       set(value) {
-        this.TOGGLE_DARKER();
+        this.SET_DARKER(value);
       },
     },
   },
   methods: {
-    ...mapMutations("db", [TOGGLE_CALIBRATION, TOGGLE_DARKER]),
+    ...mapMutations("db", [SET_CALIBRATION, SET_DARKER]),
     ...mapActions("db", [RESET_DATABASE]),
     finish() {
       this.$refs.importer.reset();
