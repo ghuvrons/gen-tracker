@@ -17,14 +17,14 @@
 
     <div class="q-pa-sm">
       <q-input
-        v-model="commandBuffer"
+        v-model="cmdBuffer"
         @keyup.enter="execCommand()"
         label="Input Command:"
         hint="Press ENTER to send."
         type="text"
         stack-label
         :dark="darker"
-        :disable="loading || !theDevice"
+        :disable="loading || !device"
         :readonly="loading"
         :loading="loading"
       >
@@ -40,7 +40,7 @@
 
 <script>
 import { COMMAND_LIST } from "components/js/command";
-import { SET_THE_CMD_BUFFER } from "src/store/db/mutation-types";
+import { SET_BUFFER } from "src/store/db/mutation-types";
 import { mapState, mapMutations } from "vuex";
 import CommandListModal from "components/etc/CommandListModal";
 import CommonMixin from "components/mixins/CommonMixin";
@@ -59,24 +59,24 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["theDevice", "theCmdBuffer"]),
-    commandBuffer: {
+    ...mapState("db", ["device", "buffer"]),
+    cmdBuffer: {
       get() {
-        return this.theCmdBuffer;
+        return this.buffer;
       },
       set(value) {
-        this.SET_THE_CMD_BUFFER(value.toUpperCase());
+        this.SET_BUFFER(value.toUpperCase());
       },
     },
   },
   methods: {
-    ...mapMutations("db", [SET_THE_CMD_BUFFER]),
+    ...mapMutations("db", [SET_BUFFER]),
     selectCommand(payload) {
       this.modalOpen = false;
-      this.SET_THE_CMD_BUFFER(payload);
+      this.SET_BUFFER(payload);
     },
     execCommand() {
-      this.$root.$emit("executeCommand", this.commandBuffer);
+      this.$root.$emit("executeCommand", this.cmdBuffer);
     },
   },
 };

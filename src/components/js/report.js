@@ -1,4 +1,4 @@
-import { config } from "components/js/opt/config";
+import config from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
 import { getValue } from "components/js/utils";
 import { Header, parseFrame } from "components/js/frame";
@@ -32,17 +32,15 @@ const parseReport = (hex) => {
 };
 
 const lastFullReport = (report, reports) => {
-  if (report) {
-    let index = reports.findIndex(({ hex }) => hex === report.hex);
+  if (!report) return;
 
-    if (index >= 0) {
-      while (index < reports.length) {
-        let prev = reports[index++];
-        if (prev.frameID.val === config.frame.id.FULL) return prev;
-      }
-    }
+  let index = reports.findIndex(({ hex }) => hex === report.hex);
+  if (index < 0) return;
+
+  while (index < reports.length) {
+    let prev = reports[index++];
+    if (prev.frameID.val === config.frame.id.FULL) return prev;
   }
-  return;
 };
 
 const groupReport = () => {

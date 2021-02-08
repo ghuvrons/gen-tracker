@@ -105,10 +105,10 @@
 import { devReports, devEvents } from "src/store/db/getter-types";
 import { mapGetters } from "vuex";
 import { getField } from "components/js/utils";
-import { chart } from "components/js/opt/config";
 import { cloneDeep } from "lodash";
 import { Report } from "components/js/report";
 import { min, max, findLastIndex } from "lodash";
+import chart from "components/js/opt/chart";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
 import CommonMixin from "components/mixins/CommonMixin";
@@ -321,12 +321,14 @@ export default {
   },
   watch: {
     devReports: {
-      handler(reports) {
-        let report = reports[0];
-        if (report[this.field]) {
-          this.writeChart([report]);
-          this.applyRange();
-        }
+      handler(devReports) {
+        if (devReports.length == 0) return;
+
+        let devReport = devReports[0];
+        if (!devReport[this.field]) return;
+
+        this.writeChart([devReport]);
+        this.applyRange();
       },
     },
     "control.maximize": {

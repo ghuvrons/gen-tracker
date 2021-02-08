@@ -1,4 +1,4 @@
-import { config } from "components/js/opt/config";
+import config from "components/js/opt/config";
 
 const isIndonesia = ({ lng, lat }) => {
   let { borderIndonesia } = config.map;

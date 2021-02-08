@@ -4,8 +4,8 @@ import * as mutations from "./mutation-types";
 export default {
   [actions.RESET_DATABASE]({ commit }) {
     commit(mutations.CLEAR_ALL);
-    commit(mutations.CLEAR_THE_COMMAND);
-    commit(mutations.CLEAR_THE_CMD_BUFFER);
+    commit(mutations.CLEAR_COMMAND);
+    commit(mutations.CLEAR_BUFFER);
   },
   [actions.INSERT_REPORTS]({ commit }, payload) {
     commit(mutations.ADD_DEVICES, { unitID: payload.unitID.val });

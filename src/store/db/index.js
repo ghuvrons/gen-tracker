@@ -8,11 +8,11 @@ const state = {
   tree: false,
   calibration: false,
 
-  theCmdBuffer: null,
+  buffer: null,
 
-  theDevice: null,
-  theReport: null,
-  theCommand: null,
+  device: null,
+  report: null,
+  command: null,
 
   devices: [],
   reports: [],

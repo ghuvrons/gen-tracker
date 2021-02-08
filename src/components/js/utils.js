@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { config } from "components/js/opt/config";
+import config from "components/js/opt/config";
 import { HexToUnsignedInt, IntToHex } from "components/js/helper";
 import moment from "moment";
 import "moment-timezone";

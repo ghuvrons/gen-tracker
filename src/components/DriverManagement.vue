@@ -45,7 +45,7 @@
       >
         <q-fab-action
           @click="fetchFinger"
-          :disable="loading || !theDevice"
+          :disable="loading || !device"
           label-position="top"
           color="primary"
           icon="download"
@@ -54,7 +54,7 @@
         />
         <q-fab-action
           @click="addFinger"
-          :disable="loading || !theDevice"
+          :disable="loading || !device"
           label-position="top"
           color="green"
           icon="upload"
@@ -63,7 +63,7 @@
         />
         <q-fab-action
           @click="resetFinger"
-          :disable="loading || !theDevice"
+          :disable="loading || !device"
           label-position="top"
           color="orange"
           icon="delete_forever"
@@ -103,7 +103,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["theDevice", "responses"]),
+    ...mapState("db", ["device", "responses"]),
     ...mapGetters("db", [devFingers, devReports]),
   },
   mounted() {
@@ -148,26 +148,24 @@ export default {
     responses: {
       deep: true,
       handler(responses) {
-        if (responses.length > 0) {
-          let { resCode, payload, unitID, message } = responses[0];
-          let res = parseResCode(resCode);
+        if (responses.length == 0) return;
+        let { resCode, payload, unitID, message } = responses[0];
 
-          if (res.title == "OK") {
-            let { prop, value } = extractCommand(payload);
+        let res = parseResCode(resCode);
+        if (res.title != "OK") return;
 
-            if (prop == "FINGER_FETCH") {
-              if (message.length > 0) {
-                let ids = message.split(",");
-                for (let i = ids.length - 1; i >= 0; i--)
-                  this.ADD_FINGERS({ unitID, fingerID: ids[i] });
-              }
-            } else if (prop == "FINGER_ADD")
-              this.ADD_FINGERS({ unitID, fingerID: message });
-            else if (prop == "FINGER_DEL")
-              this.DELETE_FINGERS({ unitID, fingerID: value });
-            else if (prop == "FINGER_RST") this.RESET_FINGERS({ unitID });
+        let { prop, value } = extractCommand(payload);
+        if (prop == "FINGER_FETCH") {
+          if (message.length > 0) {
+            let ids = message.split(",");
+            for (let i = ids.length - 1; i >= 0; i--)
+              this.ADD_FINGERS({ unitID, fingerID: ids[i] });
           }
-        }
+        } else if (prop == "FINGER_ADD")
+          this.ADD_FINGERS({ unitID, fingerID: message });
+        else if (prop == "FINGER_DEL")
+          this.DELETE_FINGERS({ unitID, fingerID: value });
+        else if (prop == "FINGER_RST") this.RESET_FINGERS({ unitID });
       },
     },
   },

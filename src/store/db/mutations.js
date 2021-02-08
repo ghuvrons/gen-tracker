@@ -1,5 +1,5 @@
 import * as mutations from "./mutation-types";
-import { config } from "components/js/opt/config";
+import config from "components/js/opt/config";
 
 const { maxStorage } = config;
 
@@ -17,40 +17,40 @@ export default {
     state.tree = value;
   },
   [mutations.CLEAR_ALL](state) {
-    state.theDevice = null;
-    state.theReport = null;
-    state.theCommand = null;
+    state.device = null;
+    state.report = null;
+    state.command = null;
     state.devices = [];
     state.reports = [];
     state.responses = [];
     state.fingers = [];
   },
 
-  [mutations.SET_THE_DEVICE](state, payload) {
-    state.theDevice = payload;
+  [mutations.SET_DEVICE](state, payload) {
+    state.device = payload;
   },
-  [mutations.SET_THE_REPORT](state, payload) {
-    state.theReport = payload;
+  [mutations.SET_REPORT](state, payload) {
+    state.report = payload;
   },
-  [mutations.SET_THE_CMD_BUFFER](state, data) {
-    state.theCmdBuffer = data;
+  [mutations.SET_BUFFER](state, data) {
+    state.buffer = data;
   },
-  [mutations.CLEAR_THE_CMD_BUFFER](state) {
-    state.theCmdBuffer = null;
+  [mutations.CLEAR_BUFFER](state) {
+    state.buffer = null;
   },
-  [mutations.SET_THE_COMMAND](state, data) {
-    state.theCmdBuffer = data.payload;
-    state.theCommand = data;
+  [mutations.SET_COMMAND](state, data) {
+    state.buffer = data.payload;
+    state.command = data;
   },
-  [mutations.CLEAR_THE_COMMAND](state) {
-    state.theCommand = null;
+  [mutations.CLEAR_COMMAND](state) {
+    state.command = null;
   },
 
   [mutations.ADD_DEVICES](state, payload) {
-    let device = state.devices.find(({ unitID }) => unitID === payload.unitID);
+    let dev = state.devices.find(({ unitID }) => unitID === payload.unitID);
 
-    if (!device) state.devices.unshift(payload);
-    if (!state.theDevice) state.theDevice = payload;
+    if (!dev) state.devices.unshift(payload);
+    if (!state.device) state.device = payload;
   },
   [mutations.ADD_REPORTS](state, payload) {
     state.reports.unshift(payload);

@@ -8,21 +8,21 @@
     </q-bar>
 
     <q-virtual-scroll :items="devices" :style="`height: calc(${height}px - 32px)`" separator>
-      <template v-slot="{ item: device, index }">
+      <template v-slot="{ item: dev, index }">
         <q-item
           :key="index"
-          @click="setTheDevice(device.unitID)"
-          :active="device.unitID === theDevice.unitID"
+          @click="setDevice(dev.unitID)"
+          :active="dev.unitID === device.unitID"
           active-class="bg-primary text-white"
           :dark="darker"
           clickable
           dense
         >
           <q-item-section>
-            <q-item-label class="text-subtitle2">{{ device.unitID.toString() }}</q-item-label>
+            <q-item-label class="text-subtitle2">{{ dev.unitID.toString() }}</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-chip :dark="!darker" dense square>{{ getTotalReports(device.unitID) }}</q-chip>
+            <q-chip :dark="!darker" dense square>{{ getTotalReports(dev.unitID) }}</q-chip>
           </q-item-section>
         </q-item>
       </template>
@@ -40,7 +40,7 @@
 
 <script>
 import { getTotalReports } from "src/store/db/getter-types";
-import { SET_THE_DEVICE } from "src/store/db/mutation-types";
+import { SET_DEVICE } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import CommonMixin from "components/mixins/CommonMixin";
 
@@ -53,13 +53,13 @@ export default {
     },
   },
   computed: {
-    ...mapState("db", ["devices", "theDevice"]),
+    ...mapState("db", ["devices", "device"]),
     ...mapGetters("db", [getTotalReports]),
   },
   methods: {
-    ...mapMutations("db", [SET_THE_DEVICE]),
-    setTheDevice(unitID) {
-      if (!this.loading) this.SET_THE_DEVICE({ unitID });
+    ...mapMutations("db", [SET_DEVICE]),
+    setDevice(unitID) {
+      if (!this.loading) this.SET_DEVICE({ unitID });
     },
   },
 };

@@ -24,7 +24,7 @@
 
 <script>
 import { genPosition, getHeading } from "components/js/map";
-import { config } from "components/js/opt/config";
+import config from "components/js/opt/config";
 import { devReports } from "src/store/db/getter-types";
 import { mapState, mapGetters } from "vuex";
 
@@ -53,7 +53,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["theReport"]),
+    ...mapState("db", ["report"]),
     ...mapGetters("db", [devReports]),
     showStreetView() {
       return this.$q.screen.gt.xs;
@@ -80,40 +80,42 @@ export default {
   watch: {
     devReports: {
       immediate: true,
-      handler(reports) {
-        if (reports.length > 0) {
-          let { frameID, gpsLatitude, gpsLongitude } = reports[0];
-          let pos = genPosition({
+      handler(devReports) {
+        if (devReports.length == 0) return;
+        let { frameID, gpsLatitude, gpsLongitude } = devReports[0];
+        let pos = genPosition({
+          frameID: frameID.val,
+          lat: gpsLatitude && gpsLatitude.val,
+          lng: gpsLongitude && gpsLongitude.val,
+        });
+
+        if (!pos.valid) return;
+
+        this.path.push(pos);
+      },
+    },
+    report: {
+      immediate: true,
+      handler(report) {
+        if (!report) return;
+
+        let { frameID, gpsLatitude, gpsLongitude, gpsHeading } = report;
+        this.setPosition(
+          genPosition({
             frameID: frameID.val,
             lat: gpsLatitude && gpsLatitude.val,
             lng: gpsLongitude && gpsLongitude.val,
-          });
-          if (pos.valid) this.path.push(pos);
-        }
-      },
-    },
-    theReport: {
-      immediate: true,
-      handler(report) {
-        if (report) {
-          let { frameID, gpsLatitude, gpsLongitude, gpsHeading } = report;
-          this.setPosition(
-            genPosition({
-              frameID: frameID.val,
-              lat: gpsLatitude && gpsLatitude.val,
-              lng: gpsLongitude && gpsLongitude.val,
-            })
-          );
+          })
+        );
 
-          if (this.pov)
-            this.updatePov({
-              ...this.pov,
-              heading: getHeading({
-                frameID: frameID.val,
-                heading: gpsHeading && gpsHeading.val,
-              }),
-            });
-        }
+        if (!this.pov) return;
+        this.updatePov({
+          ...this.pov,
+          heading: getHeading({
+            frameID: frameID.val,
+            heading: gpsHeading && gpsHeading.val,
+          }),
+        });
       },
     },
   },

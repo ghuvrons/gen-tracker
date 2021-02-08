@@ -4,7 +4,7 @@
       <q-toolbar-title class="text-subtitle1">
         Response Reader
         <q-badge
-          v-if="theReport"
+          v-if="report"
           :color="fullFrame ? 'green' : 'light-green'"
         >{{ fullFrame ? "FULL" : "SIMPLE" }}</q-badge>
       </q-toolbar-title>
@@ -29,7 +29,7 @@
     <template v-else>
       <template v-if="treeState">
         <q-input v-model="filter" placeholder="Filter..." :dark="darker" clearable filled dense></q-input>
-        <q-scroll-area :style="`height: calc(100vh - ${height}px - 73px)`">
+        <div :style="`overflow-y:scroll; max-height: calc(100vh - ${height}px - 73px)`">
           <q-tree
             :selected="historyField"
             @update:selected="openHistory"
@@ -47,7 +47,7 @@
               >: {{ prop.node.data }} {{ getSubField(prop.node.label, 'unit') }}</span>
             </template>
           </q-tree>
-        </q-scroll-area>
+        </div>
       </template>
       <q-virtual-scroll
         v-else
@@ -67,7 +67,7 @@
             <q-item-section>
               <q-item-label lines="1">{{ getSubField(field, "title") }}</q-item-label>
               <q-item-label lines="2" caption>
-                {{ theReportData[field].out }}
+                {{ reportData[field].out }}
                 {{ getSubField(field, 'unit') }}
               </q-item-label>
             </q-item-section>
@@ -111,41 +111,10 @@ export default {
     return {
       historyField: null,
       filter: "",
-      simple: [
-        {
-          label: "Satisfied customers (with avatar)",
-          children: [
-            {
-              label: "Good food (with icon)",
-              children: [
-                { label: "Quality ingredients" },
-                { label: "Good recipe" },
-              ],
-            },
-            {
-              label: "Good service (disabled node with icon)",
-              children: [
-                { label: "Prompt attention" },
-                { label: "Professional waiter" },
-              ],
-            },
-            {
-              label: "Pleasant surroundings (with icon)",
-              children: [
-                {
-                  label: "Happy atmosphere (with image)",
-                },
-                { label: "Good table presentation" },
-                { label: "Pleasing decor" },
-              ],
-            },
-          ],
-        },
-      ],
     };
   },
   computed: {
-    ...mapState("db", ["theReport", "tree"]),
+    ...mapState("db", ["report", "tree"]),
     ...mapGetters("db", [devReports]),
     treeState: {
       get() {
@@ -155,23 +124,23 @@ export default {
         this.SET_TREE(value);
       },
     },
-    theReportData() {
+    reportData() {
       let data = {
-        ...lastFullReport(this.theReport, this.devReports),
-        ...this.theReport,
+        ...lastFullReport(this.report, this.devReports),
+        ...this.report,
       };
-      if (Object.keys(data).length > 0) return data;
-      return;
+      if (Object.keys(data).length == 0) return;
+      return data;
     },
     reportFields() {
-      return Object.keys(omit(this.theReportData, "hex"));
+      return Object.keys(omit(this.reportData, "hex"));
     },
     fullFrame() {
-      return this.theReport.frameID.val === this.$config.frame.id.FULL;
+      return this.report.frameID.val === this.$config.frame.id.FULL;
     },
     nodes() {
-      if (!this.theReportData) return [];
-      return toArrayTree(groupReport(), this.theReportData);
+      if (!this.reportData) return [];
+      return toArrayTree(groupReport(), this.reportData);
     },
   },
   methods: {
@@ -186,9 +155,7 @@ export default {
     },
     realtimeField(field) {
       let { required } = getField(Report, field);
-      return (
-        this.theReport.frameID.val === this.$config.frame.id.FULL || required
-      );
+      return this.report.frameID.val === this.$config.frame.id.FULL || required;
     },
     defined(prop) {
       return typeof prop !== "undefined";

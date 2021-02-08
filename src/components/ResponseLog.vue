@@ -43,7 +43,7 @@
 
 <script>
 import { devResponses } from "src/store/db/getter-types";
-import { SET_THE_CMD_BUFFER } from "src/store/db/mutation-types";
+import { SET_BUFFER } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { parseResCode } from "components/js/response";
 import CommonMixin from "components/mixins/CommonMixin";
@@ -61,9 +61,9 @@ export default {
     ...mapGetters("db", [devResponses]),
   },
   methods: {
-    ...mapMutations("db", [SET_THE_CMD_BUFFER]),
+    ...mapMutations("db", [SET_BUFFER]),
     applyCommand(payload) {
-      if (!this.loading) this.SET_THE_CMD_BUFFER(payload);
+      if (!this.loading) this.SET_BUFFER(payload);
     },
     parseResCode(code) {
       return parseResCode(code);

@@ -13,12 +13,20 @@
         </q-toolbar-title>
 
         <q-btn
+          v-if="$q.fullscreen.isCapable"
+          @click="$q.fullscreen.toggle()"
+          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
           flat
           dense
           round
-          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-          v-if="$q.fullscreen.isCapable"
-          @click="$q.fullscreen.toggle()"
+        ></q-btn>
+
+        <q-btn
+          @click="darkState = !darkState"
+          :icon="darker ? 'light_mode' : 'dark_mode'"
+          flat
+          dense
+          round
         ></q-btn>
 
         <q-btn flat dense round icon="more_vert" @click="drawer.right = !drawer.right"></q-btn>
@@ -57,6 +65,8 @@
 </template>
 
 <script>
+import { SET_DARKER } from "src/store/db/mutation-types";
+import { mapMutations } from "vuex";
 import ReportReader from "components/ReportReader";
 import UnitManagement from "components/UnitManagement";
 import ResponseLog from "components/ResponseLog";
@@ -80,6 +90,19 @@ export default {
       },
       splitter: 150,
     };
+  },
+  computed: {
+    darkState: {
+      get() {
+        return this.darker;
+      },
+      set(value) {
+        this.SET_DARKER(value);
+      },
+    },
+  },
+  methods: {
+    ...mapMutations("db", [SET_DARKER]),
   },
 };
 </script>

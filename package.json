@@ -24,6 +24,7 @@
     "long": "^4.0.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
+    "numeral": "^2.0.6",
     "quasar": "^1.15.2",
     "tz-lookup": "^6.1.25",
     "vue-chartjs": "^3.5.0",

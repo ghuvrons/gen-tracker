@@ -10,8 +10,8 @@ import { isString, dilation } from "components/js/utils";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
   SET_LOADING,
-  SET_THE_COMMAND,
-  CLEAR_THE_COMMAND,
+  SET_COMMAND,
+  CLEAR_COMMAND,
 } from "src/store/db/mutation-types";
 import { INSERT_REPORTS, INSERT_RESPONSES } from "src/store/db/action-types";
 import { parseReport } from "components/js/report";
@@ -44,11 +44,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["theCommand", "responses", "reports", "theDevice"]),
+    ...mapState("db", ["command", "responses", "reports", "device"]),
     ...mapGetters("db", [devReports]),
   },
   methods: {
-    ...mapMutations("db", [SET_LOADING, SET_THE_COMMAND, CLEAR_THE_COMMAND]),
+    ...mapMutations("db", [SET_LOADING, SET_COMMAND, CLEAR_COMMAND]),
     ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS]),
     importData(reports) {
       this.importTotal = reports.length;
@@ -83,17 +83,17 @@ export default {
       this.$q.notify({ type: "negative", message });
     },
     executeCommand(payload) {
-      if (!this.theDevice) return this.notifyError("No device.");
-      if (this.theCommand) return this.notifyError("Command busy.");
+      if (!this.device) return this.notifyError("No device.");
+      if (this.command) return this.notifyError("Command busy.");
 
       let cmd = parseCommand(payload);
       if (isString(cmd)) return this.notifyError(cmd);
 
-      let { unitID } = this.theDevice;
+      let { unitID } = this.device;
       let hexCmd = buildCommand(cmd, unitID);
       let binData = Buffer.from(hexCmd, "hex");
 
-      this.SET_THE_COMMAND({
+      this.SET_COMMAND({
         ...cmd,
         unitID,
         payload,
@@ -108,7 +108,7 @@ export default {
     },
 
     starWaitting() {
-      let timeout = this.theCommand.timeout || this.$config.command.timeout;
+      let timeout = this.command.timeout || this.$config.command.timeout;
 
       this.SET_LOADING(true);
       this.timers.cmdTimeout.time = timeout * 1000;
@@ -120,14 +120,14 @@ export default {
     },
     stopWaitting(type, message) {
       this.SET_LOADING(false);
-      this.CLEAR_THE_COMMAND();
+      this.CLEAR_COMMAND();
       this.$q.notify({ type, message });
 
       if (this.notification) this.notification();
       if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
     },
     cmdTimeout() {
-      let response = parseResponse(this.theCommand, null);
+      let response = parseResponse(this.command, null);
       this.INSERT_RESPONSES(response);
     },
     ignoreCommand() {
@@ -136,26 +136,25 @@ export default {
     handleCommandLost(report) {
       let { sendDatetime, unitID } = report;
 
-      if (this.theCommand.unitID === unitID.val)
-        if (dilation(sendDatetime.val, "seconds", this.commandTime) > 10) {
-          this.stopWaitting("negative", "Command is lost");
-          this.cmdTimeout();
-        }
+      if (this.command.unitID != unitID.val) return;
+
+      if (dilation(sendDatetime.val, "seconds", this.commandTime) < 10) return;
+
+      this.stopWaitting("negative", "Command is lost");
+      this.cmdTimeout();
     },
 
     validFrame(bin) {
       let hex = bin.toString("hex").toUpperCase();
       let valid = validateFrame(hex);
 
-      if (!valid) {
-        console.error(`CORRUPT ${hex}`);
-        return;
-      }
+      if (!valid) return console.error(`CORRUPT ${hex}`);
       return hex;
     },
     handleResponseFrame(hex) {
-      let response = parseResponse(this.theCommand, hex);
-      if (!response || response.unitID !== this.theCommand.unitID) return;
+      let response = parseResponse(this.command, hex);
+      if (!response) return;
+      if (response.unitID !== this.command.unitID) return;
 
       this.INSERT_RESPONSES(response);
       return response;
@@ -163,19 +162,15 @@ export default {
     handleReportFrame(hex) {
       let report = parseReport(hex);
 
-      if (Math.abs(dilation(report.logDatetime.val, "years")) > 1) {
-        console.warn(`^REPORT (EXPIRED)`);
-        return;
-      }
+      if (Math.abs(dilation(report.logDatetime.val, "years")) > 1)
+        return console.warn(`^REPORT (EXPIRED)`);
 
       if (
         this.reports.some(
           ({ logDatetime }) => logDatetime.val == report.logDatetime.val
         )
-      ) {
-        console.warn(`^REPORT (DUPLICATE)`);
-        return;
-      }
+      )
+        return console.warn(`^REPORT (DUPLICATE)`);
 
       this.INSERT_REPORTS(report);
       return report;
@@ -190,7 +185,7 @@ export default {
   },
   mqtt: {
     "VCU/+/RSP": function (data, topic) {
-      if (!this.theCommand) return;
+      if (!this.command) return;
 
       let hex = this.validFrame(data);
       if (!hex) return;
@@ -207,22 +202,22 @@ export default {
       let report = this.handleReportFrame(hex);
       if (!report) return;
 
-      if (this.theCommand && this.theCommand.timeout > 60)
+      if (this.command && this.command.timeout > 60)
         this.handleCommandLost(report);
     },
   },
   watch: {
     responses: function (responses) {
-      if (responses.length > 0) {
-        let { resCode } = responses[0];
-        let res = parseResCode(resCode);
-        let ok = res.title == "OK";
+      if (responses.length == 0) return;
 
-        let type = ok ? "positive" : "negative";
-        let message = ok ? "Command sent." : `Command is ${res.title}`;
+      let { resCode } = responses[0];
+      let res = parseResCode(resCode);
+      let ok = res.title == "OK";
 
-        this.stopWaitting(type, message);
-      }
+      let type = ok ? "positive" : "negative";
+      let message = ok ? "Command sent." : `Command is ${res.title}`;
+
+      this.stopWaitting(type, message);
     },
   },
 };

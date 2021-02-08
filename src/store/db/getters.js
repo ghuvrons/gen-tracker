@@ -7,11 +7,11 @@ export default {
   [getters.getTotalReports]: ({ reports }) => (theUnitID) => {
     return reports.filter(({ unitID }) => unitID.val === theUnitID).length;
   },
-  [getters.devReports]({ reports, theDevice }) {
-    let _reports = reports.filter(
-      ({ unitID }) => unitID.val === theDevice.unitID
+  [getters.devReports]({ reports, device }) {
+    let devReports = reports.filter(
+      ({ unitID }) => unitID.val === device.unitID
     );
-    return theDevice ? _reports : [];
+    return device ? devReports : [];
   },
   [getters.devEvents](state, getters) {
     let events = getters.devReports.reduce(
@@ -31,15 +31,15 @@ export default {
     return groupBy(events, "name");
   },
 
-  [getters.devResponses]({ responses, theDevice }) {
-    return theDevice
-      ? responses.filter(({ unitID }) => unitID === theDevice.unitID)
+  [getters.devResponses]({ responses, device }) {
+    return device
+      ? responses.filter(({ unitID }) => unitID === device.unitID)
       : [];
   },
 
-  [getters.devFingers]({ fingers, theDevice }) {
-    return theDevice
-      ? fingers.filter(({ unitID }) => unitID === theDevice.unitID)
+  [getters.devFingers]({ fingers, device }) {
+    return device
+      ? fingers.filter(({ unitID }) => unitID === device.unitID)
       : [];
   },
 };

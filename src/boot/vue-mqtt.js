@@ -1,5 +1,5 @@
 import VueMqtt from "vue-mqtt";
-import { config } from "components/js/opt/config";
+import config from "components/js/opt/config";
 let { mqtt } = config;
 
 // leave the export, even if you don't use it

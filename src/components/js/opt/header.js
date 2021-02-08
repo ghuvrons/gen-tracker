@@ -1,4 +1,4 @@
-import { config } from "components/js/opt/config";
+import config from "components/js/opt/config";
 import { CRC32 } from "components/js/crc32-mpeg2";
 import {
   ChangeEndian,
@@ -69,35 +69,30 @@ const Header = [
 const CommandHeader = [
   {
     field: "prefix",
-    // title: "Prefix",
     header: true,
     size: 2,
-    format: (_) => ChangeEndian(AsciiToHex(config.command.prefix)),
+    format: (_) => ChangeEndian(AsciiToHex(config.prefix.command)),
   },
   {
     field: "crc",
-    // title: "CRC",
     header: true,
     size: 4,
     format: (val) => ChangeEndian(CRC32(val).padStart(4 * 2, "0")),
   },
   {
     field: "size",
-    // title: "Size",
     header: true,
     size: 1,
     format: (hex) => ChangeEndian(IntToHex(hex.length / 2, 1 * 2)),
   },
   {
     field: "frameID",
-    // title: "Frame ID",
     header: true,
     size: 1,
     format: (_) => ChangeEndian(IntToHex(0, 1 * 2)),
   },
   {
     field: "unitID",
-    // title: "Unit ID",
     header: true,
     size: 4,
     format: (val) => ChangeEndian(IntToHex(val, 4 * 2)),

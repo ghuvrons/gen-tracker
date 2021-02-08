@@ -15,7 +15,7 @@
           icon="stop"
           color="primary"
           label="Ignore command"
-          :disable="!theCommand"
+          :disable="!command"
           @click="$root.$emit('ignoreCommand')"
         />
       </div>
@@ -52,9 +52,6 @@
     </div>
     <div class="row q-gutter-xs q-mt-xs">
       <div class="col-auto">
-        <q-toggle v-model="darkState" :dark="darker" label="Dark Mode" />
-      </div>
-      <div class="col-auto">
         <q-toggle
           v-model="calibrationState"
           :disable="devices.length == 0"
@@ -69,7 +66,7 @@
 <script>
 import { devReports } from "src/store/db/getter-types";
 import { RESET_DATABASE } from "src/store/db/action-types";
-import { SET_CALIBRATION, SET_DARKER } from "src/store/db/mutation-types";
+import { SET_CALIBRATION } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { exportCSV, exportJSON } from "components/js/exporter";
 import { calibrateTime } from "components/js/utils";
@@ -87,7 +84,7 @@ export default {
     ...mapState("db", [
       "devices",
       "calibration",
-      "theCommand",
+      "command",
       "reports",
       "responses",
     ]),
@@ -100,17 +97,9 @@ export default {
         this.SET_CALIBRATION(value);
       },
     },
-    darkState: {
-      get() {
-        return this.darker;
-      },
-      set(value) {
-        this.SET_DARKER(value);
-      },
-    },
   },
   methods: {
-    ...mapMutations("db", [SET_CALIBRATION, SET_DARKER]),
+    ...mapMutations("db", [SET_CALIBRATION]),
     ...mapActions("db", [RESET_DATABASE]),
     finish() {
       this.$refs.importer.reset();
@@ -123,20 +112,12 @@ export default {
     },
     importJSON(files) {
       return new Promise((resolve, reject) => {
-        // if (this.reports.length == 0) {
         let reader = new FileReader();
         reader.onload = (e) => {
           this.$root.$emit("importData", JSON.parse(e.target.result));
           resolve();
         };
         reader.readAsText(files[0]);
-        // } else {
-        //   this.$q.notify({
-        //     message: "Database should empty",
-        //     type: "negative",
-        //   });
-        //   reject();
-        // }
       });
     },
     clearStore() {
@@ -152,23 +133,22 @@ export default {
     },
   },
   watch: {
-    devReports: function (reports) {
-      if (reports.length > 0) {
-        if (this.calibration) {
-          let { frameID, gpsLatitude, gpsLongitude, sendDatetime } = reports[0];
-          if (frameID.val === this.$config.frame.id.FULL) {
-            let validTime = calibrateTime({
-              lat: gpsLatitude.val,
-              lng: gpsLongitude.val,
-              datetime: sendDatetime.val,
-            });
-            if (validTime) {
-              this.$root.$emit("executeCommand", `REPORT_RTC=${validTime}`);
-              this.$q.notify({ message: "Calibrating device time.." });
-            }
-          }
-        }
-      }
+    devReports: function (devReports) {
+      if (devReports.length == 0) return;
+      if (!this.calibration) return;
+
+      let { frameID, gpsLatitude, gpsLongitude, sendDatetime } = devReports[0];
+      if (frameID.val != this.$config.frame.id.FULL) return;
+
+      let validTime = calibrateTime({
+        lat: gpsLatitude.val,
+        lng: gpsLongitude.val,
+        datetime: sendDatetime.val,
+      });
+      if (!validTime) return;
+
+      this.$root.$emit("executeCommand", `REPORT_RTC=${validTime}`);
+      this.$q.notify({ message: "Calibrating device time.." });
     },
   },
 };
