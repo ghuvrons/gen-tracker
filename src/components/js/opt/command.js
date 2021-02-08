@@ -1,4 +1,4 @@
-import { CommandHeader } from "components/js/opt/header";
+import { Header } from "components/js/opt/header";
 import { IntToHex, ChangeEndian } from "components/js/helper";
 import { buildTimestamp } from "components/js/utils";
 
@@ -32,7 +32,7 @@ const COMMAND_LIST = [
     subCode: 0,
     type: "uint8_t[7]",
     range: ["YYMMDDHHmmss0E"],
-    format: (val) => buildTimestamp(val),
+    formatCmd: (val) => buildTimestamp(val),
   },
   {
     command: "REPORT_ODOM",
@@ -125,24 +125,24 @@ const COMMAND_LIST = [
 ];
 
 const Command = [
-  ...CommandHeader,
+  ...Header,
   {
     field: "code",
     title: "Code",
     size: 1,
-    format: (val) => ChangeEndian(IntToHex(val, 1 * 2)),
+    formatCmd: (val) => ChangeEndian(IntToHex(val, 1 * 2)),
   },
   {
     field: "subCode",
     title: "Sub Code",
     size: 1,
-    format: (val) => ChangeEndian(IntToHex(val, 1 * 2)),
+    formatCmd: (val) => ChangeEndian(IntToHex(val, 1 * 2)),
   },
   {
     field: "value",
     title: "Value",
     size: 8,
-    format: (val) => ChangeEndian(IntToHex(parseInt(val), 8 * 2)),
+    formatCmd: (val) => ChangeEndian(IntToHex(parseInt(val), 8 * 2)),
   },
 ];
 

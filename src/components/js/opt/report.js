@@ -1,4 +1,5 @@
 import moment from "moment";
+import config from "components/js/opt/config";
 import { startCase } from "lodash";
 import { parseDatetime } from "components/js/utils";
 import { Header } from "components/js/opt/header";
@@ -31,6 +32,16 @@ const VCU = ({ required }) => {
   const RTC = ["sendDatetime", "logDatetime"];
 
   let fields = [
+    {
+      group: "packet",
+      field: "frameID",
+      title: "Frame ID",
+      required: true,
+      chartable: true,
+      size: 1,
+      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
+      display: (valFormat) => config.frame.name[valFormat],
+    },
     ...RTC.reduce((carry, rtc) => {
       return carry.concat([
         {
@@ -42,8 +53,7 @@ const VCU = ({ required }) => {
           size: 7,
           format: (v) =>
             Number(moment(parseDatetime(v), "YYMMDDHHmmss0E").format("X")),
-          display: (vf) => moment(vf, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
-          // moment(vf, "X").format("DD MMM YYYY, HH:mm:ss"),
+          display: (vf) => moment(vf, "X").format("ddd, DD-MM-YY HH:mm:ss"),
         },
       ]);
     }, []),

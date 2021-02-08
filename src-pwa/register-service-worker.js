@@ -36,6 +36,7 @@ register(process.env.SERVICE_WORKER_FILE, {
           label: "Refresh",
           color: "yellow",
           handler: () => {
+            window.localStorage.clear();
             window.location.reload();
           },
         },

@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "1.32",
+    version: "1.33",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -20,15 +20,10 @@ export default {
     response: "@S",
   },
   frame: {
-    name: [
-      // "RESPONSE",
-      "SIMPLE",
-      "FULL",
-    ],
+    name: ["SIMPLE", "FULL"],
     id: {
-      // RESPONSE: 0,
-      SIMPLE: 1,
-      FULL: 2,
+      SIMPLE: 0,
+      FULL: 1,
     },
   },
   map: {

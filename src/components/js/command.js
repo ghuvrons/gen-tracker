@@ -6,25 +6,25 @@ const buildCommand = (cmd, unitID) => {
   if (!cmd) return;
 
   return Command.reduce((carry, el, idx) => {
-    let { field, format } = Command[Command.length - 1 - idx];
+    let { field, formatCmd } = Command[Command.length - idx - 1];
 
     switch (field) {
       case "value":
-        if (cmd.hasOwnProperty("format")) carry = cmd.format(cmd.value) + carry;
-        else carry = format(cmd.value || 0) + carry;
+        if (cmd.hasOwnProperty("formatCmd"))
+          carry = cmd.formatCmd(cmd.value) + carry;
+        else carry = formatCmd(cmd.value || 0) + carry;
         break;
       case "subCode":
       case "code":
-        carry = format(cmd[field]) + carry;
+        carry = formatCmd(cmd[field]) + carry;
         break;
       case "unitID":
-        carry = format(unitID) + carry;
+        carry = formatCmd(unitID) + carry;
         break;
-      case "frameID":
       case "size":
       case "crc":
       case "prefix":
-        carry = format(carry) + carry;
+        carry = formatCmd(carry) + carry;
         break;
       default:
         break;

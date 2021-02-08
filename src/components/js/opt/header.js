@@ -19,6 +19,7 @@ const Header = [
     size: 2,
     format: (val) => HexToAscii(ChangeEndian(val)),
     display: (valFormat) => valFormat,
+    formatCmd: (_) => ChangeEndian(AsciiToHex(config.prefix.command)),
   },
   {
     group: "packet",
@@ -30,6 +31,7 @@ const Header = [
     size: 4,
     format: (val) => HexToUnsignedInt(ChangeEndian(val)),
     display: (valFormat) => IntToHex(valFormat, 8).toUpperCase(),
+    formatCmd: (val) => ChangeEndian(CRC32(val).padStart(4 * 2, "0")),
   },
   {
     group: "packet",
@@ -42,17 +44,7 @@ const Header = [
     size: 1,
     format: (val) => HexToUnsignedInt(ChangeEndian(val)),
     display: (valFormat) => Dot(valFormat),
-  },
-  {
-    group: "packet",
-    field: "frameID",
-    title: "Frame ID",
-    header: true,
-    required: true,
-    chartable: true,
-    size: 1,
-    format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-    display: (valFormat) => config.frame.name[valFormat],
+    formatCmd: (hex) => ChangeEndian(IntToHex(hex.length / 2, 1 * 2)),
   },
   {
     group: "packet",
@@ -63,40 +55,8 @@ const Header = [
     size: 4,
     format: (val) => HexToUnsignedInt(ChangeEndian(val)),
     display: (valFormat) => valFormat,
+    formatCmd: (val) => ChangeEndian(IntToHex(val, 4 * 2)),
   },
 ];
 
-const CommandHeader = [
-  {
-    field: "prefix",
-    header: true,
-    size: 2,
-    format: (_) => ChangeEndian(AsciiToHex(config.prefix.command)),
-  },
-  {
-    field: "crc",
-    header: true,
-    size: 4,
-    format: (val) => ChangeEndian(CRC32(val).padStart(4 * 2, "0")),
-  },
-  {
-    field: "size",
-    header: true,
-    size: 1,
-    format: (hex) => ChangeEndian(IntToHex(hex.length / 2, 1 * 2)),
-  },
-  {
-    field: "frameID",
-    header: true,
-    size: 1,
-    format: (_) => ChangeEndian(IntToHex(0, 1 * 2)),
-  },
-  {
-    field: "unitID",
-    header: true,
-    size: 4,
-    format: (val) => ChangeEndian(IntToHex(val, 4 * 2)),
-  },
-];
-
-export { Header, CommandHeader };
+export { Header };

@@ -1,12 +1,12 @@
 import config from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
 import { getValue } from "components/js/utils";
-import { Header, parseFrame } from "components/js/frame";
+import { parseFrame } from "components/js/frame";
 import { groupBy, set } from "lodash";
 
 const parseReportData = (hex) => {
+  let frameID = getValue(parseFrame(hex, Report), "frameID");
   let { frame } = config;
-  let frameID = getValue(parseFrame(hex, Header), "frameID");
 
   let report = Report.filter(
     ({ required }) =>
