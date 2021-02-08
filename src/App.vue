@@ -6,24 +6,24 @@
 
 <script>
 import { validateFrame } from "components/js/frame";
-import { getValue, isString } from "components/js/utils";
-import { mapState, mapMutations, mapActions } from "vuex";
+import { isString, dilation } from "components/js/utils";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
   SET_LOADING,
   SET_THE_COMMAND,
   CLEAR_THE_COMMAND,
-} from "./store/db/mutation-types";
-import { INSERT_REPORTS, INSERT_COMMANDS } from "./store/db/action-types";
+} from "src/store/db/mutation-types";
+import { INSERT_REPORTS, INSERT_RESPONSES } from "src/store/db/action-types";
 import { parseReport } from "components/js/report";
 import { parseResponse, parseResCode } from "components/js/response";
-import { parseCommand } from "components/js/command";
+import { parseCommand, buildCommand } from "components/js/command";
 import { QSpinnerGears } from "quasar";
+import { cloneDeep } from "lodash";
+import { devReports } from "src/store/db/getter-types";
 import moment from "moment";
-// import DummyMixin from "components/mixins/DummyMixin";
 
 export default {
   name: "App",
-  // mixins: [DummyMixin],
   created() {
     this.$root.$on("executeCommand", this.executeCommand);
     this.$root.$on("ignoreCommand", this.ignoreCommand);
@@ -36,141 +36,185 @@ export default {
   },
   data() {
     return {
-      dismiss: null,
+      dialog: null,
+      notification: null,
+      importBuffer: [],
+      importTotal: 0,
+      commandTime: null,
     };
   },
   computed: {
-    ...mapState("db", ["theCommand", "commands", "reports", "theUnit"]),
+    ...mapState("db", ["theCommand", "responses", "reports", "theDevice"]),
+    ...mapGetters("db", [devReports]),
   },
   methods: {
     ...mapMutations("db", [SET_LOADING, SET_THE_COMMAND, CLEAR_THE_COMMAND]),
-    ...mapActions("db", [INSERT_COMMANDS, INSERT_REPORTS]),
+    ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS]),
     importData(reports) {
-      const dialog = this.$q.dialog({
+      this.importTotal = reports.length;
+      this.importBuffer = cloneDeep(reports);
+
+      this.$timer.start("importer");
+      this.dialog = this.$q.dialog({
         title: "Importing...",
         dark: this.darker,
         message: "0%",
+        persistent: true,
+        ok: false,
         progress: {
           spinner: QSpinnerGears,
           color: "primary",
         },
-        persistent: true,
-        ok: false,
+      });
+    },
+    importer() {
+      let len = this.importBuffer.length;
+      if (len > 0) {
+        let percentage = (len * 100) / this.importTotal;
+        this.dialog.update({ message: `${percentage.toFixed(2)}%` });
+        this.handleReportFrame(this.importBuffer.pop());
+      } else {
+        if (this.timers.importer.isRunning) this.$timer.stop("importer");
+        if (this.dialog) this.dialog.hide();
+      }
+    },
+
+    notifyError(message) {
+      this.$q.notify({ type: "negative", message });
+    },
+    executeCommand(payload) {
+      if (!this.theDevice) return this.notifyError("No device.");
+      if (this.theCommand) return this.notifyError("Command busy.");
+
+      let cmd = parseCommand(payload);
+      if (isString(cmd)) return this.notifyError(cmd);
+
+      let { unitID } = this.theDevice;
+      let hexCmd = buildCommand(cmd, unitID);
+      let binData = Buffer.from(hexCmd, "hex");
+
+      this.SET_THE_COMMAND({
+        ...cmd,
+        unitID,
+        payload,
+        hexCmd,
       });
 
-      let percentage = 0;
-      reports.forEach((hex, i) => {
-        percentage = ((i + 1) * 100) / reports.length;
-        this.$nextTick(() => {
-          this.handleFrame(hex);
-          dialog.update({ message: `${percentage}%` });
-        });
-      });
-      dialog.hide();
+      this.$mqtt.publish(`VCU/${unitID}/CMD`, binData);
+      console.log(`COMMAND ${hexCmd}`);
+
+      this.starWaitting();
+      this.commandTime = moment();
     },
 
     starWaitting() {
+      let timeout = this.theCommand.timeout || this.$config.command.timeout;
+
       this.SET_LOADING(true);
-      this.dismiss = this.$q.notify({
+      this.timers.cmdTimeout.time = timeout * 1000;
+      this.$timer.start("cmdTimeout");
+      this.notification = this.$q.notify({
         message: "Sending command....",
         timeout: 0,
       });
-      this.timers.cmdTimeout.time =
-        this.theCommand.timeout || this.$config.command.timeoutMS;
-      this.$timer.start("cmdTimeout");
     },
     stopWaitting(type, message) {
-      this.CLEAR_THE_COMMAND();
       this.SET_LOADING(false);
-      if (this.dismiss) this.dismiss();
-      if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
-
+      this.CLEAR_THE_COMMAND();
       this.$q.notify({ type, message });
-    },
 
+      if (this.notification) this.notification();
+      if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
+    },
     cmdTimeout() {
-      this.INSERT_COMMANDS(parseResponse(this.theCommand, null));
+      let response = parseResponse(this.theCommand, null);
+      this.INSERT_RESPONSES(response);
     },
     ignoreCommand() {
       this.stopWaitting("warning", "Command ignored.");
     },
+    handleCommandLost(report) {
+      let { sendDatetime, unitID } = report;
 
-    parseCommand(payload) {
-      if (!this.theUnit) return "No device.";
-      if (this.theCommand) return "Command busy.";
-      return parseCommand(payload);
+      if (this.theCommand.unitID === unitID.val)
+        if (dilation(sendDatetime.val, "seconds", this.commandTime) > 10) {
+          this.stopWaitting("negative", "Command is lost");
+          this.cmdTimeout();
+        }
     },
-    executeCommand(payload) {
-      let cmd = this.parseCommand(payload);
 
-      if (isString(cmd)) {
-        this.$q.notify({ message: cmd, type: "negative" });
-        return;
-      }
+    validFrame(bin) {
+      let hex = bin.toString("hex").toUpperCase();
+      let valid = validateFrame(hex);
 
-      this.SET_THE_COMMAND({
-        ...cmd,
-        unitID: this.theUnit,
-        payload,
-      });
-    },
-    handleFrame(hex) {
-      let header = validateFrame(hex);
-      if (!header) {
+      if (!valid) {
         console.error(`CORRUPT ${hex}`);
         return;
       }
+      return hex;
+    },
+    handleResponseFrame(hex) {
+      let response = parseResponse(this.theCommand, hex);
+      if (!response || response.unitID !== this.theCommand.unitID) return;
 
-      let frameID = getValue(header, "frameID");
+      this.INSERT_RESPONSES(response);
+      return response;
+    },
+    handleReportFrame(hex) {
+      let report = parseReport(hex);
 
-      if (frameID === this.$config.frame.id.RESPONSE) {
-        console.log(`RESPONSE ${hex}`);
-        let response = parseResponse(this.theCommand, hex);
-        if (response) this.INSERT_COMMANDS(response);
-      } else {
-        let report = parseReport(hex);
-        let difference = moment().diff(moment(report.logDatetime.val, "X"));
-
-        if (moment.duration(difference).as("months") > 1)
-          console.warn(`REPORT (EXPIRED) ${hex}`);
-        else if (
-          this.reports.some(
-            ({ logDatetime }) => logDatetime.val == report.logDatetime.val
-          )
-        )
-          console.warn(`REPORT (DUPLICATE) ${hex}`);
-        else {
-          console.log(`REPORT ${hex}`);
-          this.INSERT_REPORTS(report);
-        }
+      if (Math.abs(dilation(report.logDatetime.val, "years")) > 1) {
+        console.warn(`^REPORT (EXPIRED)`);
+        return;
       }
+
+      if (
+        this.reports.some(
+          ({ logDatetime }) => logDatetime.val == report.logDatetime.val
+        )
+      ) {
+        console.warn(`^REPORT (DUPLICATE)`);
+        return;
+      }
+
+      this.INSERT_REPORTS(report);
+      return report;
     },
   },
   timers: {
     cmdTimeout: { time: 0 },
+    importer: { time: 10, repeat: true },
   },
   mounted() {
     this.$mqtt.subscribe("VCU/#");
   },
   mqtt: {
     "VCU/+/RSP": function (data, topic) {
-      let hex = data.toString("hex").toUpperCase();
-      if (this.theCommand) this.handleFrame(hex);
+      if (!this.theCommand) return;
+
+      let hex = this.validFrame(data);
+      if (!hex) return;
+      console.log(`RESPONSE ${hex}`);
+
+      let response = this.handleResponseFrame(hex);
+      if (!response) return;
     },
     "VCU/+/RPT": function (data, topic) {
-      let hex = data.toString("hex").toUpperCase();
-      this.handleFrame(hex);
+      let hex = this.validFrame(data);
+      if (!hex) return;
+      console.log(`REPORT ${hex}`);
 
-      if (this.theCommand && this.theCommand.payload.includes("FOTA")) {
-        this.stopWaitting("negative", "Command is lost");
-        this.cmdTimeout();
-      }
+      let report = this.handleReportFrame(hex);
+      if (!report) return;
+
+      if (this.theCommand && this.theCommand.timeout > 60)
+        this.handleCommandLost(report);
     },
   },
   watch: {
-    commands: function (commands) {
-      if (commands.length > 0) {
-        let { resCode } = commands[0];
+    responses: function (responses) {
+      if (responses.length > 0) {
+        let { resCode } = responses[0];
         let res = parseResCode(resCode);
         let ok = res.title == "OK";
 
@@ -178,16 +222,6 @@ export default {
         let message = ok ? "Command sent." : `Command is ${res.title}`;
 
         this.stopWaitting(type, message);
-      }
-    },
-    theCommand: function (cmd) {
-      if (cmd) {
-        let { unitID, hexCmd } = cmd;
-        let binData = Buffer.from(hexCmd, "hex");
-
-        this.starWaitting();
-        this.$mqtt.publish(`VCU/${unitID}/CMD`, binData);
-        console.log(`COMMAND ${hexCmd}`);
       }
     },
   },

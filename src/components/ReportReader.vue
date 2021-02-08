@@ -28,7 +28,7 @@
     </q-banner>
     <template v-else>
       <template v-if="treeState">
-        <q-input v-model="filter" label="Filter" :dark="darker" clearable dense></q-input>
+        <q-input v-model="filter" placeholder="Filter..." :dark="darker" clearable filled dense></q-input>
         <q-scroll-area :style="`height: calc(100vh - ${height}px - 73px)`">
           <q-tree
             :selected="historyField"
@@ -88,12 +88,12 @@
 
 <script>
 import ReportHistoryModal from "components/etc/ReportHistoryModal";
-import { Report, lastFullReport } from "components/js/report";
-import { devReports } from "../store/db/getter-types";
-import { SET_TREE } from "../store/db/mutation-types";
+import { Report, lastFullReport, groupReport } from "components/js/report";
+import { devReports } from "src/store/db/getter-types";
+import { SET_TREE } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { getField, toArrayTree, removeWords } from "components/js/utils";
-import { groupBy, set, omit } from "lodash";
+import { omit } from "lodash";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -171,20 +171,7 @@ export default {
     },
     nodes() {
       if (!this.theReportData) return [];
-
-      let group = groupBy(Report, "group");
-      return toArrayTree(
-        Object.keys(groupBy(Report, "group")).reduce(
-          (o, key) =>
-            set(
-              o,
-              key,
-              group[key].reduce((c, el) => ({ ...c, [el.field]: "" }), {})
-            ),
-          {}
-        ),
-        this.theReportData
-      );
+      return toArrayTree(groupReport(), this.theReportData);
     },
   },
   methods: {

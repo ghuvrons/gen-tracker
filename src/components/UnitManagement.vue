@@ -3,41 +3,31 @@
     <q-bar class="bg-blue text-white">
       <q-toolbar-title class="text-subtitle1">
         Unit Management
-        <q-badge v-if="units.length > 0" color="red" align="top">
-          {{ units.length }}
-        </q-badge>
+        <q-badge v-if="devices.length > 0" color="red" align="top">{{ devices.length }}</q-badge>
       </q-toolbar-title>
     </q-bar>
 
-    <q-virtual-scroll
-      :items="units"
-      :style="`height: calc(${height}px - 32px)`"
-      separator
-    >
-      <template v-slot="{ item: unitID, index }">
+    <q-virtual-scroll :items="devices" :style="`height: calc(${height}px - 32px)`" separator>
+      <template v-slot="{ item: device, index }">
         <q-item
           :key="index"
-          @click="setTheUnit(unitID)"
-          :active="unitID === theUnit"
+          @click="setTheDevice(device.unitID)"
+          :active="device.unitID === theDevice.unitID"
           active-class="bg-primary text-white"
           :dark="darker"
           clickable
           dense
         >
           <q-item-section>
-            <q-item-label class="text-subtitle2">
-              {{ unitID.toString() }}
-            </q-item-label>
+            <q-item-label class="text-subtitle2">{{ device.unitID.toString() }}</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-chip :dark="!darker" dense square>
-              {{ getTotalReports(unitID) }}
-            </q-chip>
+            <q-chip :dark="!darker" dense square>{{ getTotalReports(device.unitID) }}</q-chip>
           </q-item-section>
         </q-item>
       </template>
       <template v-slot:after>
-        <q-banner v-if="units.length == 0" :dark="darker">
+        <q-banner v-if="devices.length == 0" :dark="darker">
           <template v-slot:avatar>
             <q-icon name="info"></q-icon>
           </template>
@@ -49,8 +39,8 @@
 </template>
 
 <script>
-import { getTotalReports } from "../store/db/getter-types";
-import { SET_THE_UNIT } from "../store/db/mutation-types";
+import { getTotalReports } from "src/store/db/getter-types";
+import { SET_THE_DEVICE } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import CommonMixin from "components/mixins/CommonMixin";
 
@@ -63,13 +53,13 @@ export default {
     },
   },
   computed: {
-    ...mapState("db", ["units", "theUnit"]),
+    ...mapState("db", ["devices", "theDevice"]),
     ...mapGetters("db", [getTotalReports]),
   },
   methods: {
-    ...mapMutations("db", [SET_THE_UNIT]),
-    setTheUnit(unitID) {
-      if (!this.loading) this.SET_THE_UNIT(unitID);
+    ...mapMutations("db", [SET_THE_DEVICE]),
+    setTheDevice(unitID) {
+      if (!this.loading) this.SET_THE_DEVICE({ unitID });
     },
   },
 };

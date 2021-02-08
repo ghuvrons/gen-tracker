@@ -2,6 +2,7 @@ import { config } from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
 import { getValue } from "components/js/utils";
 import { Header, parseFrame } from "components/js/frame";
+import { groupBy, set } from "lodash";
 
 const parseReportData = (hex) => {
   let { frame } = config;
@@ -44,4 +45,17 @@ const lastFullReport = (report, reports) => {
   return;
 };
 
-export { Report, parseReport, parseReportData, lastFullReport };
+const groupReport = () => {
+  let group = groupBy(Report, "group");
+  return Object.keys(group).reduce((o, key) => {
+    return set(
+      o,
+      key,
+      group[key].reduce((c, el) => {
+        return { ...c, [el.field]: "" };
+      }, {})
+    );
+  }, {});
+};
+
+export { Report, parseReport, parseReportData, lastFullReport, groupReport };

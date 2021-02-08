@@ -10,13 +10,13 @@ const state = {
 
   theCmdBuffer: null,
 
-  theUnit: null,
+  theDevice: null,
   theReport: null,
   theCommand: null,
 
-  units: [],
+  devices: [],
   reports: [],
-  commands: [],
+  responses: [],
   fingers: [],
 };
 

@@ -3,40 +3,34 @@
     <q-bar class="bg-blue text-white">
       <q-toolbar-title class="text-subtitle1">
         Response Log
-        <q-badge v-if="devCommands.length > 0" color="red" align="top">
-          {{ devCommands.length }}
-        </q-badge>
+        <q-badge v-if="devResponses.length > 0" color="red" align="top">{{ devResponses.length }}</q-badge>
       </q-toolbar-title>
     </q-bar>
 
     <q-virtual-scroll
-      :items="devCommands"
+      :items="devResponses"
       :style="`height: calc(100vh - ${height}px - 33px)`"
       separator
     >
       <template v-slot="{ item: cmd, index }">
-        <q-item
-          :key="index"
-          @click="applyCommand(cmd.payload)"
-          :dark="darker"
-          clickable
-        >
+        <q-item :key="index" @click="applyCommand(cmd.payload)" :dark="darker" clickable>
           <q-item-section>
             <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
-            <q-item-label lines="2" caption>
-              {{ cmd.message }}
-            </q-item-label>
+            <q-item-label lines="2" caption>{{ cmd.message }}</q-item-label>
           </q-item-section>
 
           <q-item-section side>
-            <q-chip :color="parseResCode(cmd.resCode).color" dark dense square>
-              {{ parseResCode(cmd.resCode).title }}
-            </q-chip>
+            <q-chip
+              :color="parseResCode(cmd.resCode).color"
+              dark
+              dense
+              square
+            >{{ parseResCode(cmd.resCode).title }}</q-chip>
           </q-item-section>
         </q-item>
       </template>
       <template v-slot:after>
-        <q-banner v-if="devCommands.length == 0" :dark="darker">
+        <q-banner v-if="devResponses.length == 0" :dark="darker">
           <template v-slot:avatar>
             <q-icon name="info"></q-icon>
           </template>
@@ -48,8 +42,8 @@
 </template>
 
 <script>
-import { devCommands } from "../store/db/getter-types";
-import { SET_THE_CMD_BUFFER } from "../store/db/mutation-types";
+import { devResponses } from "src/store/db/getter-types";
+import { SET_THE_CMD_BUFFER } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { parseResCode } from "components/js/response";
 import CommonMixin from "components/mixins/CommonMixin";
@@ -64,7 +58,7 @@ export default {
   },
   computed: {
     ...mapState("db", ["loading"]),
-    ...mapGetters("db", [devCommands]),
+    ...mapGetters("db", [devResponses]),
   },
   methods: {
     ...mapMutations("db", [SET_THE_CMD_BUFFER]),

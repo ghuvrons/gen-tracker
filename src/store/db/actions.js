@@ -8,11 +8,11 @@ export default {
     commit(mutations.CLEAR_THE_CMD_BUFFER);
   },
   [actions.INSERT_REPORTS]({ commit }, payload) {
-    commit(mutations.ADD_UNITS, payload.unitID.val);
+    commit(mutations.ADD_DEVICES, { unitID: payload.unitID.val });
     commit(mutations.ADD_REPORTS, payload);
   },
-  [actions.INSERT_COMMANDS]({ commit }, payload) {
-    commit(mutations.ADD_UNITS, payload.unitID);
-    commit(mutations.ADD_COMMANDS, payload);
+  [actions.INSERT_RESPONSES]({ commit }, payload) {
+    commit(mutations.ADD_DEVICES, { unitID: payload.unitID });
+    commit(mutations.ADD_RESPONSES, payload);
   },
 };

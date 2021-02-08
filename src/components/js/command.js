@@ -2,7 +2,7 @@ import { COMMAND_LIST, Command } from "components/js/opt/command";
 import { isString } from "components/js/utils";
 import moment from "moment";
 
-const buildCommand = (cmd, value) => {
+const buildCommand = (cmd, unitID) => {
   if (!cmd) return;
 
   return Command.reduce((carry, el, idx) => {
@@ -10,19 +10,21 @@ const buildCommand = (cmd, value) => {
 
     switch (field) {
       case "value":
-        if (cmd.hasOwnProperty("format")) carry = cmd.format(value) + carry;
-        else carry = format(value || 0) + carry;
+        if (cmd.hasOwnProperty("format")) carry = cmd.format(cmd.value) + carry;
+        else carry = format(cmd.value || 0) + carry;
         break;
       case "subCode":
       case "code":
         carry = format(cmd[field]) + carry;
         break;
+      case "unitID":
+        carry = format(unitID) + carry;
+        break;
+      case "frameID":
       case "size":
       case "crc":
-        carry = format(carry) + carry;
-        break;
       case "prefix":
-        carry = format() + carry;
+        carry = format(carry) + carry;
         break;
       default:
         break;
@@ -69,9 +71,8 @@ const parseCommand = (payload) => {
 
   return {
     ...cmd,
-    hexCmd: buildCommand(cmd, value),
     value,
   };
 };
 
-export { COMMAND_LIST, Command, parseCommand, extractCommand };
+export { COMMAND_LIST, Command, parseCommand, buildCommand, extractCommand };

@@ -24,7 +24,7 @@
         type="text"
         stack-label
         :dark="darker"
-        :disable="loading || !theUnit"
+        :disable="loading || !theDevice"
         :readonly="loading"
         :loading="loading"
       >
@@ -40,10 +40,11 @@
 
 <script>
 import { COMMAND_LIST } from "components/js/command";
-import { SET_THE_CMD_BUFFER } from "../store/db/mutation-types";
+import { SET_THE_CMD_BUFFER } from "src/store/db/mutation-types";
 import { mapState, mapMutations } from "vuex";
 import CommandListModal from "components/etc/CommandListModal";
 import CommonMixin from "components/mixins/CommonMixin";
+import { cloneDeep } from "lodash";
 
 export default {
   // name: 'ComponentName',
@@ -53,12 +54,12 @@ export default {
   },
   data() {
     return {
-      COMMAND_LIST: this.$_.cloneDeep(COMMAND_LIST),
+      COMMAND_LIST: cloneDeep(COMMAND_LIST),
       modalOpen: false,
     };
   },
   computed: {
-    ...mapState("db", ["theUnit", "theCmdBuffer"]),
+    ...mapState("db", ["theDevice", "theCmdBuffer"]),
     commandBuffer: {
       get() {
         return this.theCmdBuffer;

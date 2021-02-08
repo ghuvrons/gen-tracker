@@ -17,17 +17,17 @@ export default {
     state.tree = value;
   },
   [mutations.CLEAR_ALL](state) {
-    state.theUnit = null;
+    state.theDevice = null;
     state.theReport = null;
     state.theCommand = null;
-    state.units = [];
+    state.devices = [];
     state.reports = [];
-    state.commands = [];
+    state.responses = [];
     state.fingers = [];
   },
 
-  [mutations.SET_THE_UNIT](state, payload) {
-    state.theUnit = payload;
+  [mutations.SET_THE_DEVICE](state, payload) {
+    state.theDevice = payload;
   },
   [mutations.SET_THE_REPORT](state, payload) {
     state.theReport = payload;
@@ -46,19 +46,19 @@ export default {
     state.theCommand = null;
   },
 
-  [mutations.ADD_UNITS](state, payload) {
-    let unit = state.units.find((unitID) => unitID === payload);
+  [mutations.ADD_DEVICES](state, payload) {
+    let device = state.devices.find(({ unitID }) => unitID === payload.unitID);
 
-    if (!unit) state.units.unshift(payload);
-    if (!state.theUnit) state.theUnit = payload;
+    if (!device) state.devices.unshift(payload);
+    if (!state.theDevice) state.theDevice = payload;
   },
   [mutations.ADD_REPORTS](state, payload) {
     state.reports.unshift(payload);
     if (state.reports.length > maxStorage.reports) state.reports.pop();
   },
-  [mutations.ADD_COMMANDS](state, payload) {
-    state.commands.unshift(payload);
-    if (state.commands.length > maxStorage.commands) state.commands.pop();
+  [mutations.ADD_RESPONSES](state, payload) {
+    state.responses.unshift(payload);
+    if (state.responses.length > maxStorage.responses) state.responses.pop();
   },
 
   [mutations.ADD_FINGERS](state, payload) {

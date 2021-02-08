@@ -9,8 +9,6 @@ const parseResponse = ({ payload, unitID, code, subCode, hexCmd }, hexRes) => {
   if (hexRes) {
     let data = parseFrame(hexRes, Response);
 
-    if (getValue(data, "unitID") != unitID) return;
-
     if (getValue(data, "code") != code) return;
 
     if (getValue(data, "subCode") != subCode) return;

@@ -12,9 +12,7 @@
           <q-toolbar-title>
             <span v-if="$q.screen.gt.sm" class="text-weight-bold">HISTORY</span>
             {{ this.theField.title }}
-            <q-chip v-if="chart.data" dark dense square>
-              {{ chart.data.labels.length }}
-            </q-chip>
+            <q-chip v-if="chart.data" dark dense square>{{ chart.data.labels.length }}</q-chip>
           </q-toolbar-title>
           <q-btn flat round dense icon="close" v-close-popup />
         </q-toolbar>
@@ -91,13 +89,9 @@
               </div>
             </div>
 
-            <div
-              v-if="eventGroup"
-              class="col-xs-12 col-sm-12 col-md-4 col-lg-3"
-            >
+            <div v-if="eventGroup" class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
               <div class="q-pa-sm scroll">
-                <event-group-reader :current-value="currentValue">
-                </event-group-reader>
+                <event-group-reader :current-value="currentValue"></event-group-reader>
               </div>
             </div>
           </div>
@@ -108,12 +102,13 @@
 </template>
 
 <script>
-import { devReports, devEvents } from "../../store/db/getter-types";
+import { devReports, devEvents } from "src/store/db/getter-types";
 import { mapGetters } from "vuex";
 import { getField } from "components/js/utils";
 import { chart } from "components/js/opt/config";
 import { cloneDeep } from "lodash";
 import { Report } from "components/js/report";
+import { min, max, findLastIndex } from "lodash";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
 import CommonMixin from "components/mixins/CommonMixin";
@@ -193,7 +188,7 @@ export default {
       // find the index
       let iMin = min ? labels.findIndex((val) => val >= min) : 0;
       let iMax = max
-        ? this.$_.findLastIndex(labels, (val) => val <= max)
+        ? findLastIndex(labels, (val) => val <= max)
         : labels.length - 1;
 
       return { iMin, iMax };
@@ -212,8 +207,8 @@ export default {
 
       // calculate y-axes
       let scope = data.filter((_, i) => i >= iMin && i <= iMax);
-      let yMin = this.$_.min(scope);
-      let yMax = this.$_.max(scope);
+      let yMin = min(scope);
+      let yMax = max(scope);
 
       // correction
       if (this.control.beginAtZero) {

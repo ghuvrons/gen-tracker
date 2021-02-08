@@ -25,7 +25,7 @@
 <script>
 import { genPosition, getHeading } from "components/js/map";
 import { config } from "components/js/opt/config";
-import { devReports } from "../store/db/getter-types";
+import { devReports } from "src/store/db/getter-types";
 import { mapState, mapGetters } from "vuex";
 
 export default {

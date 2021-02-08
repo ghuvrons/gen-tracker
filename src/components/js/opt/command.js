@@ -42,14 +42,6 @@ const COMMAND_LIST = [
     type: "uint32_t",
     range: [0, 99999],
   },
-  // {
-  //   command: "REPORT_UNITID",
-  //   desc: "Set unit ID of VCU",
-  //   code: 1,
-  //   subCode: 2,
-  //   type: "uint32_t",
-  //   range: [0, 4294967295],
-  // },
   {
     command: "AUDIO_BEEP",
     desc: "Set beep the audio module",
@@ -77,16 +69,14 @@ const COMMAND_LIST = [
     desc: "Get all registered id",
     code: 3,
     subCode: 0,
-
-    timeout: 10000,
+    timeout: 10,
   },
   {
     command: "FINGER_ADD",
     desc: "Add new fingerprint",
     code: 3,
     subCode: 1,
-
-    timeout: 20000,
+    timeout: 20,
   },
   {
     command: "FINGER_DEL",
@@ -95,15 +85,14 @@ const COMMAND_LIST = [
     subCode: 2,
     type: "uint8_t",
     range: [1, 5],
-    timeout: 10000,
+    timeout: 10,
   },
   {
     command: "FINGER_RST",
     desc: "Reset all saved fingerprint ID",
     code: 3,
     subCode: 3,
-
-    timeout: 10000,
+    timeout: 10,
   },
   {
     command: "REMOTE_PAIRING",
@@ -112,20 +101,26 @@ const COMMAND_LIST = [
     subCode: 0,
   },
   {
+    command: "REMOTE_UNITID",
+    desc: "Set unit ID of VCU",
+    code: 4,
+    subCode: 1,
+    type: "uint32_t",
+    range: [0, 4294967295],
+  },
+  {
     command: "FOTA_VCU",
     desc: "Upgrade VCU firmware",
     code: 5,
     subCode: 0,
-
-    timeout: 5 * 60000,
+    timeout: 5 * 60,
   },
   {
     command: "FOTA_HMI",
     desc: "Upgrade HMI firmware",
     code: 5,
     subCode: 1,
-
-    timeout: 10 * 60000,
+    timeout: 10 * 60,
   },
 ];
 

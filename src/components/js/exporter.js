@@ -41,7 +41,7 @@ const exportCSV = (reports) => {
 };
 
 const makeDataJSON = (reports) => {
-  return reports ? reports.reverse().map(({ hex }) => hex) : [];
+  return reports ? reports.map(({ hex }) => hex) : [];
 };
 
 const exportJSON = (reports) => {

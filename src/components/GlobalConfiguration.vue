@@ -6,7 +6,7 @@
           icon="delete"
           color="negative"
           label="Clear data"
-          :disable="units.length == 0"
+          :disable="devices.length == 0"
           @click="clearStore()"
         />
       </div>
@@ -57,7 +57,7 @@
       <div class="col-auto">
         <q-toggle
           v-model="calibrationState"
-          :disable="units.length == 0"
+          :disable="devices.length == 0"
           :dark="darker"
           label="Time Calibration"
         />
@@ -67,9 +67,9 @@
 </template>
 
 <script>
-import { devReports } from "../store/db/getter-types";
-import { RESET_DATABASE } from "../store/db/action-types";
-import { SET_CALIBRATION, SET_DARKER } from "../store/db/mutation-types";
+import { devReports } from "src/store/db/getter-types";
+import { RESET_DATABASE } from "src/store/db/action-types";
+import { SET_CALIBRATION, SET_DARKER } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { exportCSV, exportJSON } from "components/js/exporter";
 import { calibrateTime } from "components/js/utils";
@@ -85,11 +85,11 @@ export default {
   },
   computed: {
     ...mapState("db", [
-      "units",
+      "devices",
       "calibration",
       "theCommand",
       "reports",
-      "commands",
+      "responses",
     ]),
     ...mapGetters("db", [devReports]),
     calibrationState: {
@@ -123,20 +123,20 @@ export default {
     },
     importJSON(files) {
       return new Promise((resolve, reject) => {
-        if (this.reports.length == 0) {
-          let reader = new FileReader();
-          reader.onload = (e) => {
-            this.$root.$emit("importData", JSON.parse(e.target.result));
-            resolve();
-          };
-          reader.readAsText(files[0]);
-        } else {
-          this.$q.notify({
-            message: "Database should empty",
-            type: "negative",
-          });
-          reject();
-        }
+        // if (this.reports.length == 0) {
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.$root.$emit("importData", JSON.parse(e.target.result));
+          resolve();
+        };
+        reader.readAsText(files[0]);
+        // } else {
+        //   this.$q.notify({
+        //     message: "Database should empty",
+        //     type: "negative",
+        //   });
+        //   reject();
+        // }
       });
     },
     clearStore() {

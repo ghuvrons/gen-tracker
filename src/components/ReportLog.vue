@@ -20,20 +20,14 @@
                 dark
                 dense
                 square
-              >
-                {{ report.frameID.out }}
-              </q-chip>
+              >{{ report.frameID.out }}</q-chip>
 
-              <q-chip color="primary" dark dense square>
-                {{ getDatetime(report) }}
-              </q-chip>
+              <q-chip color="primary" dark dense square>{{ getDatetime(report) }}</q-chip>
             </div>
           </q-item-section>
 
           <q-item-section>
-            <q-item-label class="ellipsis">
-              {{ report.hex }}
-            </q-item-label>
+            <q-item-label class="ellipsis">{{ report.hex }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>
@@ -52,13 +46,13 @@
         @click="lock.follow = !lock.follow"
         :icon="lock.follow ? 'lock' : 'lock_open'"
         :disable="devReports.length == 0"
-        :loading="loading"
         :color="lock.follow ? 'secondary' : 'grey'"
         fab-mini
       >
-        <q-tooltip anchor="top middle" self="bottom middle">
-          {{ lock.follow ? "Unfollow" : "Follow" }}
-        </q-tooltip>
+        <q-tooltip
+          anchor="top middle"
+          self="bottom middle"
+        >{{ lock.follow ? "Unfollow" : "Follow" }}</q-tooltip>
       </q-btn>
     </q-page-sticky>
   </div>
@@ -66,8 +60,8 @@
 
 <script>
 import { unix2time } from "components/js/utils";
-import { devReports } from "../store/db/getter-types";
-import { SET_THE_REPORT } from "../store/db/mutation-types";
+import { devReports } from "src/store/db/getter-types";
+import { SET_THE_REPORT } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import CommonMixin from "components/mixins/CommonMixin";
 
@@ -87,7 +81,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["theUnit", "theReport"]),
+    ...mapState("db", ["theReport"]),
     ...mapGetters("db", [devReports]),
   },
   methods: {
@@ -97,9 +91,6 @@ export default {
     },
   },
   watch: {
-    height: function (h) {
-      console.warn(h);
-    },
     devReports: {
       immediate: true,
       handler(reports) {

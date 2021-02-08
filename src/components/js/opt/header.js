@@ -69,24 +69,38 @@ const Header = [
 const CommandHeader = [
   {
     field: "prefix",
-    title: "Prefix",
+    // title: "Prefix",
     header: true,
     size: 2,
-    format: () => ChangeEndian(AsciiToHex(config.command.prefix)),
+    format: (_) => ChangeEndian(AsciiToHex(config.command.prefix)),
   },
   {
     field: "crc",
-    title: "CRC",
+    // title: "CRC",
     header: true,
     size: 4,
     format: (val) => ChangeEndian(CRC32(val).padStart(4 * 2, "0")),
   },
   {
     field: "size",
-    title: "Size",
+    // title: "Size",
     header: true,
     size: 1,
     format: (hex) => ChangeEndian(IntToHex(hex.length / 2, 1 * 2)),
+  },
+  {
+    field: "frameID",
+    // title: "Frame ID",
+    header: true,
+    size: 1,
+    format: (_) => ChangeEndian(IntToHex(0, 1 * 2)),
+  },
+  {
+    field: "unitID",
+    // title: "Unit ID",
+    header: true,
+    size: 4,
+    format: (val) => ChangeEndian(IntToHex(val, 4 * 2)),
   },
 ];
 

@@ -4,12 +4,10 @@
       <template v-slot="{ item: driver, index }">
         <q-item :key="index" :dark="darker">
           <q-item-section avatar>
-            <q-chip color="primary" dark square>
-              {{ driver.fingerID }}
-            </q-chip>
+            <q-chip color="primary" dark square>{{ driver.fingerID }}</q-chip>
           </q-item-section>
           <q-item-section>
-            <q-item-label> Mr. {{ name[driver.fingerID - 1] }}</q-item-label>
+            <q-item-label>Mr. {{ name[driver.fingerID - 1] }}</q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-btn
@@ -47,7 +45,7 @@
       >
         <q-fab-action
           @click="fetchFinger"
-          :disable="loading || !theUnit"
+          :disable="loading || !theDevice"
           label-position="top"
           color="primary"
           icon="download"
@@ -56,7 +54,7 @@
         />
         <q-fab-action
           @click="addFinger"
-          :disable="loading || !theUnit"
+          :disable="loading || !theDevice"
           label-position="top"
           color="green"
           icon="upload"
@@ -65,7 +63,7 @@
         />
         <q-fab-action
           @click="resetFinger"
-          :disable="loading || !theUnit"
+          :disable="loading || !theDevice"
           label-position="top"
           color="orange"
           icon="delete_forever"
@@ -82,11 +80,11 @@ import {
   ADD_FINGERS,
   DELETE_FINGERS,
   RESET_FINGERS,
-} from "../store/db/mutation-types";
+} from "src/store/db/mutation-types";
 import { extractCommand } from "components/js/command";
 import { parseResCode } from "components/js/response";
 import { VEHICLE_STATES } from "components/js/opt/report";
-import { devFingers, devReports } from "../store/db/getter-types";
+import { devFingers, devReports } from "src/store/db/getter-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import CommonMixin from "components/mixins/CommonMixin";
 
@@ -105,7 +103,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["theUnit", "commands"]),
+    ...mapState("db", ["theDevice", "responses"]),
     ...mapGetters("db", [devFingers, devReports]),
   },
   mounted() {
@@ -147,11 +145,11 @@ export default {
     },
   },
   watch: {
-    commands: {
+    responses: {
       deep: true,
-      handler(commands) {
-        if (commands.length > 0) {
-          let { resCode, payload, unitID, message } = commands[0];
+      handler(responses) {
+        if (responses.length > 0) {
+          let { resCode, payload, unitID, message } = responses[0];
           let res = parseResCode(resCode);
 
           if (res.title == "OK") {

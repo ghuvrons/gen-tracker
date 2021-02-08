@@ -30,6 +30,7 @@ register(process.env.SERVICE_WORKER_FILE, {
       message: "New content is available; please refresh.",
       color: "red",
       icon: "refresh",
+      timeout: 60000,
       actions: [
         {
           label: "Refresh",

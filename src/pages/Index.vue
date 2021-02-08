@@ -42,7 +42,7 @@ import MapManagement from "components/MapManagement";
 import ReportLog from "components/ReportLog";
 import DriverManagement from "components/DriverManagement";
 import GlobalConfiguration from "components/GlobalConfiguration";
-import { devReports, devFingers } from "../store/db/getter-types";
+import { devReports, devFingers } from "src/store/db/getter-types";
 import { mapGetters } from "vuex";
 import CommonMixin from "components/mixins/CommonMixin";
 

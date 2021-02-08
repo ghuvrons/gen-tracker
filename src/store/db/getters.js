@@ -4,12 +4,14 @@ import { unix2time } from "components/js/utils";
 import * as getters from "./getter-types";
 
 export default {
-  [getters.getTotalReports]: ({ reports }) => (theUnit) => {
-    return reports.filter(({ unitID }) => unitID.val === theUnit).length;
+  [getters.getTotalReports]: ({ reports }) => (theUnitID) => {
+    return reports.filter(({ unitID }) => unitID.val === theUnitID).length;
   },
-  [getters.devReports]({ reports, theUnit }) {
-    let _reports = reports.filter(({ unitID }) => unitID.val === theUnit);
-    return theUnit ? _reports : [];
+  [getters.devReports]({ reports, theDevice }) {
+    let _reports = reports.filter(
+      ({ unitID }) => unitID.val === theDevice.unitID
+    );
+    return theDevice ? _reports : [];
   },
   [getters.devEvents](state, getters) {
     let events = getters.devReports.reduce(
@@ -29,11 +31,15 @@ export default {
     return groupBy(events, "name");
   },
 
-  [getters.devCommands]({ commands, theUnit }) {
-    return theUnit ? commands.filter(({ unitID }) => unitID === theUnit) : [];
+  [getters.devResponses]({ responses, theDevice }) {
+    return theDevice
+      ? responses.filter(({ unitID }) => unitID === theDevice.unitID)
+      : [];
   },
 
-  [getters.devFingers]({ fingers, theUnit }) {
-    return theUnit ? fingers.filter(({ unitID }) => unitID === theUnit) : [];
+  [getters.devFingers]({ fingers, theDevice }) {
+    return theDevice
+      ? fingers.filter(({ unitID }) => unitID === theDevice.unitID)
+      : [];
   },
 };

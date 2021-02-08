@@ -24,8 +24,9 @@
 
 <script>
 import { EVENT_LIST, parseEvent } from "components/js/event";
-import { devEvents } from "../../store/db/getter-types";
+import { devEvents } from "src/store/db/getter-types";
 import { mapGetters } from "vuex";
+import { cloneDeep } from "lodash";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -35,7 +36,7 @@ export default {
   mixins: [CommonMixin],
   data() {
     return {
-      EVENT_LIST: this.$_.cloneDeep(EVENT_LIST),
+      EVENT_LIST: cloneDeep(EVENT_LIST),
     };
   },
   computed: {

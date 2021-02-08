@@ -1,8 +1,10 @@
 import _ from "lodash";
 import { config } from "components/js/opt/config";
 import { HexToUnsignedInt, IntToHex } from "components/js/helper";
+import moment from "moment";
+import "moment-timezone";
 
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const tzlookup = require("tz-lookup");
 
 const isString = (myVar) => {
@@ -43,20 +45,24 @@ const getOutput = (arr, fields) => {
   return getField(arr, fields, "output");
 };
 
+const dilation = (unix, as, start) => {
+  if (!start) start = moment();
+  let diff = start.diff(moment(unix, "X"));
+  return moment.duration(diff).as(as);
+};
+
 const calibrateTime = ({ lat, lng, datetime }) => {
   let timezone = _.clone(config.timezone);
 
   // correct timestamp if not sync with server
   if (lat && lng) timezone = tzlookup(lat, lng);
 
-  let serverTime = moment(new Date());
+  let serverTime = moment();
   let deviceTime = moment(datetime, "X");
-  let difference = Math.abs(
-    moment.duration(serverTime.diff(deviceTime)).as("seconds")
-  );
+  let diff = Math.abs(dilation(deviceTime, "seconds", serverTime));
 
   //  (at least more n minutes different)
-  if (!deviceTime.isValid() || difference > config.timediff)
+  if (!deviceTime.isValid() || diff > config.timeDilation)
     return serverTime.tz(timezone).format("YYMMDDHHmmss0E");
 };
 
@@ -79,17 +85,13 @@ const buildTimestamp = (ascii) => {
   );
 };
 
-const unix2time = (unix) => {
-  return moment.unix(unix).format("HH:mm:ss");
-};
-
 const toArrayTree = (obj, data) => {
   return Object.keys(obj).map((key) => {
     return typeof obj[key] === "object"
       ? { label: key, children: toArrayTree(obj[key], data) }
       : {
           label: key,
-          data: data && data[key].out,
+          data: data && data[key] && data[key].out,
         };
   });
 };
@@ -99,6 +101,10 @@ const removeWords = (str, arr) => {
     const regex = new RegExp(`${val}`, "gi");
     return acc.replace(regex, "");
   }, str);
+};
+
+const unix2time = (unix) => {
+  return moment.unix(unix).format("HH:mm:ss");
 };
 
 export {
@@ -113,4 +119,5 @@ export {
   unix2time,
   toArrayTree,
   removeWords,
+  dilation,
 };

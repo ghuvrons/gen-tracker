@@ -40,11 +40,10 @@ const VCU = ({ required }) => {
           required: true,
           chartable: true,
           size: 7,
-          format: (val) =>
-            Number(moment(parseDatetime(val), "YYMMDDHHmmss0E").format("X")),
-          display: (valFormat) =>
-            moment(valFormat, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
-          // moment(valFormat, "X").format("DD MMM YYYY, HH:mm:ss"),
+          format: (v) =>
+            Number(moment(parseDatetime(v), "YYMMDDHHmmss0E").format("X")),
+          display: (vf) => moment(vf, "X").format("ddd, DD MMM YYYY, HH:mm:ss"),
+          // moment(vf, "X").format("DD MMM YYYY, HH:mm:ss"),
         },
       ]);
     }, []),
@@ -55,11 +54,10 @@ const VCU = ({ required }) => {
       required: true,
       chartable: true,
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => {
-        if (valFormat === 0xff) return "NONE";
-
-        return IntToHex(valFormat, 2).toUpperCase();
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => {
+        if (vf === 0xff) return "NONE";
+        return IntToHex(vf, 2).toUpperCase();
       },
     },
     {
@@ -69,8 +67,8 @@ const VCU = ({ required }) => {
       required: true,
       chartable: true,
       size: 8,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => IntToHex(valFormat, 16).toUpperCase(),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => IntToHex(vf, 16).toUpperCase(),
     },
     {
       group: "vcu",
@@ -79,8 +77,8 @@ const VCU = ({ required }) => {
       required: true,
       chartable: true,
       size: 1,
-      format: (val) => HexToSignedInt8(ChangeEndian(val)),
-      display: (valFormat) => getVehicleState(valFormat),
+      format: (v) => HexToSignedInt8(ChangeEndian(v)),
+      display: (vf) => getVehicleState(vf),
     },
     {
       group: "vcu.gps",
@@ -89,8 +87,8 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 4,
-      format: (val) => HexToSignedInt32(ChangeEndian(val)) * 0.0000001,
-      display: (valFormat) => parseFloat(valFormat.toFixed(7)),
+      format: (v) => HexToSignedInt32(ChangeEndian(v)) * 0.0000001,
+      display: (vf) => parseFloat(vf.toFixed(7)),
     },
     {
       group: "vcu.gps",
@@ -99,8 +97,8 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 4,
-      format: (val) => HexToSignedInt32(ChangeEndian(val)) * 0.0000001,
-      display: (valFormat) => parseFloat(valFormat.toFixed(7)),
+      format: (v) => HexToSignedInt32(ChangeEndian(v)) * 0.0000001,
+      display: (vf) => parseFloat(vf.toFixed(7)),
     },
     {
       group: "vcu.gps",
@@ -110,8 +108,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "m",
       size: 4,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1,
-      display: (valFormat) => parseFloat(valFormat.toFixed(2)),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.1,
+      display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
       group: "vcu.gps",
@@ -120,8 +118,8 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1,
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.1,
+      display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
       group: "vcu.gps",
@@ -130,8 +128,8 @@ const VCU = ({ required }) => {
       required: false,
       chartable: true,
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1,
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.1,
+      display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
       group: "vcu.gps",
@@ -141,8 +139,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Degree",
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 2,
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 2,
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu.gps",
@@ -152,8 +150,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Sat.",
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu",
@@ -163,8 +161,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Km/hr",
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu.trip",
@@ -174,8 +172,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "m",
       size: 4,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu",
@@ -185,8 +183,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "%",
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu",
@@ -196,8 +194,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "mVolt",
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 18,
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 18,
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu.estimation",
@@ -207,8 +205,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Km",
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu.estimation",
@@ -218,8 +216,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "Km/kWh",
       size: 1,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu.trip",
@@ -229,8 +227,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "m",
       size: 4,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => Dot(vf),
     },
     {
       group: "vcu.trip",
@@ -240,8 +238,8 @@ const VCU = ({ required }) => {
       chartable: true,
       unit: "m",
       size: 4,
-      format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => Dot(valFormat),
+      format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+      display: (vf) => Dot(vf),
     },
   ];
 
@@ -260,11 +258,11 @@ const BMS = ({ required }) => {
         title: `BMS${i} ID`,
         required: true,
         size: 4,
-        format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-        display: (valFormat) => {
-          if (valFormat === 0xffffffff) return "NONE";
+        format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+        display: (vf) => {
+          if (vf === 0xffffffff) return "NONE";
 
-          return IntToHex(valFormat, 8).toUpperCase();
+          return IntToHex(vf, 8).toUpperCase();
         },
       },
       {
@@ -275,8 +273,8 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "Volt",
         size: 2,
-        format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.01,
-        display: (valFormat) => valFormat.toFixed(2),
+        format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01,
+        display: (vf) => vf.toFixed(2),
       },
       {
         group: `bms.${i}`,
@@ -286,8 +284,8 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "Ampere",
         size: 2,
-        format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.01 - 50,
-        display: (valFormat) => valFormat.toFixed(2),
+        format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01 - 50,
+        display: (vf) => vf.toFixed(2),
       },
       {
         group: `bms.${i}`,
@@ -297,8 +295,8 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "%",
         size: 2,
-        format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.01,
-        display: (valFormat) => Dot(valFormat),
+        format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01,
+        display: (vf) => Dot(vf),
       },
       {
         group: `bms.${i}`,
@@ -308,8 +306,8 @@ const BMS = ({ required }) => {
         chartable: true,
         unit: "Celcius",
         size: 2,
-        format: (val) => HexToUnsignedInt(ChangeEndian(val)) * 0.1 - 40,
-        display: (valFormat) => valFormat.toFixed(2),
+        format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.1 - 40,
+        display: (vf) => vf.toFixed(2),
       },
     ];
     fields = [...fields, ...tmp];
@@ -347,8 +345,8 @@ const TEST = () => {
           chartable: true,
           unit: "s",
           size: 1,
-          format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-          display: (valFormat) => Dot(valFormat),
+          format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+          display: (vf) => Dot(vf),
         },
         {
           group: `vcu.task.stack`,
@@ -358,8 +356,8 @@ const TEST = () => {
           chartable: true,
           unit: "words",
           size: 2,
-          format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-          display: (valFormat) => Dot(valFormat),
+          format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+          display: (vf) => Dot(vf),
         },
       ]);
     }, []),
@@ -373,8 +371,8 @@ const TEST = () => {
           chartable: true,
           unit: "Degree",
           size: 1,
-          format: (val) => HexToSignedInt8(ChangeEndian(val)),
-          display: (valFormat) => Dot(valFormat),
+          format: (v) => HexToSignedInt8(ChangeEndian(v)),
+          display: (vf) => Dot(vf),
         },
       ]);
     }, []),

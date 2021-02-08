@@ -2,7 +2,7 @@ import { unix2time } from "components/js/utils";
 
 const config = {
   app: {
-    version: "1.30",
+    version: "1.31",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -15,7 +15,7 @@ const config = {
   },
   command: {
     prefix: "@C",
-    timeoutMS: 5000,
+    timeout: 5,
   },
   frame: {
     prefix: "@R",
@@ -39,7 +39,7 @@ const config = {
       latMax: 5.90713,
     },
   },
-  timediff: 5 * 60,
+  timeDilation: 5 * 60,
   timezone: "Asia/Jakarta",
   maxStorage: {
     reports: 1000,
