@@ -1,5 +1,5 @@
 <template>
-  <div :style="`height: calc(100vh - ${height}vh - 105px)`">
+  <div :style="contentStyle">
     <div class="row q-gutter-xs">
       <div class="col-auto">
         <q-btn
@@ -45,7 +45,7 @@
           :factory="importJSON"
           accept=".json"
           label="Import JSON"
-          @finish="finish"
+          @finishImport="finishImport"
         />
       </div>
     </div>
@@ -66,7 +66,7 @@ import { devReports } from "src/store/db/getter-types";
 import { RESET_DATABASE } from "src/store/db/action-types";
 import { SET_CALIBRATION } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import { exportCSV, exportJSON } from "components/js/exporter";
+import { exportCSV, exportJSON, importJSON } from "components/js/exporter";
 import { calibrateTime } from "components/js/utils";
 import CommonMixin from "components/mixins/CommonMixin";
 
@@ -74,7 +74,8 @@ export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
   props: {
-    height: {
+    contentStyle: {
+      type: String,
       required: true,
     },
   },
@@ -99,7 +100,7 @@ export default {
   methods: {
     ...mapMutations("db", [SET_CALIBRATION]),
     ...mapActions("db", [RESET_DATABASE]),
-    finish() {
+    finishImport() {
       this.$refs.importer.reset();
     },
     exportJSON() {
@@ -109,14 +110,7 @@ export default {
       exportCSV(this.reports);
     },
     importJSON(files) {
-      return new Promise((resolve, reject) => {
-        let reader = new FileReader();
-        reader.onload = (e) => {
-          this.$root.$emit("importData", JSON.parse(e.target.result));
-          resolve();
-        };
-        reader.readAsText(files[0]);
-      });
+      importJSON(files[0]).then((res) => this.$root.$emit("importData", res));
     },
     clearStore() {
       this.$q

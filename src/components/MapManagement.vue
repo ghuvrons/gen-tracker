@@ -78,20 +78,18 @@ export default {
     },
   },
   watch: {
-    devReports: {
+    "devReports.0": {
       immediate: true,
-      handler(devReports) {
-        if (devReports.length == 0) return;
-        let { frameID, gpsLatitude, gpsLongitude } = devReports[0];
+      handler(devReport) {
+        if (!devReport) return;
+        let { frameID, gpsLatitude, gpsLongitude } = devReport;
         let pos = genPosition({
           frameID: frameID.val,
           lat: gpsLatitude && gpsLatitude.val,
           lng: gpsLongitude && gpsLongitude.val,
         });
 
-        if (!pos.valid) return;
-
-        this.path.push(pos);
+        if (pos.valid) this.path.push(pos);
       },
     },
     report: {

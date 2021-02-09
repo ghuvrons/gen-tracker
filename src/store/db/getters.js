@@ -1,11 +1,23 @@
 import { groupBy } from "lodash";
 import { EVENT_LIST, parseEvent } from "components/js/event";
 import { unix2time } from "components/js/utils";
+import moment from "moment";
 import * as getters from "./getter-types";
 
 export default {
-  [getters.getTotalReports]: ({ reports }) => (theUnitID) => {
+  [getters.devTotalReports]: ({ reports }) => (theUnitID) => {
     return reports.filter(({ unitID }) => unitID.val === theUnitID).length;
+  },
+  [getters.devLastFinger]: ({ device }) => {
+    if (!device.fingerTime) return "Unknown";
+    return moment(device.fingerTime, "X").format("DD-MM-YY HH:mm:ss");
+  },
+  [getters.devLastReport]: ({ reports }) => (theUnitID) => {
+    let report = reports.find(({ unitID }) => unitID.val === theUnitID);
+
+    if (report)
+      return moment(report.sendDatetime.val, "X").endOf("second").fromNow();
+    return "?";
   },
   [getters.devReports]({ reports, device }) {
     let devReports = reports.filter(

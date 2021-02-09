@@ -36,7 +36,7 @@
     <q-drawer v-model="drawer.left" show-if-above bordered>
       <q-splitter v-model="splitter" style="height: 100vh" unit="px" horizontal>
         <template v-slot:before>
-          <unit-management :height="splitter"></unit-management>
+          <device-management :height="splitter"></device-management>
         </template>
         <template v-slot:separator>
           <q-avatar color="grey" text-color="white" size="20px" icon="drag_indicator" />
@@ -62,7 +62,7 @@
 import { SET_DARKER } from "src/store/db/mutation-types";
 import { mapState, mapMutations } from "vuex";
 import ReportReader from "components/ReportReader";
-import UnitManagement from "components/UnitManagement";
+import DeviceManagement from "components/DeviceManagement";
 import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
 import CommonMixin from "components/mixins/CommonMixin";
@@ -72,7 +72,7 @@ export default {
   mixins: [CommonMixin],
   components: {
     ReportReader,
-    UnitManagement,
+    DeviceManagement,
     ResponseLog,
     CommandManagement,
   },

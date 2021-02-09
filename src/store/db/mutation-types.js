@@ -11,6 +11,8 @@ export const CLEAR_BUFFER = "CLEAR_BUFFER";
 export const SET_COMMAND = "SET_COMMAND";
 export const CLEAR_COMMAND = "CLEAR_COMMAND";
 
+export const TAKE_FINGER_TIME = "TAKE_FINGER_TIME";
+
 export const ADD_DEVICES = "ADD_DEVICES";
 export const ADD_REPORTS = "ADD_REPORTS";
 export const ADD_RESPONSES = "ADD_RESPONSES";

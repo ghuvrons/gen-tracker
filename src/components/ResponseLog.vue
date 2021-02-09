@@ -7,7 +7,14 @@
       </q-toolbar-title>
     </q-bar>
 
+    <q-banner v-if="devResponses.length == 0">
+      <template v-slot:avatar>
+        <q-icon name="info"></q-icon>
+      </template>
+      No response yet
+    </q-banner>
     <q-virtual-scroll
+      v-else
       :items="devResponses"
       :style="`height: calc(100vh - ${height}px - 33px)`"
       separator
@@ -16,7 +23,7 @@
         <q-item :key="index" @click="applyCommand(cmd.payload)" clickable>
           <q-item-section>
             <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
-            <q-item-label lines="2" caption>{{ cmd.message }}</q-item-label>
+            <q-item-label lines="2" caption>{{ parseVehicleState(cmd.message) }}</q-item-label>
           </q-item-section>
 
           <q-item-section side>
@@ -29,19 +36,12 @@
           </q-item-section>
         </q-item>
       </template>
-      <template v-slot:after>
-        <q-banner v-if="devResponses.length == 0">
-          <template v-slot:avatar>
-            <q-icon name="info"></q-icon>
-          </template>
-          No response yet
-        </q-banner>
-      </template>
     </q-virtual-scroll>
   </div>
 </template>
 
 <script>
+import { VEHICLE_STATES } from "components/js/opt/report";
 import { devResponses } from "src/store/db/getter-types";
 import { SET_BUFFER } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
@@ -67,6 +67,17 @@ export default {
     },
     parseResCode(code) {
       return parseResCode(code);
+    },
+    parseVehicleState(msg) {
+      if (!msg) return;
+
+      let labels = Object.keys(VEHICLE_STATES);
+      let values = Object.values(VEHICLE_STATES);
+
+      return msg.replace(/\{(.+?)\}/g, function (string, val) {
+        let idx = values.findIndex((v) => v === parseInt(val));
+        return labels[idx];
+      });
     },
   },
 };

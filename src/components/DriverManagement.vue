@@ -1,36 +1,37 @@
 <template>
-  <div :style="`height: calc(100vh - ${height}vh - 105px)`">
-    <q-virtual-scroll :items="devFingers" separator>
-      <template v-slot="{ item: driver, index }">
-        <q-item :key="index">
-          <q-item-section avatar>
-            <q-chip color="primary" dark square>{{ driver.fingerID }}</q-chip>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Mr. {{ name[driver.fingerID - 1] }}</q-item-label>
-          </q-item-section>
-          <q-item-section side>
-            <q-btn
-              @click="deleteFinger(driver)"
-              :loading="loading"
-              size="sm"
-              icon="delete"
-              outline
-              unelevated
-              round
-            />
-          </q-item-section>
-        </q-item>
+  <div :style="contentStyle">
+    <q-banner v-if="devFingers.length == 0">
+      <template v-slot:avatar>
+        <q-icon name="info"></q-icon>
       </template>
-      <template v-slot:after>
-        <q-banner v-if="devFingers.length == 0">
-          <template v-slot:avatar>
-            <q-icon name="info"></q-icon>
-          </template>
-          No finger driver yet
-        </q-banner>
-      </template>
-    </q-virtual-scroll>
+      No finger driver yet
+    </q-banner>
+    <template v-else>
+      <div class="text-subtitle2">Last fetch: {{ devLastFinger }}</div>
+      <q-virtual-scroll :items="devFingers" separator>
+        <template v-slot="{ item: driver, index }">
+          <q-item :key="index" dense>
+            <q-item-section avatar>
+              <q-chip color="primary" dark square>{{ driver.fingerID }}</q-chip>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Mr. {{ name[driver.fingerID - 1] }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-btn
+                @click="deleteFinger(driver)"
+                :loading="loading"
+                size="sm"
+                icon="delete"
+                outline
+                unelevated
+                round
+              />
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-virtual-scroll>
+    </template>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab
@@ -42,6 +43,7 @@
         direction="left"
         label-position="top"
         padding="sm"
+        :disable="loading"
       >
         <q-fab-action
           @click="fetchFinger"
@@ -76,23 +78,16 @@
 </template>
 
 <script>
-import {
-  ADD_FINGERS,
-  DELETE_FINGERS,
-  RESET_FINGERS,
-} from "src/store/db/mutation-types";
-import { extractCommand } from "components/js/command";
-import { parseResCode } from "components/js/response";
-import { VEHICLE_STATES } from "components/js/opt/report";
-import { devFingers, devReports } from "src/store/db/getter-types";
-import { mapState, mapGetters, mapMutations } from "vuex";
+import { devFingers, devLastFinger } from "src/store/db/getter-types";
+import { mapState, mapGetters } from "vuex";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
   props: {
-    height: {
+    contentStyle: {
+      type: String,
       required: true,
     },
   },
@@ -103,16 +98,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["device", "responses"]),
-    ...mapGetters("db", [devFingers, devReports]),
-  },
-  mounted() {
-    if (this.devReports.length > 0)
-      if (this.devReports[0].vehicleState.out >= VEHICLE_STATES["STANDBY"])
-        this.fetchFinger();
+    ...mapState("db", ["device"]),
+    ...mapGetters("db", [devFingers, devLastFinger]),
   },
   methods: {
-    ...mapMutations("db", [ADD_FINGERS, DELETE_FINGERS, RESET_FINGERS]),
     fetchFinger() {
       this.$root.$emit("executeCommand", `FINGER_FETCH`);
     },
@@ -120,53 +109,25 @@ export default {
       this.$root.$emit("executeCommand", `FINGER_ADD`);
     },
     deleteFinger({ fingerID }) {
-      this.$q
-        .dialog({
-          title: "Confirmation",
-          message: `Are you sure to remove this fingerprint *${fingerID}* ?`,
-          dark: this.$q.dark.isActive,
-          preventClose: true,
-          cancel: true,
-        })
-        .onOk(() =>
-          this.$root.$emit("executeCommand", `FINGER_DEL=${fingerID}`)
-        );
+      this.confirm(
+        `Are you sure to remove this fingerprint ${fingerID} ?`
+      ).onOk(() =>
+        this.$root.$emit("executeCommand", `FINGER_DEL=${fingerID}`)
+      );
     },
     resetFinger() {
-      this.$q
-        .dialog({
-          title: "Confirmation",
-          message: `Are you sure to remove all fingerprints  ?`,
-          dark: this.$q.dark.isActive,
-          preventClose: true,
-          cancel: true,
-        })
-        .onOk(() => this.$root.$emit("executeCommand", `FINGER_RST`));
+      this.confirm(`Are you sure to remove all fingerprints  ?`).onOk(() =>
+        this.$root.$emit("executeCommand", `FINGER_RST`)
+      );
     },
-  },
-  watch: {
-    responses: {
-      deep: true,
-      handler(responses) {
-        if (responses.length == 0) return;
-        let { resCode, payload, unitID, message } = responses[0];
-
-        let res = parseResCode(resCode);
-        if (res.title != "OK") return;
-
-        let { prop, value } = extractCommand(payload);
-        if (prop == "FINGER_FETCH") {
-          if (message.length > 0) {
-            let ids = message.split(",");
-            for (let i = ids.length - 1; i >= 0; i--)
-              this.ADD_FINGERS({ unitID, fingerID: ids[i] });
-          }
-        } else if (prop == "FINGER_ADD")
-          this.ADD_FINGERS({ unitID, fingerID: message });
-        else if (prop == "FINGER_DEL")
-          this.DELETE_FINGERS({ unitID, fingerID: value });
-        else if (prop == "FINGER_RST") this.RESET_FINGERS({ unitID });
-      },
+    confirm(message) {
+      return this.$q.dialog({
+        title: "Confirmation",
+        message,
+        dark: this.$q.dark.isActive,
+        preventClose: true,
+        cancel: true,
+      });
     },
   },
 };

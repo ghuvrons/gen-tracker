@@ -52,4 +52,25 @@ const exportJSON = (reports) => {
   exportFromJSON({ data, fileName, exportType });
 };
 
-export { exportCSV, exportJSON };
+const importJSON = (file) => {
+  return new Promise((resolve, reject) => {
+    if (!file) reject();
+
+    let reader = new FileReader();
+    reader.onload = (e) => resolve(JSON.parse(e.target.result));
+    reader.readAsText(file);
+  });
+
+  // return new Promise((resolve, reject) => {
+  //   if (!file) reject();
+
+  //   let reader = new FileReader();
+  //   reader.onload = (e) => {
+  //     this.$root.$emit("importData", JSON.parse(e.target.result));
+  //     resolve();
+  //   };
+  //   reader.readAsText(files);
+  // });
+};
+
+export { exportCSV, exportJSON, importJSON };

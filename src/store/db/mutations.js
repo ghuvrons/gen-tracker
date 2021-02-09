@@ -1,5 +1,6 @@
 import * as mutations from "./mutation-types";
 import config from "components/js/opt/config";
+import moment from "moment";
 
 const { maxStorage } = config;
 
@@ -46,6 +47,18 @@ export default {
     state.command = null;
   },
 
+  [mutations.TAKE_FINGER_TIME](state, device) {
+    let idx = state.devices.findIndex(({ unitID }) => unitID === device.unitID);
+
+    if (idx >= 0) {
+      let dev = {
+        ...device,
+        fingerTime: moment().unix(),
+      };
+      state.devices.splice(idx, 1, dev);
+      if (state.device.unitID == device.unitID) state.device = dev;
+    }
+  },
   [mutations.ADD_DEVICES](state, payload) {
     let dev = state.devices.find(({ unitID }) => unitID === payload.unitID);
 

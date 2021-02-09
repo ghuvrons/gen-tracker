@@ -21,7 +21,7 @@
             dense
           ></q-input>
           <!-- <q-space></q-space> -->
-          <q-btn flat round dense icon="close" v-close-popup />
+          <q-btn class="q-ml-sm" flat round dense icon="close" v-close-popup />
         </q-toolbar>
       </q-header>
 

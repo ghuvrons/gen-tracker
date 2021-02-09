@@ -15,4 +15,10 @@ export default {
     commit(mutations.ADD_DEVICES, { unitID: payload.unitID });
     commit(mutations.ADD_RESPONSES, payload);
   },
+  [actions.INSERT_FINGERS]({ commit, state }, { unitID, ids }) {
+    commit(mutations.TAKE_FINGER_TIME, state.device);
+    ids.forEach((id) =>
+      commit(mutations.ADD_FINGERS, { unitID, fingerID: id })
+    );
+  },
 };

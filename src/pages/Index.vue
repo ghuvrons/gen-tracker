@@ -21,13 +21,13 @@
         <!-- Targets -->
         <q-tab-panels v-model="selectedTab" keep-alive animated swipeable>
           <q-tab-panel name="tab-1">
-            <report-log :height="splitter"></report-log>
+            <report-log :content-style="contentStyle"></report-log>
           </q-tab-panel>
           <q-tab-panel name="tab-2">
-            <driver-management :height="splitter"></driver-management>
+            <driver-management :content-style="contentStyle"></driver-management>
           </q-tab-panel>
           <q-tab-panel name="tab-3">
-            <global-configuration :height="splitter"></global-configuration>
+            <global-configuration :content-style="contentStyle"></global-configuration>
           </q-tab-panel>
         </q-tab-panels>
       </template>
@@ -66,6 +66,9 @@ export default {
   },
   computed: {
     ...mapGetters("db", [devReports, devFingers]),
+    contentStyle() {
+      return `height: calc(100vh - ${this.splitter}vh - 95px)`;
+    },
   },
 };
 </script>

@@ -1,6 +1,12 @@
 <template>
-  <div :style="`height: calc(100vh - ${height}vh - 105px)`">
-    <q-virtual-scroll :items="devReports" separator>
+  <div :style="contentStyle">
+    <q-banner v-if="devReports.length == 0">
+      <template v-slot:avatar>
+        <q-icon name="info"></q-icon>
+      </template>
+      No report yet
+    </q-banner>
+    <q-virtual-scroll v-else :items="devReports" separator>
       <template v-slot="{ item: devReport, index }">
         <q-item
           :key="index"
@@ -30,14 +36,6 @@
           </q-item-section>
         </q-item>
       </template>
-      <template v-slot:after>
-        <q-banner v-if="devReports.length == 0">
-          <template v-slot:avatar>
-            <q-icon name="info"></q-icon>
-          </template>
-          No report yet
-        </q-banner>
-      </template>
     </q-virtual-scroll>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
@@ -62,13 +60,15 @@ import { unix2time } from "components/js/utils";
 import { devReports } from "src/store/db/getter-types";
 import { SET_REPORT } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
+import { get } from "lodash";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
   mixins: [CommonMixin],
   props: {
-    height: {
+    contentStyle: {
+      type: String,
       required: true,
     },
   },
@@ -90,12 +90,16 @@ export default {
     },
   },
   watch: {
-    devReports: {
+    "devReports.0": {
       immediate: true,
-      handler(devReports) {
-        if (devReports.length == 0) return;
+      handler(devReport, oldDevReport) {
+        if (!devReport) return this.SET_REPORT(null);
 
-        if (this.lock.follow) this.SET_REPORT(devReports[0]);
+        if (
+          devReport.unitID.val != get(oldDevReport, "unitID.val") ||
+          this.lock.follow
+        )
+          this.SET_REPORT(devReport);
       },
     },
   },

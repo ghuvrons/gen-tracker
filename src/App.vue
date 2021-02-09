@@ -12,14 +12,25 @@ import {
   SET_LOADING,
   SET_COMMAND,
   CLEAR_COMMAND,
+  ADD_FINGERS,
+  DELETE_FINGERS,
+  RESET_FINGERS,
+  TAKE_FINGER_TIME,
 } from "src/store/db/mutation-types";
-import { INSERT_REPORTS, INSERT_RESPONSES } from "src/store/db/action-types";
+import {
+  INSERT_REPORTS,
+  INSERT_RESPONSES,
+  INSERT_FINGERS,
+} from "src/store/db/action-types";
 import { parseReport } from "components/js/report";
 import { parseResponse, parseResCode } from "components/js/response";
-import { parseCommand, buildCommand } from "components/js/command";
+import {
+  parseCommand,
+  buildCommand,
+  extractCommand,
+} from "components/js/command";
 import { QSpinnerGears } from "quasar";
 import { cloneDeep } from "lodash";
-import { devReports } from "src/store/db/getter-types";
 import moment from "moment";
 
 export default {
@@ -45,11 +56,18 @@ export default {
   },
   computed: {
     ...mapState("db", ["command", "responses", "reports", "device"]),
-    ...mapGetters("db", [devReports]),
   },
   methods: {
-    ...mapMutations("db", [SET_LOADING, SET_COMMAND, CLEAR_COMMAND]),
-    ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS]),
+    ...mapMutations("db", [
+      SET_LOADING,
+      SET_COMMAND,
+      CLEAR_COMMAND,
+      ADD_FINGERS,
+      DELETE_FINGERS,
+      RESET_FINGERS,
+      TAKE_FINGER_TIME,
+    ]),
+    ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS, INSERT_FINGERS]),
     importData(reports) {
       this.importTotal = reports.length;
       this.importBuffer = cloneDeep(reports);
@@ -207,17 +225,31 @@ export default {
     },
   },
   watch: {
-    responses: function (responses) {
-      if (responses.length == 0) return;
+    "responses.0": function (response) {
+      if (!response) return;
 
-      let { resCode } = responses[0];
+      let { resCode } = response;
       let res = parseResCode(resCode);
       let ok = res.title == "OK";
 
       let type = ok ? "positive" : "negative";
-      let message = ok ? "Command sent." : `Command is ${res.title}`;
+      let msg = ok ? "Command sent." : `Command is ${res.title}`;
 
-      this.stopWaitting(type, message);
+      this.stopWaitting(type, msg);
+
+      // DRIVER LOGIC
+      let { payload, unitID, message } = response;
+      if (!ok) return;
+
+      let { prop, value } = extractCommand(payload);
+      if (prop == "FINGER_FETCH") {
+        if (message.length > 0)
+          this.INSERT_FINGERS({ unitID, ids: message.split(",") });
+      } else if (prop == "FINGER_ADD")
+        this.ADD_FINGERS({ unitID, fingerID: message });
+      else if (prop == "FINGER_DEL")
+        this.DELETE_FINGERS({ unitID, fingerID: value });
+      else if (prop == "FINGER_RST") this.RESET_FINGERS({ unitID });
     },
   },
 };
