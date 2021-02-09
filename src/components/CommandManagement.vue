@@ -23,7 +23,6 @@
         hint="Press ENTER to send."
         type="text"
         stack-label
-        :dark="darker"
         :disable="loading || !device"
         :readonly="loading"
         :loading="loading"

@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="modalOpen" :maximized="$q.screen.lt.md" full-width full-height>
-    <q-layout view="Lhh lpR fff" :class="darkerClass" container>
+    <q-layout view="Lhh lpR fff" container>
       <q-header class="bg-primary">
         <q-toolbar>
           <template v-if="$q.screen.gt.xs">
@@ -13,8 +13,8 @@
           <q-input
             v-model="keyword"
             placeholder="Filter..."
-            :dark="darker"
             :class="{ 'full-width': $q.screen.lt.sm }"
+            dark
             clearable
             square
             outlined
@@ -26,8 +26,8 @@
       </q-header>
 
       <q-page-container>
-        <q-page padding>
-          <q-banner v-if="searchResults.length == 0" :dark="darker">
+        <q-page :class="$q.dark.isActive ? 'bg-black': 'bg-white'" padding>
+          <q-banner v-if="searchResults.length == 0">
             <template v-slot:avatar>
               <q-icon name="info"></q-icon>
             </template>
@@ -35,7 +35,7 @@
           </q-banner>
           <q-virtual-scroll v-else :items="searchResults" separator>
             <template v-slot="{ item: cmd, index }">
-              <q-item :key="index" @click="$emit('select', cmd.command)" :dark="darker" clickable>
+              <q-item :key="index" @click="$emit('select', cmd.command)" clickable>
                 <q-item-section>
                   <q-item-label lines="1">{{ cmd.command }}</q-item-label>
                   <q-item-label lines="2" caption>{{ cmd.desc }}</q-item-label>

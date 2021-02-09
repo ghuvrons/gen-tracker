@@ -14,7 +14,6 @@
           @click="setDevice(dev.unitID)"
           :active="dev.unitID === device.unitID"
           active-class="bg-primary text-white"
-          :dark="darker"
           clickable
           dense
         >
@@ -22,12 +21,12 @@
             <q-item-label class="text-subtitle2">{{ dev.unitID.toString() }}</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-chip :dark="!darker" dense square>{{ getTotalReports(dev.unitID) }}</q-chip>
+            <q-chip :dark="!$q.dark.isActive" dense square>{{ getTotalReports(dev.unitID) }}</q-chip>
           </q-item-section>
         </q-item>
       </template>
       <template v-slot:after>
-        <q-banner v-if="devices.length == 0" :dark="darker">
+        <q-banner v-if="devices.length == 0">
           <template v-slot:avatar>
             <q-icon name="info"></q-icon>
           </template>

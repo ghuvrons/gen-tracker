@@ -1,17 +1,16 @@
 <template>
-  <q-list :dark="darker" bordered>
+  <q-list bordered>
     <q-expansion-item
       v-for="(event, name) in devEvents"
       :key="name"
       :label="`${name} `"
       :caption="`(${event.length}) times`"
       :header-class="`text-${activeEvent(name) ? 'green' : 'grey'}`"
-      :dark="darker"
       expand-separator
     >
       <q-virtual-scroll :items="event" style="max-height:50vh" separator>
-        <template v-slot="{ item: evt, index }">
-          <q-item :key="`${name}-${evt.time}`" :dark="darker">
+        <template v-slot="{ item: evt }">
+          <q-item :key="`${name}-${evt.time}`">
             <q-item-section>
               <q-item-label caption>{{ evt.time }}</q-item-label>
             </q-item-section>

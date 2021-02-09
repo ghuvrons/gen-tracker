@@ -43,7 +43,6 @@
         <q-uploader
           ref="importer"
           :factory="importJSON"
-          :dark="darker"
           accept=".json"
           label="Import JSON"
           @finish="finish"
@@ -55,7 +54,6 @@
         <q-toggle
           v-model="calibrationState"
           :disable="devices.length == 0"
-          :dark="darker"
           label="Time Calibration"
         />
       </div>
@@ -82,8 +80,8 @@ export default {
   },
   computed: {
     ...mapState("db", [
-      "devices",
       "calibration",
+      "devices",
       "command",
       "reports",
       "responses",
@@ -125,7 +123,7 @@ export default {
         .dialog({
           title: "Confirmation",
           message: `Are you sure to remove all data?`,
-          dark: this.darker,
+          dark: this.$q.dark.isActive,
           preventClose: true,
           cancel: true,
         })

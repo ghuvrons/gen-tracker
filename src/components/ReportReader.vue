@@ -20,7 +20,7 @@
       </q-btn>
     </q-bar>
 
-    <q-banner v-if="reportFields.length == 0" :dark="darker">
+    <q-banner v-if="reportFields.length == 0">
       <template v-slot:avatar>
         <q-icon name="info"></q-icon>
       </template>
@@ -28,14 +28,13 @@
     </q-banner>
     <template v-else>
       <template v-if="treeState">
-        <q-input v-model="filter" placeholder="Filter..." :dark="darker" clearable filled dense></q-input>
+        <q-input v-model="filter" placeholder="Filter..." clearable filled dense></q-input>
         <div :style="`overflow-y:scroll; max-height: calc(100vh - ${height}px - 73px)`">
           <q-tree
             :selected="historyField"
             @update:selected="openHistory"
             :nodes="nodes"
             :filter="filter"
-            :dark="darker"
             color="primary"
             node-key="label"
             default-expand-all
@@ -55,14 +54,13 @@
         :style="`height: calc(100vh - ${height}px - 34px)`"
         separator
       >
-        <template v-slot="{ item: field, index }">
+        <template v-slot="{ item: field }">
           <q-item
             :key="field"
             @click="openHistory(field)"
             :clickable="hasHistory(field)"
             :active="historyField == field"
             active-class="bg-primary text-white"
-            :dark="darker"
           >
             <q-item-section>
               <q-item-label lines="1">{{ getSubField(field, "title") }}</q-item-label>

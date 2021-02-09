@@ -22,8 +22,8 @@
         ></q-btn>
 
         <q-btn
-          @click="darkState = !darkState"
-          :icon="darker ? 'light_mode' : 'dark_mode'"
+          @click="$q.dark.toggle()"
+          :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'"
           flat
           dense
           round
@@ -33,7 +33,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="drawer.left" :content-class="darkerClass" show-if-above bordered>
+    <q-drawer v-model="drawer.left" show-if-above bordered>
       <q-splitter v-model="splitter" style="height: 100vh" unit="px" horizontal>
         <template v-slot:before>
           <unit-management :height="splitter"></unit-management>
@@ -47,13 +47,7 @@
       </q-splitter>
     </q-drawer>
 
-    <q-drawer
-      side="right"
-      v-model="drawer.right"
-      :content-class="darkerClass"
-      show-if-above
-      bordered
-    >
+    <q-drawer side="right" v-model="drawer.right" show-if-above bordered>
       <command-management style="height: 120px"></command-management>
       <response-log :height="120"></response-log>
     </q-drawer>
@@ -66,7 +60,7 @@
 
 <script>
 import { SET_DARKER } from "src/store/db/mutation-types";
-import { mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import ReportReader from "components/ReportReader";
 import UnitManagement from "components/UnitManagement";
 import ResponseLog from "components/ResponseLog";
@@ -92,17 +86,18 @@ export default {
     };
   },
   computed: {
-    darkState: {
-      get() {
-        return this.darker;
-      },
-      set(value) {
-        this.SET_DARKER(value);
-      },
-    },
+    ...mapState("db", ["darker"]),
   },
   methods: {
     ...mapMutations("db", [SET_DARKER]),
+  },
+  mounted() {
+    this.$q.dark.set(this.darker);
+  },
+  watch: {
+    "$q.dark.isActive": function (v) {
+      this.SET_DARKER(v);
+    },
   },
 };
 </script>

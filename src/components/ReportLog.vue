@@ -4,7 +4,6 @@
       <template v-slot="{ item: devReport, index }">
         <q-item
           :key="index"
-          :dark="darker"
           :active="devReport.hex === report.hex"
           active-class="bg-primary text-white"
           @click="SET_REPORT(devReport)"
@@ -32,7 +31,7 @@
         </q-item>
       </template>
       <template v-slot:after>
-        <q-banner v-if="devReports.length == 0" :dark="darker">
+        <q-banner v-if="devReports.length == 0">
           <template v-slot:avatar>
             <q-icon name="info"></q-icon>
           </template>

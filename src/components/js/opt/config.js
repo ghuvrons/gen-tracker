@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "1.33",
+    version: "1.34",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },

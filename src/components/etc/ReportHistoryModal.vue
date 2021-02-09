@@ -6,7 +6,7 @@
     full-height
     full-width
   >
-    <q-layout view="Lhh lpR fff" :class="darkerClass" container>
+    <q-layout view="Lhh lpR fff" container>
       <q-header class="bg-primary">
         <q-toolbar>
           <q-toolbar-title>
@@ -19,7 +19,7 @@
       </q-header>
 
       <q-page-container>
-        <q-page padding>
+        <q-page :class="$q.dark.isActive ? 'bg-black': 'bg-white'" padding>
           <div class="row">
             <div
               :class="
@@ -27,12 +27,7 @@
               "
             >
               <div class="q-pa-sm">
-                <line-chart
-                  style="height: 60vh"
-                  :param="chart"
-                  :update="history.update"
-                  :dark="darker"
-                />
+                <line-chart style="height: 60vh" :param="chart" :update="history.update" />
                 <q-range
                   v-model="range.value"
                   :min="range.min"
@@ -44,37 +39,24 @@
                 />
                 <div class="row justify-between items-center content-center">
                   <div class="col-auto">
-                    <q-toggle
-                      v-model="control.beginAtZero"
-                      label="Begin Zero"
-                      class="q-ma-xs"
-                      :dark="darker"
-                    />
+                    <q-toggle v-model="control.beginAtZero" label="Begin Zero" class="q-ma-xs" />
                     <q-toggle
                       v-model="control.drag"
                       :disable="control.maximize"
                       label="Lock Window"
                       class="q-ma-xs"
-                      :dark="darker"
                     />
                     <q-toggle
                       v-model="control.follow"
                       :disable="control.maximize"
                       label="Follow Data"
                       class="q-ma-xs"
-                      :dark="darker"
                     />
-                    <q-toggle
-                      v-model="control.maximize"
-                      label="Max Range"
-                      class="q-ma-xs"
-                      :dark="darker"
-                    />
+                    <q-toggle v-model="control.maximize" label="Max Range" class="q-ma-xs" />
                   </div>
                   <div class="col-auto">
                     <q-input
                       :value="rangeSample"
-                      :dark="darker"
                       type="number"
                       class="q-ma-xs"
                       style="width: 130px"
@@ -365,7 +347,7 @@ export default {
         this.scaleChart();
       },
     },
-    darker: {
+    "$q.dark.isActive": {
       immediate: true,
       handler(dark) {
         this.changeColor(dark ? "#FFF" : "#666");

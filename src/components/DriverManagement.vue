@@ -2,7 +2,7 @@
   <div :style="`height: calc(100vh - ${height}vh - 105px)`">
     <q-virtual-scroll :items="devFingers" separator>
       <template v-slot="{ item: driver, index }">
-        <q-item :key="index" :dark="darker">
+        <q-item :key="index">
           <q-item-section avatar>
             <q-chip color="primary" dark square>{{ driver.fingerID }}</q-chip>
           </q-item-section>
@@ -23,7 +23,7 @@
         </q-item>
       </template>
       <template v-slot:after>
-        <q-banner v-if="devFingers.length == 0" :dark="darker">
+        <q-banner v-if="devFingers.length == 0">
           <template v-slot:avatar>
             <q-icon name="info"></q-icon>
           </template>
@@ -124,7 +124,7 @@ export default {
         .dialog({
           title: "Confirmation",
           message: `Are you sure to remove this fingerprint *${fingerID}* ?`,
-          dark: this.darker,
+          dark: this.$q.dark.isActive,
           preventClose: true,
           cancel: true,
         })
@@ -137,7 +137,7 @@ export default {
         .dialog({
           title: "Confirmation",
           message: `Are you sure to remove all fingerprints  ?`,
-          dark: this.darker,
+          dark: this.$q.dark.isActive,
           preventClose: true,
           cancel: true,
         })

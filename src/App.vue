@@ -57,7 +57,7 @@ export default {
       this.$timer.start("importer");
       this.dialog = this.$q.dialog({
         title: "Importing...",
-        dark: this.darker,
+        dark: this.$q.dark.isActive,
         message: "0%",
         persistent: true,
         ok: false,

@@ -1,5 +1,5 @@
 <template>
-  <q-page :class="darkerClass">
+  <q-page>
     <q-splitter v-model="splitter" style="height: calc(100vh - 50px)" horizontal>
       <template v-slot:before>
         <map-management></map-management>
@@ -19,7 +19,7 @@
         </q-tabs>
 
         <!-- Targets -->
-        <q-tab-panels v-model="selectedTab" :class="darkerClass" keep-alive animated swipeable>
+        <q-tab-panels v-model="selectedTab" keep-alive animated swipeable>
           <q-tab-panel name="tab-1">
             <report-log :height="splitter"></report-log>
           </q-tab-panel>

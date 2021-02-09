@@ -13,7 +13,7 @@
       separator
     >
       <template v-slot="{ item: cmd, index }">
-        <q-item :key="index" @click="applyCommand(cmd.payload)" :dark="darker" clickable>
+        <q-item :key="index" @click="applyCommand(cmd.payload)" clickable>
           <q-item-section>
             <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
             <q-item-label lines="2" caption>{{ cmd.message }}</q-item-label>
@@ -30,7 +30,7 @@
         </q-item>
       </template>
       <template v-slot:after>
-        <q-banner v-if="devResponses.length == 0" :dark="darker">
+        <q-banner v-if="devResponses.length == 0">
           <template v-slot:avatar>
             <q-icon name="info"></q-icon>
           </template>
