@@ -76,13 +76,13 @@
 </template>
 
 <script>
-import { SET_COMMAND } from "src/store/db/mutation-types";
 import { devDevice, devFingers } from "src/store/db/getter-types";
-import { mapState, mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import { confirm } from "components/js/framework";
 import { get } from "lodash";
 import moment from "moment";
 import CommonMixin from "components/mixins/CommonMixin";
+import { INSERT_COMMAND } from "src/store/db/action-types";
 
 export default {
   // name: 'ComponentName',
@@ -103,7 +103,7 @@ export default {
     ...mapGetters("db", [devFingers, devDevice]),
   },
   methods: {
-    ...mapMutations("db", [SET_COMMAND]),
+    ...mapActions("db", [INSERT_COMMAND]),
     fingerTime() {
       let fingerTime = get(this.devDevice, "fingerTime");
 
@@ -112,19 +112,19 @@ export default {
       return "Unknown";
     },
     fetch() {
-      this.SET_COMMAND({ payload: `FINGER_FETCH` });
+      this.INSERT_COMMAND({ payload: `FINGER_FETCH` });
     },
     add() {
-      this.SET_COMMAND({ payload: `FINGER_ADD` });
+      this.INSERT_COMMAND({ payload: `FINGER_ADD` });
     },
     remove({ fingerID }) {
       confirm(
         `Are you sure to remove this fingerprint ${fingerID} ?`
-      ).onOk(() => this.SET_COMMAND({ payload: `FINGER_DEL=${fingerID}` }));
+      ).onOk(() => this.INSERT_COMMAND({ payload: `FINGER_DEL=${fingerID}` }));
     },
     clear() {
       confirm(`Are you sure to clear all fingerprints  ?`).onOk(() =>
-        this.SET_COMMAND({ payload: `FINGER_RST` })
+        this.INSERT_COMMAND({ payload: `FINGER_RST` })
       );
     },
   },

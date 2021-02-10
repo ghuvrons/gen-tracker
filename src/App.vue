@@ -6,13 +6,11 @@
 
 <script>
 import {
-  SET_COMMAND,
   SET_REPORT,
   ADD_FINGERS,
   REMOVE_FINGERS,
   CLEAR_FINGERS,
   TAKE_FINGER_TIME,
-  CLEAR_COMMAND,
 } from "src/store/db/mutation-types";
 import {
   parseCommand,
@@ -23,7 +21,11 @@ import { validateFrame } from "components/js/frame";
 import { isString, dilation } from "components/js/utils";
 import { calibrateTime } from "components/js/utils";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import { INSERT_REPORTS, INSERT_RESPONSES } from "src/store/db/action-types";
+import {
+  INSERT_COMMAND,
+  INSERT_REPORTS,
+  INSERT_RESPONSES,
+} from "src/store/db/action-types";
 import { devDevice, devReports } from "src/store/db/getter-types";
 import { parseReport } from "components/js/report";
 import { parseResponse, parseResCode } from "components/js/response";
@@ -62,15 +64,13 @@ export default {
   },
   methods: {
     ...mapMutations("db", [
-      SET_COMMAND,
-      CLEAR_COMMAND,
       SET_REPORT,
       ADD_FINGERS,
       REMOVE_FINGERS,
       CLEAR_FINGERS,
       TAKE_FINGER_TIME,
     ]),
-    ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS]),
+    ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS, INSERT_COMMAND]),
     importData(reports) {
       this.importTotal = reports.length;
       this.importBuffer = cloneDeep(reports);
@@ -93,7 +93,6 @@ export default {
     starWaitting() {
       let timeout = this.cmdExecuting.timeout || config.command.timeout;
 
-      this.SET_LOADING(true);
       this.timers.cmdTimeout.time = timeout * 1000;
       this.$timer.start("cmdTimeout");
       this.notification = this.$q.notify({
@@ -102,16 +101,30 @@ export default {
       });
     },
     stopWaitting() {
-      this.SET_LOADING(false);
-      this.CLEAR_COMMAND();
-      this.cmdExecuting = null;
-
       if (this.notification) this.notification();
       if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
+
+      this.cmdExecuting = null;
+      this.INSERT_COMMAND({
+        payload: "",
+        exec: false,
+      });
+    },
+    notifyResponse({ resCode }) {
+      let res = parseResCode(resCode);
+      let ok = res.title == "OK";
+
+      let type = ok ? "positive" : "negative";
+      let msg = ok ? "Command sent." : `Command is ${res.title}`;
+
+      notify(msg, type);
     },
     cmdTimeout() {
       let response = parseResponse(this.cmdExecuting, null);
+
       this.INSERT_RESPONSES(response);
+      this.notifyResponse(response);
+      this.stopWaitting();
     },
     ignoreCommand() {
       notify("Command ignored.", "warning");
@@ -121,12 +134,10 @@ export default {
       let { sendDatetime, unitID } = report;
 
       if (this.cmdExecuting.unitID != unitID.val) return;
-
       if (dilation(sendDatetime.val, "seconds", this.cmdTime) < 10) return;
 
-      notify("Command is lost");
+      notify("Command lost.", "warning");
       this.stopWaitting();
-      this.cmdTimeout();
     },
 
     validFrame(bin) {
@@ -141,12 +152,15 @@ export default {
       if (get(response, "unitID") !== this.cmdExecuting.unitID) return;
 
       this.INSERT_RESPONSES(response);
+      this.notifyResponse(response);
+      this.stopWaitting();
+
       return response;
     },
     handleReportFrame(hex) {
       let report = parseReport(hex);
 
-      if (Math.abs(dilation(report.logDatetime.val, "years")) > 1)
+      if (dilation(report.logDatetime.val, "years") > 1)
         return console.warn(`^REPORT (EXPIRED)`);
 
       if (
@@ -165,7 +179,7 @@ export default {
     importer: { time: 10, repeat: true },
   },
   mounted() {
-    this.CLEAR_COMMAND();
+    this.stopWaitting();
     this.$mqtt.subscribe("VCU/#", { qos: 1 });
   },
   mqtt: {
@@ -222,20 +236,13 @@ export default {
     "responses.0": function (response) {
       if (!response) return;
 
-      let { resCode } = response;
+      let { payload, unitID, message, resCode } = response;
       let res = parseResCode(resCode);
       let ok = res.title == "OK";
 
-      let type = ok ? "positive" : "negative";
-      let msg = ok ? "Command sent." : `Command is ${res.title}`;
-
-      notify(msg, type);
-      this.stopWaitting();
-
-      // DRIVER LOGIC
-      let { payload, unitID, message } = response;
       if (!ok) return;
 
+      // DRIVER LOGIC
       let { prop, value } = extractCommand(payload);
       if (prop == "FINGER_FETCH") {
         this.TAKE_FINGER_TIME(unitID);
@@ -268,7 +275,7 @@ export default {
         let validTime = calibrateTime(devReport);
         if (!validTime) return;
 
-        this.SET_COMMAND({ payload: `REPORT_RTC=${validTime}` });
+        this.INSERT_COMMAND({ payload: `REPORT_RTC=${validTime}` });
         notify("Calibrating device time..", "info");
       },
     },

@@ -5,9 +5,9 @@ import * as getters from "./getter-types";
 
 export default {
   [getters.indexByUnitID]: ({ reports }) => {
-    return reports.reduce((map, item, index) => {
-      map[item.unitID.val] = map[item.unitID.val] || [];
-      map[item.unitID.val].push(index);
+    return reports.reduce((map, { unitID }, index) => {
+      map[unitID.val] = map[unitID.val] || [];
+      map[unitID.val].push(index);
       return map;
     }, {});
   },
@@ -51,11 +51,9 @@ export default {
     return devices.find((device) => device.unitID === unitID);
   },
   [getters.devResponses]({ responses, unitID }) {
-    return unitID
-      ? responses.filter((response) => response.unitID === unitID)
-      : [];
+    return responses.filter((response) => response.unitID === unitID);
   },
   [getters.devFingers]({ fingers, unitID }) {
-    return unitID ? fingers.filter((finger) => finger.unitID === unitID) : [];
+    return fingers.filter((finger) => finger.unitID === unitID);
   },
 };

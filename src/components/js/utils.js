@@ -48,7 +48,7 @@ const getOutput = (arr, fields) => {
 const dilation = (unix, as, start) => {
   if (!start) start = moment();
   let diff = start.diff(moment.unix(unix));
-  return moment.duration(diff).as(as);
+  return Math.abs(moment.duration(diff).as(as));
 };
 
 const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
@@ -60,7 +60,7 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
 
   let serverTime = moment();
   let deviceTime = moment.unix(sendDatetime.val);
-  let diff = Math.abs(dilation(deviceTime, "seconds", serverTime));
+  let diff = dilation(deviceTime, "seconds", serverTime);
 
   //  (at least more n minutes different)
   if (!deviceTime.isValid() || diff > config.timeDilation)

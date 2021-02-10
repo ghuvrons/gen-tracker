@@ -42,10 +42,10 @@
 
 <script>
 import { devResponses } from "src/store/db/getter-types";
-import { SET_COMMAND } from "src/store/db/mutation-types";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import { parseResCode, parseMessage } from "components/js/response";
 import CommonMixin from "components/mixins/CommonMixin";
+import { INSERT_COMMAND } from "src/store/db/action-types";
 
 export default {
   // name: 'ComponentName',
@@ -59,9 +59,9 @@ export default {
     ...mapGetters("db", [devResponses]),
   },
   methods: {
-    ...mapMutations("db", [SET_COMMAND]),
+    ...mapActions("db", [INSERT_COMMAND]),
     writeCommand({ payload }) {
-      this.SET_COMMAND({ payload, exec: false });
+      this.INSERT_COMMAND({ payload, exec: false });
     },
     parseResCode(code) {
       return parseResCode(code);

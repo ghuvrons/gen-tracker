@@ -39,12 +39,12 @@
 
 <script>
 import { COMMAND_LIST } from "components/js/command";
-import { SET_COMMAND } from "src/store/db/mutation-types";
-import { mapState, mapGetters, mapMutations } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import CommandListModal from "components/etc/CommandListModal";
 import CommonMixin from "components/mixins/CommonMixin";
 import { cloneDeep } from "lodash";
 import { devDevice } from "src/store/db/getter-types";
+import { INSERT_COMMAND } from "src/store/db/action-types";
 
 export default {
   // name: 'ComponentName',
@@ -66,17 +66,17 @@ export default {
         return this.command.payload;
       },
       set(value) {
-        this.SET_COMMAND({ payload: value.toUpperCase(), exec: false });
+        this.INSERT_COMMAND({ payload: value.toUpperCase(), exec: false });
       },
     },
   },
   methods: {
-    ...mapMutations("db", [SET_COMMAND]),
+    ...mapActions("db", [INSERT_COMMAND]),
     writeCommand(payload) {
       this.payload = payload;
     },
     execCommand() {
-      this.SET_COMMAND({ payload: this.payload, exec: true });
+      this.INSERT_COMMAND({ payload: this.payload, exec: true });
     },
   },
 };

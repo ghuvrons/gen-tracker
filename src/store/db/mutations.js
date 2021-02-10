@@ -15,16 +15,7 @@ export default {
     state.report = payload;
   },
   [mutations.SET_COMMAND](state, command) {
-    state.command = {
-      exec: true,
-      ...command,
-    };
-  },
-  [mutations.CLEAR_COMMAND](state) {
-    state.command = {
-      payload: "",
-      exec: false,
-    };
+    state.command = command;
   },
 
   [mutations.TAKE_FINGER_TIME](state, theUnitID) {
