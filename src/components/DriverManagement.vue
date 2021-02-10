@@ -45,7 +45,7 @@
       >
         <q-fab-action
           @click="fetch"
-          :disable="loading || !unitID"
+          :disable="loading || !devDevice"
           label-position="top"
           color="primary"
           icon="download"
@@ -54,7 +54,7 @@
         />
         <q-fab-action
           @click="add"
-          :disable="loading || !unitID"
+          :disable="loading || !devDevice"
           label-position="top"
           color="green"
           icon="upload"
@@ -63,7 +63,7 @@
         />
         <q-fab-action
           @click="clear"
-          :disable="loading || !unitID"
+          :disable="loading || !devDevice"
           label-position="top"
           color="orange"
           icon="delete_forever"
@@ -100,7 +100,6 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["unitID"]),
     ...mapGetters("db", [devFingers, devDevice]),
   },
   methods: {

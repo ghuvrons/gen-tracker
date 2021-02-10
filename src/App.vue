@@ -5,10 +5,6 @@
 </template>
 
 <script>
-import { validateFrame } from "components/js/frame";
-import { isString, dilation } from "components/js/utils";
-import { calibrateTime } from "components/js/utils";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
   SET_COMMAND,
   SET_REPORT,
@@ -18,15 +14,19 @@ import {
   TAKE_FINGER_TIME,
   CLEAR_COMMAND,
 } from "src/store/db/mutation-types";
-import { INSERT_REPORTS, INSERT_RESPONSES } from "src/store/db/action-types";
-import { devReports } from "src/store/db/getter-types";
-import { parseReport } from "components/js/report";
-import { parseResponse, parseResCode } from "components/js/response";
 import {
   parseCommand,
   buildCommand,
   extractCommand,
 } from "components/js/command";
+import { validateFrame } from "components/js/frame";
+import { isString, dilation } from "components/js/utils";
+import { calibrateTime } from "components/js/utils";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { INSERT_REPORTS, INSERT_RESPONSES } from "src/store/db/action-types";
+import { devDevice, devReports } from "src/store/db/getter-types";
+import { parseReport } from "components/js/report";
+import { parseResponse, parseResCode } from "components/js/response";
 import config from "components/js/opt/config";
 import { notify } from "components/js/framework";
 import { loader } from "components/js/framework";
@@ -56,9 +56,9 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["unitID", "command", "responses", "reports"]),
+    ...mapState("db", ["command", "responses", "reports"]),
     ...mapState("common", ["follow", "calibration"]),
-    ...mapGetters("db", [devReports]),
+    ...mapGetters("db", [devDevice, devReports]),
   },
   methods: {
     ...mapMutations("db", [
@@ -194,14 +194,14 @@ export default {
   watch: {
     "command.exec": function (exec) {
       if (exec) {
-        if (!this.unitID) return notify("No device.");
+        if (!this.devDevice) return notify("No device.");
         if (this.cmdExecuting) return notify("Command busy.");
 
         let { payload } = this.command;
         let cmd = parseCommand(payload);
         if (isString(cmd)) return notify(cmd);
 
-        let { unitID } = this;
+        let { unitID } = this.devDevice;
         let hexCmd = buildCommand(cmd, unitID);
         let binData = Buffer.from(hexCmd, "hex");
 

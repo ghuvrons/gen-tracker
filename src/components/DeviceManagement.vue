@@ -42,9 +42,14 @@
 </template>
 
 <script>
-import { devTotalReports, devLastReport } from "src/store/db/getter-types";
+import {
+  devTotalReports,
+  devLastReport,
+  devDevice,
+} from "src/store/db/getter-types";
 import { SET_UNITID } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
+import { get } from "lodash";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -56,13 +61,13 @@ export default {
     },
   },
   computed: {
-    ...mapState("db", ["devices", "unitID"]),
-    ...mapGetters("db", [devTotalReports, devLastReport]),
+    ...mapState("db", ["devices"]),
+    ...mapGetters("db", [devDevice, devTotalReports, devLastReport]),
   },
   methods: {
     ...mapMutations("db", [SET_UNITID]),
     active({ unitID }) {
-      return unitID === this.unitID;
+      return unitID === get(this.devDevice, "unitID");
     },
   },
 };

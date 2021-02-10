@@ -23,7 +23,7 @@
         hint="Press ENTER to send."
         type="text"
         stack-label
-        :disable="loading || !unitID"
+        :disable="loading || !devDevice"
         :readonly="loading"
         :loading="loading"
       >
@@ -40,10 +40,11 @@
 <script>
 import { COMMAND_LIST } from "components/js/command";
 import { SET_COMMAND } from "src/store/db/mutation-types";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 import CommandListModal from "components/etc/CommandListModal";
 import CommonMixin from "components/mixins/CommonMixin";
 import { cloneDeep } from "lodash";
+import { devDevice } from "src/store/db/getter-types";
 
 export default {
   // name: 'ComponentName',
@@ -58,7 +59,8 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["unitID", "command"]),
+    ...mapState("db", ["command"]),
+    ...mapGetters("db", [devDevice]),
     payload: {
       get() {
         return this.command.payload;
