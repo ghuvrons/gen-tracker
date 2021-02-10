@@ -1,11 +1,11 @@
-import initialState from "./state";
+import state from "./state";
 import getters from "./getters";
 import mutations from "./mutations";
 import actions from "./actions";
 
 export default {
   namespaced: true,
-  state: initialState(),
+  state,
   getters,
   mutations,
   actions,

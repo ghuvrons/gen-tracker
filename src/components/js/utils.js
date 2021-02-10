@@ -47,18 +47,19 @@ const getOutput = (arr, fields) => {
 
 const dilation = (unix, as, start) => {
   if (!start) start = moment();
-  let diff = start.diff(moment(unix, "X"));
+  let diff = start.diff(moment.unix(unix));
   return moment.duration(diff).as(as);
 };
 
-const calibrateTime = ({ lat, lng, datetime }) => {
+const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
   let timezone = _.clone(config.timezone);
 
   // correct timestamp if not sync with server
-  if (lat && lng) timezone = tzlookup(lat, lng);
+  if (gpsLatitude.val && gpsLongitude.val)
+    timezone = tzlookup(gpsLatitude.val, gpsLongitude.val);
 
   let serverTime = moment();
-  let deviceTime = moment(datetime, "X");
+  let deviceTime = moment.unix(sendDatetime.val);
   let diff = Math.abs(dilation(deviceTime, "seconds", serverTime));
 
   //  (at least more n minutes different)
@@ -103,10 +104,6 @@ const removeWords = (str, arr) => {
   }, str);
 };
 
-const unix2time = (unix) => {
-  return moment.unix(unix).format("HH:mm:ss");
-};
-
 export {
   flowFilter,
   isString,
@@ -116,7 +113,6 @@ export {
   calibrateTime,
   parseDatetime,
   buildTimestamp,
-  unix2time,
   toArrayTree,
   removeWords,
   dilation,

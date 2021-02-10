@@ -20,10 +20,10 @@
       separator
     >
       <template v-slot="{ item: cmd, index }">
-        <q-item :key="index" @click="applyCommand(cmd.payload)" clickable>
+        <q-item :key="index" @click="writeCommand(cmd)" :clickable="!loading">
           <q-item-section>
             <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
-            <q-item-label lines="2" caption>{{ parseVehicleState(cmd.message) }}</q-item-label>
+            <q-item-label lines="2" caption>{{ parseMessage(cmd.message) }}</q-item-label>
           </q-item-section>
 
           <q-item-section side>
@@ -41,11 +41,10 @@
 </template>
 
 <script>
-import { VEHICLE_STATES } from "components/js/opt/report";
 import { devResponses } from "src/store/db/getter-types";
-import { SET_BUFFER } from "src/store/db/mutation-types";
-import { mapState, mapGetters, mapMutations } from "vuex";
-import { parseResCode } from "components/js/response";
+import { SET_COMMAND } from "src/store/db/mutation-types";
+import { mapGetters, mapMutations } from "vuex";
+import { parseResCode, parseMessage } from "components/js/response";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -57,27 +56,18 @@ export default {
     },
   },
   computed: {
-    ...mapState("db", ["loading"]),
     ...mapGetters("db", [devResponses]),
   },
   methods: {
-    ...mapMutations("db", [SET_BUFFER]),
-    applyCommand(payload) {
-      if (!this.loading) this.SET_BUFFER(payload);
+    ...mapMutations("db", [SET_COMMAND]),
+    writeCommand({ payload }) {
+      this.SET_COMMAND({ payload, exec: false });
     },
     parseResCode(code) {
       return parseResCode(code);
     },
-    parseVehicleState(msg) {
-      if (!msg) return;
-
-      let labels = Object.keys(VEHICLE_STATES);
-      let values = Object.values(VEHICLE_STATES);
-
-      return msg.replace(/\{(.+?)\}/g, function (string, val) {
-        let idx = values.findIndex((v) => v === parseInt(val));
-        return labels[idx];
-      });
+    parseMessage(msg) {
+      return parseMessage(msg);
     },
   },
 };

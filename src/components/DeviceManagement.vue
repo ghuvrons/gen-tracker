@@ -17,18 +17,21 @@
       <template v-slot="{ item: dev, index }">
         <q-item
           :key="index"
-          @click="setDevice(dev)"
-          :active="dev.unitID === device.unitID"
+          @click="SET_UNITID(dev.unitID)"
+          :active="active(dev)"
           active-class="bg-primary text-white"
-          clickable
+          :clickable="!loading"
           dense
         >
           <q-item-section>
             <q-item-label class="text-subtitle2">{{ dev.unitID.toString() }}</q-item-label>
           </q-item-section>
-          <q-item-section side top>
-            <q-item-label caption>{{ devLastReport(dev.unitID) }}</q-item-label>
-            <q-item-label caption>
+          <q-item-section side>
+            <q-item-label
+              :class="{'text-white' : active(dev)}"
+              caption
+            >{{ devLastReport(dev.unitID) }}</q-item-label>
+            <q-item-label :class="{'text-white' : active(dev)}" caption>
               <b>{{ devTotalReports(dev.unitID) }}</b> reports
             </q-item-label>
           </q-item-section>
@@ -40,7 +43,7 @@
 
 <script>
 import { devTotalReports, devLastReport } from "src/store/db/getter-types";
-import { SET_DEVICE } from "src/store/db/mutation-types";
+import { SET_UNITID } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import CommonMixin from "components/mixins/CommonMixin";
 
@@ -53,13 +56,13 @@ export default {
     },
   },
   computed: {
-    ...mapState("db", ["devices", "device"]),
+    ...mapState("db", ["devices", "unitID"]),
     ...mapGetters("db", [devTotalReports, devLastReport]),
   },
   methods: {
-    ...mapMutations("db", [SET_DEVICE]),
-    setDevice(dev) {
-      if (!this.loading) this.SET_DEVICE(dev);
+    ...mapMutations("db", [SET_UNITID]),
+    active({ unitID }) {
+      return unitID === this.unitID;
     },
   },
 };

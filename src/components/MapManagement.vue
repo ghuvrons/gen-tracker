@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { genPosition, getHeading } from "components/js/map";
+import { getPosition, getHeading } from "components/js/map";
 import config from "components/js/opt/config";
 import { devReports } from "src/store/db/getter-types";
 import { mapState, mapGetters } from "vuex";
@@ -82,13 +82,8 @@ export default {
       immediate: true,
       handler(devReport) {
         if (!devReport) return;
-        let { frameID, gpsLatitude, gpsLongitude } = devReport;
-        let pos = genPosition({
-          frameID: frameID.val,
-          lat: gpsLatitude && gpsLatitude.val,
-          lng: gpsLongitude && gpsLongitude.val,
-        });
 
+        let pos = getPosition(devReport);
         if (pos.valid) this.path.push(pos);
       },
     },
@@ -97,22 +92,12 @@ export default {
       handler(report) {
         if (!report) return;
 
-        let { frameID, gpsLatitude, gpsLongitude, gpsHeading } = report;
-        this.setPosition(
-          genPosition({
-            frameID: frameID.val,
-            lat: gpsLatitude && gpsLatitude.val,
-            lng: gpsLongitude && gpsLongitude.val,
-          })
-        );
+        this.setPosition(getPosition(report));
 
         if (!this.pov) return;
         this.updatePov({
           ...this.pov,
-          heading: getHeading({
-            frameID: frameID.val,
-            heading: gpsHeading && gpsHeading.val,
-          }),
+          heading: getHeading(report),
         });
       },
     },

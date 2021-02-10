@@ -302,11 +302,9 @@ export default {
     this.applyRange();
   },
   watch: {
-    devReports: {
-      handler(devReports) {
-        if (devReports.length == 0) return;
-
-        let devReport = devReports[0];
+    "devReports.0": {
+      handler(devReport) {
+        if (!devReport) return;
         if (!devReport[this.field]) return;
 
         this.writeChart([devReport]);

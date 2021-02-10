@@ -10,24 +10,24 @@ const isIndonesia = ({ lng, lat }) => {
   );
 };
 
-const genPosition = ({ frameID, lat, lng }) => {
+const getPosition = ({ frameID, gpsLatitude, gpsLongitude }) => {
   let pos = {
     ...config.map.centerIndonesia,
     valid: false,
   };
 
-  if (frameID === config.frame.id.FULL) {
-    pos.lat = lat;
-    pos.lng = lng;
+  if (frameID.val === config.frame.id.FULL) {
+    pos.lat = gpsLatitude.val;
+    pos.lng = gpsLongitude.val;
     pos.valid = isIndonesia(pos);
   }
 
   return pos;
 };
 
-const getHeading = ({ frameID, heading }) => {
-  if (frameID === config.frame.id.FULL) return heading;
+const getHeading = ({ frameID, gpsHeading }) => {
+  if (frameID.val === config.frame.id.FULL) return gpsHeading.val;
   return 0;
 };
 
-export { genPosition, getHeading };
+export { getPosition, getHeading };

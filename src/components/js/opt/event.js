@@ -1,8 +1,9 @@
 const EVENT_LIST = [
   { name: "VCU_NET_SOFT_RESET", bit: 0, group: "VCU" },
   { name: "VCU_NET_HARD_RESET", bit: 1, group: "VCU" },
-  { name: "VCU_BIKE_FALLEN", bit: 2, group: "VCU" },
-  { name: "VCU_REMOTE_MISSING", bit: 3, group: "VCU" },
+  { name: "VCU_REMOTE_MISSING", bit: 2, group: "VCU" },
+  { name: "VCU_BIKE_FALLEN", bit: 3, group: "VCU" },
+  { name: "VCU_BIKE_MOVED", bit: 4, group: "VCU" },
   { name: "BMS_DISCHARGE_OVER_CURRENT", bit: 30, group: "BMS" },
   { name: "BMS_CHARGE_OVER_CURRENT", bit: 31, group: "BMS" },
   { name: "BMS_SHORT_CIRCUIT", bit: 32, group: "BMS" },

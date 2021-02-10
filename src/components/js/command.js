@@ -1,6 +1,5 @@
 import { COMMAND_LIST, Command } from "components/js/opt/command";
 import { isString } from "components/js/utils";
-import moment from "moment";
 
 const buildCommand = (cmd, unitID) => {
   if (!cmd) return;
@@ -58,16 +57,17 @@ const parseCommand = (payload) => {
   if (!cmd) return "Unknown command.";
 
   // check is value in range
-  if (cmd.range) {
+  if (!cmd.range) {
+    if (value) return "Command dont need value";
+  } else {
     if (!value) return "Command need value";
 
-    const [min, max] = cmd.range;
-    if (!isString(min)) {
+    if (cmd.validator && !cmd.validator(value)) return "Value is invalid";
+    else {
+      const [min, max] = cmd.range;
       if (value < min || value > max) return "Value not in range";
-    } else if (cmd.command == "REPORT_RTC") {
-      if (!moment(value, "YYMMDDHHmmss0E").isValid()) return "Datetime invalid";
-    } else if (value.length != min.length) return "Value length is invalid";
-  } else if (value) return "Command dont need value";
+    }
+  }
 
   return {
     ...cmd,

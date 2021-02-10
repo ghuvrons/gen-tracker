@@ -1,4 +1,4 @@
-import { unix2time } from "components/js/utils";
+import moment from "moment";
 const numeral = require("numeral");
 
 export default {
@@ -33,7 +33,7 @@ export default {
         {
           ticks: {
             callback: function (value) {
-              return unix2time(value);
+              return moment.unix(value).format("HH:mm:ss");
             },
             max: 1,
             min: 0,
@@ -55,7 +55,7 @@ export default {
         {
           ticks: {
             callback: function (value) {
-              return numeral(value).format("0.0a");
+              return numeral(value).format("0.00a");
             },
             beginAtZero: true,
             max: 1,

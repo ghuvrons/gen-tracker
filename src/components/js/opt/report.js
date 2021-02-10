@@ -53,7 +53,7 @@ const VCU = ({ required }) => {
           size: 7,
           format: (v) =>
             Number(moment(parseDatetime(v), "YYMMDDHHmmss0E").format("X")),
-          display: (vf) => moment(vf, "X").format("ddd, DD-MM-YY HH:mm:ss"),
+          display: (vf) => moment.unix(vf).format("ddd, DD-MM-YY HH:mm:ss"),
         },
       ]);
     }, []),

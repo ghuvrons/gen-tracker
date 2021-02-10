@@ -27,7 +27,7 @@
                 square
               >{{ devReport.frameID.out }}</q-chip>
 
-              <q-chip color="primary" dark dense square>{{ getDatetime(devReport) }}</q-chip>
+              <q-chip color="primary" dark dense square>{{ getDatetime(devReport.logDatetime) }}</q-chip>
             </div>
           </q-item-section>
 
@@ -40,27 +40,27 @@
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn
-        @click="lock.follow = !lock.follow"
-        :icon="lock.follow ? 'lock' : 'lock_open'"
+        @click="followState = !followState"
+        :icon="followState ? 'lock' : 'lock_open'"
+        :color="followState ? 'secondary' : 'grey'"
         :disable="devReports.length == 0"
-        :color="lock.follow ? 'secondary' : 'grey'"
         fab-mini
       >
         <q-tooltip
           anchor="top middle"
           self="bottom middle"
-        >{{ lock.follow ? "Unfollow" : "Follow" }}</q-tooltip>
+        >{{ followState ? "Unfollow" : "Follow" }}</q-tooltip>
       </q-btn>
     </q-page-sticky>
   </div>
 </template>
 
 <script>
-import { unix2time } from "components/js/utils";
+import moment from "moment";
 import { devReports } from "src/store/db/getter-types";
 import { SET_REPORT } from "src/store/db/mutation-types";
+import { SET_FOLLOW } from "src/store/common/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { get } from "lodash";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -72,35 +72,24 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      lock: {
-        follow: true,
-      },
-    };
-  },
   computed: {
     ...mapState("db", ["report"]),
+    ...mapState("common", ["follow"]),
     ...mapGetters("db", [devReports]),
+    followState: {
+      get() {
+        return this.follow;
+      },
+      set(value) {
+        this.SET_FOLLOW(value);
+      },
+    },
   },
   methods: {
     ...mapMutations("db", [SET_REPORT]),
-    getDatetime({ logDatetime }) {
-      return unix2time(logDatetime.val);
-    },
-  },
-  watch: {
-    "devReports.0": {
-      immediate: true,
-      handler(devReport, oldDevReport) {
-        if (!devReport) return this.SET_REPORT(null);
-
-        if (
-          devReport.unitID.val != get(oldDevReport, "unitID.val") ||
-          this.lock.follow
-        )
-          this.SET_REPORT(devReport);
-      },
+    ...mapMutations("common", [SET_FOLLOW]),
+    getDatetime(logDatetime) {
+      return moment.unix(logDatetime.val).format("HH:mm:ss");
     },
   },
 };

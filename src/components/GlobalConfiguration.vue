@@ -15,7 +15,7 @@
           icon="stop"
           color="primary"
           label="Ignore command"
-          :disable="!command"
+          :disable="!command.exec"
           @click="$root.$emit('ignoreCommand')"
         />
       </div>
@@ -62,12 +62,11 @@
 </template>
 
 <script>
-import { devReports } from "src/store/db/getter-types";
-import { RESET_DATABASE } from "src/store/db/action-types";
-import { SET_CALIBRATION } from "src/store/db/mutation-types";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { CLEAR_ALL } from "src/store/db/mutation-types";
+import { SET_CALIBRATION } from "src/store/common/mutation-types";
+import { mapState, mapMutations } from "vuex";
 import { exportCSV, exportJSON, importJSON } from "components/js/exporter";
-import { calibrateTime } from "components/js/utils";
+import { confirm } from "components/js/framework";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -80,14 +79,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("db", [
-      "calibration",
-      "devices",
-      "command",
-      "reports",
-      "responses",
-    ]),
-    ...mapGetters("db", [devReports]),
+    ...mapState("db", ["devices", "command", "reports"]),
     calibrationState: {
       get() {
         return this.calibration;
@@ -98,8 +90,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("db", [SET_CALIBRATION]),
-    ...mapActions("db", [RESET_DATABASE]),
+    ...mapMutations("common", [SET_CALIBRATION]),
+    ...mapMutations("db", [CLEAR_ALL]),
     finishImport() {
       this.$refs.importer.reset();
     },
@@ -113,34 +105,7 @@ export default {
       importJSON(files[0]).then((res) => this.$root.$emit("importData", res));
     },
     clearStore() {
-      this.$q
-        .dialog({
-          title: "Confirmation",
-          message: `Are you sure to remove all data?`,
-          dark: this.$q.dark.isActive,
-          preventClose: true,
-          cancel: true,
-        })
-        .onOk(() => this.RESET_DATABASE());
-    },
-  },
-  watch: {
-    devReports: function (devReports) {
-      if (devReports.length == 0) return;
-      if (!this.calibration) return;
-
-      let { frameID, gpsLatitude, gpsLongitude, sendDatetime } = devReports[0];
-      if (frameID.val != this.$config.frame.id.FULL) return;
-
-      let validTime = calibrateTime({
-        lat: gpsLatitude.val,
-        lng: gpsLongitude.val,
-        datetime: sendDatetime.val,
-      });
-      if (!validTime) return;
-
-      this.$root.$emit("executeCommand", `REPORT_RTC=${validTime}`);
-      this.$q.notify({ message: "Calibrating device time.." });
+      confirm(`Are you sure to remove all data?`).onOk(() => this.CLEAR_ALL());
     },
   },
 };

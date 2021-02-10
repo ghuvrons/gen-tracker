@@ -1,57 +1,61 @@
 import { groupBy } from "lodash";
 import { EVENT_LIST, parseEvent } from "components/js/event";
-import { unix2time } from "components/js/utils";
 import moment from "moment";
 import * as getters from "./getter-types";
 
 export default {
-  [getters.devTotalReports]: ({ reports }) => (theUnitID) => {
-    return reports.filter(({ unitID }) => unitID.val === theUnitID).length;
+  [getters.indexByUnitID]: ({ reports }) => {
+    return reports.reduce((map, item, index) => {
+      map[item.unitID.val] = map[item.unitID.val] || [];
+      map[item.unitID.val].push(index);
+      return map;
+    }, {});
   },
-  [getters.devLastFinger]: ({ device }) => {
-    if (!device.fingerTime) return "Unknown";
-    return moment(device.fingerTime, "X").format("DD-MM-YY HH:mm:ss");
+  [getters.byUnitID]: (state, getters) => (unitID) => {
+    return (getters.indexByUnitID[unitID] || []).map(
+      (index) => state.reports[index]
+    );
   },
-  [getters.devLastReport]: ({ reports }) => (theUnitID) => {
-    let report = reports.find(({ unitID }) => unitID.val === theUnitID);
+
+  [getters.devTotalReports]: (state, getters) => (unitID) => {
+    return getters.byUnitID(unitID).length;
+  },
+  [getters.devLastReport]: (state, getters) => (unitID) => {
+    let report = getters.byUnitID(unitID)[0];
 
     if (report)
-      return moment(report.sendDatetime.val, "X").endOf("second").fromNow();
-    return "?";
+      return moment.unix(report.sendDatetime.val).endOf("second").fromNow();
+    return "Unknown ago";
   },
-  [getters.devReports]({ reports, device }) {
-    let devReports = reports.filter(
-      ({ unitID }) => unitID.val === device.unitID
+  [getters.devReports]({ unitID }, getters) {
+    return getters.byUnitID(unitID);
+  },
+  [getters.devEvents]({ unitID }, getters) {
+    return groupBy(
+      getters.byUnitID(unitID).reduce(
+        (carry, { eventsGroup, logDatetime }) =>
+          carry.concat(
+            ...EVENT_LIST.filter(({ bit }) =>
+              parseEvent(eventsGroup.val, bit)
+            ).map(({ name }) => ({
+              time: moment.unix(logDatetime.val).format("HH:mm:ss"),
+              name,
+            }))
+          ),
+        []
+      ),
+      "name"
     );
-    return device ? devReports : [];
   },
-  [getters.devEvents](state, getters) {
-    let events = getters.devReports.reduce(
-      (carry, { eventsGroup, logDatetime }) => {
-        return carry.concat(
-          ...EVENT_LIST.filter(({ bit }) =>
-            parseEvent(eventsGroup.val, bit)
-          ).map(({ name }) => ({
-            time: unix2time(logDatetime.val),
-            name,
-          }))
-        );
-      },
-      []
-    );
-
-    return groupBy(events, "name");
+  [getters.devDevice]({ devices, unitID }) {
+    return devices.find((device) => device.unitID === unitID);
   },
-
-  [getters.devResponses]({ responses, device }) {
-    return device
-      ? responses.filter(({ unitID }) => unitID === device.unitID)
+  [getters.devResponses]({ responses, unitID }) {
+    return unitID
+      ? responses.filter((response) => response.unitID === unitID)
       : [];
   },
-
-  [getters.devFingers]({ fingers, device }) {
-    return device
-      ? fingers.filter(({ unitID }) => unitID === device.unitID)
-      : [];
+  [getters.devFingers]({ fingers, unitID }) {
+    return unitID ? fingers.filter((finger) => finger.unitID === unitID) : [];
   },
 };

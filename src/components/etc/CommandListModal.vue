@@ -35,7 +35,7 @@
           </q-banner>
           <q-virtual-scroll v-else :items="searchResults" separator>
             <template v-slot="{ item: cmd, index }">
-              <q-item :key="index" @click="$emit('select', cmd.command)" clickable>
+              <q-item :key="index" @click="select(cmd)" clickable>
                 <q-item-section>
                   <q-item-label lines="1">{{ cmd.command }}</q-item-label>
                   <q-item-label lines="2" caption>{{ cmd.desc }}</q-item-label>
@@ -97,6 +97,10 @@ export default {
 
       if (max) return `[ ${min}, ${max} ]`;
       return `[ ${min} ]`;
+    },
+    select({ command }) {
+      this.$emit("select", command);
+      this.modalOpen = false;
     },
   },
 };

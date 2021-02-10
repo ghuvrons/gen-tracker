@@ -5,11 +5,8 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="drawer.left = !drawer.left"></q-btn>
 
         <q-toolbar-title>
-          {{ $config.app.title }}
-          <q-item-label
-            class="text-white"
-            caption
-          >{{ $config.app.subTitle }} v.{{ $config.app.version }}</q-item-label>
+          {{ app.title }}
+          <q-item-label class="text-white" caption>{{ app.subTitle }} v.{{ app.version }}</q-item-label>
         </q-toolbar-title>
 
         <q-btn
@@ -59,13 +56,14 @@
 </template>
 
 <script>
-import { SET_DARKER } from "src/store/db/mutation-types";
+import { SET_DARKER } from "src/store/common/mutation-types";
 import { mapState, mapMutations } from "vuex";
 import ReportReader from "components/ReportReader";
 import DeviceManagement from "components/DeviceManagement";
 import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
 import CommonMixin from "components/mixins/CommonMixin";
+import config from "components/js/opt/config";
 
 export default {
   name: "MyLayout",
@@ -82,14 +80,15 @@ export default {
         left: this.$q.platform.is.desktop,
         right: false,
       },
+      app: config.app,
       splitter: 150,
     };
   },
   computed: {
-    ...mapState("db", ["darker"]),
+    ...mapState("common", ["darker"]),
   },
   methods: {
-    ...mapMutations("db", [SET_DARKER]),
+    ...mapMutations("common", [SET_DARKER]),
   },
   mounted() {
     this.$q.dark.set(this.darker);

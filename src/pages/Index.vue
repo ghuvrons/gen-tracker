@@ -19,7 +19,7 @@
         </q-tabs>
 
         <!-- Targets -->
-        <q-tab-panels v-model="selectedTab" keep-alive animated swipeable>
+        <q-tab-panels v-model="selectedTab" swipeable>
           <q-tab-panel name="tab-1">
             <report-log :content-style="contentStyle"></report-log>
           </q-tab-panel>

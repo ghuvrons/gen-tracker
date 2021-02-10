@@ -7,5 +7,7 @@ export default ({ app, router, store, Vue }) => {
   Vue.use(VueMqtt, `wss://${mqtt.address}:${mqtt.port}${mqtt.path}`, {
     username: mqtt.username,
     password: mqtt.password,
+    clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8),
+    clean: false,
   });
 };

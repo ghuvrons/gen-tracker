@@ -1,37 +1,35 @@
 <template>
   <div :style="contentStyle">
+    <div class="text-subtitle2">Last fetch: {{ fingerTime() }}</div>
     <q-banner v-if="devFingers.length == 0">
       <template v-slot:avatar>
         <q-icon name="info"></q-icon>
       </template>
       No finger driver yet
     </q-banner>
-    <template v-else>
-      <div class="text-subtitle2">Last fetch: {{ devLastFinger }}</div>
-      <q-virtual-scroll :items="devFingers" separator>
-        <template v-slot="{ item: driver, index }">
-          <q-item :key="index" dense>
-            <q-item-section avatar>
-              <q-chip color="primary" dark square>{{ driver.fingerID }}</q-chip>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Mr. {{ name[driver.fingerID - 1] }}</q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-btn
-                @click="deleteFinger(driver)"
-                :loading="loading"
-                size="sm"
-                icon="delete"
-                outline
-                unelevated
-                round
-              />
-            </q-item-section>
-          </q-item>
-        </template>
-      </q-virtual-scroll>
-    </template>
+    <q-virtual-scroll v-else :items="devFingers" separator>
+      <template v-slot="{ item: driver, index }">
+        <q-item :key="index" dense>
+          <q-item-section avatar>
+            <q-chip color="primary" dark square>{{ driver.fingerID }}</q-chip>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Mr. {{ name[driver.fingerID - 1] }}</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn
+              @click="remove(driver)"
+              :loading="loading"
+              size="sm"
+              icon="delete"
+              outline
+              unelevated
+              round
+            />
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-virtual-scroll>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab
@@ -46,8 +44,8 @@
         :disable="loading"
       >
         <q-fab-action
-          @click="fetchFinger"
-          :disable="loading || !device"
+          @click="fetch"
+          :disable="loading || !unitID"
           label-position="top"
           color="primary"
           icon="download"
@@ -55,8 +53,8 @@
           external-label
         />
         <q-fab-action
-          @click="addFinger"
-          :disable="loading || !device"
+          @click="add"
+          :disable="loading || !unitID"
           label-position="top"
           color="green"
           icon="upload"
@@ -64,8 +62,8 @@
           external-label
         />
         <q-fab-action
-          @click="resetFinger"
-          :disable="loading || !device"
+          @click="clear"
+          :disable="loading || !unitID"
           label-position="top"
           color="orange"
           icon="delete_forever"
@@ -78,8 +76,12 @@
 </template>
 
 <script>
-import { devFingers, devLastFinger } from "src/store/db/getter-types";
-import { mapState, mapGetters } from "vuex";
+import { SET_COMMAND } from "src/store/db/mutation-types";
+import { devDevice, devFingers } from "src/store/db/getter-types";
+import { mapState, mapGetters, mapMutations } from "vuex";
+import { confirm } from "components/js/framework";
+import { get } from "lodash";
+import moment from "moment";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -98,36 +100,33 @@ export default {
     };
   },
   computed: {
-    ...mapState("db", ["device"]),
-    ...mapGetters("db", [devFingers, devLastFinger]),
+    ...mapState("db", ["unitID"]),
+    ...mapGetters("db", [devFingers, devDevice]),
   },
   methods: {
-    fetchFinger() {
-      this.$root.$emit("executeCommand", `FINGER_FETCH`);
+    ...mapMutations("db", [SET_COMMAND]),
+    fingerTime() {
+      let fingerTime = get(this.devDevice, "fingerTime");
+
+      if (fingerTime)
+        return moment.unix(fingerTime).format("DD-MM-YY HH:mm:ss");
+      return "Unknown";
     },
-    addFinger() {
-      this.$root.$emit("executeCommand", `FINGER_ADD`);
+    fetch() {
+      this.SET_COMMAND({ payload: `FINGER_FETCH` });
     },
-    deleteFinger({ fingerID }) {
-      this.confirm(
+    add() {
+      this.SET_COMMAND({ payload: `FINGER_ADD` });
+    },
+    remove({ fingerID }) {
+      confirm(
         `Are you sure to remove this fingerprint ${fingerID} ?`
-      ).onOk(() =>
-        this.$root.$emit("executeCommand", `FINGER_DEL=${fingerID}`)
-      );
+      ).onOk(() => this.SET_COMMAND({ payload: `FINGER_DEL=${fingerID}` }));
     },
-    resetFinger() {
-      this.confirm(`Are you sure to remove all fingerprints  ?`).onOk(() =>
-        this.$root.$emit("executeCommand", `FINGER_RST`)
+    clear() {
+      confirm(`Are you sure to clear all fingerprints  ?`).onOk(() =>
+        this.SET_COMMAND({ payload: `FINGER_RST` })
       );
-    },
-    confirm(message) {
-      return this.$q.dialog({
-        title: "Confirmation",
-        message,
-        dark: this.$q.dark.isActive,
-        preventClose: true,
-        cancel: true,
-      });
     },
   },
 };

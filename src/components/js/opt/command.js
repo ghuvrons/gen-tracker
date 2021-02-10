@@ -1,6 +1,7 @@
 import { Header } from "components/js/opt/header";
 import { IntToHex, ChangeEndian } from "components/js/helper";
 import { buildTimestamp } from "components/js/utils";
+import moment from "moment";
 
 const COMMAND_LIST = [
   {
@@ -33,6 +34,7 @@ const COMMAND_LIST = [
     type: "uint8_t[7]",
     range: ["YYMMDDHHmmss0E"],
     formatCmd: (val) => buildTimestamp(val),
+    validator: (val) => moment(val, "YYMMDDHHmmss0E").isValid(),
   },
   {
     command: "REPORT_ODOM",
@@ -55,14 +57,6 @@ const COMMAND_LIST = [
     subCode: 1,
     type: "bool",
     range: [0, 1],
-  },
-  {
-    command: "AUDIO_VOL",
-    desc: "Change audio module volume",
-    code: 2,
-    subCode: 2,
-    type: "uint8_t",
-    range: [0, 100],
   },
   {
     command: "FINGER_FETCH",

@@ -42,8 +42,8 @@ export default {
     ...mapGetters("db", [devEvents]),
   },
   methods: {
-    activeEvent(_name) {
-      let bit = EVENT_LIST.find(({ name }) => name === _name).bit;
+    activeEvent(theName) {
+      let bit = EVENT_LIST.find(({ name }) => name === theName).bit;
       return parseEvent(this.currentValue, bit);
     },
   },
