@@ -26,14 +26,14 @@
         :selected="field"
         @update:selected="open"
         :report="theReport"
-        :height="height"
+        :height="hTree"
       ></tree-report-reader>
       <list-report-reader
         v-else
         :selected="field"
         @update:selected="open"
         :report="theReport"
-        :height="height"
+        :height="hList"
       ></list-report-reader>
     </template>
 
@@ -90,6 +90,12 @@ export default {
         ...lastFullReport(this.report, this.devReports),
         ...this.report,
       };
+    },
+    hList() {
+      return `height: calc(100vh - ${this.height}px - 34px)`;
+    },
+    hTree() {
+      return ` height: calc(100vh - ${this.height}px - 73px)`;
     },
   },
   methods: {

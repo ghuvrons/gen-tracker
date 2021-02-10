@@ -13,12 +13,7 @@
       </template>
       No response yet
     </q-banner>
-    <q-virtual-scroll
-      v-else
-      :items="devResponses"
-      :style="`height: calc(100vh - ${height}px - 33px)`"
-      separator
-    >
+    <q-virtual-scroll v-else :items="devResponses" :style="height" separator>
       <template v-slot="{ item: cmd, index }">
         <q-item :key="index" @click="writeCommand(cmd)" :clickable="!loading">
           <q-item-section>

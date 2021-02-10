@@ -13,7 +13,7 @@
       </template>
       No unit yet
     </q-banner>
-    <q-virtual-scroll v-else :items="devices" :style="`height: calc(${height}px - 32px)`" separator>
+    <q-virtual-scroll v-else :items="devices" :style="height" separator>
       <template v-slot="{ item: dev, index }">
         <q-item
           :key="index"

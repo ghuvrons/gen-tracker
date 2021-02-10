@@ -58,9 +58,6 @@ export default {
   data() {
     return {
       selectedTab: "tab-1",
-      mapHeight: 300,
-      paneHeight: 0,
-      pageWidth: 0,
       splitter: 50,
     };
   },

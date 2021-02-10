@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-input v-model="filter" placeholder="Filter..." clearable filled dense></q-input>
-    <div :style="`overflow-y:scroll; max-height: calc(100vh - ${height}px - 73px)`">
+    <div style="overflow-y:scroll" :style="height">
       <q-tree
         :selected="selected"
         @update:selected="$emit('update:selected', $event)"

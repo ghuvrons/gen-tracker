@@ -87,13 +87,18 @@
 import { devReports, devEvents } from "src/store/db/getter-types";
 import { mapGetters } from "vuex";
 import { getField } from "components/js/utils";
-import { cloneDeep } from "lodash";
 import { Report } from "components/js/report";
-import { min, max, findLastIndex } from "lodash";
-import chart from "components/js/opt/chart";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
 import CommonMixin from "components/mixins/CommonMixin";
+import ChartMixin from "components/mixins/ChartMixin";
+import {
+  findRange,
+  findRangeX,
+  findRangeY,
+  getLabel,
+  grabDatasets,
+} from "components/js/chart";
 
 export default {
   // name: 'ComponentName',
@@ -102,7 +107,7 @@ export default {
       required: true,
     },
   },
-  mixins: [CommonMixin],
+  mixins: [CommonMixin, ChartMixin],
   components: {
     LineChart,
     EventGroupReader,
@@ -111,7 +116,6 @@ export default {
     return {
       currentValue: 0,
       modalOpen: false,
-      chart: cloneDeep(chart),
       tmp: {
         max: null,
         sample: null,
@@ -134,12 +138,6 @@ export default {
         follow: false,
         drag: false,
       },
-      history: {
-        update: {
-          data: false,
-          options: false,
-        },
-      },
     };
   },
   computed: {
@@ -153,151 +151,58 @@ export default {
       );
     },
     rangeSample() {
-      let { iMin, iMax } = this.findRange(this.range.value);
+      let { iMin, iMax } = findRange(this.chart.data, this.range.value);
       return iMax - iMin + 1;
     },
   },
   methods: {
-    getLabel(index) {
-      let { labels } = this.chart.data;
-
-      if (index >= 0) return labels[index];
-      return labels[labels.length - 1];
-    },
-    findRange({ min, max }) {
-      let { labels } = this.chart.data;
-
-      // find the index
-      let iMin = min ? labels.findIndex((val) => val >= min) : 0;
-      let iMax = max
-        ? findLastIndex(labels, (val) => val <= max)
-        : labels.length - 1;
-
-      return { iMin, iMax };
-    },
-    findRangeX({ iMin, iMax }) {
-      let { labels } = this.chart.data;
-
-      // calculate x-axes
-      let xMin = labels[iMin];
-      let xMax = labels[iMax];
-
-      return { xMin, xMax };
-    },
-    findRangeY({ iMin, iMax }) {
-      let { data } = this.chart.data.datasets[0];
-
-      // calculate y-axes
-      let scope = data.filter((_, i) => i >= iMin && i <= iMax);
-      let yMin = min(scope);
-      let yMax = max(scope);
-
-      // correction
-      if (this.control.beginAtZero) {
-        if (yMin > 0) yMin = 0;
-        else yMax = 0;
-      }
-      if (yMax == yMin) {
-        if (yMin >= 0) yMax += 1;
-        else yMin -= 1;
-      }
-
-      return { yMin, yMax };
-    },
     applyRange(sample) {
-      let { iMin, iMax } = this.findRange(this.range.value);
-      let { xMax } = this.findRangeX({ iMin, iMax });
+      let { iMin, iMax } = findRange(this.chart.data, this.range.value);
+      let { xMax } = findRangeX(this.chart.data, { iMin, iMax });
       let oldSample = iMax - iMin;
 
       if (this.control.maximize || this.control.follow) {
         iMax = this.chart.data.labels.length - 1;
-        xMax = this.getLabel(iMax);
-
+        xMax = getLabel(this.chart.data, iMax);
         if (this.control.maximize) iMin = 0;
       }
 
       if (!sample) {
         sample = iMax - iMin;
-
         if (this.control.drag) {
           sample = oldSample;
-
-          if (!this.control.follow) xMax = this.getLabel(iMin + sample);
+          if (!this.control.follow)
+            xMax = getLabel(this.chart.data, iMin + sample);
         }
       } else sample--;
 
       this.range.value = {
-        min: this.getLabel(iMax - sample),
+        min: getLabel(this.chart.data, iMax - sample),
         max: xMax,
       };
     },
     scaleChart() {
-      let { iMin, iMax } = this.findRange(this.range.value);
-      let { xMin, xMax } = this.findRangeX({ iMin, iMax });
-      let { yMin, yMax } = this.findRangeY({ iMin, iMax });
+      let indexes = findRange(this.chart.data, this.range.value);
+      let { xMin, xMax } = findRangeX(this.chart.data, indexes);
+      let { yMin, yMax } = findRangeY(
+        this.chart.data.datasets[0],
+        this.control,
+        indexes
+      );
 
       this.currentValue = xMax;
-      this.chart.options.scales.xAxes[0].ticks.max = xMax;
-      this.chart.options.scales.xAxes[0].ticks.min = xMin;
-      this.chart.options.scales.yAxes[0].ticks.max = yMax;
-      this.chart.options.scales.yAxes[0].ticks.min = yMin;
-      this.chart.options.scales.yAxes[0].ticks.beginAtZero = this.control.beginAtZero;
-
-      this.history.update.options = !this.history.update.options;
+      this.setChartScales({ xMin, xMax, yMin, yMax }, this.control);
       this.$nextTick(() => (this.modalOpen = true));
     },
-    grabLabelsAndDatasets(reports) {
-      let datasets = [];
-      let labels = [];
-
-      reports.forEach((report) => {
-        if (report[this.field]) {
-          datasets.push(report[this.field].val);
-          labels.push(report.logDatetime.val);
-        }
-      });
-
-      return {
-        datasets: datasets.reverse(),
-        labels: labels.reverse(),
-      };
-    },
     writeChart(reports) {
-      let { labels, datasets } = this.grabLabelsAndDatasets(reports);
+      this.setChartData(grabDatasets(reports, this.field));
 
-      if (reports.length > 1) {
-        this.chart.data.labels = labels;
-        this.chart.data.datasets[0].data = datasets;
-      } else {
-        this.chart.data.labels.push(labels[0]);
-        this.chart.data.datasets[0].data.push(datasets[0]);
-      }
-      this.range.min = this.getLabel(0);
-      this.range.max = this.getLabel(-1);
-
-      this.history.update.data = !this.history.update.data;
-    },
-    prepareChart() {
-      let { title, unit } = this.theField;
-
-      this.chart.data.datasets[0].label = title;
-      this.chart.options.scales.yAxes[0].scaleLabel.labelString =
-        unit || "Value";
-
-      this.history.update.options = !this.history.update.options;
-    },
-    changeColor(color) {
-      this.chart.options.legend.labels.fontColor = color;
-      this.chart.options.scales.xAxes[0].ticks.fontColor = color;
-      this.chart.options.scales.xAxes[0].scaleLabel.fontColor = color;
-      this.chart.options.scales.xAxes[0].gridLines.color = color;
-      this.chart.options.scales.yAxes[0].ticks.fontColor = color;
-      this.chart.options.scales.yAxes[0].scaleLabel.fontColor = color;
-      this.chart.options.scales.yAxes[0].gridLines.color = color;
+      this.range.min = getLabel(this.chart.data, 0);
+      this.range.max = getLabel(this.chart.data, -1);
     },
   },
   mounted() {
-    this.prepareChart();
+    this.setChartLabel(this.field);
     this.writeChart(this.devReports);
     this.applyRange();
   },
@@ -348,8 +253,7 @@ export default {
     "$q.dark.isActive": {
       immediate: true,
       handler(dark) {
-        this.changeColor(dark ? "#FFF" : "#666");
-        this.history.update.options = !this.history.update.options;
+        this.setChartColor(dark ? "#FFF" : "#666");
       },
     },
   },
