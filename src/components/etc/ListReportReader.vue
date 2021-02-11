@@ -28,7 +28,7 @@
 
 <script>
 import { Report } from "components/js/report";
-import { getField } from "components/js/utils";
+import { getField, frameId } from "components/js/utils";
 import { omit, get } from "lodash";
 import config from "components/js/opt/config";
 
@@ -52,9 +52,7 @@ export default {
   methods: {
     realtime(field) {
       let { required } = getField(Report, field);
-      return (
-        get(this.report, "frameID.val") === config.frame.id.FULL || required
-      );
+      return get(this.report, "frameID.val") === frameId("FULL") || required;
     },
     getSubField(field, subField) {
       return getField(Report, field)[subField];

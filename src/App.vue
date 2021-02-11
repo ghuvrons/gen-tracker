@@ -18,7 +18,7 @@ import {
   extractCommand,
 } from "components/js/command";
 import { validateFrame } from "components/js/frame";
-import { isString, dilation } from "components/js/utils";
+import { isString, dilation, frameId } from "components/js/utils";
 import { calibrateTime } from "components/js/utils";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
@@ -270,7 +270,7 @@ export default {
         // TIME CALIBRATION
         if (!this.calibration) return;
 
-        if (devReport.frameID.val != config.frame.id.FULL) return;
+        if (devReport.frameID.val != frameId("FULL")) return;
 
         let validTime = calibrateTime(devReport);
         if (!validTime) return;

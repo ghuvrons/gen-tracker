@@ -19,13 +19,7 @@ export default {
     command: "@C",
     response: "@S",
   },
-  frame: {
-    name: ["SIMPLE", "FULL"],
-    id: {
-      SIMPLE: 0,
-      FULL: 1,
-    },
-  },
+  frames: ["SIMPLE", "FULL"],
   map: {
     zoom: 3,
     centerIndonesia: {

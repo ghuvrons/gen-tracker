@@ -1,6 +1,6 @@
 import config from "components/js/opt/config";
 import { Report } from "components/js/opt/report";
-import { getValue } from "components/js/utils";
+import { getValue, frameId } from "components/js/utils";
 import { parseFrame } from "components/js/frame";
 import { groupBy, set } from "lodash";
 
@@ -10,7 +10,7 @@ const parseReportData = (hex) => {
 
   let report = Report.filter(
     ({ required }) =>
-      frameID == frame.id.FULL || (frameID == frame.id.SIMPLE && required)
+      frameID == frameId("FULL") || (frameID == frameId("SIMPLE") && required)
   );
 
   return parseFrame(hex, report);
@@ -39,7 +39,7 @@ const lastFullReport = (report, reports) => {
 
   while (index < reports.length) {
     let prev = reports[index++];
-    if (prev.frameID.val === config.frame.id.FULL) return prev;
+    if (prev.frameID.val === frameId("FULL")) return prev;
   }
 };
 

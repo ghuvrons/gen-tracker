@@ -107,14 +107,14 @@ const COMMAND_LIST = [
     desc: "Upgrade VCU firmware",
     code: 5,
     subCode: 0,
-    timeout: 5 * 60,
+    timeout: 6 * 60,
   },
   {
     command: "FOTA_HMI",
     desc: "Upgrade HMI firmware",
     code: 5,
     subCode: 1,
-    timeout: 10 * 60,
+    timeout: 12 * 60,
   },
 ];
 

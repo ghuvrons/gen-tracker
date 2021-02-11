@@ -1,4 +1,5 @@
 import config from "components/js/opt/config";
+import { frameId } from "components/js/utils";
 
 const isIndonesia = ({ lng, lat }) => {
   let { borderIndonesia } = config.map;
@@ -16,7 +17,7 @@ const getPosition = ({ frameID, gpsLatitude, gpsLongitude }) => {
     valid: false,
   };
 
-  if (frameID.val === config.frame.id.FULL) {
+  if (frameID.val === frameId("FULL")) {
     pos.lat = gpsLatitude.val;
     pos.lng = gpsLongitude.val;
     pos.valid = isIndonesia(pos);
@@ -26,7 +27,7 @@ const getPosition = ({ frameID, gpsLatitude, gpsLongitude }) => {
 };
 
 const getHeading = ({ frameID, gpsHeading }) => {
-  if (frameID.val === config.frame.id.FULL) return gpsHeading.val;
+  if (frameID.val === frameId("FULL")) return gpsHeading.val;
   return 0;
 };
 

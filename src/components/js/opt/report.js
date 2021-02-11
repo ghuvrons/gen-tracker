@@ -40,7 +40,7 @@ const VCU = ({ required }) => {
       chartable: true,
       size: 1,
       format: (val) => HexToUnsignedInt(ChangeEndian(val)),
-      display: (valFormat) => config.frame.name[valFormat],
+      display: (valFormat) => config.frames[valFormat],
     },
     ...RTC.reduce((carry, rtc) => {
       return carry.concat([

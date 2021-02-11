@@ -104,6 +104,10 @@ const removeWords = (str, arr) => {
   }, str);
 };
 
+const frameId = (name) => {
+  return config.frames.findIndex((v) => v.includes(name));
+};
+
 export {
   flowFilter,
   isString,
@@ -116,4 +120,5 @@ export {
   toArrayTree,
   removeWords,
   dilation,
+  frameId,
 };
