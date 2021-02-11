@@ -11,6 +11,7 @@ import {
   REMOVE_FINGERS,
   CLEAR_FINGERS,
   TAKE_FINGER_TIME,
+  STOP_COMMAND,
 } from "src/store/db/mutation-types";
 import {
   parseCommand,
@@ -40,11 +41,9 @@ export default {
   name: "App",
   mixins: [CommonMixin],
   created() {
-    this.$root.$on("ignoreCommand", this.ignoreCommand);
     this.$root.$on("importData", this.importData);
   },
   destroyed() {
-    this.$root.$off("ignoreCommand", this.ignoreCommand);
     this.$root.$off("importData", this.importData);
   },
   data() {
@@ -53,7 +52,7 @@ export default {
       notification: null,
       importBuffer: [],
       importTotal: 0,
-      cmdTime: null,
+      cmdTick: null,
       cmdExecuting: null,
     };
   },
@@ -70,7 +69,12 @@ export default {
       CLEAR_FINGERS,
       TAKE_FINGER_TIME,
     ]),
-    ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS, INSERT_COMMAND]),
+    ...mapActions("db", [
+      INSERT_RESPONSES,
+      INSERT_REPORTS,
+      INSERT_COMMAND,
+      STOP_COMMAND,
+    ]),
     importData(reports) {
       this.importTotal = reports.length;
       this.importBuffer = cloneDeep(reports);
@@ -89,27 +93,6 @@ export default {
         if (this.dialog) this.dialog.hide();
       }
     },
-
-    starWaitting() {
-      let timeout = this.cmdExecuting.timeout || config.command.timeout;
-
-      this.timers.cmdTimeout.time = timeout * 1000;
-      this.$timer.start("cmdTimeout");
-      this.notification = this.$q.notify({
-        message: "Sending command....",
-        timeout: 0,
-      });
-    },
-    stopWaitting() {
-      if (this.notification) this.notification();
-      if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
-
-      this.cmdExecuting = null;
-      this.INSERT_COMMAND({
-        payload: "",
-        exec: false,
-      });
-    },
     notifyResponse({ resCode }) {
       let res = parseResCode(resCode);
       let ok = res.title == "OK";
@@ -119,41 +102,48 @@ export default {
 
       notify(msg, type);
     },
+
+    starWaitting(exec) {
+      this.cmdExecuting = exec;
+
+      this.cmdTick = moment();
+      this.timers.cmdTimeout.time =
+        (exec.timeout || config.command.timeout) * 1000;
+      this.$timer.start("cmdTimeout");
+      this.notification = this.$q.notify({
+        message: "Sending command....",
+        timeout: 0,
+      });
+    },
+    stopWaitting() {
+      if (this.notification) this.notification();
+      if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
+      if (this.cmdExecuting) this.cmdExecuting = null;
+    },
     cmdTimeout() {
       let response = parseResponse(this.cmdExecuting, null);
 
       this.INSERT_RESPONSES(response);
       this.notifyResponse(response);
-      this.stopWaitting();
-    },
-    ignoreCommand() {
-      notify("Command ignored.", "warning");
-      this.stopWaitting();
+      this.STOP_COMMAND();
     },
     handleCommandLost(report) {
       let { sendDatetime, unitID } = report;
 
       if (this.cmdExecuting.unitID != unitID.val) return;
-      if (dilation(sendDatetime.val, "seconds", this.cmdTime) < 10) return;
+      if (dilation(sendDatetime.val, "seconds", this.cmdTick) < 10) return;
 
       notify("Command lost.", "warning");
-      this.stopWaitting();
+      this.STOP_COMMAND();
     },
 
-    validFrame(bin) {
-      let hex = bin.toString("hex").toUpperCase();
-      let valid = validateFrame(hex);
-
-      if (!valid) return console.error(`CORRUPT ${hex}`);
-      return hex;
-    },
     handleResponseFrame(hex) {
       let response = parseResponse(this.cmdExecuting, hex);
       if (get(response, "unitID") !== this.cmdExecuting.unitID) return;
 
       this.INSERT_RESPONSES(response);
       this.notifyResponse(response);
-      this.stopWaitting();
+      this.STOP_COMMAND();
 
       return response;
     },
@@ -173,13 +163,19 @@ export default {
       this.INSERT_REPORTS(report);
       return report;
     },
+    validFrame(bin) {
+      let hex = bin.toString("hex").toUpperCase();
+      let valid = validateFrame(hex);
+
+      if (!valid) return console.error(`CORRUPT ${hex}`);
+      return hex;
+    },
   },
   timers: {
     cmdTimeout: { time: 0 },
     importer: { time: 10, repeat: true },
   },
   mounted() {
-    this.stopWaitting();
     this.$mqtt.subscribe("VCU/#", { qos: 1 });
   },
   mqtt: {
@@ -206,32 +202,37 @@ export default {
     },
   },
   watch: {
-    "command.exec": function (exec) {
-      if (exec) {
-        if (!this.devDevice) return notify("No device.");
-        if (this.cmdExecuting) return notify("Command busy.");
+    "command.exec": {
+      immediate: true,
+      handler(exec) {
+        if (exec) {
+          if (!this.devDevice) return notify("No device.");
+          if (this.cmdExecuting) return notify("Command busy.");
 
-        let { payload } = this.command;
-        let cmd = parseCommand(payload);
-        if (isString(cmd)) return notify(cmd);
+          let { payload } = this.command;
+          let cmd = parseCommand(payload);
+          if (isString(cmd)) {
+            this.STOP_COMMAND();
+            return notify(cmd);
+          }
 
-        let { unitID } = this.devDevice;
-        let hexCmd = buildCommand(cmd, unitID);
-        let binData = Buffer.from(hexCmd, "hex");
+          let { unitID } = this.devDevice;
+          let hexCmd = buildCommand(cmd, unitID);
+          let binData = Buffer.from(hexCmd, "hex");
 
-        this.cmdExecuting = {
-          ...cmd,
-          unitID,
-          payload,
-          hexCmd,
-        };
+          this.$mqtt.publish(`VCU/${unitID}/CMD`, binData);
+          console.log(`COMMAND ${hexCmd}`);
 
-        this.$mqtt.publish(`VCU/${unitID}/CMD`, binData);
-        console.log(`COMMAND ${hexCmd}`);
-
-        this.starWaitting();
-        this.cmdTime = moment();
-      }
+          this.starWaitting({
+            ...cmd,
+            unitID,
+            payload,
+            hexCmd,
+          });
+        } else {
+          this.stopWaitting();
+        }
+      },
     },
     "responses.0": function (response) {
       if (!response) return;

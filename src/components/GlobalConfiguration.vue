@@ -16,7 +16,7 @@
           color="primary"
           label="Ignore command"
           :disable="!command.exec"
-          @click="$root.$emit('ignoreCommand')"
+          @click="ignoreCommand()"
         />
       </div>
       <div class="col-auto">
@@ -62,11 +62,11 @@
 </template>
 
 <script>
-import { CLEAR_ALL } from "src/store/db/mutation-types";
+import { CLEAR_ALL, STOP_COMMAND } from "src/store/db/mutation-types";
 import { SET_CALIBRATION } from "src/store/common/mutation-types";
 import { mapState, mapMutations } from "vuex";
 import { exportCSV, exportJSON, importJSON } from "components/js/exporter";
-import { confirm } from "components/js/framework";
+import { confirm, notify } from "components/js/framework";
 import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     ...mapMutations("common", [SET_CALIBRATION]),
-    ...mapMutations("db", [CLEAR_ALL]),
+    ...mapMutations("db", [CLEAR_ALL, STOP_COMMAND]),
     finishImport() {
       this.$refs.importer.reset();
     },
@@ -106,6 +106,10 @@ export default {
     },
     clearStore() {
       confirm(`Are you sure to remove all data?`).onOk(() => this.CLEAR_ALL());
+    },
+    ignoreCommand() {
+      notify("Command ignored.", "warning");
+      this.STOP_COMMAND();
     },
   },
 };
