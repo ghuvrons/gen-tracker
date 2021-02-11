@@ -21,4 +21,11 @@ export default {
     commit(mutations.SET_COMMAND, command);
     commit(`common/${SET_LOADING}`, command.exec, { root: true });
   },
+  [actions.STOP_COMMAND]({ state, commit }, payload) {
+    commit(mutations.SET_COMMAND, {
+      ...state.command,
+      exec: false,
+    });
+    commit(`common/${SET_LOADING}`, false, { root: true });
+  },
 };

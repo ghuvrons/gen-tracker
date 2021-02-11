@@ -11,7 +11,6 @@ import {
   REMOVE_FINGERS,
   CLEAR_FINGERS,
   TAKE_FINGER_TIME,
-  STOP_COMMAND,
 } from "src/store/db/mutation-types";
 import {
   parseCommand,
@@ -23,6 +22,7 @@ import { isString, dilation, frameId } from "components/js/utils";
 import { calibrateTime } from "components/js/utils";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
+  STOP_COMMAND,
   INSERT_COMMAND,
   INSERT_REPORTS,
   INSERT_RESPONSES,

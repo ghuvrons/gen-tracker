@@ -17,12 +17,6 @@ export default {
   [mutations.SET_COMMAND](state, command) {
     state.command = command;
   },
-  [mutations.STOP_COMMAND](state) {
-    state.command = {
-      ...state.command,
-      exec: false,
-    };
-  },
 
   [mutations.TAKE_FINGER_TIME](state, theUnitID) {
     let idx = state.devices.findIndex(({ unitID }) => unitID === theUnitID);
