@@ -13,7 +13,7 @@
       >
         <template v-slot:default-header="{node}">
           <span class="text-weight-bold">{{ getFieldNodeTitle(node.label) }}</span>
-          <span v-if="defined(node.data)">: {{ node.data }} {{ getSubField(node.label, 'unit') }}</span>
+          <span v-if="node.data">: {{ node.data.out }} {{ node.data.unit }}</span>
         </template>
       </q-tree>
     </div>
@@ -21,10 +21,7 @@
 </template>
 
 <script>
-import { Report } from "components/js/report";
-import { getField, removeWords } from "components/js/utils";
-import { groupReport } from "components/js/report";
-import { toArrayTree } from "components/js/utils";
+import { set, omit } from "lodash";
 
 export default {
   emits: ["update:selected"],
@@ -46,24 +43,60 @@ export default {
   },
   computed: {
     nodes() {
-      if (!this.report) return [];
-      return toArrayTree(groupReport(), this.report);
+      return this.report ? this.toArrayTree(this.groupNodes()) : [];
     },
   },
   methods: {
-    defined(prop) {
-      return typeof prop !== "undefined";
-    },
-    getSubField(field, subField) {
-      return getField(Report, field)[subField];
-    },
     getFieldNodeTitle(field) {
-      let theField = getField(Report, field);
+      let theField = this.report[field];
       if (theField) {
         let group = theField.group.split(".");
-        return removeWords(theField.title, group);
+        return this.removeWords(theField.title, group);
       }
       return field.toUpperCase();
+    },
+    removeWords(str, arr) {
+      return arr.reduce((acc, val) => {
+        const regex = new RegExp(val, "gi");
+        return acc.replace(regex, "");
+      }, str);
+    },
+    groupBy(report) {
+      return Object.keys(report).reduce((acc, field) => {
+        let theField = report[field];
+        let { group } = theField;
+
+        let content = [{ ...theField, field }];
+        if (acc[group]) content = [...acc[group], ...content];
+
+        return {
+          ...acc,
+          [group]: content,
+        };
+      }, {});
+    },
+    groupNodes() {
+      let group = this.groupBy(omit(this.report, "hex"));
+
+      return Object.keys(group).reduce(
+        (o, key) =>
+          set(
+            o,
+            key,
+            group[key].reduce((c, el) => ({ ...c, [el.field]: el }), {})
+          ),
+        {}
+      );
+    },
+    toArrayTree(nodes) {
+      return Object.keys(nodes).map((key) => {
+        return !nodes[key].hasOwnProperty("field")
+          ? { label: key, children: this.toArrayTree(nodes[key]) }
+          : {
+              label: key,
+              data: nodes[key],
+            };
+      });
     },
   },
 };

@@ -9,10 +9,10 @@
         clickable
       >
         <q-item-section>
-          <q-item-label lines="1">{{ getSubField(field, "title") }}</q-item-label>
+          <q-item-label lines="1">{{ report[field].title }}</q-item-label>
           <q-item-label lines="2" caption>
             {{ report[field].out }}
-            {{ getSubField(field, 'unit') }}
+            {{ report[field].unit }}
           </q-item-label>
         </q-item-section>
         <q-item-section side>
@@ -29,8 +29,7 @@
 <script>
 import { Report } from "components/js/report";
 import { getField, frameId } from "components/js/utils";
-import { omit, get } from "lodash";
-import config from "components/js/opt/config";
+import { omit } from "lodash";
 
 export default {
   props: {
@@ -52,10 +51,7 @@ export default {
   methods: {
     realtime(field) {
       let { required } = getField(Report, field);
-      return get(this.report, "frameID.val") === frameId("FULL") || required;
-    },
-    getSubField(field, subField) {
-      return getField(Report, field)[subField];
+      return this.report.frameID.val === frameId("FULL") || required;
     },
   },
 };

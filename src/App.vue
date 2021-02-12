@@ -173,7 +173,7 @@ export default {
   },
   timers: {
     cmdTimeout: { time: 0 },
-    importer: { time: 10, repeat: true },
+    importer: { time: 100, repeat: true },
   },
   mounted() {
     this.$mqtt.subscribe("VCU/#", { qos: 1 });

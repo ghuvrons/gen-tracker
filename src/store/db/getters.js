@@ -33,8 +33,8 @@ export default {
   [getters.devEvents]({ unitID }, getters) {
     return groupBy(
       getters.byUnitID(unitID).reduce(
-        (carry, { eventsGroup, logDatetime }) =>
-          carry.concat(
+        (acc, { eventsGroup, logDatetime }) =>
+          acc.concat(
             ...EVENT_LIST.filter(({ bit }) =>
               parseEvent(eventsGroup.val, bit)
             ).map(({ name }) => ({

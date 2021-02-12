@@ -43,11 +43,11 @@
 
 <script>
 import ReportHistoryModal from "components/etc/ReportHistoryModal";
-import { Report, lastFullReport } from "components/js/report";
+import { Report, lastFullReport, readReport } from "components/js/report";
 import { devReports } from "src/store/db/getter-types";
 import { SET_TREE } from "src/store/common/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { getField } from "components/js/utils";
+import { getField, frameId } from "components/js/utils";
 import { get } from "lodash";
 import CommonMixin from "components/mixins/CommonMixin";
 import TreeReportReader from "components/etc/TreeReportReader";
@@ -86,10 +86,18 @@ export default {
     theReport() {
       if (!this.report) return;
 
-      return {
-        ...lastFullReport(this.report, this.devReports),
-        ...this.report,
-      };
+      let report = readReport(this.report);
+      if (this.report.frameId != frameId("FULL")) {
+        let full = lastFullReport(this.report, this.devReports);
+
+        if (full)
+          report = {
+            ...readReport(full),
+            ...report,
+          };
+      }
+
+      return report;
     },
     hList() {
       return `height: calc(100vh - ${this.height}px - 34px)`;

@@ -31,7 +31,7 @@ const getVehicleState = (state) => {
 const VCU = ({ required }) => {
   const RTC = ["sendDatetime", "logDatetime"];
 
-  let fields = [
+  return [
     {
       group: "packet",
       field: "frameID",
@@ -42,8 +42,8 @@ const VCU = ({ required }) => {
       format: (val) => HexToUnsignedInt(ChangeEndian(val)),
       display: (valFormat) => config.frames[valFormat],
     },
-    ...RTC.reduce((carry, rtc) => {
-      return carry.concat([
+    ...RTC.reduce((acc, rtc) => {
+      return acc.concat([
         {
           group: "packet.datetime",
           field: rtc,
@@ -251,106 +251,101 @@ const VCU = ({ required }) => {
       format: (v) => HexToUnsignedInt(ChangeEndian(v)),
       display: (vf) => Dot(vf),
     },
-  ];
-
-  return fields.filter((el) => el.required === required);
+  ].filter(({ required: req }) => req === required);
 };
 
 const BMS = ({ required }) => {
-  const BMSCount = 2;
-  let fields = [];
-
-  for (let i = 1; i <= BMSCount; i++) {
-    let tmp = [
-      {
-        group: `bms.${i}`,
-        field: `BMSId${i}`,
-        title: `BMS${i} ID`,
-        required: true,
-        size: 4,
-        format: (v) => HexToUnsignedInt(ChangeEndian(v)),
-        display: (vf) => {
-          if (vf === 0xffffffff) return "NONE";
-
-          return IntToHex(vf, 8).toUpperCase();
-        },
-      },
-      {
-        group: `bms.${i}`,
-        field: `BMSVoltage${i}`,
-        title: `BMS${i} Voltage`,
-        required: true,
-        chartable: true,
-        unit: "Volt",
-        size: 2,
-        format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01,
-        display: (vf) => vf.toFixed(2),
-      },
-      {
-        group: `bms.${i}`,
-        field: `BMSCurrent${i}`,
-        title: `BMS${i} Current`,
-        required: true,
-        chartable: true,
-        unit: "Ampere",
-        size: 2,
-        format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01 - 50,
-        display: (vf) => vf.toFixed(2),
-      },
-      {
-        group: `bms.${i}`,
-        field: `BMSSoc${i}`,
-        title: `BMS${i} SoC`,
-        required: false,
-        chartable: true,
-        unit: "%",
-        size: 2,
-        format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01,
-        display: (vf) => Dot(vf),
-      },
-      {
-        group: `bms.${i}`,
-        field: `BMSTemperature${i}`,
-        title: `BMS${i} Temperature`,
-        required: false,
-        chartable: true,
-        unit: "Celcius",
-        size: 2,
-        format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.1 - 40,
-        display: (vf) => vf.toFixed(2),
-      },
-    ];
-    fields = [...fields, ...tmp];
-  }
-
-  return fields.filter(({ required: _required }) => _required === required);
+  return ["One", "Two"]
+    .reduce(
+      (acc, i) =>
+        acc.concat([
+          {
+            group: `bms.${i}`,
+            field: `bms${i}Id`,
+            title: `BMS ${i} ID`,
+            required: true,
+            size: 4,
+            format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+            display: (vf) => {
+              if (vf === 0xffffffff) return "NONE";
+              return IntToHex(vf, 8).toUpperCase();
+            },
+          },
+          {
+            group: `bms.${i}`,
+            field: `bms${i}Voltage`,
+            title: `BMS ${i} Voltage`,
+            required: true,
+            chartable: true,
+            unit: "Volt",
+            size: 2,
+            format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01,
+            display: (vf) => vf.toFixed(2),
+          },
+          {
+            group: `bms.${i}`,
+            field: `bms${i}Current`,
+            title: `BMS ${i} Current`,
+            required: true,
+            chartable: true,
+            unit: "Ampere",
+            size: 2,
+            format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01 - 50,
+            display: (vf) => vf.toFixed(2),
+          },
+          {
+            group: `bms.${i}`,
+            field: `bms${i}Soc`,
+            title: `BMS ${i} SoC`,
+            required: false,
+            chartable: true,
+            unit: "%",
+            size: 2,
+            format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01,
+            display: (vf) => Dot(vf),
+          },
+          {
+            group: `bms.${i}`,
+            field: `bms${i}Temperature`,
+            title: `BMS ${i} Temperature`,
+            required: false,
+            chartable: true,
+            unit: "Celcius",
+            size: 2,
+            format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.1 - 40,
+            display: (vf) => vf.toFixed(2),
+          },
+        ]),
+      []
+    )
+    .filter(({ required: req }) => req === required);
 };
 
 const TEST = () => {
   const TASK_LIST = [
-    "ManagerTask",
-    "IotTask",
-    "ReporterTask",
-    "CommandTask",
-    "GpsTask",
-    "GyroTask",
-    "RemoteTask",
-    "FingerTask",
-    "AudioTask",
-    "GateTask",
-    "CanRxTask",
-    "CanTxTask",
-    "Hmi2PowerTask",
+    "managerTask",
+    "iotTask",
+    "reporterTask",
+    "commandTask",
+    "gpsTask",
+    "gyroTask",
+    "remoteTask",
+    "fingerTask",
+    "audioTask",
+    "gateTask",
+    "canRxTask",
+    "canTxTask",
+    "hmi2PowerTask",
   ];
   const GYRO_LIST = ["Yaw", "Pitch", "Roll"];
 
   return [
-    ...TASK_LIST.reduce((carry, task) => {
-      return carry.concat([
+    ...TASK_LIST.reduce((acc, task) => {
+      return acc.concat([
         {
           group: `vcu.task.wakeup`,
-          field: `${task}-wakeup`,
-          title: `${task} wakeup`,
+          field: `${task}Wakeup`,
+          title: `${startCase(task)} wakeup`,
           required: false,
           chartable: true,
           unit: "s",
@@ -360,8 +355,8 @@ const TEST = () => {
         },
         {
           group: `vcu.task.stack`,
-          field: `${task}-stack`,
-          title: `${task} stack`,
+          field: `${task}Stack`,
+          title: `${startCase(task)} stack`,
           required: false,
           chartable: true,
           unit: "words",
@@ -371,8 +366,8 @@ const TEST = () => {
         },
       ]);
     }, []),
-    ...GYRO_LIST.reduce((carry, gyro) => {
-      return carry.concat([
+    ...GYRO_LIST.reduce((acc, gyro) => {
+      return acc.concat([
         {
           group: `vcu.gyro`,
           field: `gyro${gyro}`,

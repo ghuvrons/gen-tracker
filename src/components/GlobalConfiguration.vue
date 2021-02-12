@@ -62,7 +62,8 @@
 </template>
 
 <script>
-import { CLEAR_ALL, STOP_COMMAND } from "src/store/db/mutation-types";
+import { CLEAR_ALL } from "src/store/db/mutation-types";
+import { STOP_COMMAND } from "src/store/db/action-types";
 import { SET_CALIBRATION } from "src/store/common/mutation-types";
 import { mapState, mapMutations } from "vuex";
 import { exportCSV, exportJSON, importJSON } from "components/js/exporter";

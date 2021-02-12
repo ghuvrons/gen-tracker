@@ -4,32 +4,32 @@ import { isString } from "components/js/utils";
 const buildCommand = (cmd, unitID) => {
   if (!cmd) return;
 
-  return Command.reduce((carry, el, idx) => {
+  return Command.reduce((acc, el, idx) => {
     let { field, formatCmd } = Command[Command.length - idx - 1];
 
     switch (field) {
       case "value":
         if (cmd.hasOwnProperty("formatCmd"))
-          carry = cmd.formatCmd(cmd.value) + carry;
-        else carry = formatCmd(cmd.value || 0) + carry;
+          acc = cmd.formatCmd(cmd.value) + acc;
+        else acc = formatCmd(cmd.value || 0) + acc;
         break;
       case "subCode":
       case "code":
-        carry = formatCmd(cmd[field]) + carry;
+        acc = formatCmd(cmd[field]) + acc;
         break;
       case "unitID":
-        carry = formatCmd(unitID) + carry;
+        acc = formatCmd(unitID) + acc;
         break;
       case "size":
       case "crc":
       case "prefix":
-        carry = formatCmd(carry) + carry;
+        acc = formatCmd(acc) + acc;
         break;
       default:
         break;
     }
 
-    return carry;
+    return acc;
   }, "").toUpperCase();
 };
 

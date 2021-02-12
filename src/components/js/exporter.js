@@ -6,8 +6,8 @@ import moment from "moment";
 const makeDataCSV = (reports) => {
   return reports.map((report) => ({
     ...Report.reduce(
-      (carry, { field, no }) => ({
-        ...carry,
+      (acc, { field, no }) => ({
+        ...acc,
         [no]: report[field] ? report[field].out : "",
       }),
       {}
@@ -17,8 +17,7 @@ const makeDataCSV = (reports) => {
 
 const makeLabelCSV = () => {
   return Report.reduce(
-    (carry, { title, unit }) =>
-      carry.concat([title + (unit ? ` (${unit})` : "")]),
+    (acc, { title, unit }) => acc.concat([title + (unit ? ` (${unit})` : "")]),
     []
   );
 };

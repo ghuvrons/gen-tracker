@@ -27,10 +27,10 @@ const flowFilter = (array, substr) => {
 const getField = (arr, fields, target) => {
   let result = arr.find(({ field }) => field === fields);
   if (Array.isArray(fields))
-    return fields.reduce((carry, _field) => {
+    return fields.reduce((acc, _field) => {
       result = arr.find(({ field }) => field === _field);
       return {
-        ...carry,
+        ...acc,
         [_field]: target ? result[target] : result,
       };
     }, {});
@@ -70,9 +70,9 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
 const parseDatetime = (hex) => {
   let timestamp = hex.match(/.{1,2}/g);
 
-  return timestamp.reduce((carry, ts) => {
+  return timestamp.reduce((acc, ts) => {
     let dt = HexToUnsignedInt(ts);
-    return carry.concat(dt.toString().padStart(2, "0"));
+    return acc.concat(dt.toString().padStart(2, "0"));
   }, "");
 };
 
@@ -81,27 +81,9 @@ const buildTimestamp = (ascii) => {
 
   return (
     datetime
-      .reduce((carry, dt) => carry.concat(IntToHex(parseInt(dt), 2)), "")
+      .reduce((acc, dt) => acc.concat(IntToHex(parseInt(dt), 2)), "")
       .toUpperCase() + "00"
   );
-};
-
-const toArrayTree = (obj, data) => {
-  return Object.keys(obj).map((key) => {
-    return typeof obj[key] === "object"
-      ? { label: key, children: toArrayTree(obj[key], data) }
-      : {
-          label: key,
-          data: data && data[key] && data[key].out,
-        };
-  });
-};
-
-const removeWords = (str, arr) => {
-  return arr.reduce((acc, val) => {
-    const regex = new RegExp(`${val}`, "gi");
-    return acc.replace(regex, "");
-  }, str);
 };
 
 const frameId = (name) => {
@@ -117,8 +99,6 @@ export {
   calibrateTime,
   parseDatetime,
   buildTimestamp,
-  toArrayTree,
-  removeWords,
   dilation,
   frameId,
 };

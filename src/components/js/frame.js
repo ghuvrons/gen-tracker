@@ -14,11 +14,11 @@ const calculateCRC32 = (hex) => {
 const parseFrame = (hex, frame) => {
   let cursor = 0;
 
-  return frame.reduce((carry, el) => {
+  return frame.reduce((acc, el) => {
     let formatted = el.format(hex.substr(cursor, el.size * 2));
     cursor += el.size * 2;
 
-    return carry.concat([
+    return acc.concat([
       {
         ...el,
         value: formatted,
