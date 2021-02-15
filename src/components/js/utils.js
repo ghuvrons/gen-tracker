@@ -59,12 +59,12 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
     timezone = tzlookup(gpsLatitude.val, gpsLongitude.val);
 
   let serverTime = moment();
-  let deviceTime = moment.unix(sendDatetime.val);
-  let diff = dilation(deviceTime, "seconds", serverTime);
+  // let deviceTime = moment.unix(sendDatetime.val);
+  // let diff = dilation(deviceTime, "seconds", serverTime);
 
   //  (at least more n minutes different)
-  if (!deviceTime.isValid() || diff > config.timeDilation)
-    return serverTime.tz(timezone).format("YYMMDDHHmmss0E");
+  // if (!deviceTime.isValid() || diff > 120)
+  return serverTime.tz(timezone).format("YYMMDDHHmmss0E");
 };
 
 const parseDatetime = (hex) => {

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { set, omit } from "lodash";
+import { get, set, omit } from "lodash";
 
 export default {
   emits: ["update:selected"],
@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     nodes() {
-      return this.report ? this.toArrayTree(this.groupNodes()) : [];
+      return this.report ? this.toTree(this.groupNodes()) : [];
     },
   },
   methods: {
@@ -61,41 +61,23 @@ export default {
         return acc.replace(regex, "");
       }, str);
     },
-    groupBy(report) {
-      return Object.keys(report).reduce((acc, field) => {
-        let theField = report[field];
-        let { group } = theField;
+    groupNodes() {
+      let report = omit(this.report, "hex");
 
-        let content = [{ ...theField, field }];
-        if (acc[group]) content = [...acc[group], ...content];
+      return Object.keys(report).reduce((o, field) => {
+        let { group } = report[field];
+        let content = { [field]: report[field] };
+        let grp = get(o, group);
 
-        return {
-          ...acc,
-          [group]: content,
-        };
+        if (grp) content = { ...grp, ...content };
+        return set(o, group, content);
       }, {});
     },
-    groupNodes() {
-      let group = this.groupBy(omit(this.report, "hex"));
-
-      return Object.keys(group).reduce(
-        (o, key) =>
-          set(
-            o,
-            key,
-            group[key].reduce((c, el) => ({ ...c, [el.field]: el }), {})
-          ),
-        {}
-      );
-    },
-    toArrayTree(nodes) {
-      return Object.keys(nodes).map((key) => {
-        return !nodes[key].hasOwnProperty("field")
-          ? { label: key, children: this.toArrayTree(nodes[key]) }
-          : {
-              label: key,
-              data: nodes[key],
-            };
+    toTree(nodes) {
+      return Object.keys(nodes).map((label) => {
+        return nodes[label].hasOwnProperty("out")
+          ? { label, data: nodes[label] }
+          : { label, children: this.toTree(nodes[label]) };
       });
     },
   },

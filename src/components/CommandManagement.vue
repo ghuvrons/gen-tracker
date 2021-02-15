@@ -17,7 +17,7 @@
 
     <div class="q-pa-sm">
       <q-input
-        v-model="payload"
+        v-model.lazy="payload"
         @keyup.enter="execCommand()"
         label="Input Command:"
         hint="Press ENTER to send."

@@ -5,7 +5,7 @@
       :key="name"
       :label="`${name} `"
       :caption="`(${event.length}) times`"
-      :header-class="`text-${activeEvent(name) ? 'green' : 'grey'}`"
+      :header-class="`text-${activeEvent(name) ? 'orange' : 'grey'}`"
       expand-separator
     >
       <q-virtual-scroll :items="event" style="max-height:50vh" separator>
@@ -30,7 +30,7 @@ import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   props: {
-    currentValue: Number,
+    value: Number,
   },
   mixins: [CommonMixin],
   data() {
@@ -43,8 +43,8 @@ export default {
   },
   methods: {
     activeEvent(theName) {
-      let bit = EVENT_LIST.find(({ name }) => name === theName).bit;
-      return parseEvent(this.currentValue, bit);
+      let event = EVENT_LIST.find(({ name }) => name === theName);
+      return parseEvent(this.value, event.bit);
     },
   },
 };

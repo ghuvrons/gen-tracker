@@ -38,7 +38,7 @@ const COMMAND_LIST = [
   },
   {
     command: "REPORT_ODOM",
-    desc: "Set odometer value",
+    desc: "Set odometer value (km)",
     code: 1,
     subCode: 1,
     type: "uint32_t",
@@ -93,6 +93,7 @@ const COMMAND_LIST = [
     desc: "Pairing pocket keyless",
     code: 4,
     subCode: 0,
+    timeout: 10,
   },
   {
     command: "REMOTE_UNITID",

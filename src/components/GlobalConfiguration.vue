@@ -80,6 +80,7 @@ export default {
     },
   },
   computed: {
+    ...mapState("common", ["calibration"]),
     ...mapState("db", ["devices", "command", "reports"]),
     calibrationState: {
       get() {

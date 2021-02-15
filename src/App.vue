@@ -137,6 +137,15 @@ export default {
       this.STOP_COMMAND();
     },
 
+    calibrate(report) {
+      if (report.frameID.val != frameId("FULL")) return;
+
+      let validTime = calibrateTime(report);
+      if (!validTime) return;
+
+      this.INSERT_COMMAND({ payload: `REPORT_RTC=${validTime}` });
+      notify("Calibrating device time..", "info");
+    },
     handleResponseFrame(hex) {
       let response = parseResponse(this.cmdExecuting, hex);
       if (get(response, "unitID") !== this.cmdExecuting.unitID) return;
@@ -150,8 +159,10 @@ export default {
     handleReportFrame(hex) {
       let report = parseReport(hex);
 
-      if (dilation(report.logDatetime.val, "years") > 1)
+      if (dilation(report.logDatetime.val, "days") > 1) {
+        if (this.calibration) this.calibrate(report);
         return console.warn(`^REPORT (EXPIRED)`);
+      }
 
       if (
         this.reports.some(
@@ -267,17 +278,6 @@ export default {
           this.follow
         )
           this.SET_REPORT(devReport);
-
-        // TIME CALIBRATION
-        if (!this.calibration) return;
-
-        if (devReport.frameID.val != frameId("FULL")) return;
-
-        let validTime = calibrateTime(devReport);
-        if (!validTime) return;
-
-        this.INSERT_COMMAND({ payload: `REPORT_RTC=${validTime}` });
-        notify("Calibrating device time..", "info");
       },
     },
   },

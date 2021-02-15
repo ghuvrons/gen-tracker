@@ -180,7 +180,7 @@ const VCU = ({ required }) => {
       title: "Odometer",
       required: false,
       chartable: true,
-      unit: "m",
+      unit: "Km",
       size: 4,
       format: (v) => HexToUnsignedInt(ChangeEndian(v)),
       display: (vf) => Dot(vf),

@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "1.43",
+    version: "1.44",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -33,10 +33,9 @@ export default {
       latMax: 5.90713,
     },
   },
-  timeDilation: 5 * 60,
   timezone: "Asia/Jakarta",
   maxStorage: {
     reports: 500,
-    commands: 50,
+    responses: 50,
   },
 };

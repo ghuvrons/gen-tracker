@@ -73,7 +73,7 @@
 
             <div v-if="eventGroup" class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
               <div class="q-pa-sm scroll">
-                <event-group-reader :current-value="currentValue"></event-group-reader>
+                <event-group-reader :value="currentValue"></event-group-reader>
               </div>
             </div>
           </div>
@@ -114,7 +114,6 @@ export default {
   },
   data() {
     return {
-      currentValue: 0,
       modalOpen: false,
       tmp: {
         max: null,
@@ -144,6 +143,10 @@ export default {
     ...mapGetters("db", [devReports, devEvents]),
     theField() {
       return getField(Report, this.field);
+    },
+    currentValue() {
+      let { data } = this.chart.data.datasets[0];
+      return data[data.length - 1];
     },
     eventGroup() {
       return (
@@ -190,7 +193,6 @@ export default {
         indexes
       );
 
-      this.currentValue = xMax;
       this.setChartScales({ xMin, xMax, yMin, yMax }, this.control);
       this.$nextTick(() => (this.modalOpen = true));
     },
