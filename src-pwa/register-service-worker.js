@@ -5,8 +5,6 @@
 
 import { register } from "register-service-worker";
 import { Notify } from "quasar";
-import { CLEAR_DATABASE } from "src/store/db/mutation-types";
-import store from "src/store/index";
 
 register(process.env.SERVICE_WORKER_FILE, {
   ready() {
@@ -38,8 +36,7 @@ register(process.env.SERVICE_WORKER_FILE, {
           label: "Refresh",
           color: "yellow",
           handler: () => {
-            // window.localStorage.clear();
-            store.commit(`db/${CLEAR_DATABASE}`);
+            window.localStorage.clear();
             window.location.reload();
           },
         },
