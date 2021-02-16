@@ -16,4 +16,7 @@ export default {
   [mutations.SET_TREE](state, value) {
     state.tree = value;
   },
+  [mutations.SET_NOTIFICATION](state, value) {
+    state.notification = value;
+  },
 };

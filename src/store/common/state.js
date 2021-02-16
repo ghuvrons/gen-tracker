@@ -5,5 +5,6 @@ export default function () {
     tree: false,
     follow: true,
     calibration: true,
+    notification: true,
   };
 }

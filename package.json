@@ -31,6 +31,8 @@
     "tz-lookup": "^6.1.25",
     "vue-chartjs": "^3.5.0",
     "vue-mqtt": "^2.0.3",
+    "vue-native-notification": "^1.1.1",
+    "vue-offline": "^2.0.8",
     "vue-timers": "^2.0.4",
     "vue2-google-maps": "^0.10.7",
     "vuex-persist": "^2.2.0"

@@ -1,6 +1,9 @@
 <template>
   <q-layout view="lHr LpR lFr">
     <q-header elevated>
+      <q-bar v-if="isOffline" class="bg-red" dense>
+        <q-toolbar-title class="text-caption">Offline mode</q-toolbar-title>
+      </q-bar>
       <q-toolbar class="bg-primary text-white">
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="drawer.left = !drawer.left"></q-btn>
 

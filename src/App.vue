@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       dialog: null,
-      notification: null,
+      notifier: null,
       importBuffer: [],
       importTotal: 0,
       cmdTick: null,
@@ -57,8 +57,8 @@ export default {
     };
   },
   computed: {
+    ...mapState("common", ["follow", "calibration", "notification"]),
     ...mapState("db", ["command", "responses", "reports"]),
-    ...mapState("common", ["follow", "calibration"]),
     ...mapGetters("db", [devDevice, devReports]),
   },
   methods: {
@@ -110,13 +110,13 @@ export default {
       this.timers.cmdTimeout.time =
         (exec.timeout || config.command.timeout) * 1000;
       this.$timer.start("cmdTimeout");
-      this.notification = this.$q.notify({
+      this.notifier = this.$q.notify({
         message: "Sending command....",
         timeout: 0,
       });
     },
     stopWaitting() {
-      if (this.notification) this.notification();
+      if (this.notifier) this.notifier();
       if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
       if (this.cmdExecuting) this.cmdExecuting = null;
     },
@@ -278,6 +278,15 @@ export default {
           this.follow
         )
           this.SET_REPORT(devReport);
+
+        if (this.notification)
+          this.$notification.show(
+            "New data",
+            {
+              body: `${devReport.frameID.out} frame`,
+            },
+            {}
+          );
       },
     },
   },

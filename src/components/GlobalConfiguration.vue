@@ -57,6 +57,9 @@
           label="Time Calibration"
         />
       </div>
+      <div class="col-auto">
+        <q-toggle v-model="notificationState" label="Notification" />
+      </div>
     </div>
   </div>
 </template>
@@ -64,7 +67,10 @@
 <script>
 import { CLEAR_DATABASE } from "src/store/db/mutation-types";
 import { STOP_COMMAND } from "src/store/db/action-types";
-import { SET_CALIBRATION } from "src/store/common/mutation-types";
+import {
+  SET_CALIBRATION,
+  SET_NOTIFICATION,
+} from "src/store/common/mutation-types";
 import { mapState, mapMutations } from "vuex";
 import { exportCSV, exportJSON, importJSON } from "components/js/exporter";
 import { confirm, notify } from "components/js/framework";
@@ -80,7 +86,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("common", ["calibration"]),
+    ...mapState("common", ["calibration", "notification"]),
     ...mapState("db", ["devices", "command", "reports"]),
     calibrationState: {
       get() {
@@ -90,9 +96,17 @@ export default {
         this.SET_CALIBRATION(value);
       },
     },
+    notificationState: {
+      get() {
+        return this.notification;
+      },
+      set(value) {
+        this.SET_NOTIFICATION(value);
+      },
+    },
   },
   methods: {
-    ...mapMutations("common", [SET_CALIBRATION]),
+    ...mapMutations("common", [SET_CALIBRATION, SET_NOTIFICATION]),
     ...mapMutations("db", [CLEAR_DATABASE, STOP_COMMAND]),
     finishImport() {
       this.$refs.importer.reset();
