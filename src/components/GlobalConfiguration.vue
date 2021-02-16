@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { CLEAR_ALL } from "src/store/db/mutation-types";
+import { CLEAR_DATABASE } from "src/store/db/mutation-types";
 import { STOP_COMMAND } from "src/store/db/action-types";
 import { SET_CALIBRATION } from "src/store/common/mutation-types";
 import { mapState, mapMutations } from "vuex";
@@ -93,7 +93,7 @@ export default {
   },
   methods: {
     ...mapMutations("common", [SET_CALIBRATION]),
-    ...mapMutations("db", [CLEAR_ALL, STOP_COMMAND]),
+    ...mapMutations("db", [CLEAR_DATABASE, STOP_COMMAND]),
     finishImport() {
       this.$refs.importer.reset();
     },
@@ -107,7 +107,9 @@ export default {
       importJSON(files[0]).then((res) => this.$root.$emit("importData", res));
     },
     clearStore() {
-      confirm(`Are you sure to remove all data?`).onOk(() => this.CLEAR_ALL());
+      confirm(`Are you sure to remove all data?`).onOk(() =>
+        this.CLEAR_DATABASE()
+      );
     },
     ignoreCommand() {
       notify("Command ignored.", "warning");

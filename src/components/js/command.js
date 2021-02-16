@@ -62,8 +62,9 @@ const parseCommand = (payload) => {
   } else {
     if (!value) return "Command need value";
 
-    if (cmd.validator && !cmd.validator(value)) return "Value is invalid";
-    else {
+    if (cmd.validator) {
+      if (!cmd.validator(value)) return "Value is invalid";
+    } else {
       const [min, max] = cmd.range;
       if (value < min || value > max) return "Value not in range";
     }

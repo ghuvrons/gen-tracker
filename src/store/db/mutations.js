@@ -4,7 +4,7 @@ import config from "components/js/opt/config";
 import moment from "moment";
 
 export default {
-  [mutations.CLEAR_ALL](state) {
+  [mutations.CLEAR_DATABASE](state) {
     Object.assign(state, initialState());
   },
 

@@ -159,7 +159,7 @@ export default {
     handleReportFrame(hex) {
       let report = parseReport(hex);
 
-      if (dilation(report.logDatetime.val, "days") > 1) {
+      if (dilation(report.sendDatetime.val, "minutes") > 2) {
         if (this.calibration) this.calibrate(report);
         return console.warn(`^REPORT (EXPIRED)`);
       }

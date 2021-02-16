@@ -5,6 +5,8 @@
 
 import { register } from "register-service-worker";
 import { Notify } from "quasar";
+import { CLEAR_DATABASE } from "src/store/db/mutation-types";
+import store from "src/store/index";
 
 register(process.env.SERVICE_WORKER_FILE, {
   ready() {
@@ -30,13 +32,14 @@ register(process.env.SERVICE_WORKER_FILE, {
       message: "New content is available; please refresh.",
       color: "red",
       icon: "refresh",
-      timeout: 60000,
+      timeout: 0,
       actions: [
         {
           label: "Refresh",
           color: "yellow",
           handler: () => {
-            window.localStorage.clear();
+            // window.localStorage.clear();
+            store.commit(`db/${CLEAR_DATABASE}`);
             window.location.reload();
           },
         },
@@ -54,11 +57,6 @@ register(process.env.SERVICE_WORKER_FILE, {
     console.log(
       "No internet connection found. App is running in offline mode."
     );
-
-    Notify.create({
-      message: "Offline mode",
-      color: "purple",
-    });
   },
   error(err) {
     console.error("Error during service worker registration:", err);

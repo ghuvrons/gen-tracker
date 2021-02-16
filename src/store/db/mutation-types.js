@@ -1,4 +1,4 @@
-export const CLEAR_ALL = "CLEAR_ALL";
+export const CLEAR_DATABASE = "CLEAR_DATABASE";
 
 export const TAKE_FINGER_TIME = "TAKE_FINGER_TIME";
 

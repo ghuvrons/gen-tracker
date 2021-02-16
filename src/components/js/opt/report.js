@@ -337,7 +337,7 @@ const TEST = () => {
     "canTxTask",
     "hmi2PowerTask",
   ];
-  const GYRO_LIST = ["Yaw", "Pitch", "Roll"];
+  const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
 
   return [
     ...TASK_LIST.reduce((acc, task) => {
