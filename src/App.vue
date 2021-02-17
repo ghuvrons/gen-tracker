@@ -27,7 +27,7 @@ import {
   INSERT_REPORTS,
   INSERT_RESPONSES,
 } from "src/store/db/action-types";
-import { devDevice, devReports } from "src/store/db/getter-types";
+import { devDevice, devReports, devEvents } from "src/store/db/getter-types";
 import { parseReport } from "components/js/report";
 import { parseResponse, parseResCode } from "components/js/response";
 import config from "components/js/opt/config";
@@ -59,7 +59,7 @@ export default {
   computed: {
     ...mapState("common", ["follow", "calibration", "notification"]),
     ...mapState("db", ["command", "responses", "reports"]),
-    ...mapGetters("db", [devDevice, devReports]),
+    ...mapGetters("db", [devDevice, devReports, devEvents]),
   },
   methods: {
     ...mapMutations("db", [
@@ -268,6 +268,22 @@ export default {
         this.REMOVE_FINGERS({ unitID, fingerID: value });
       else if (prop == "FINGER_RST") this.CLEAR_FINGERS({ unitID });
     },
+    "devEvents.0": {
+      deep: true,
+      handler(event) {
+        console.warn(event);
+        // if (this.notification) {
+        //   let {unitID, frameID} = report
+        //   this.$notification.show(
+        //     "New data",
+        //     {
+        //       body: `${devReport.frameID.out} frame`,
+        //     },
+        //     {}
+        //   );
+        // }
+      },
+    },
     "devReports.0": {
       immediate: true,
       handler(devReport, oldDevReport) {
@@ -278,15 +294,6 @@ export default {
           this.follow
         )
           this.SET_REPORT(devReport);
-
-        if (this.notification)
-          this.$notification.show(
-            "New data",
-            {
-              body: `${devReport.frameID.out} frame`,
-            },
-            {}
-          );
       },
     },
   },

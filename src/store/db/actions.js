@@ -4,10 +4,11 @@ import { SET_LOADING } from "src/store/common/mutation-types";
 
 export default {
   [actions.INSERT_REPORTS]({ state, commit }, payload) {
-    commit(mutations.ADD_DEVICES, { unitID: payload.unitID.val });
+    commit(mutations.ADD_DEVICES, {
+      unitID: payload.unitID.val,
+    });
     if (!state.unitID) commit(mutations.SET_UNITID, payload.unitID.val);
     commit(mutations.ADD_REPORTS, payload);
-    // hooks
   },
   [actions.INSERT_RESPONSES]({ state, commit }, payload) {
     commit(mutations.ADD_DEVICES, { unitID: payload.unitID });
@@ -21,7 +22,7 @@ export default {
     commit(mutations.SET_COMMAND, command);
     commit(`common/${SET_LOADING}`, command.exec, { root: true });
   },
-  [actions.STOP_COMMAND]({ state, commit }, payload) {
+  [actions.STOP_COMMAND]({ state, commit }) {
     commit(mutations.SET_COMMAND, {
       ...state.command,
       exec: false,
