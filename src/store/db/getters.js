@@ -1,59 +1,41 @@
-import { groupBy } from "lodash";
-import { EVENT_LIST, parseEvent } from "components/js/event";
-import moment from "moment";
+import { eventHistories } from "components/js/event";
+import { lastSendDatetime } from "components/js/report";
 import * as getters from "./getter-types";
 
 export default {
-  [getters.indexByUnitID]: ({ reports }) => {
+  [getters.reportIdxByUnitID]: ({ reports }) => {
     return reports.reduce((map, { unitID }, index) => {
       map[unitID.val] = map[unitID.val] || [];
       map[unitID.val].push(index);
       return map;
     }, {});
   },
-  [getters.byUnitID]: (state, getters) => (unitID) => {
-    return (getters.indexByUnitID[unitID] || []).map(
-      (index) => state.reports[index]
+  [getters.reportByUnitID]: (state, getters) => unitID => {
+    return (getters.reportIdxByUnitID[unitID] || []).map(
+      index => state.reports[index]
     );
   },
 
-  [getters.devTotalReports]: (state, getters) => (unitID) => {
-    return getters.byUnitID(unitID).length;
+  [getters.getTotalReports]: (state, getters) => unitID => {
+    return getters.reportByUnitID(unitID).length;
   },
-  [getters.devLastReport]: (state, getters) => (unitID) => {
-    let report = getters.byUnitID(unitID)[0];
-
-    if (report)
-      return moment.unix(report.sendDatetime.val).endOf("second").fromNow();
-    return "Unknown ago";
-  },
-  [getters.devReports]({ unitID }, getters) {
-    return getters.byUnitID(unitID);
+  [getters.getLastReport]: (state, getters) => unitID => {
+    let report = getters.reportByUnitID(unitID)[0];
+    return lastSendDatetime(report);
   },
   [getters.devEvents]({ unitID }, getters) {
-    return groupBy(
-      getters.byUnitID(unitID).reduce(
-        (acc, { eventsGroup, logDatetime }) =>
-          acc.concat(
-            ...EVENT_LIST.filter(({ bit }) =>
-              parseEvent(eventsGroup.val, bit)
-            ).map(({ name }) => ({
-              time: moment.unix(logDatetime.val).format("HH:mm:ss"),
-              name,
-            }))
-          ),
-        []
-      ),
-      "name"
-    );
+    return eventHistories(getters.reportByUnitID(unitID));
+  },
+  [getters.devReports]({ unitID }, getters) {
+    return getters.reportByUnitID(unitID);
   },
   [getters.devDevice]({ devices, unitID }) {
-    return devices.find((device) => device.unitID === unitID);
+    return devices.find(device => device.unitID === unitID);
   },
   [getters.devResponses]({ responses, unitID }) {
-    return responses.filter((response) => response.unitID === unitID);
+    return responses.filter(response => response.unitID === unitID);
   },
   [getters.devFingers]({ fingers, unitID }) {
-    return fingers.filter((finger) => finger.unitID === unitID);
-  },
+    return fingers.filter(finger => finger.unitID === unitID);
+  }
 };

@@ -1,8 +1,8 @@
-export const indexByUnitID = "indexByUnitID";
-export const byUnitID = "byUnitID";
+export const reportIdxByUnitID = "reportIdxByUnitID";
+export const reportByUnitID = "reportByUnitID";
 
-export const devTotalReports = "devTotalReports";
-export const devLastReport = "devLastReport";
+export const getTotalReports = "getTotalReports";
+export const getLastReport = "getLastReport";
 export const devReports = "devReports";
 export const devEvents = "devEvents";
 export const devResponses = "devResponses";

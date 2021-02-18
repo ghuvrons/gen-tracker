@@ -1,8 +1,9 @@
 import { Report } from "components/js/opt/report";
 import { getValue, getField, frameId } from "components/js/utils";
 import { parseFrame } from "components/js/frame";
+import moment from "moment";
 
-const parseReportData = (hex) => {
+const parseReportData = hex => {
   let frameID = getValue(parseFrame(hex, Report), "frameID");
 
   let report = Report.filter(
@@ -13,7 +14,7 @@ const parseReportData = (hex) => {
   return parseFrame(hex, report);
 };
 
-const parseReport = (hex) => {
+const parseReport = hex => {
   let data = parseReportData(hex);
 
   return data.reduce(
@@ -21,14 +22,14 @@ const parseReport = (hex) => {
       ...acc,
       [field]: {
         val: value,
-        out: output,
-      },
+        out: output
+      }
     }),
     { hex }
   );
 };
 
-const readReport = (report) => {
+const readReport = report => {
   return Object.keys(report).reduce((acc, field) => {
     let value = report[field];
 
@@ -38,13 +39,13 @@ const readReport = (report) => {
         ...value,
         group,
         title,
-        unit,
+        unit
       };
     }
 
     return {
       ...acc,
-      [field]: value,
+      [field]: value
     };
   }, {});
 };
@@ -61,4 +62,20 @@ const lastFullReport = (report, reports) => {
   }
 };
 
-export { Report, parseReport, parseReportData, lastFullReport, readReport };
+const lastSendDatetime = report => {
+  if (report)
+    return moment
+      .unix(report.sendDatetime.val)
+      .endOf("second")
+      .fromNow();
+  return "Unknown ago";
+};
+
+export {
+  Report,
+  parseReport,
+  parseReportData,
+  lastFullReport,
+  readReport,
+  lastSendDatetime
+};

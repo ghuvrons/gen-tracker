@@ -36,6 +36,7 @@ import { loader } from "components/js/framework";
 import { cloneDeep, get } from "lodash";
 import CommonMixin from "components/mixins/CommonMixin";
 import moment from "moment";
+import { readEvent } from "components/js/event";
 
 export default {
   name: "App",
@@ -270,22 +271,6 @@ export default {
         this.REMOVE_FINGERS({ unitID, fingerID: value });
       else if (prop == "FINGER_RST") this.CLEAR_FINGERS({ unitID });
     },
-    "devEvents.0": {
-      deep: true,
-      handler(event) {
-        console.warn(event);
-        // if (this.notification) {
-        //   let {unitID, frameID} = report
-        //   this.$notification.show(
-        //     "New data",
-        //     {
-        //       body: `${devReport.frameID.out} frame`,
-        //     },
-        //     {}
-        //   );
-        // }
-      }
-    },
     "devReports.0": {
       immediate: true,
       handler(devReport, oldDevReport) {
@@ -296,6 +281,20 @@ export default {
           this.follow
         )
           this.SET_REPORT(devReport);
+
+        if (!this.notification) return;
+        let curEvents = readEvent(devReport);
+        let oldEvents = readEvent(oldDevReport);
+        let newEvents = curEvents.filter(evt => !oldEvents.includes(evt));
+        if (newEvents.length > 0) {
+          newEvents.forEach(evt => {
+            this.$notification.show(
+              evt,
+              { body: devReport.logDatetime.out },
+              {}
+            );
+          });
+        }
       }
     }
   }
