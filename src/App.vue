@@ -282,7 +282,7 @@ export default {
         )
           this.SET_REPORT(devReport);
 
-        if (this.notification) {
+        if (this.notification && oldDevReport) {
           let curEvents = readEvent(devReport);
           let oldEvents = readEvent(oldDevReport);
           let newEvents = curEvents.filter(evt => !oldEvents.includes(evt));
