@@ -20,9 +20,9 @@ export default {
     return getters.reportByUnitID(unitID).length;
   },
   [getters.getLastReport]: (state, getters) => unitID => {
-    let report = getters.reportByUnitID(unitID)[0];
-    return lastSendDatetime(report);
+    return lastSendDatetime(getters.reportByUnitID(unitID)[0]);
   },
+
   [getters.devEvents]({ unitID }, getters) {
     return eventHistories(getters.reportByUnitID(unitID));
   },

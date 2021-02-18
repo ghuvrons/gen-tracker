@@ -282,11 +282,10 @@ export default {
         )
           this.SET_REPORT(devReport);
 
-        if (!this.notification) return;
-        let curEvents = readEvent(devReport);
-        let oldEvents = readEvent(oldDevReport);
-        let newEvents = curEvents.filter(evt => !oldEvents.includes(evt));
-        if (newEvents.length > 0) {
+        if (this.notification) {
+          let curEvents = readEvent(devReport);
+          let oldEvents = readEvent(oldDevReport);
+          let newEvents = curEvents.filter(evt => !oldEvents.includes(evt));
           newEvents.forEach(evt => {
             this.$notification.show(
               evt,
