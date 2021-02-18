@@ -10,12 +10,12 @@ import {
   ADD_FINGERS,
   REMOVE_FINGERS,
   CLEAR_FINGERS,
-  TAKE_FINGER_TIME,
+  TAKE_FINGER_TIME
 } from "src/store/db/mutation-types";
 import {
   parseCommand,
   buildCommand,
-  extractCommand,
+  extractCommand
 } from "components/js/command";
 import { validateFrame } from "components/js/frame";
 import { isString, dilation, frameId } from "components/js/utils";
@@ -25,7 +25,7 @@ import {
   STOP_COMMAND,
   INSERT_COMMAND,
   INSERT_REPORTS,
-  INSERT_RESPONSES,
+  INSERT_RESPONSES
 } from "src/store/db/action-types";
 import { devDevice, devReports, devEvents } from "src/store/db/getter-types";
 import { parseReport } from "components/js/report";
@@ -53,13 +53,13 @@ export default {
       importBuffer: [],
       importTotal: 0,
       cmdTick: null,
-      cmdExecuting: null,
+      cmdExecuting: null
     };
   },
   computed: {
     ...mapState("common", ["follow", "calibration", "notification"]),
     ...mapState("db", ["command", "responses", "reports"]),
-    ...mapGetters("db", [devDevice, devReports, devEvents]),
+    ...mapGetters("db", [devDevice, devReports, devEvents])
   },
   methods: {
     ...mapMutations("db", [
@@ -67,13 +67,13 @@ export default {
       ADD_FINGERS,
       REMOVE_FINGERS,
       CLEAR_FINGERS,
-      TAKE_FINGER_TIME,
+      TAKE_FINGER_TIME
     ]),
     ...mapActions("db", [
       INSERT_RESPONSES,
       INSERT_REPORTS,
       INSERT_COMMAND,
-      STOP_COMMAND,
+      STOP_COMMAND
     ]),
     importData(reports) {
       this.importTotal = reports.length;
@@ -112,7 +112,7 @@ export default {
       this.$timer.start("cmdTimeout");
       this.notifier = this.$q.notify({
         message: "Sending command....",
-        timeout: 0,
+        timeout: 0
       });
     },
     stopWaitting() {
@@ -138,6 +138,8 @@ export default {
     },
 
     calibrate(report) {
+      if (!this.devDevice) return;
+
       if (report.frameID.val != frameId("FULL")) return;
 
       let validTime = calibrateTime(report);
@@ -180,17 +182,17 @@ export default {
 
       if (!valid) return console.error(`CORRUPT ${hex}`);
       return hex;
-    },
+    }
   },
   timers: {
     cmdTimeout: { time: 0 },
-    importer: { time: 100, repeat: true },
+    importer: { time: 100, repeat: true }
   },
   mounted() {
     this.$mqtt.subscribe("VCU/#", { qos: 1 });
   },
   mqtt: {
-    "VCU/+/RSP": function (data, topic) {
+    "VCU/+/RSP": function(data, topic) {
       if (!this.cmdExecuting) return;
 
       let hex = this.validFrame(data);
@@ -200,7 +202,7 @@ export default {
       let response = this.handleResponseFrame(hex);
       if (!response) return;
     },
-    "VCU/+/RPT": function (data, topic) {
+    "VCU/+/RPT": function(data, topic) {
       let hex = this.validFrame(data);
       if (!hex) return;
       console.log(`REPORT ${hex}`);
@@ -210,7 +212,7 @@ export default {
 
       if (get(this.cmdExecuting, "timeout") > 60)
         this.handleCommandLost(report);
-    },
+    }
   },
   watch: {
     "command.exec": {
@@ -238,14 +240,14 @@ export default {
             ...cmd,
             unitID,
             payload,
-            hexCmd,
+            hexCmd
           });
         } else {
           this.stopWaitting();
         }
-      },
+      }
     },
-    "responses.0": function (response) {
+    "responses.0": function(response) {
       if (!response) return;
 
       let { payload, unitID, message, resCode } = response;
@@ -260,7 +262,7 @@ export default {
         this.TAKE_FINGER_TIME(unitID);
         if (message.length > 0) {
           let ids = message.split(",");
-          ids.forEach((fingerID) => this.ADD_FINGERS({ unitID, fingerID }));
+          ids.forEach(fingerID => this.ADD_FINGERS({ unitID, fingerID }));
         }
       } else if (prop == "FINGER_ADD")
         this.ADD_FINGERS({ unitID, fingerID: message });
@@ -282,7 +284,7 @@ export default {
         //     {}
         //   );
         // }
-      },
+      }
     },
     "devReports.0": {
       immediate: true,
@@ -294,9 +296,9 @@ export default {
           this.follow
         )
           this.SET_REPORT(devReport);
-      },
-    },
-  },
+      }
+    }
+  }
 };
 </script>
 

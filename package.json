@@ -8,13 +8,13 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
-    "dev": "quasar dev",
-    "build": "quasar build",
-    "build:pwa": "quasar build -m pwa",
-    "build:windows": "quasar build -m electron -T win32",
-    "build:linux": "quasar build -m electron -b builder",
-    "icon:generate": "icongenie generate -m spa,pwa -i src/assets/logo.png --theme-color 027BE3 --splashscreen-color 6A0DAD --splashscreen-icon-ratio 80 --padding 5,5 --skip-trim",
-    "icon:verify": "icongenie verify -m spa,pwa"
+    "dev": "npx quasar dev",
+    "build": "npx quasar build",
+    "build:pwa": "npx quasar build -m pwa",
+    "build:windows": "npx quasar build -m electron -T win32",
+    "build:linux": "npx quasar build -m electron -b builder",
+    "icon:generate": "npx icongenie generate -m spa,pwa -i src/assets/logo.png --theme-color 027BE3 --splashscreen-color 6A0DAD --splashscreen-icon-ratio 80 --padding 5,5 --skip-trim",
+    "icon:verify": "npx icongenie verify -m spa,pwa"
   },
   "dependencies": {
     "@quasar/extras": "^1.9.16",
