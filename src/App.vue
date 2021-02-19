@@ -105,11 +105,12 @@ export default {
     },
 
     starWaitting(exec) {
-      this.cmdExecuting = exec;
+      let { timeout } = config.command;
+      if (exec.timeout > timeout) timeout = exec.timeout;
 
+      this.cmdExecuting = exec;
       this.cmdTick = moment();
-      this.timers.cmdTimeout.time =
-        (exec.timeout || config.command.timeout) * 1000;
+      this.timers.cmdTimeout.time = timeout * 1000;
       this.$timer.start("cmdTimeout");
       this.notifier = this.$q.notify({
         message: "Sending command....",
@@ -162,9 +163,9 @@ export default {
     handleReportFrame(hex) {
       let report = parseReport(hex);
 
-      if (dilation(report.sendDatetime.val, "minutes") > 2) {
+      if (dilation(report.logDatetime.val, "years") > 1) {
         if (this.calibration) this.calibrate(report);
-        return console.warn(`^REPORT (EXPIRED)`);
+        return console.error(`^REPORT (EXPIRED)`);
       }
 
       if (
@@ -172,7 +173,7 @@ export default {
           ({ logDatetime }) => logDatetime.val == report.logDatetime.val
         )
       )
-        return console.warn(`^REPORT (DUPLICATE)`);
+        return console.error(`^REPORT (DUPLICATE)`);
 
       this.INSERT_REPORTS(report);
       return report;
@@ -190,15 +191,16 @@ export default {
     importer: { time: 100, repeat: true }
   },
   mounted() {
-    this.$mqtt.subscribe("VCU/#", { qos: 1 });
+    this.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });
+    this.$mqtt.subscribe("VCU/+/RSP", { qos: 2 });
   },
   mqtt: {
     "VCU/+/RSP": function(data, topic) {
-      if (!this.cmdExecuting) return;
-
       let hex = this.validFrame(data);
       if (!hex) return;
-      console.log(`RESPONSE ${hex}`);
+
+      if (!this.cmdExecuting) return console.error(`RESPONSE ${hex}`);
+      console.warn(`RESPONSE ${hex}`);
 
       let response = this.handleResponseFrame(hex);
       if (!response) return;
@@ -234,7 +236,7 @@ export default {
           let hexCmd = buildCommand(cmd, unitID);
           let binData = Buffer.from(hexCmd, "hex");
 
-          this.$mqtt.publish(`VCU/${unitID}/CMD`, binData);
+          this.$mqtt.publish(`VCU/${unitID}/CMD`, binData, { qos: 2 });
           console.log(`COMMAND ${hexCmd}`);
 
           this.starWaitting({
