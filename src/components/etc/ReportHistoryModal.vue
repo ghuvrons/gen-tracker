@@ -12,14 +12,16 @@
           <q-toolbar-title>
             <span v-if="$q.screen.gt.sm" class="text-weight-bold">HISTORY</span>
             {{ this.theField.title }}
-            <q-chip v-if="chart.data" dark dense square>{{ chart.data.labels.length }}</q-chip>
+            <q-chip v-if="chart.data" dark dense square>{{
+              chart.data.labels.length
+            }}</q-chip>
           </q-toolbar-title>
           <q-btn flat round dense icon="close" v-close-popup />
         </q-toolbar>
       </q-header>
 
       <q-page-container>
-        <q-page :class="$q.dark.isActive ? 'bg-black': 'bg-white'" padding>
+        <q-page :class="$q.dark.isActive ? 'bg-black' : 'bg-white'" padding>
           <div class="row">
             <div
               :class="
@@ -27,7 +29,11 @@
               "
             >
               <div class="q-pa-sm">
-                <line-chart style="height: 60vh" :param="chart" :update="history.update" />
+                <line-chart
+                  style="height: 60vh"
+                  :param="chart"
+                  :update="history.update"
+                />
                 <q-range
                   v-model="range.value"
                   :min="range.min"
@@ -39,7 +45,11 @@
                 />
                 <div class="row justify-between items-center content-center">
                   <div class="col-auto">
-                    <q-toggle v-model="control.beginAtZero" label="Begin Zero" class="q-ma-xs" />
+                    <q-toggle
+                      v-model="control.beginAtZero"
+                      label="Begin Zero"
+                      class="q-ma-xs"
+                    />
                     <q-toggle
                       v-model="control.drag"
                       :disable="control.maximize"
@@ -52,7 +62,11 @@
                       label="Follow Data"
                       class="q-ma-xs"
                     />
-                    <q-toggle v-model="control.maximize" label="Max Range" class="q-ma-xs" />
+                    <q-toggle
+                      v-model="control.maximize"
+                      label="Max Range"
+                      class="q-ma-xs"
+                    />
                   </div>
                   <div class="col-auto">
                     <q-input
@@ -71,7 +85,10 @@
               </div>
             </div>
 
-            <div v-if="eventGroup" class="col-xs-12 col-sm-12 col-md-4 col-lg-3">
+            <div
+              v-if="eventGroup"
+              class="col-xs-12 col-sm-12 col-md-4 col-lg-3"
+            >
               <div class="q-pa-sm scroll">
                 <event-group-reader :value="currentValue"></event-group-reader>
               </div>
@@ -84,33 +101,31 @@
 </template>
 
 <script>
-import { devReports, devEvents } from "src/store/db/getter-types";
 import { mapGetters } from "vuex";
 import { getField } from "components/js/utils";
 import { Report } from "components/js/report";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
-import CommonMixin from "components/mixins/CommonMixin";
 import ChartMixin from "components/mixins/ChartMixin";
 import {
   findRange,
   findRangeX,
   findRangeY,
   getLabel,
-  grabDatasets,
+  grabDatasets
 } from "components/js/chart";
 
 export default {
   // name: 'ComponentName',
   props: {
     field: {
-      required: true,
-    },
+      required: true
+    }
   },
-  mixins: [CommonMixin, ChartMixin],
+  mixins: [ChartMixin],
   components: {
     LineChart,
-    EventGroupReader,
+    EventGroupReader
   },
   data() {
     return {
@@ -119,7 +134,7 @@ export default {
         max: null,
         sample: null,
         follow: false,
-        drag: false,
+        drag: false
       },
       range: {
         disable: false,
@@ -128,19 +143,19 @@ export default {
         max: null,
         value: {
           min: 0,
-          max: null,
-        },
+          max: null
+        }
       },
       control: {
         beginAtZero: false,
         maximize: true,
         follow: false,
-        drag: false,
-      },
+        drag: false
+      }
     };
   },
   computed: {
-    ...mapGetters("db", [devReports, devEvents]),
+    ...mapGetters("db", ["devReports", "devEvents"]),
     theField() {
       return getField(Report, this.field);
     },
@@ -156,7 +171,7 @@ export default {
     rangeSample() {
       let { iMin, iMax } = findRange(this.chart.data, this.range.value);
       return iMax - iMin + 1;
-    },
+    }
   },
   methods: {
     applyRange(sample) {
@@ -181,7 +196,7 @@ export default {
 
       this.range.value = {
         min: getLabel(this.chart.data, iMax - sample),
-        max: xMax,
+        max: xMax
       };
     },
     scaleChart() {
@@ -201,7 +216,7 @@ export default {
 
       this.range.min = getLabel(this.chart.data, 0);
       this.range.max = getLabel(this.chart.data, -1);
-    },
+    }
   },
   mounted() {
     this.setChartLabel(this.field);
@@ -216,7 +231,7 @@ export default {
 
         this.writeChart([devReport]);
         this.applyRange();
-      },
+      }
     },
     "control.maximize": {
       immediate: true,
@@ -239,26 +254,26 @@ export default {
           sample = this.tmp.sample;
         }
         this.applyRange(sample);
-      },
+      }
     },
     "range.value": {
       deep: true,
       handler(_) {
         this.scaleChart();
-      },
+      }
     },
     "control.beginAtZero": {
       handler(_) {
         this.scaleChart();
-      },
+      }
     },
     "$q.dark.isActive": {
       immediate: true,
       handler(dark) {
         this.setChartColor(dark ? "#FFF" : "#666");
-      },
-    },
-  },
+      }
+    }
+  }
 };
 </script>
 

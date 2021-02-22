@@ -10,7 +10,9 @@
         push
         dense
       >
-        <q-tooltip anchor="center left" self="center right">{{treeState ? 'List' : 'Tree'}}</q-tooltip>
+        <q-tooltip anchor="center left" self="center right">{{
+          treeState ? "List" : "Tree"
+        }}</q-tooltip>
       </q-btn>
     </q-bar>
 
@@ -37,51 +39,52 @@
       ></list-report-reader>
     </template>
 
-    <report-history-modal v-if="field" :field="field" @close="reset()"></report-history-modal>
+    <report-history-modal
+      v-if="field"
+      :field="field"
+      @close="reset()"
+    ></report-history-modal>
   </div>
 </template>
 
 <script>
 import ReportHistoryModal from "components/etc/ReportHistoryModal";
 import { Report, lastFullReport, readReport } from "components/js/report";
-import { devReports } from "src/store/db/getter-types";
 import { SET_TREE } from "src/store/common/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { getField, frameId } from "components/js/utils";
 import { get } from "lodash";
-import CommonMixin from "components/mixins/CommonMixin";
 import TreeReportReader from "components/etc/TreeReportReader";
 import ListReportReader from "components/etc/ListReportReader";
 
 export default {
   // name: 'ComponentName',
-  mixins: [CommonMixin],
   props: {
     height: {
-      required: true,
-    },
+      required: true
+    }
   },
   components: {
     ReportHistoryModal,
     TreeReportReader,
-    ListReportReader,
+    ListReportReader
   },
   data() {
     return {
-      field: null,
+      field: null
     };
   },
   computed: {
     ...mapState("db", ["report"]),
     ...mapState("common", ["tree"]),
-    ...mapGetters("db", [devReports]),
+    ...mapGetters("db", ["devReports"]),
     treeState: {
       get() {
         return this.tree;
       },
       set(value) {
         this.SET_TREE(value);
-      },
+      }
     },
     theReport() {
       if (!this.report) return;
@@ -93,7 +96,7 @@ export default {
         if (full)
           report = {
             ...readReport(full),
-            ...report,
+            ...report
           };
       }
 
@@ -104,7 +107,7 @@ export default {
     },
     hTree() {
       return ` height: calc(100vh - ${this.height}px - 73px)`;
-    },
+    }
   },
   methods: {
     ...mapMutations("common", [SET_TREE]),
@@ -121,8 +124,8 @@ export default {
     },
     reset() {
       this.field = null;
-    },
-  },
+    }
+  }
 };
 </script>
 

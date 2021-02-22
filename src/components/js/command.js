@@ -21,7 +21,7 @@ const buildCommand = (cmd, unitID) => {
         acc = formatCmd(unitID) + acc;
         break;
       case "size":
-      case "crc":
+      // case "crc":
       case "prefix":
         acc = formatCmd(acc) + acc;
         break;
@@ -33,7 +33,7 @@ const buildCommand = (cmd, unitID) => {
   }, "").toUpperCase();
 };
 
-const extractCommand = (payload) => {
+const extractCommand = payload => {
   let prop = payload;
   let value = null;
 
@@ -46,7 +46,7 @@ const extractCommand = (payload) => {
   return { prop, value };
 };
 
-const parseCommand = (payload) => {
+const parseCommand = payload => {
   let { prop, value } = extractCommand(payload);
 
   // check is no payload
@@ -72,7 +72,7 @@ const parseCommand = (payload) => {
 
   return {
     ...cmd,
-    value,
+    value
   };
 };
 

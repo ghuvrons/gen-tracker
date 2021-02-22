@@ -2,6 +2,6 @@ import { mapState } from "vuex";
 
 export default {
   computed: {
-    ...mapState("common", ["loading"]),
-  },
+    ...mapState("common", ["processing"])
+  }
 };

@@ -1,15 +1,14 @@
-import { CRC32 } from "components/js/crc32-mpeg2";
+// import { CRC32 } from "components/js/crc32-mpeg2";
 import { getValue, getOutput } from "components/js/utils";
 import { Header } from "components/js/opt/header";
 import config from "components/js/opt/config";
 
-const calculateCRC32 = (hex) => {
-  let crcSize = Header.filter(({ field }) => ["prefix", "crc"].includes(field))
-    .map(({ size }) => size)
-    .reduce((sum, val) => sum + val);
-
-  return CRC32(hex.substring(crcSize * 2));
-};
+// const calculateCRC32 = (hex) => {
+//   let crcSize = Header.filter(({ field }) => ["prefix", "crc"].includes(field))
+//     .map(({ size }) => size)
+//     .reduce((sum, val) => sum + val);
+//   return CRC32(hex.substring(crcSize * 2));
+// };
 
 const parseFrame = (hex, frame) => {
   let cursor = 0;
@@ -22,13 +21,13 @@ const parseFrame = (hex, frame) => {
       {
         ...el,
         value: formatted,
-        output: el.display(formatted),
-      },
+        output: el.display(formatted)
+      }
     ]);
   }, []);
 };
 
-const validateFrame = (hex) => {
+const validateFrame = hex => {
   let header = parseFrame(hex, Header);
   let { report, response } = config.prefix;
 
@@ -36,11 +35,15 @@ const validateFrame = (hex) => {
   if (![report, response].includes(prefix))
     return console.warn(`CORRUPT: Prefix not same`);
 
-  let crc = getOutput(header, "crc");
-  if (crc != calculateCRC32(hex)) return console.warn(`CORRUPT: CRC not valid`);
+  // let crc = getOutput(header, "crc");
+  // if (crc != calculateCRC32(hex)) return console.warn(`CORRUPT: CRC not valid`);
 
   let headerSize = Header.filter(({ field }) =>
-    ["prefix", "crc", "size"].includes(field)
+    [
+      "prefix",
+      // "crc",
+      "size"
+    ].includes(field)
   )
     .map(({ size }) => size)
     .reduce((sum, val) => sum + val);

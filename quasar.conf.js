@@ -19,11 +19,13 @@ module.exports = function(/* ctx */) {
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
     boot: [
+      "mixins",
+      "vue-composition-api",
       "vue-mqtt",
-      "vue2-google-maps",
-      "vue-timers",
+      "vue-native-notification",
       "vue-offline",
-      "vue-native-notification"
+      "vue-timers",
+      "vue2-google-maps"
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

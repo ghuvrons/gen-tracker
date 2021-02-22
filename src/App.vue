@@ -27,20 +27,17 @@ import {
   INSERT_REPORTS,
   INSERT_RESPONSES
 } from "src/store/db/action-types";
-import { devDevice, devReports, devEvents } from "src/store/db/getter-types";
 import { parseReport } from "components/js/report";
 import { parseResponse, parseResCode } from "components/js/response";
 import config from "components/js/opt/config";
 import { notify } from "components/js/framework";
 import { loader } from "components/js/framework";
 import { cloneDeep, get } from "lodash";
-import CommonMixin from "components/mixins/CommonMixin";
 import moment from "moment";
 import { readEvent } from "components/js/event";
 
 export default {
   name: "App",
-  mixins: [CommonMixin],
   created() {
     this.$root.$on("importData", this.importData);
   },
@@ -60,7 +57,7 @@ export default {
   computed: {
     ...mapState("common", ["follow", "calibration", "notification"]),
     ...mapState("db", ["command", "responses", "reports"]),
-    ...mapGetters("db", [devDevice, devReports, devEvents])
+    ...mapGetters("db", ["devDevice", "devReports", "devEvents"])
   },
   methods: {
     ...mapMutations("db", [

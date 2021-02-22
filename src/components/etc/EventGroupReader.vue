@@ -8,7 +8,7 @@
       :header-class="`text-${activeEvent(name) ? 'orange' : 'grey'}`"
       expand-separator
     >
-      <q-virtual-scroll :items="event" style="max-height:50vh" separator>
+      <q-virtual-scroll :items="event" style="max-height: 50vh" separator>
         <template v-slot="{ item: evt }">
           <q-item :key="`${name}-${evt.time}`">
             <q-item-section>
@@ -23,30 +23,27 @@
 
 <script>
 import { EVENT_LIST, parseEvent } from "components/js/event";
-import { devEvents } from "src/store/db/getter-types";
 import { mapGetters } from "vuex";
 import { cloneDeep } from "lodash";
-import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   props: {
-    value: Number,
+    value: Number
   },
-  mixins: [CommonMixin],
   data() {
     return {
-      EVENT_LIST: cloneDeep(EVENT_LIST),
+      EVENT_LIST: cloneDeep(EVENT_LIST)
     };
   },
   computed: {
-    ...mapGetters("db", [devEvents]),
+    ...mapGetters("db", ["devEvents"])
   },
   methods: {
     activeEvent(theName) {
       let event = EVENT_LIST.find(({ name }) => name === theName);
       return parseEvent(this.value, event.bit);
-    },
-  },
+    }
+  }
 };
 </script>
 

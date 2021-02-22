@@ -22,7 +22,7 @@
           @click="SET_UNITID(dev.unitID)"
           :active="active(dev)"
           active-class="bg-primary text-white"
-          :clickable="!loading"
+          :clickable="!processing"
           dense
         >
           <q-item-section>
@@ -45,19 +45,12 @@
 </template>
 
 <script>
-import {
-  getTotalReports,
-  getLastReport,
-  devDevice
-} from "src/store/db/getter-types";
 import { SET_UNITID } from "src/store/db/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { get } from "lodash";
-import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
-  mixins: [CommonMixin],
   props: {
     height: {
       required: true
@@ -65,7 +58,7 @@ export default {
   },
   computed: {
     ...mapState("db", ["devices"]),
-    ...mapGetters("db", [devDevice, getTotalReports, getLastReport])
+    ...mapGetters("db", ["devDevice", "getTotalReports", "getLastReport"])
   },
   methods: {
     ...mapMutations("db", [SET_UNITID]),

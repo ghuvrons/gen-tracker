@@ -19,15 +19,20 @@
           <q-item-section avatar>
             <div>
               <q-chip
-                :color="devReport.frameID.out == 'FULL' ? 'green' : 'light-green'"
+                :color="
+                  devReport.frameID.out == 'FULL' ? 'green' : 'light-green'
+                "
                 class="q-ml-sm text-center"
                 style="width: 60px"
                 dark
                 dense
                 square
-              >{{ devReport.frameID.out }}</q-chip>
+                >{{ devReport.frameID.out }}</q-chip
+              >
 
-              <q-chip color="primary" dark dense square>{{ getDatetime(devReport.logDatetime) }}</q-chip>
+              <q-chip color="primary" dark dense square>{{
+                getDatetime(devReport.logDatetime)
+              }}</q-chip>
             </div>
           </q-item-section>
 
@@ -46,10 +51,9 @@
         :disable="devReports.length == 0"
         fab-mini
       >
-        <q-tooltip
-          anchor="top middle"
-          self="bottom middle"
-        >{{ followState ? "Unfollow" : "Follow" }}</q-tooltip>
+        <q-tooltip anchor="top middle" self="bottom middle">{{
+          followState ? "Unfollow" : "Follow"
+        }}</q-tooltip>
       </q-btn>
     </q-page-sticky>
   </div>
@@ -57,41 +61,38 @@
 
 <script>
 import moment from "moment";
-import { devReports } from "src/store/db/getter-types";
 import { SET_REPORT } from "src/store/db/mutation-types";
 import { SET_FOLLOW } from "src/store/common/mutation-types";
 import { mapState, mapGetters, mapMutations } from "vuex";
-import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
-  mixins: [CommonMixin],
   props: {
     contentStyle: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {
     ...mapState("db", ["report"]),
     ...mapState("common", ["follow"]),
-    ...mapGetters("db", [devReports]),
+    ...mapGetters("db", ["devReports"]),
     followState: {
       get() {
         return this.follow;
       },
       set(value) {
         this.SET_FOLLOW(value);
-      },
-    },
+      }
+    }
   },
   methods: {
     ...mapMutations("db", [SET_REPORT]),
     ...mapMutations("common", [SET_FOLLOW]),
     getDatetime(logDatetime) {
       return moment.unix(logDatetime.val).format("HH:mm:ss");
-    },
-  },
+    }
+  }
 };
 </script>
 

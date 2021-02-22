@@ -1,10 +1,10 @@
-export default function () {
+export default function() {
   return {
-    loading: false,
+    processing: false,
     darker: false,
     tree: false,
     follow: true,
     calibration: true,
-    notification: true,
+    notification: true
   };
 }

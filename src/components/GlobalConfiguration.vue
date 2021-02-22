@@ -69,21 +69,19 @@ import { CLEAR_DATABASE } from "src/store/db/mutation-types";
 import { STOP_COMMAND } from "src/store/db/action-types";
 import {
   SET_CALIBRATION,
-  SET_NOTIFICATION,
+  SET_NOTIFICATION
 } from "src/store/common/mutation-types";
 import { mapState, mapMutations } from "vuex";
 import { exportCSV, exportJSON, importJSON } from "components/js/exporter";
 import { confirm, notify } from "components/js/framework";
-import CommonMixin from "components/mixins/CommonMixin";
 
 export default {
   // name: 'ComponentName',
-  mixins: [CommonMixin],
   props: {
     contentStyle: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {
     ...mapState("common", ["calibration", "notification"]),
@@ -94,7 +92,7 @@ export default {
       },
       set(value) {
         this.SET_CALIBRATION(value);
-      },
+      }
     },
     notificationState: {
       get() {
@@ -102,8 +100,8 @@ export default {
       },
       set(value) {
         this.SET_NOTIFICATION(value);
-      },
-    },
+      }
+    }
   },
   methods: {
     ...mapMutations("common", [SET_CALIBRATION, SET_NOTIFICATION]),
@@ -118,7 +116,7 @@ export default {
       exportCSV(this.reports);
     },
     importJSON(files) {
-      importJSON(files[0]).then((res) => this.$root.$emit("importData", res));
+      importJSON(files[0]).then(res => this.$root.$emit("importData", res));
     },
     clearStore() {
       confirm(`Are you sure to remove all data?`).onOk(() =>
@@ -128,8 +126,8 @@ export default {
     ignoreCommand() {
       notify("Command ignored.", "warning");
       this.STOP_COMMAND();
-    },
-  },
+    }
+  }
 };
 </script>
 

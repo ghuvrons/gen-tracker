@@ -1,8 +1,8 @@
 import * as mutations from "./mutation-types";
 
 export default {
-  [mutations.SET_LOADING](state, payload) {
-    state.loading = payload;
+  [mutations.SET_PROCESSING](state, payload) {
+    state.processing = payload;
   },
   [mutations.SET_CALIBRATION](state, value) {
     state.calibration = value;
@@ -18,5 +18,5 @@ export default {
   },
   [mutations.SET_NOTIFICATION](state, value) {
     state.notification = value;
-  },
+  }
 };

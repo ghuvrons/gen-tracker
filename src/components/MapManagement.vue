@@ -1,13 +1,28 @@
 <template>
   <q-splitter :value="showStreetView ? 50 : 100">
     <template v-slot:before>
-      <gmap-map class="fit" :center="center" :zoom="zoom" :options="options" map-type-id="roadmap">
+      <gmap-map
+        class="fit"
+        :center="center"
+        :zoom="zoom"
+        :options="options"
+        map-type-id="roadmap"
+      >
         <gmap-marker v-if="position.valid" :position="position"></gmap-marker>
-        <gmap-polyline v-if="path.length > 0" :path="path" ref="polyline"></gmap-polyline>
+        <gmap-polyline
+          v-if="path.length > 0"
+          :path="path"
+          ref="polyline"
+        ></gmap-polyline>
       </gmap-map>
     </template>
     <template v-if="showStreetView" v-slot:separator>
-      <q-avatar color="grey" text-color="white" size="20px" icon="drag_indicator" />
+      <q-avatar
+        color="grey"
+        text-color="white"
+        size="20px"
+        icon="drag_indicator"
+      />
     </template>
     <template v-if="showStreetView" v-slot:after>
       <gmap-street-view-panorama
@@ -25,7 +40,6 @@
 <script>
 import { getPosition, getHeading } from "components/js/map";
 import config from "components/js/opt/config";
-import { devReports } from "src/store/db/getter-types";
 import { mapState, mapGetters } from "vuex";
 
 export default {
@@ -35,7 +49,7 @@ export default {
       center: { ...config.map.centerIndonesia },
       position: {
         ...config.map.centerIndonesia,
-        valid: false,
+        valid: false
       },
       zoom: config.map.zoom,
       pov: null,
@@ -48,16 +62,16 @@ export default {
         streetViewControl: false,
         rotateControl: false,
         fullscreenControl: true,
-        disableDefaultUi: true,
-      },
+        disableDefaultUi: true
+      }
     };
   },
   computed: {
     ...mapState("db", ["report"]),
-    ...mapGetters("db", [devReports]),
+    ...mapGetters("db", ["devReports"]),
     showStreetView() {
       return this.$q.screen.gt.xs;
-    },
+    }
   },
   methods: {
     updatePov(pov) {
@@ -75,7 +89,7 @@ export default {
         this.center = { ...config.map.centerIndonesia };
       }
       this.position = { ...location, valid };
-    },
+    }
   },
   watch: {
     "devReports.0": {
@@ -85,7 +99,7 @@ export default {
 
         let pos = getPosition(devReport);
         if (pos.valid) this.path.push(pos);
-      },
+      }
     },
     report: {
       immediate: true,
@@ -97,11 +111,11 @@ export default {
         if (!this.pov) return;
         this.updatePov({
           ...this.pov,
-          heading: getHeading(report),
+          heading: getHeading(report)
         });
-      },
-    },
-  },
+      }
+    }
+  }
 };
 </script>
 

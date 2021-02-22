@@ -5,11 +5,20 @@
         <q-toolbar-title class="text-caption">Offline mode</q-toolbar-title>
       </q-bar>
       <q-toolbar class="bg-primary text-white">
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="drawer.left = !drawer.left"></q-btn>
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          @click="drawer.left = !drawer.left"
+        ></q-btn>
 
         <q-toolbar-title>
           {{ app.title }}
-          <q-item-label class="text-white" caption>{{ app.subTitle }} v.{{ app.version }}</q-item-label>
+          <q-item-label class="text-white" caption
+            >{{ app.subTitle }} v.{{ app.version }}</q-item-label
+          >
         </q-toolbar-title>
 
         <q-btn
@@ -29,7 +38,13 @@
           round
         ></q-btn>
 
-        <q-btn flat dense round icon="more_vert" @click="drawer.right = !drawer.right"></q-btn>
+        <q-btn
+          flat
+          dense
+          round
+          icon="more_vert"
+          @click="drawer.right = !drawer.right"
+        ></q-btn>
       </q-toolbar>
     </q-header>
 
@@ -39,7 +54,12 @@
           <device-management :height="hDeviceManagement"></device-management>
         </template>
         <template v-slot:separator>
-          <q-avatar color="grey" text-color="white" size="20px" icon="drag_indicator" />
+          <q-avatar
+            color="grey"
+            text-color="white"
+            size="20px"
+            icon="drag_indicator"
+          />
         </template>
         <template v-slot:after>
           <report-reader :height="splitter"></report-reader>
@@ -65,26 +85,24 @@ import ReportReader from "components/ReportReader";
 import DeviceManagement from "components/DeviceManagement";
 import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
-import CommonMixin from "components/mixins/CommonMixin";
 import config from "components/js/opt/config";
 
 export default {
   name: "MyLayout",
-  mixins: [CommonMixin],
   components: {
     ReportReader,
     DeviceManagement,
     ResponseLog,
-    CommandManagement,
+    CommandManagement
   },
   data() {
     return {
       drawer: {
         left: this.$q.platform.is.desktop,
-        right: false,
+        right: false
       },
       app: config.app,
-      splitter: 150,
+      splitter: 150
     };
   },
   computed: {
@@ -97,19 +115,19 @@ export default {
     },
     hDeviceManagement() {
       return `height: calc(${this.splitter}px - 32px)`;
-    },
+    }
   },
   methods: {
-    ...mapMutations("common", [SET_DARKER]),
+    ...mapMutations("common", [SET_DARKER])
   },
   mounted() {
     this.$q.dark.set(this.darker);
   },
   watch: {
-    "$q.dark.isActive": function (v) {
+    "$q.dark.isActive": function(v) {
       this.SET_DARKER(v);
-    },
-  },
+    }
+  }
 };
 </script>
 

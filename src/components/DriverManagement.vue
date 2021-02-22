@@ -19,7 +19,7 @@
           <q-item-section side>
             <q-btn
               @click="remove(driver)"
-              :loading="loading"
+              :loading="processing"
               size="sm"
               icon="delete"
               outline
@@ -41,11 +41,11 @@
         direction="left"
         label-position="top"
         padding="sm"
-        :disable="loading"
+        :disable="processing"
       >
         <q-fab-action
           @click="fetch"
-          :disable="loading || !devDevice"
+          :disable="processing || !devDevice"
           label-position="top"
           color="primary"
           icon="download"
@@ -54,7 +54,7 @@
         />
         <q-fab-action
           @click="add"
-          :disable="loading || !devDevice"
+          :disable="processing || !devDevice"
           label-position="top"
           color="green"
           icon="upload"
@@ -63,7 +63,7 @@
         />
         <q-fab-action
           @click="clear"
-          :disable="loading || !devDevice"
+          :disable="processing || !devDevice"
           label-position="top"
           color="orange"
           icon="delete_forever"
@@ -76,31 +76,28 @@
 </template>
 
 <script>
-import { devDevice, devFingers } from "src/store/db/getter-types";
 import { mapGetters, mapActions } from "vuex";
 import { confirm } from "components/js/framework";
 import { get } from "lodash";
 import moment from "moment";
-import CommonMixin from "components/mixins/CommonMixin";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
 export default {
   // name: 'ComponentName',
-  mixins: [CommonMixin],
   props: {
     contentStyle: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
       name: ["One", "Two", "Three", "Four", "Five"],
-      fab: false,
+      fab: false
     };
   },
   computed: {
-    ...mapGetters("db", [devFingers, devDevice]),
+    ...mapGetters("db", ["devFingers", "devDevice"])
   },
   methods: {
     ...mapActions("db", [INSERT_COMMAND]),
@@ -126,8 +123,8 @@ export default {
       confirm(`Are you sure to clear all fingerprints  ?`).onOk(() =>
         this.INSERT_COMMAND({ payload: `FINGER_RST` })
       );
-    },
-  },
+    }
+  }
 };
 </script>
 
