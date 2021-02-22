@@ -101,12 +101,11 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import { getField } from "components/js/utils";
 import { Report } from "components/js/report";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
-import ChartMixin from "components/mixins/ChartMixin";
+import { Dark } from "quasar";
 import {
   findRange,
   findRangeX,
@@ -114,6 +113,15 @@ import {
   getLabel,
   grabDatasets
 } from "components/js/chart";
+import useChart from "components/js/composables/useChart";
+import {
+  computed,
+  reactive,
+  watch,
+  onMounted,
+  toRefs
+} from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   // name: 'ComponentName',
@@ -122,13 +130,21 @@ export default {
       required: true
     }
   },
-  mixins: [ChartMixin],
   components: {
     LineChart,
     EventGroupReader
   },
-  data() {
-    return {
+  setup(props) {
+    const {
+      chart,
+      history,
+      setScales,
+      setData,
+      setLabel,
+      setColor
+    } = useChart();
+
+    const state = reactive({
       modalOpen: false,
       tmp: {
         max: null,
@@ -152,127 +168,134 @@ export default {
         follow: false,
         drag: false
       }
-    };
-  },
-  computed: {
-    ...mapGetters("db", ["devReports", "devEvents"]),
-    theField() {
-      return getField(Report, this.field);
-    },
-    currentValue() {
-      let { data } = this.chart.data.datasets[0];
+    });
+
+    const { useGetters } = createNamespacedHelpers("db");
+    const { devReports, devEvents } = useGetters(["devReports", "devEvents"]);
+
+    const theField = computed(() => getField(Report, props.field));
+    const currentValue = computed(() => {
+      let { data } = chart.value.data.datasets[0];
       return data[data.length - 1];
-    },
-    eventGroup() {
-      return (
-        this.field === "eventsGroup" && Object.keys(this.devEvents).length > 0
-      );
-    },
-    rangeSample() {
-      let { iMin, iMax } = findRange(this.chart.data, this.range.value);
+    });
+    const eventGroup = computed(
+      () =>
+        props.field == "eventsGroup" && Object.keys(devEvents.value).length > 0
+    );
+    const rangeSample = computed(() => {
+      let { iMin, iMax } = findRange(chart.value.data, state.range.value);
       return iMax - iMin + 1;
-    }
-  },
-  methods: {
-    applyRange(sample) {
-      let { iMin, iMax } = findRange(this.chart.data, this.range.value);
-      let { xMax } = findRangeX(this.chart.data, { iMin, iMax });
+    });
+
+    const applyRange = sample => {
+      let { iMin, iMax } = findRange(chart.value.data, state.range.value);
+      let { xMax } = findRangeX(chart.value.data, { iMin, iMax });
       let oldSample = iMax - iMin;
 
-      if (this.control.maximize || this.control.follow) {
-        iMax = this.chart.data.labels.length - 1;
-        xMax = getLabel(this.chart.data, iMax);
-        if (this.control.maximize) iMin = 0;
+      if (state.control.maximize || state.control.follow) {
+        iMax = chart.value.data.labels.length - 1;
+        xMax = getLabel(chart.value.data, iMax);
+        if (state.control.maximize) iMin = 0;
       }
 
       if (!sample) {
         sample = iMax - iMin;
-        if (this.control.drag) {
+        if (state.control.drag) {
           sample = oldSample;
-          if (!this.control.follow)
-            xMax = getLabel(this.chart.data, iMin + sample);
+          if (!state.control.follow)
+            xMax = getLabel(chart.value.data, iMin + sample);
         }
       } else sample--;
 
-      this.range.value = {
-        min: getLabel(this.chart.data, iMax - sample),
+      state.range.value = {
+        min: getLabel(chart.value.data, iMax - sample),
         max: xMax
       };
-    },
-    scaleChart() {
-      let indexes = findRange(this.chart.data, this.range.value);
-      let { xMin, xMax } = findRangeX(this.chart.data, indexes);
+    };
+    const scaleChart = () => {
+      let indexes = findRange(chart.value.data, state.range.value);
+      let { xMin, xMax } = findRangeX(chart.value.data, indexes);
       let { yMin, yMax } = findRangeY(
-        this.chart.data.datasets[0],
-        this.control,
+        chart.value.data.datasets[0],
+        state.control,
         indexes
       );
 
-      this.setChartScales({ xMin, xMax, yMin, yMax }, this.control);
-      this.$nextTick(() => (this.modalOpen = true));
-    },
-    writeChart(reports) {
-      this.setChartData(grabDatasets(reports, this.field));
+      setScales({ xMin, xMax, yMin, yMax }, state.control);
+      state.modalOpen = true;
+    };
+    const writeChart = reports => {
+      setData(grabDatasets(reports, props.field));
 
-      this.range.min = getLabel(this.chart.data, 0);
-      this.range.max = getLabel(this.chart.data, -1);
-    }
-  },
-  mounted() {
-    this.setChartLabel(this.field);
-    this.writeChart(this.devReports);
-    this.applyRange();
-  },
-  watch: {
-    "devReports.0": {
-      handler(devReport) {
+      state.range.min = getLabel(chart.value.data, 0);
+      state.range.max = getLabel(chart.value.data, -1);
+    };
+
+    onMounted(() => {
+      setLabel(props.field);
+      writeChart(devReports.value);
+      applyRange();
+    });
+
+    watch(
+      () => state.range.value,
+      _ => scaleChart(),
+      { deep: true }
+    );
+    watch(
+      () => state.control.beginAtZero,
+      _ => scaleChart()
+    );
+    watch(
+      () => Dark.isActive,
+      dark => setColor(dark ? "#FFF" : "#666"),
+      { lazy: false }
+    );
+    watch(
+      () => devReports.value[0],
+      devReport => {
         if (!devReport) return;
-        if (!devReport[this.field]) return;
+        if (!devReport[props.field]) return;
 
-        this.writeChart([devReport]);
-        this.applyRange();
+        writeChart([devReport]);
+        applyRange();
       }
-    },
-    "control.maximize": {
-      immediate: true,
-      handler(max) {
+    );
+    watch(
+      () => state.control.maximize,
+      max => {
         let sample = null;
         if (max) {
-          this.tmp.max = this.range.value.max;
-          this.tmp.sample = this.rangeSample;
-          this.tmp.drag = this.control.drag;
-          this.tmp.follow = this.control.follow;
-          this.range.disable = true;
+          state.tmp.max = state.range.value.max;
+          state.tmp.sample = state.rangeSample;
+          state.tmp.drag = state.control.drag;
+          state.tmp.follow = state.control.follow;
+          state.range.disable = true;
 
-          this.control.follow = false;
-          this.control.drag = false;
+          state.control.follow = false;
+          state.control.drag = false;
         } else {
-          this.range.disable = false;
-          this.control.follow = this.tmp.follow;
-          this.control.drag = this.tmp.drag;
-          this.range.value.max = this.tmp.max;
-          sample = this.tmp.sample;
+          state.range.disable = false;
+          state.control.follow = state.tmp.follow;
+          state.control.drag = state.tmp.drag;
+          state.range.value.max = state.tmp.max;
+          sample = state.tmp.sample;
         }
-        this.applyRange(sample);
-      }
-    },
-    "range.value": {
-      deep: true,
-      handler(_) {
-        this.scaleChart();
-      }
-    },
-    "control.beginAtZero": {
-      handler(_) {
-        this.scaleChart();
-      }
-    },
-    "$q.dark.isActive": {
-      immediate: true,
-      handler(dark) {
-        this.setChartColor(dark ? "#FFF" : "#666");
-      }
-    }
+        applyRange(sample);
+      },
+      { lazy: false }
+    );
+
+    return {
+      chart,
+      history,
+      ...toRefs(state),
+
+      theField,
+      currentValue,
+      eventGroup,
+      rangeSample
+    };
   }
 };
 </script>

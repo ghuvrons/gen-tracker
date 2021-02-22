@@ -25,7 +25,7 @@
           color="green"
           label="Export CSV"
           :disable="reports.length == 0"
-          @click.native="exportCSV()"
+          @click.native="exportCSV(reports)"
         />
       </div>
       <div class="col-auto">
@@ -34,18 +34,17 @@
           color="purple"
           label="Export JSON"
           :disable="reports.length == 0"
-          @click.native="exportJSON()"
+          @click.native="exportJSON(reports)"
         />
       </div>
     </div>
     <div class="row q-gutter-xs q-mt-xs">
       <div class="col-auto">
         <q-uploader
-          ref="importer"
-          :factory="importJSON"
+          ref="uploader"
+          :factory="importData"
           accept=".json"
           label="Import JSON"
-          @finishImport="finishImport"
         />
       </div>
     </div>
@@ -65,15 +64,17 @@
 </template>
 
 <script>
-import { CLEAR_DATABASE } from "src/store/db/mutation-types";
-import { STOP_COMMAND } from "src/store/db/action-types";
 import {
   SET_CALIBRATION,
   SET_NOTIFICATION
 } from "src/store/common/mutation-types";
-import { mapState, mapMutations } from "vuex";
+import { CLEAR_DATABASE } from "src/store/db/mutation-types";
+import { STOP_COMMAND } from "src/store/db/action-types";
 import { exportCSV, exportJSON, importJSON } from "components/js/exporter";
-import { confirm, notify } from "components/js/framework";
+import { confirm, notify, loader } from "components/js/framework";
+
+import { ref, reactive, computed } from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   // name: 'ComponentName',
@@ -83,50 +84,86 @@ export default {
       required: true
     }
   },
-  computed: {
-    ...mapState("common", ["calibration", "notification"]),
-    ...mapState("db", ["devices", "command", "reports"]),
-    calibrationState: {
-      get() {
-        return this.calibration;
-      },
-      set(value) {
-        this.SET_CALIBRATION(value);
-      }
-    },
-    notificationState: {
-      get() {
-        return this.notification;
-      },
-      set(value) {
-        this.SET_NOTIFICATION(value);
-      }
-    }
-  },
-  methods: {
-    ...mapMutations("common", [SET_CALIBRATION, SET_NOTIFICATION]),
-    ...mapMutations("db", [CLEAR_DATABASE, STOP_COMMAND]),
-    finishImport() {
-      this.$refs.importer.reset();
-    },
-    exportJSON() {
-      exportJSON(this.reports);
-    },
-    exportCSV() {
-      exportCSV(this.reports);
-    },
-    importJSON(files) {
-      importJSON(files[0]).then(res => this.$root.$emit("importData", res));
-    },
-    clearStore() {
-      confirm(`Are you sure to remove all data?`).onOk(() =>
-        this.CLEAR_DATABASE()
-      );
-    },
-    ignoreCommand() {
+  setup(props) {
+    const db = createNamespacedHelpers("db");
+    const { devices, command, reports } = db.useState([
+      "devices",
+      "command",
+      "reports"
+    ]);
+    const {
+      [CLEAR_DATABASE]: clearDatabase,
+      [STOP_COMMAND]: stopCommand
+    } = db.useMutations([CLEAR_DATABASE, STOP_COMMAND]);
+
+    const common = createNamespacedHelpers("common");
+    const { calibration, notification } = common.useState([
+      "calibration",
+      "notification"
+    ]);
+    const {
+      [SET_CALIBRATION]: setCalibration,
+      [SET_NOTIFICATION]: setNotification
+    } = common.useMutations([SET_CALIBRATION, SET_NOTIFICATION]);
+
+    const uploader = ref(null);
+    const state = reactive({
+      hInterval: null,
+      dialog: null,
+      buffer: [],
+      buflen: 0
+    });
+
+    const calibrationState = computed({
+      get: () => calibration.value,
+      set: v => setCalibration(v)
+    });
+    const notificationState = computed({
+      get: () => notification.value,
+      set: v => setNotification(v)
+    });
+
+    const clearStore = () =>
+      confirm(`Are you sure to remove all data?`).onOk(() => clearDatabase());
+    const ignoreCommand = () => {
       notify("Command ignored.", "warning");
-      this.STOP_COMMAND();
-    }
+      stopCommand();
+    };
+    const importing = () => {
+      if (state.buffer.length > 0) {
+        let percent = (state.buffer.length * 100) / state.buflen;
+        state.dialog.update({ message: `${percent.toFixed(2)}%` });
+        // this.handleReportFrame(state.buffer.pop());
+      } else {
+        if (state.hInterval) clearInterval(state.hInterval);
+        if (state.dialog) state.dialog.hide();
+        if (uploader.value) uploader.value.reset();
+      }
+    };
+    const importData = ([file]) =>
+      importJSON(file).then(reports => {
+        state.buffer = reports;
+        state.buflen = reports.length;
+        state.dialog = loader("Importing...");
+        state.hInterval = setInterval(importing, 100);
+      });
+
+    return {
+      uploader,
+
+      devices,
+      command,
+      reports,
+
+      calibrationState,
+      notificationState,
+
+      clearStore,
+      ignoreCommand,
+      importData,
+      exportJSON,
+      exportCSV
+    };
   }
 };
 </script>

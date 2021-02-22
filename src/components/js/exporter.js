@@ -3,15 +3,15 @@ import { ExportToCsv } from "export-to-csv";
 import exportFromJSON from "export-from-json";
 import moment from "moment";
 
-const makeDataCSV = (reports) => {
-  return reports.map((report) => ({
+const makeDataCSV = reports => {
+  return reports.map(report => ({
     ...Report.reduce(
       (acc, { field, no }) => ({
         ...acc,
-        [no]: report[field] ? report[field].out : "",
+        [no]: report[field] ? report[field].out : ""
       }),
       {}
-    ),
+    )
   }));
 };
 
@@ -22,7 +22,7 @@ const makeLabelCSV = () => {
   );
 };
 
-const exportCSV = (reports) => {
+const exportCSV = reports => {
   const csvExporter = new ExportToCsv({
     fieldSeparator: ",",
     quoteStrings: '"',
@@ -33,17 +33,17 @@ const exportCSV = (reports) => {
     useTextFile: false,
     useBom: true,
     useKeysAsHeaders: false,
-    headers: makeLabelCSV(),
+    headers: makeLabelCSV()
   });
 
   csvExporter.generateCsv(makeDataCSV(reports));
 };
 
-const makeDataJSON = (reports) => {
+const makeDataJSON = reports => {
   return reports ? reports.map(({ hex }) => hex) : [];
 };
 
-const exportJSON = (reports) => {
+const exportJSON = reports => {
   const fileName = `tracking-${moment().format("YYMMDDHHmmss")}`;
   const data = makeDataJSON(reports);
   const exportType = "json";
@@ -51,25 +51,14 @@ const exportJSON = (reports) => {
   exportFromJSON({ data, fileName, exportType });
 };
 
-const importJSON = (file) => {
+const importJSON = file => {
   return new Promise((resolve, reject) => {
     if (!file) reject();
 
     let reader = new FileReader();
-    reader.onload = (e) => resolve(JSON.parse(e.target.result));
+    reader.onload = e => resolve(JSON.parse(e.target.result));
     reader.readAsText(file);
   });
-
-  // return new Promise((resolve, reject) => {
-  //   if (!file) reject();
-
-  //   let reader = new FileReader();
-  //   reader.onload = (e) => {
-  //     this.$root.$emit("importData", JSON.parse(e.target.result));
-  //     resolve();
-  //   };
-  //   reader.readAsText(files);
-  // });
 };
 
 export { exportCSV, exportJSON, importJSON };

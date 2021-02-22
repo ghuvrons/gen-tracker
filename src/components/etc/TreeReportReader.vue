@@ -1,6 +1,12 @@
 <template>
   <div>
-    <q-input v-model="filter" placeholder="Filter..." clearable filled dense></q-input>
+    <q-input
+      v-model="filter"
+      placeholder="Filter..."
+      clearable
+      filled
+      dense
+    ></q-input>
     <div style="overflow-y:scroll" :style="height">
       <q-tree
         :selected="selected"
@@ -11,9 +17,13 @@
         node-key="label"
         default-expand-all
       >
-        <template v-slot:default-header="{node}">
-          <span class="text-weight-bold">{{ getFieldNodeTitle(node.label) }}</span>
-          <span v-if="node.data">: {{ node.data.out }} {{ node.data.unit }}</span>
+        <template v-slot:default-header="{ node }">
+          <span class="text-weight-bold">
+            {{ getFieldNodeTitle(node.label) }}
+          </span>
+          <span v-if="node.data">
+            : {{ node.data.out }} {{ node.data.unit }}
+          </span>
         </template>
       </q-tree>
     </div>
@@ -22,47 +32,40 @@
 
 <script>
 import { get, set, omit } from "lodash";
+import { ref, computed } from "@vue/composition-api";
 
 export default {
   emits: ["update:selected"],
   props: {
     report: {
-      required: true,
+      required: true
     },
     selected: {
-      required: true,
+      required: true
     },
     height: {
-      required: true,
-    },
+      required: true
+    }
   },
-  data() {
-    return {
-      filter: "",
-    };
-  },
-  computed: {
-    nodes() {
-      return this.report ? this.toTree(this.groupNodes()) : [];
-    },
-  },
-  methods: {
-    getFieldNodeTitle(field) {
-      let theField = this.report[field];
-      if (theField) {
-        let group = theField.group.split(".");
-        return this.removeWords(theField.title, group);
-      }
-      return field.toUpperCase();
-    },
-    removeWords(str, arr) {
-      return arr.reduce((acc, val) => {
+  setup(props) {
+    const filter = ref("");
+
+    const removeWords = (str, arr) =>
+      arr.reduce((acc, val) => {
         const regex = new RegExp(val, "gi");
         return acc.replace(regex, "");
       }, str);
-    },
-    groupNodes() {
-      let report = omit(this.report, "hex");
+
+    const getFieldNodeTitle = field => {
+      let theField = props.report[field];
+      if (theField) {
+        let group = theField.group.split(".");
+        return removeWords(theField.title, group);
+      }
+      return field.toUpperCase();
+    };
+    const groupNodes = () => {
+      let report = omit(props.report, "hex");
 
       return Object.keys(report).reduce((o, field) => {
         let { group } = report[field];
@@ -72,15 +75,23 @@ export default {
         if (grp) content = { ...grp, ...content };
         return set(o, group, content);
       }, {});
-    },
-    toTree(nodes) {
-      return Object.keys(nodes).map((label) => {
+    };
+    const toTree = nodes =>
+      Object.keys(nodes).map(label => {
         return nodes[label].hasOwnProperty("out")
           ? { label, data: nodes[label] }
-          : { label, children: this.toTree(nodes[label]) };
+          : { label, children: toTree(nodes[label]) };
       });
-    },
-  },
+
+    const nodes = computed(() => (props.report ? toTree(groupNodes()) : []));
+
+    return {
+      filter,
+      nodes,
+
+      getFieldNodeTitle
+    };
+  }
 };
 </script>
 

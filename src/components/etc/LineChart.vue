@@ -1,5 +1,5 @@
 <script>
-import { Line } from 'vue-chartjs'
+import { Line } from "vue-chartjs";
 
 export default {
   // name: 'ComponentName',
@@ -19,22 +19,22 @@ export default {
     }
   },
   mounted() {
-    this.render()
+    this.render();
   },
   methods: {
     render() {
-      this.renderChart(this.param.data, this.param.options)
+      this.renderChart(this.param.data, this.param.options);
     }
   },
   watch: {
-    'update.data': function (val) {
-      this.$data._chart.update()
+    "update.data": function(val) {
+      this.$data._chart.update();
     },
-    'update.options': function (val) {
-      this.render()
+    "update.options": function(val) {
+      this.render();
     }
   }
-}
+};
 </script>
 
 <style>

@@ -1,9 +1,9 @@
 <template>
   <div>
     <q-bar class="bg-blue text-white">
-      <q-toolbar-title class="text-subtitle1"
-        >Command Management</q-toolbar-title
-      >
+      <q-toolbar-title class="text-subtitle1">
+        Command Management
+      </q-toolbar-title>
       <q-btn
         v-if="COMMAND_LIST.length > 0"
         @click.native="modalOpen = true"
@@ -47,12 +47,12 @@
 </template>
 
 <script>
-import { COMMAND_LIST } from "components/js/command";
-// import { mapState, mapGetters, mapActions } from "vuex";
 import CommandListModal from "components/etc/CommandListModal";
+
+import { COMMAND_LIST } from "components/js/command";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
-import { reactive, toRefs, computed } from "@vue/composition-api";
+import { ref, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
@@ -66,10 +66,7 @@ export default {
     const { devDevice } = useGetters(["devDevice"]);
     const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 
-    const state = reactive({
-      COMMAND_LIST,
-      modalOpen: false
-    });
+    const modalOpen = ref(false);
 
     const payload = computed({
       get: () => command.value.payload,
@@ -82,7 +79,8 @@ export default {
     const execCommand = () => insertCommand({ payload: payload.value });
 
     return {
-      ...toRefs(state),
+      COMMAND_LIST,
+      modalOpen,
 
       payload,
       devDevice,
@@ -90,33 +88,6 @@ export default {
       writeCommand,
       execCommand
     };
-  },
-  // data() {
-  //   return {
-  //     COMMAND_LIST: cloneDeep(COMMAND_LIST),
-  //     modalOpen: false,
-  //   };
-  // },
-  computed: {
-    // ...mapState("db", ["command"]),
-    // ...mapGetters("db", [devDevice]),
-    // payload: {
-    //   get() {
-    //     return this.command.payload;
-    //   },
-    //   set(value) {
-    //     this.INSERT_COMMAND({ payload: value.toUpperCase(), exec: false });
-    //   },
-    // },
-  },
-  methods: {
-    // ...mapActions("db", [INSERT_COMMAND]),
-    // writeCommand(payload) {
-    //   this.payload = payload;
-    // },
-    // execCommand() {
-    //   this.INSERT_COMMAND({ payload: this.payload, exec: true });
-    // },
   }
 };
 </script>

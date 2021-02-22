@@ -1,5 +1,5 @@
 <template>
-  <q-splitter :value="showStreetView ? 50 : 100">
+  <q-splitter :value="showPano ? 50 : 100">
     <template v-slot:before>
       <gmap-map
         class="fit"
@@ -16,7 +16,7 @@
         ></gmap-polyline>
       </gmap-map>
     </template>
-    <template v-if="showStreetView" v-slot:separator>
+    <template v-if="showPano" v-slot:separator>
       <q-avatar
         color="grey"
         text-color="white"
@@ -24,7 +24,7 @@
         icon="drag_indicator"
       />
     </template>
-    <template v-if="showStreetView" v-slot:after>
+    <template v-if="showPano" v-slot:after>
       <gmap-street-view-panorama
         class="fit"
         :position="position"
@@ -38,23 +38,33 @@
 </template>
 
 <script>
-import { getPosition, getHeading } from "components/js/map";
 import config from "components/js/opt/config";
-import { mapState, mapGetters } from "vuex";
+import { getPosition, getHeading } from "components/js/map";
+import { Screen } from "quasar";
+
+import { reactive, toRefs, computed, watch } from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   // name: 'ComponentName',
-  data() {
-    return {
-      center: { ...config.map.centerIndonesia },
-      position: {
-        ...config.map.centerIndonesia,
-        valid: false
-      },
-      zoom: config.map.zoom,
+  setup(props) {
+    const { useState, useGetters } = createNamespacedHelpers("db");
+    const { report } = useState(["report"]);
+    const { devReports } = useGetters(["devReports"]);
+
+    const { centerIndonesia, zoom } = config.map;
+    const state = reactive({
       pov: null,
       pano: null,
       path: [],
+      zoom,
+      center: {
+        ...centerIndonesia
+      },
+      position: {
+        ...centerIndonesia,
+        valid: false
+      },
       options: {
         zoomControl: true,
         mapTypeControl: false,
@@ -64,57 +74,51 @@ export default {
         fullscreenControl: true,
         disableDefaultUi: true
       }
+    });
+
+    const showPano = computed(() => Screen.gt.xs);
+
+    const updatePov = pov => (state.pov = pov);
+    const updatePano = pano => (state.pano = pano);
+    const setPosition = ({ valid, ...location }) => {
+      state.zoom = valid ? 17 : zoom;
+      state.center = { ...(valid ? location : centerIndonesia) };
+      state.position = { ...location, valid };
     };
-  },
-  computed: {
-    ...mapState("db", ["report"]),
-    ...mapGetters("db", ["devReports"]),
-    showStreetView() {
-      return this.$q.screen.gt.xs;
-    }
-  },
-  methods: {
-    updatePov(pov) {
-      this.pov = pov;
-    },
-    updatePano(pano) {
-      this.pano = pano;
-    },
-    setPosition({ valid, ...location }) {
-      if (valid) {
-        this.zoom = 17;
-        this.center = { ...location };
-      } else {
-        this.zoom = config.map.zoom;
-        this.center = { ...config.map.centerIndonesia };
-      }
-      this.position = { ...location, valid };
-    }
-  },
-  watch: {
-    "devReports.0": {
-      immediate: true,
-      handler(devReport) {
+
+    watch(
+      () => devReports.value[0],
+      devReport => {
         if (!devReport) return;
 
         let pos = getPosition(devReport);
-        if (pos.valid) this.path.push(pos);
-      }
-    },
-    report: {
-      immediate: true,
-      handler(report) {
+        if (pos.valid) state.path.push(pos);
+      },
+      { lazy: false }
+    );
+
+    watch(
+      () => report.value,
+      report => {
         if (!report) return;
+        setPosition(getPosition(report));
 
-        this.setPosition(getPosition(report));
-
-        if (!this.pov) return;
-        this.updatePov({
-          ...this.pov,
+        if (!state.pov) return;
+        updatePov({
+          ...state.pov,
           heading: getHeading(report)
         });
-      }
-    }
+      },
+      { lazy: false }
+    );
+
+    return {
+      ...toRefs(state),
+      showPano,
+
+      updatePov,
+      updatePano
+    };
   }
 };
 </script>

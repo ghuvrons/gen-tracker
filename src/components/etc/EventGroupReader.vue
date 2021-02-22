@@ -23,26 +23,27 @@
 
 <script>
 import { EVENT_LIST, parseEvent } from "components/js/event";
-import { mapGetters } from "vuex";
-import { cloneDeep } from "lodash";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   props: {
     value: Number
   },
-  data() {
-    return {
-      EVENT_LIST: cloneDeep(EVENT_LIST)
-    };
-  },
-  computed: {
-    ...mapGetters("db", ["devEvents"])
-  },
-  methods: {
-    activeEvent(theName) {
+  setup(props) {
+    const { useGetters } = createNamespacedHelpers("db");
+    const { devEvents } = useGetters(["devEvents"]);
+
+    const activeEvent = theName => {
       let event = EVENT_LIST.find(({ name }) => name === theName);
-      return parseEvent(this.value, event.bit);
-    }
+      return parseEvent(props.value, event.bit);
+    };
+
+    return {
+      EVENT_LIST,
+      devEvents,
+
+      activeEvent
+    };
   }
 };
 </script>

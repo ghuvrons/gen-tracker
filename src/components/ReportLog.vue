@@ -12,7 +12,7 @@
           :key="index"
           :active="devReport.hex === report.hex"
           active-class="bg-primary text-white"
-          @click="SET_REPORT(devReport)"
+          @click="setReport(devReport)"
           clickable
           dense
         >
@@ -63,7 +63,9 @@
 import moment from "moment";
 import { SET_REPORT } from "src/store/db/mutation-types";
 import { SET_FOLLOW } from "src/store/common/mutation-types";
-import { mapState, mapGetters, mapMutations } from "vuex";
+
+import { computed } from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   // name: 'ComponentName',
@@ -73,25 +75,32 @@ export default {
       required: true
     }
   },
-  computed: {
-    ...mapState("db", ["report"]),
-    ...mapState("common", ["follow"]),
-    ...mapGetters("db", ["devReports"]),
-    followState: {
-      get() {
-        return this.follow;
-      },
-      set(value) {
-        this.SET_FOLLOW(value);
-      }
-    }
-  },
-  methods: {
-    ...mapMutations("db", [SET_REPORT]),
-    ...mapMutations("common", [SET_FOLLOW]),
-    getDatetime(logDatetime) {
-      return moment.unix(logDatetime.val).format("HH:mm:ss");
-    }
+  setup(props) {
+    const db = createNamespacedHelpers("db");
+    const { report } = db.useState(["report"]);
+    const { devReports } = db.useGetters(["devReports"]);
+    const { [SET_REPORT]: setReport } = db.useMutations([SET_REPORT]);
+
+    const common = createNamespacedHelpers("common");
+    const { follow } = common.useState(["follow"]);
+    const { [SET_FOLLOW]: setFollow } = common.useMutations([SET_FOLLOW]);
+
+    const followState = computed({
+      get: () => follow.value,
+      set: v => setFollow(v)
+    });
+
+    const getDatetime = logDatetime =>
+      moment.unix(logDatetime.val).format("HH:mm:ss");
+
+    return {
+      report,
+      devReports,
+      followState,
+
+      setReport,
+      getDatetime
+    };
   }
 };
 </script>

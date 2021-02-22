@@ -44,7 +44,7 @@
             <template v-slot="{ item: cmd, index }">
               <q-item
                 :key="index"
-                @click="select(cmd)"
+                @click="selectCommand(cmd)"
                 :clickable="!processing"
               >
                 <q-item-section>
@@ -75,46 +75,45 @@
 <script>
 import { COMMAND_LIST } from "components/js/command";
 import { flowFilter } from "components/js/utils";
-import { cloneDeep } from "lodash";
+
+import { ref, computed } from "@vue/composition-api";
 
 export default {
-  emits: ["select"],
+  emits: ["input", "select"],
   props: {
     value: {
       required: true,
       type: Boolean
     }
   },
-  data() {
-    return {
-      COMMAND_LIST: cloneDeep(COMMAND_LIST),
-      keyword: ""
-    };
-  },
-  computed: {
-    modalOpen: {
-      get() {
-        return this.value;
-      },
-      set(value) {
-        this.$emit("input", value);
-      }
-    },
-    searchResults() {
-      return flowFilter(this.COMMAND_LIST, this.keyword || "");
-    }
-  },
-  methods: {
-    getRange(range) {
-      const [min, max] = range;
+  setup(props, { emit }) {
+    const keyword = ref("");
 
-      if (max) return `[ ${min}, ${max} ]`;
-      return `[ ${min} ]`;
-    },
-    select({ command }) {
-      this.$emit("select", command);
-      this.modalOpen = false;
-    }
+    const modalOpen = computed({
+      get: () => props.value,
+      set: v => emit("input", v)
+    });
+    const searchResults = computed(() =>
+      flowFilter(COMMAND_LIST, keyword.value || "")
+    );
+
+    const getRange = ([min, max]) =>
+      max ? `[ ${min}, ${max} ]` : `[ ${min} ]`;
+    const selectCommand = ({ command }) => {
+      modalOpen.value = false;
+      emit("select", command);
+    };
+
+    return {
+      COMMAND_LIST,
+      keyword,
+
+      modalOpen,
+      searchResults,
+
+      getRange,
+      selectCommand
+    };
   }
 };
 </script>

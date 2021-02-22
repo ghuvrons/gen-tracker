@@ -31,25 +31,15 @@ import { parseReport } from "components/js/report";
 import { parseResponse, parseResCode } from "components/js/response";
 import config from "components/js/opt/config";
 import { notify } from "components/js/framework";
-import { loader } from "components/js/framework";
-import { cloneDeep, get } from "lodash";
+import { get } from "lodash";
 import moment from "moment";
 import { readEvent } from "components/js/event";
 
 export default {
   name: "App",
-  created() {
-    this.$root.$on("importData", this.importData);
-  },
-  destroyed() {
-    this.$root.$off("importData", this.importData);
-  },
   data() {
     return {
-      dialog: null,
       notifier: null,
-      importBuffer: [],
-      importTotal: 0,
       cmdTick: null,
       cmdExecuting: null
     };
@@ -73,24 +63,6 @@ export default {
       INSERT_COMMAND,
       STOP_COMMAND
     ]),
-    importData(reports) {
-      this.importTotal = reports.length;
-      this.importBuffer = cloneDeep(reports);
-
-      this.$timer.start("importer");
-      this.dialog = loader("Importing...");
-    },
-    importer() {
-      let len = this.importBuffer.length;
-      if (len > 0) {
-        let percentage = (len * 100) / this.importTotal;
-        this.dialog.update({ message: `${percentage.toFixed(2)}%` });
-        this.handleReportFrame(this.importBuffer.pop());
-      } else {
-        if (this.timers.importer.isRunning) this.$timer.stop("importer");
-        if (this.dialog) this.dialog.hide();
-      }
-    },
     notifyResponse({ resCode }) {
       let res = parseResCode(resCode);
       let ok = res.title == "OK";
@@ -186,8 +158,7 @@ export default {
     }
   },
   timers: {
-    cmdTimeout: { time: 0 },
-    importer: { time: 100, repeat: true }
+    cmdTimeout: { time: 0 }
   },
   mounted() {
     this.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });

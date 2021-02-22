@@ -45,9 +45,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
 import { parseResCode, parseMessage } from "components/js/response";
 import { INSERT_COMMAND } from "src/store/db/action-types";
+
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   // name: 'ComponentName',
@@ -56,20 +57,21 @@ export default {
       required: true
     }
   },
-  computed: {
-    ...mapGetters("db", ["devResponses"])
-  },
-  methods: {
-    ...mapActions("db", [INSERT_COMMAND]),
-    writeCommand({ payload }) {
-      this.INSERT_COMMAND({ payload, exec: false });
-    },
-    parseResCode(code) {
-      return parseResCode(code);
-    },
-    parseMessage(msg) {
-      return parseMessage(msg);
-    }
+  setup(props) {
+    const { useGetters, useActions } = createNamespacedHelpers("db");
+    const { devResponses } = useGetters(["devResponses"]);
+    const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
+
+    const writeCommand = ({ payload }) =>
+      insertCommand({ payload, exec: false });
+
+    return {
+      devResponses,
+
+      writeCommand,
+      parseResCode,
+      parseMessage
+    };
   }
 };
 </script>

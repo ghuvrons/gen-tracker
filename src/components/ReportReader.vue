@@ -42,7 +42,7 @@
     <report-history-modal
       v-if="field"
       :field="field"
-      @close="reset()"
+      @close="field = null"
     ></report-history-modal>
   </div>
 </template>
@@ -51,11 +51,13 @@
 import ReportHistoryModal from "components/etc/ReportHistoryModal";
 import { Report, lastFullReport, readReport } from "components/js/report";
 import { SET_TREE } from "src/store/common/mutation-types";
-import { mapState, mapGetters, mapMutations } from "vuex";
 import { getField, frameId } from "components/js/utils";
 import { get } from "lodash";
 import TreeReportReader from "components/etc/TreeReportReader";
 import ListReportReader from "components/etc/ListReportReader";
+
+import { ref, computed } from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   // name: 'ComponentName',
@@ -69,62 +71,66 @@ export default {
     TreeReportReader,
     ListReportReader
   },
-  data() {
-    return {
-      field: null
-    };
-  },
-  computed: {
-    ...mapState("db", ["report"]),
-    ...mapState("common", ["tree"]),
-    ...mapGetters("db", ["devReports"]),
-    treeState: {
-      get() {
-        return this.tree;
-      },
-      set(value) {
-        this.SET_TREE(value);
-      }
-    },
-    theReport() {
-      if (!this.report) return;
+  setup(props) {
+    const db = createNamespacedHelpers("db");
+    const { report } = db.useState(["report"]);
+    const { devReports } = db.useGetters(["devReports"]);
 
-      let report = readReport(this.report);
-      if (this.report.frameId != frameId("FULL")) {
-        let full = lastFullReport(this.report, this.devReports);
+    const common = createNamespacedHelpers("common");
+    const { tree } = common.useState(["tree"]);
+    const { [SET_TREE]: setTree } = common.useMutations([SET_TREE]);
+
+    const field = ref(null);
+
+    const hList = computed(
+      () => `height: calc(100vh - ${props.height}px - 34px)`
+    );
+    const hTree = computed(
+      () => ` height: calc(100vh - ${props.height}px - 73px)`
+    );
+    const treeState = computed({
+      get: () => tree.value,
+      set: v => setTree(v)
+    });
+    const theReport = computed(() => {
+      if (!report.value) return;
+
+      let rpt = readReport(report.value);
+      if (report.value.frameId != frameId("FULL")) {
+        let full = lastFullReport(report.value, devReports.value);
 
         if (full)
-          report = {
+          rpt = {
             ...readReport(full),
-            ...report
+            ...rpt
           };
       }
 
-      return report;
-    },
-    hList() {
-      return `height: calc(100vh - ${this.height}px - 34px)`;
-    },
-    hTree() {
-      return ` height: calc(100vh - ${this.height}px - 73px)`;
-    }
-  },
-  methods: {
-    ...mapMutations("common", [SET_TREE]),
-    open(field) {
-      if (!field) return;
+      return rpt;
+    });
 
-      let theField = getField(Report, field);
+    const open = fld => {
+      if (!fld) return;
+
+      let theField = getField(Report, fld);
       if (!get(theField, "chartable")) return;
 
-      let related = this.devReports.filter(({ [field]: _field }) => _field);
+      let related = devReports.value.filter(({ [fld]: _field }) => _field);
       if (related.length < 2) return;
 
-      this.field = field;
-    },
-    reset() {
-      this.field = null;
-    }
+      field.value = fld;
+    };
+
+    return {
+      field,
+
+      hList,
+      hTree,
+      treeState,
+      theReport,
+
+      open
+    };
   }
 };
 </script>

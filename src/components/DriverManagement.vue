@@ -1,6 +1,6 @@
 <template>
   <div :style="contentStyle">
-    <div class="text-subtitle2">Last fetch: {{ fingerTime() }}</div>
+    <div class="text-subtitle2">Last fetch: {{ getFingerTime() }}</div>
     <q-banner v-if="devFingers.length == 0">
       <template v-slot:avatar>
         <q-icon name="info"></q-icon>
@@ -76,11 +76,13 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
 import { confirm } from "components/js/framework";
 import { get } from "lodash";
 import moment from "moment";
 import { INSERT_COMMAND } from "src/store/db/action-types";
+
+import { ref } from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   // name: 'ComponentName',
@@ -90,40 +92,44 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      name: ["One", "Two", "Three", "Four", "Five"],
-      fab: false
-    };
-  },
-  computed: {
-    ...mapGetters("db", ["devFingers", "devDevice"])
-  },
-  methods: {
-    ...mapActions("db", [INSERT_COMMAND]),
-    fingerTime() {
-      let fingerTime = get(this.devDevice, "fingerTime");
+  setup(props) {
+    const { useGetters, useActions } = createNamespacedHelpers("db");
+    const { devFingers, devDevice } = useGetters(["devFingers", "devDevice"]);
+    const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 
-      if (fingerTime)
-        return moment.unix(fingerTime).format("DD-MM-YY HH:mm:ss");
-      return "Unknown";
-    },
-    fetch() {
-      this.INSERT_COMMAND({ payload: `FINGER_FETCH` });
-    },
-    add() {
-      this.INSERT_COMMAND({ payload: `FINGER_ADD` });
-    },
-    remove({ fingerID }) {
+    const name = ref(["One", "Two", "Three", "Four", "Five"]);
+    const fab = ref(false);
+
+    const getFingerTime = () => {
+      let fingerTime = get(devDevice.value, "fingerTime");
+      return fingerTime
+        ? moment.unix(fingerTime).format("DD-MM-YY HH:mm:ss")
+        : "Unknown";
+    };
+    const fetch = () => insertCommand({ payload: `FINGER_FETCH` });
+    const add = () => insertCommand({ payload: `FINGER_ADD` });
+    const remove = ({ fingerID }) =>
       confirm(
         `Are you sure to remove this fingerprint ${fingerID} ?`
-      ).onOk(() => this.INSERT_COMMAND({ payload: `FINGER_DEL=${fingerID}` }));
-    },
-    clear() {
+      ).onOk(() => insertCommand({ payload: `FINGER_DEL=${fingerID}` }));
+    const clear = () =>
       confirm(`Are you sure to clear all fingerprints  ?`).onOk(() =>
-        this.INSERT_COMMAND({ payload: `FINGER_RST` })
+        insertCommand({ payload: `FINGER_RST` })
       );
-    }
+
+    return {
+      name,
+      fab,
+
+      devFingers,
+      devDevice,
+
+      getFingerTime,
+      fetch,
+      add,
+      remove,
+      clear
+    };
   }
 };
 </script>
