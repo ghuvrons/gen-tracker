@@ -19,6 +19,6 @@ export default ({ app, router, store, Vue }) => {
     username: mqtt.username,
     password: mqtt.password,
     clientId,
-    clean: false
+    clean: true
   });
 };
