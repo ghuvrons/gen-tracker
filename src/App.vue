@@ -10,7 +10,9 @@ import {
   ADD_FINGERS,
   REMOVE_FINGERS,
   CLEAR_FINGERS,
-  TAKE_FINGER_TIME
+  TAKE_FINGER_TIME,
+  ADD_BUFFERS,
+  DEL_BUFFER
 } from "src/store/db/mutation-types";
 import { parseCommand, buildCommand, extractCommand } from "src/js/command";
 import { validateFrame } from "src/js/frame";
@@ -42,13 +44,15 @@ export default {
   },
   computed: {
     ...mapState("common", ["follow", "calibration", "notification"]),
-    ...mapState("db", ["command", "responses", "reports"]),
+    ...mapState("db", ["command", "responses", "reports", "buffers"]),
     ...mapGetters("db", ["devDevice", "devReports", "devEvents"])
   },
   methods: {
     ...mapMutations("db", [
       SET_REPORT,
       ADD_FINGERS,
+      ADD_BUFFERS,
+      DEL_BUFFER,
       REMOVE_FINGERS,
       CLEAR_FINGERS,
       TAKE_FINGER_TIME
@@ -125,6 +129,14 @@ export default {
 
       return response;
     },
+    handleBuffers() {
+      if (this.buffers.length > 0) {
+        const hex = this.buffers[0];
+        this.DEL_BUFFER();
+        console.log(`REPORT ${hex}`);
+        this.handleReportFrame(hex);
+      }
+    },
     handleReportFrame(hex) {
       let report = parseReport(hex);
 
@@ -143,6 +155,10 @@ export default {
         return console.error(`^REPORT (DUPLICATE)`);
 
       this.INSERT_REPORTS(report);
+
+      if (get(this.cmdExecuting, "timeout") > 60)
+        this.handleCommandLost(report);
+
       return report;
     },
     validFrame(bin) {
@@ -154,7 +170,8 @@ export default {
     }
   },
   timers: {
-    cmdTimeout: { time: 0 }
+    cmdTimeout: { time: 0 },
+    handleBuffers: { time: 100, autostart: true, repeat: true, immediate: true }
   },
   mounted() {
     this.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });
@@ -166,21 +183,15 @@ export default {
       if (!hex) return;
 
       if (!this.cmdExecuting) return console.error(`RESPONSE ${hex}`);
-      console.warn(`RESPONSE ${hex}`);
 
-      let response = this.handleResponseFrame(hex);
-      if (!response) return;
+      console.warn(`RESPONSE ${hex}`);
+      this.handleResponseFrame(hex);
     },
     "VCU/+/RPT": function(data, topic) {
       let hex = this.validFrame(data);
       if (!hex) return;
-      console.log(`REPORT ${hex}`);
 
-      let report = this.handleReportFrame(hex);
-      if (!report) return;
-
-      if (get(this.cmdExecuting, "timeout") > 60)
-        this.handleCommandLost(report);
+      this.ADD_BUFFERS(hex);
     }
   },
   watch: {

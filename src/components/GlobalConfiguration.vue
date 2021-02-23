@@ -68,12 +68,12 @@ import {
   SET_CALIBRATION,
   SET_NOTIFICATION
 } from "src/store/common/mutation-types";
-import { CLEAR_DATABASE } from "src/store/db/mutation-types";
+import { CLEAR_DATABASE, ADD_BUFFERS } from "src/store/db/mutation-types";
 import { STOP_COMMAND } from "src/store/db/action-types";
 import { exportCSV, exportJSON, importJSON } from "src/js/exporter";
-import { confirm, notify, loader } from "src/js/framework";
+import { confirm, notify } from "src/js/framework";
 
-import { ref, reactive, computed } from "@vue/composition-api";
+import { ref, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
@@ -93,8 +93,9 @@ export default {
     ]);
     const {
       [CLEAR_DATABASE]: clearDatabase,
-      [STOP_COMMAND]: stopCommand
-    } = db.useMutations([CLEAR_DATABASE, STOP_COMMAND]);
+      [STOP_COMMAND]: stopCommand,
+      [ADD_BUFFERS]: addBuffers
+    } = db.useMutations([CLEAR_DATABASE, STOP_COMMAND, ADD_BUFFERS]);
 
     const common = createNamespacedHelpers("common");
     const { calibration, notification } = common.useState([
@@ -107,12 +108,6 @@ export default {
     } = common.useMutations([SET_CALIBRATION, SET_NOTIFICATION]);
 
     const uploader = ref(null);
-    const state = reactive({
-      hInterval: null,
-      dialog: null,
-      buffer: [],
-      buflen: 0
-    });
 
     const calibrationState = computed({
       get: () => calibration.value,
@@ -129,23 +124,10 @@ export default {
       notify("Command ignored.", "warning");
       stopCommand();
     };
-    const importing = () => {
-      if (state.buffer.length > 0) {
-        let percent = (state.buffer.length * 100) / state.buflen;
-        state.dialog.update({ message: `${percent.toFixed(2)}%` });
-        // this.handleReportFrame(state.buffer.pop());
-      } else {
-        if (state.hInterval) clearInterval(state.hInterval);
-        if (state.dialog) state.dialog.hide();
-        if (uploader.value) uploader.value.reset();
-      }
-    };
     const importData = ([file]) =>
-      importJSON(file).then(reports => {
-        state.buffer = reports;
-        state.buflen = reports.length;
-        state.dialog = loader("Importing...");
-        state.hInterval = setInterval(importing, 100);
+      importJSON(file).then(hexs => {
+        hexs.forEach(hex => addBuffers(hex));
+        if (uploader.value) uploader.value.reset();
       });
 
     return {

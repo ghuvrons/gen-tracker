@@ -7,6 +7,9 @@ export const SET_UNITID = "SET_UNITID";
 export const SET_REPORT = "SET_REPORT";
 export const SET_COMMAND = "SET_COMMAND";
 
+export const ADD_BUFFERS = "ADD_BUFFERS";
+export const DEL_BUFFER = "DEL_BUFFER";
+
 export const ADD_DEVICES = "ADD_DEVICES";
 export const ADD_REPORTS = "ADD_REPORTS";
 export const ADD_RESPONSES = "ADD_RESPONSES";

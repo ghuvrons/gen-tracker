@@ -7,11 +7,7 @@ let { mqtt } = config;
 export default ({ app, router, store, Vue }) => {
   let clientId = LocalStorage.getItem("clientId");
   if (!clientId) {
-    clientId =
-      "mqttjs_" +
-      Math.random()
-        .toString(16)
-        .substr(2, 8);
+    clientId = "mqttjs_" + Math.random().toString(16).substr(2, 8);
     LocalStorage.set("clientId", clientId);
   }
 
@@ -19,6 +15,6 @@ export default ({ app, router, store, Vue }) => {
     username: mqtt.username,
     password: mqtt.password,
     clientId,
-    clean: true
+    clean: false,
   });
 };

@@ -27,6 +27,13 @@ export default {
         fingerTime: moment().unix()
       });
   },
+  [mutations.ADD_BUFFERS](state, payload) {
+    state.buffers.unshift(payload);
+  },
+  [mutations.DEL_BUFFER](state) {
+    state.buffers.shift();
+  },
+
   [mutations.ADD_DEVICES](state, payload) {
     let exist = state.devices.find(({ unitID }) => unitID === payload.unitID);
     if (!exist) state.devices.unshift(payload);
