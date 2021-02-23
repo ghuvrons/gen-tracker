@@ -1,6 +1,6 @@
-import { Report } from "components/js/opt/report";
-import { getValue, getField, frameId } from "components/js/utils";
-import { parseFrame } from "components/js/frame";
+import { Report } from "src/js/opt/report";
+import { getValue, getField, frameId } from "src/js/utils";
+import { parseFrame } from "src/js/frame";
 import moment from "moment";
 
 const parseReportData = hex => {

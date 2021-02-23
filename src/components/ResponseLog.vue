@@ -24,9 +24,9 @@
         >
           <q-item-section>
             <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
-            <q-item-label lines="2" caption>{{
-              parseMessage(cmd.message)
-            }}</q-item-label>
+            <!-- <q-item-label lines="2" caption> -->
+            {{ parseMessage(cmd.message) }}
+            <!-- </q-item-label> -->
           </q-item-section>
 
           <q-item-section side>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { parseResCode, parseMessage } from "components/js/response";
+import { parseResCode, parseMessage } from "src/js/response";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
 import { createNamespacedHelpers } from "vuex-composition-helpers";

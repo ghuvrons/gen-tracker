@@ -1,7 +1,7 @@
-import { getValue } from "components/js/utils";
-import { parseFrame } from "components/js/frame";
-import { VEHICLE_STATES } from "components/js/opt/report";
-import { RESPONSE_LIST, Response } from "components/js/opt/response";
+import { getValue } from "src/js/utils";
+import { parseFrame } from "src/js/frame";
+import { VEHICLE_STATES } from "src/js/opt/report";
+import { RESPONSE_LIST, Response } from "src/js/opt/response";
 
 const parseResponse = ({ payload, unitID, code, subCode, hexCmd }, hexRes) => {
   let res = RESPONSE_LIST.find(({ name }) => name === "timeout");
@@ -26,22 +26,22 @@ const parseResponse = ({ payload, unitID, code, subCode, hexCmd }, hexRes) => {
     unitID,
     payload,
     resCode: res.resCode,
-    message,
+    message
   };
 };
 
-const parseResCode = (code) => {
+const parseResCode = code => {
   return RESPONSE_LIST.find(({ resCode }) => resCode == code);
 };
 
-const parseMessage = (msg) => {
+const parseMessage = msg => {
   if (!msg) return;
 
   let labels = Object.keys(VEHICLE_STATES);
   let values = Object.values(VEHICLE_STATES);
 
-  return msg.replace(/\{(.+?)\}/g, function (string, val) {
-    let idx = values.findIndex((v) => v === parseInt(val));
+  return msg.replace(/\{(.+?)\}/g, function(string, val) {
+    let idx = values.findIndex(v => v === parseInt(val));
     return labels[idx];
   });
 };

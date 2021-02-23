@@ -101,8 +101,8 @@
 </template>
 
 <script>
-import { getField } from "components/js/utils";
-import { Report } from "components/js/report";
+import { getField } from "src/js/utils";
+import { Report } from "src/js/report";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
 import { Dark } from "quasar";
@@ -112,8 +112,8 @@ import {
   findRangeY,
   getLabel,
   grabDatasets
-} from "components/js/chart";
-import useChart from "components/js/composables/useChart";
+} from "src/js/chart";
+import useChart from "src/composables/useChart";
 import {
   computed,
   reactive,

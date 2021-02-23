@@ -1,6 +1,10 @@
-import CommonMixin from "components/js/mixins/CommonMixin";
+import { mapState } from "vuex";
 
 export default ({ Vue }) => {
   // Vue.prototype.$config = cloneDeep(config);
-  Vue.mixin(CommonMixin);
+  Vue.mixin({
+    computed: {
+      ...mapState("common", ["processing"])
+    }
+  });
 };

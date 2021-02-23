@@ -1,5 +1,5 @@
-import { eventHistories } from "components/js/event";
-import { lastSendDatetime } from "components/js/report";
+import { eventHistories } from "src/js/event";
+import { lastSendDatetime } from "src/js/report";
 // import * as getters from "./getter-types";
 
 export default {

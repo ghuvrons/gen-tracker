@@ -1,13 +1,13 @@
 import _ from "lodash";
-import config from "components/js/opt/config";
-import { HexToUnsignedInt, IntToHex } from "components/js/helper";
+import config from "src/js/opt/config";
+import { HexToUnsignedInt, IntToHex } from "src/js/helper";
 import moment from "moment";
 import "moment-timezone";
 
 // const moment = require("moment-timezone");
 const tzlookup = require("tz-lookup");
 
-const isString = (myVar) => {
+const isString = myVar => {
   return typeof myVar === "string" || myVar instanceof String;
 };
 
@@ -31,7 +31,7 @@ const getField = (arr, fields, target) => {
       result = arr.find(({ field }) => field === _field);
       return {
         ...acc,
-        [_field]: target ? result[target] : result,
+        [_field]: target ? result[target] : result
       };
     }, {});
   return target ? result[target] : result;
@@ -67,7 +67,7 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
   return serverTime.tz(timezone).format("YYMMDDHHmmss0E");
 };
 
-const parseDatetime = (hex) => {
+const parseDatetime = hex => {
   let timestamp = hex.match(/.{1,2}/g);
 
   return timestamp.reduce((acc, ts) => {
@@ -76,7 +76,7 @@ const parseDatetime = (hex) => {
   }, "");
 };
 
-const buildTimestamp = (ascii) => {
+const buildTimestamp = ascii => {
   let datetime = ascii.match(/.{1,2}/g);
 
   return (
@@ -86,8 +86,8 @@ const buildTimestamp = (ascii) => {
   );
 };
 
-const frameId = (name) => {
-  return config.frames.findIndex((v) => v.includes(name));
+const frameId = name => {
+  return config.frames.findIndex(v => v.includes(name));
 };
 
 export {
@@ -100,5 +100,5 @@ export {
   parseDatetime,
   buildTimestamp,
   dilation,
-  frameId,
+  frameId
 };

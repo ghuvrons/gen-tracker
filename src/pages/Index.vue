@@ -55,7 +55,9 @@ import MapManagement from "components/MapManagement";
 import ReportLog from "components/ReportLog";
 import DriverManagement from "components/DriverManagement";
 import GlobalConfiguration from "components/GlobalConfiguration";
-import { mapGetters } from "vuex";
+
+import { ref, computed } from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
   // name: 'PageIndex',
@@ -65,17 +67,25 @@ export default {
     DriverManagement,
     GlobalConfiguration
   },
-  data() {
+  setup(props) {
+    const { useGetters } = createNamespacedHelpers("db");
+    const { devReports, devFingers } = useGetters(["devReports", "devFingers"]);
+
+    const selectedTab = ref("tab-1");
+    const splitter = ref(50);
+
+    const contentStyle = computed(
+      () => `height: calc(100vh - ${splitter.value}vh - 95px)`
+    );
+
     return {
-      selectedTab: "tab-1",
-      splitter: 50
+      selectedTab,
+      splitter,
+
+      devReports,
+      devFingers,
+      contentStyle
     };
-  },
-  computed: {
-    ...mapGetters("db", ["devReports", "devFingers"]),
-    contentStyle() {
-      return `height: calc(100vh - ${this.splitter}vh - 95px)`;
-    }
   }
 };
 </script>

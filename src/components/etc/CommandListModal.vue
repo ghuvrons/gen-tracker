@@ -73,8 +73,8 @@
 </template>
 
 <script>
-import { COMMAND_LIST } from "components/js/command";
-import { flowFilter } from "components/js/utils";
+import { COMMAND_LIST } from "src/js/command";
+import { flowFilter } from "src/js/utils";
 
 import { ref, computed } from "@vue/composition-api";
 

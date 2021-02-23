@@ -1,4 +1,4 @@
-import { Report } from "components/js/report";
+import { Report } from "src/js/report";
 import { ExportToCsv } from "export-to-csv";
 import exportFromJSON from "export-from-json";
 import moment from "moment";

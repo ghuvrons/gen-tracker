@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { EVENT_LIST, parseEvent } from "components/js/event";
+import { EVENT_LIST, parseEvent } from "src/js/event";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {

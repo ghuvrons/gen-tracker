@@ -1,7 +1,7 @@
-// import { CRC32 } from "components/js/crc32-mpeg2";
-import { getValue, getOutput } from "components/js/utils";
-import { Header } from "components/js/opt/header";
-import config from "components/js/opt/config";
+// import { CRC32 } from "src/js/crc32-mpeg2";
+import { getValue, getOutput } from "src/js/utils";
+import { Header } from "src/js/opt/header";
+import config from "src/js/opt/config";
 
 // const calculateCRC32 = (hex) => {
 //   let crcSize = Header.filter(({ field }) => ["prefix", "crc"].includes(field))

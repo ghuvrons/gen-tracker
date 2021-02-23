@@ -1,4 +1,4 @@
-import { EVENT_LIST } from "components/js/opt/event";
+import { EVENT_LIST } from "src/js/opt/event";
 import { groupBy } from "lodash";
 import moment from "moment";
 const Long = require("long");

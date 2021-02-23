@@ -12,14 +12,10 @@ import {
   CLEAR_FINGERS,
   TAKE_FINGER_TIME
 } from "src/store/db/mutation-types";
-import {
-  parseCommand,
-  buildCommand,
-  extractCommand
-} from "components/js/command";
-import { validateFrame } from "components/js/frame";
-import { isString, dilation, frameId } from "components/js/utils";
-import { calibrateTime } from "components/js/utils";
+import { parseCommand, buildCommand, extractCommand } from "src/js/command";
+import { validateFrame } from "src/js/frame";
+import { isString, dilation, frameId } from "src/js/utils";
+import { calibrateTime } from "src/js/utils";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
   STOP_COMMAND,
@@ -27,13 +23,13 @@ import {
   INSERT_REPORTS,
   INSERT_RESPONSES
 } from "src/store/db/action-types";
-import { parseReport } from "components/js/report";
-import { parseResponse, parseResCode } from "components/js/response";
-import config from "components/js/opt/config";
-import { notify } from "components/js/framework";
+import { parseReport } from "src/js/report";
+import { parseResponse, parseResCode } from "src/js/response";
+import config from "src/js/opt/config";
+import { notify } from "src/js/framework";
 import { get } from "lodash";
 import moment from "moment";
-import { readEvent } from "components/js/event";
+import { readEvent } from "src/js/event";
 
 export default {
   name: "App",

@@ -1,6 +1,6 @@
 import { cloneDeep } from "lodash";
 import { toRefs, reactive } from "@vue/composition-api";
-import chart from "components/js/opt/chart";
+import chart from "src/js/opt/chart";
 
 export default function useChart() {
   const state = reactive({

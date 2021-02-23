@@ -85,7 +85,7 @@ import ReportReader from "components/ReportReader";
 import DeviceManagement from "components/DeviceManagement";
 import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
-import config from "components/js/opt/config";
+import config from "src/js/opt/config";
 
 export default {
   name: "MyLayout",

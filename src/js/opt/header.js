@@ -1,5 +1,5 @@
-import config from "components/js/opt/config";
-// import { CRC32 } from "components/js/crc32-mpeg2";
+import config from "src/js/opt/config";
+// import { CRC32 } from "src/js/crc32-mpeg2";
 import {
   ChangeEndian,
   Dot,
@@ -7,7 +7,7 @@ import {
   AsciiToHex,
   HexToUnsignedInt,
   IntToHex
-} from "components/js/helper";
+} from "src/js/helper";
 
 const Header = [
   {

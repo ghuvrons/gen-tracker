@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { confirm } from "components/js/framework";
+import { confirm } from "src/js/framework";
 import { get } from "lodash";
 import moment from "moment";
 import { INSERT_COMMAND } from "src/store/db/action-types";

@@ -1,6 +1,6 @@
 import * as mutations from "./mutation-types";
 import initialState from "./state";
-import config from "components/js/opt/config";
+import config from "src/js/opt/config";
 import moment from "moment";
 
 export default {
@@ -24,7 +24,7 @@ export default {
     if (idx >= 0)
       state.devices.splice(idx, 1, {
         ...state.devices[idx],
-        fingerTime: moment().unix(),
+        fingerTime: moment().unix()
       });
   },
   [mutations.ADD_DEVICES](state, payload) {
@@ -59,5 +59,5 @@ export default {
     state.fingers = state.fingers.filter(
       ({ unitID }) => unitID !== payload.unitID
     );
-  },
+  }
 };

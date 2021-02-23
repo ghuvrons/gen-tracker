@@ -49,9 +49,9 @@
 
 <script>
 import ReportHistoryModal from "components/etc/ReportHistoryModal";
-import { Report, lastFullReport, readReport } from "components/js/report";
+import { Report, lastFullReport, readReport } from "src/js/report";
 import { SET_TREE } from "src/store/common/mutation-types";
-import { getField, frameId } from "components/js/utils";
+import { getField, frameId } from "src/js/utils";
 import { get } from "lodash";
 import TreeReportReader from "components/etc/TreeReportReader";
 import ListReportReader from "components/etc/ListReportReader";

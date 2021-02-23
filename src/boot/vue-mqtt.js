@@ -1,5 +1,5 @@
 import VueMqtt from "vue-mqtt";
-import config from "components/js/opt/config";
+import config from "src/js/opt/config";
 import { LocalStorage } from "quasar";
 let { mqtt } = config;
 

@@ -1,5 +1,5 @@
-import { COMMAND_LIST, Command } from "components/js/opt/command";
-import { isString } from "components/js/utils";
+import { COMMAND_LIST, Command } from "src/js/opt/command";
+import { isString } from "src/js/utils";
 
 const buildCommand = (cmd, unitID) => {
   if (!cmd) return;

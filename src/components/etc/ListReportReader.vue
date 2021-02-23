@@ -27,33 +27,33 @@
 </template>
 
 <script>
-import { Report } from "components/js/report";
-import { getField, frameId } from "components/js/utils";
+import { Report } from "src/js/report";
+import { getField, frameId } from "src/js/utils";
 import { omit } from "lodash";
 
 export default {
   props: {
     report: {
-      required: true,
+      required: true
     },
     selected: {
-      required: true,
+      required: true
     },
     height: {
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {
     fields() {
       return Object.keys(omit(this.report, "hex"));
-    },
+    }
   },
   methods: {
     realtime(field) {
       let { required } = getField(Report, field);
       return this.report.frameID.val === frameId("FULL") || required;
-    },
-  },
+    }
+  }
 };
 </script>
 

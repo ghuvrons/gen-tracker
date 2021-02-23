@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import config from "components/js/opt/config";
-import { getPosition, getHeading } from "components/js/map";
+import config from "src/js/opt/config";
+import { getPosition, getHeading } from "src/js/map";
 import { Screen } from "quasar";
 
 import { reactive, toRefs, computed, watch } from "@vue/composition-api";

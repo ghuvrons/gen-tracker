@@ -70,8 +70,8 @@ import {
 } from "src/store/common/mutation-types";
 import { CLEAR_DATABASE } from "src/store/db/mutation-types";
 import { STOP_COMMAND } from "src/store/db/action-types";
-import { exportCSV, exportJSON, importJSON } from "components/js/exporter";
-import { confirm, notify, loader } from "components/js/framework";
+import { exportCSV, exportJSON, importJSON } from "src/js/exporter";
+import { confirm, notify, loader } from "src/js/framework";
 
 import { ref, reactive, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
