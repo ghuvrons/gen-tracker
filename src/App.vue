@@ -158,7 +158,7 @@ export default {
   },
   mounted() {
     this.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });
-    this.$mqtt.subscribe("VCU/+/RSP", { qos: 2 });
+    this.$mqtt.subscribe("VCU/+/RSP", { qos: 1 });
   },
   mqtt: {
     "VCU/+/RSP": function(data, topic) {
