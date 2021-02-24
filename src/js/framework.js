@@ -3,24 +3,25 @@ import { Dialog } from "quasar";
 import { Notify } from "quasar";
 import { QSpinnerGears } from "quasar";
 
-const notify = (message, type = "negative") => {
+const notify = (message, type = "negative", timeout = 5000) => {
   return Notify.create({
     type,
     message,
+    timeout
   });
 };
 
-const confirm = (message) => {
+const confirm = message => {
   return Dialog.create({
     message,
     title: "Confirmation",
     dark: Dark.isActive,
     preventClose: true,
-    cancel: true,
+    cancel: true
   });
 };
 
-const loader = (title) => {
+const loader = title => {
   return Dialog.create({
     title,
     message: "0%",
@@ -29,8 +30,8 @@ const loader = (title) => {
     ok: false,
     progress: {
       spinner: QSpinnerGears,
-      color: "primary",
-    },
+      color: "primary"
+    }
   });
 };
 

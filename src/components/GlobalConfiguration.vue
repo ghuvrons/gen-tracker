@@ -95,7 +95,7 @@ export default {
     const {
       [CLEAR_DATABASE]: clearDatabase,
       [ADD_BUFFERS]: addBuffers
-    } = db.useMutations([CLEAR_DATABASE, STOP_COMMAND, ADD_BUFFERS]);
+    } = db.useMutations([CLEAR_DATABASE, ADD_BUFFERS]);
     const {
       [STOP_COMMAND]: stopCommand,
       [INSERT_COMMAND]: insertCommand

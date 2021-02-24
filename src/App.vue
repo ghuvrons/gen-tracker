@@ -14,16 +14,16 @@ import {
   ADD_BUFFERS,
   DEL_BUFFER
 } from "src/store/db/mutation-types";
-import { parseCommand, buildCommand, extractCommand } from "src/js/command";
-import { validateFrame } from "src/js/frame";
-import { isString, dilation } from "src/js/utils";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
   STOP_COMMAND,
   INSERT_REPORTS,
   INSERT_RESPONSES,
   INSERT_DEV_STATUS
 } from "src/store/db/action-types";
+import { parseCommand, buildCommand, extractCommand } from "src/js/command";
+import { validateFrame } from "src/js/frame";
+import { isString, dilation } from "src/js/utils";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { parseReport } from "src/js/report";
 import { parseResponse, parseResCode } from "src/js/response";
 import config from "src/js/opt/config";
@@ -32,22 +32,33 @@ import { get } from "lodash";
 import moment from "moment";
 import { readEvent } from "src/js/event";
 
+import { ref, computed, reactive } from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
+
 export default {
   name: "App",
-  data() {
-    return {
-      notifier: null,
-      cmdTick: null,
-      cmdExecuting: null
-    };
-  },
-  computed: {
-    ...mapState("common", ["follow", "notification"]),
-    ...mapState("db", ["command", "responses", "reports", "buffers"]),
-    ...mapGetters("db", ["devDevice", "devReports", "devEvents"])
-  },
-  methods: {
-    ...mapMutations("db", [
+  setup(props) {
+    const db = createNamespacedHelpers("db");
+    const { command, responses, reports, buffers } = db.useState([
+      "command",
+      "responses",
+      "reports",
+      "buffers"
+    ]);
+    const { devDevice, devReports, devEvents } = db.useGetters([
+      "devDevice",
+      "devReports",
+      "devEvents"
+    ]);
+    const {
+      [SET_REPORT]: setReport,
+      [ADD_FINGERS]: addFingers,
+      [ADD_BUFFERS]: addBuffers,
+      [DEL_BUFFER]: delBuffer,
+      [REMOVE_FINGERS]: removeFingers,
+      [CLEAR_FINGERS]: clearFingers,
+      [TAKE_DEV_FINGER]: takeDevFinger
+    } = db.useMutations([
       SET_REPORT,
       ADD_FINGERS,
       ADD_BUFFERS,
@@ -55,14 +66,32 @@ export default {
       REMOVE_FINGERS,
       CLEAR_FINGERS,
       TAKE_DEV_FINGER
-    ]),
-    ...mapActions("db", [
+    ]);
+    const {
+      [INSERT_RESPONSES]: insertResponses,
+      [INSERT_REPORTS]: insertReports,
+      [INSERT_DEV_STATUS]: insertDevStatus,
+      [STOP_COMMAND]: stopCommand
+    } = db.useActions([
       INSERT_RESPONSES,
       INSERT_REPORTS,
       INSERT_DEV_STATUS,
       STOP_COMMAND
-    ]),
-    notifyResponse({ resCode }) {
+    ]);
+
+    const common = createNamespacedHelpers("common");
+    const { follow, notification } = common.useState([
+      "follow",
+      "notification"
+    ]);
+
+    const state = reactive({
+      notifier: null,
+      cmdTick: null,
+      cmdExecuting: null
+    });
+
+    const notifyResponse = ({ resCode }) => {
       let res = parseResCode(resCode);
       let ok = res.title == "OK";
 
@@ -70,21 +99,69 @@ export default {
       let msg = ok ? "Command sent." : `Command is ${res.title}`;
 
       notify(msg, type);
-    },
-
-    starWaitting(exec) {
+    };
+    const starWaitting = exec => {
       let { timeout } = config.command;
       if (exec.timeout > timeout) timeout = exec.timeout;
 
-      this.cmdExecuting = exec;
-      this.cmdTick = moment();
+      state.cmdExecuting = exec;
+      state.cmdTick = moment();
       this.timers.cmdTimeout.time = timeout * 1000;
       this.$timer.start("cmdTimeout");
-      this.notifier = this.$q.notify({
-        message: "Sending command....",
-        timeout: 0
-      });
-    },
+      state.notifier = notify("Sending command....", "info", 0);
+    };
+  },
+  // data() {
+  //   return {
+  //     notifier: null,
+  //     cmdTick: null,
+  //     cmdExecuting: null
+  //   };
+  // },
+  computed: {
+    // ...mapState("common", ["follow", "notification"]),
+    // ...mapState("db", ["command", "responses", "reports", "buffers"]),
+    // ...mapGetters("db", ["devDevice", "devReports", "devEvents"])
+  },
+  methods: {
+    // ...mapMutations("db", [
+    //   SET_REPORT,
+    //   ADD_FINGERS,
+    //   ADD_BUFFERS,
+    //   DEL_BUFFER,
+    //   REMOVE_FINGERS,
+    //   CLEAR_FINGERS,
+    //   TAKE_DEV_FINGER
+    // ]),
+    // ...mapActions("db", [
+    //   INSERT_RESPONSES,
+    //   INSERT_REPORTS,
+    //   INSERT_DEV_STATUS,
+    //   STOP_COMMAND
+    // ]),
+    // notifyResponse({ resCode }) {
+    //   let res = parseResCode(resCode);
+    //   let ok = res.title == "OK";
+
+    //   let type = ok ? "positive" : "negative";
+    //   let msg = ok ? "Command sent." : `Command is ${res.title}`;
+
+    //   notify(msg, type);
+    // },
+
+    // starWaitting(exec) {
+    //   let { timeout } = config.command;
+    //   if (exec.timeout > timeout) timeout = exec.timeout;
+
+    //   this.cmdExecuting = exec;
+    //   this.cmdTick = moment();
+    //   this.timers.cmdTimeout.time = timeout * 1000;
+    //   this.$timer.start("cmdTimeout");
+    //   this.notifier = this.$q.notify({
+    //     message: "Sending command....",
+    //     timeout: 0
+    //   });
+    // },
     stopWaitting() {
       if (this.notifier) this.notifier();
       if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
