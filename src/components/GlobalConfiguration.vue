@@ -4,16 +4,22 @@
       <div class="col-auto">
         <q-btn
           icon="delete"
-          color="negative"
-          label="Clear data"
+          label="Reset DB"
           :disable="devices.length == 0"
           @click="clearStore()"
         />
       </div>
       <div class="col-auto">
         <q-btn
+          icon="alarm_on"
+          label="Calibrate"
+          :disable="devReports.length == 0"
+          @click="calibrate()"
+        />
+      </div>
+      <div class="col-auto">
+        <q-btn
           icon="stop"
-          color="primary"
           label="Ignore command"
           :disable="!command.exec"
           @click="ignoreCommand()"
@@ -22,7 +28,6 @@
       <div class="col-auto">
         <q-btn
           icon="cloud_download"
-          color="green"
           label="Export CSV"
           :disable="reports.length == 0"
           @click.native="exportCSV(reports)"
@@ -31,7 +36,6 @@
       <div class="col-auto">
         <q-btn
           icon="cloud_download"
-          color="purple"
           label="Export JSON"
           :disable="reports.length == 0"
           @click.native="exportJSON(reports)"
@@ -50,13 +54,6 @@
     </div>
     <div class="row q-gutter-xs q-mt-xs">
       <div class="col-auto">
-        <q-toggle
-          v-model="calibrationState"
-          :disable="devices.length == 0"
-          label="Time Calibration"
-        />
-      </div>
-      <div class="col-auto">
         <q-toggle v-model="notificationState" label="Notification" />
       </div>
     </div>
@@ -64,14 +61,13 @@
 </template>
 
 <script>
-import {
-  SET_CALIBRATION,
-  SET_NOTIFICATION
-} from "src/store/common/mutation-types";
+import { SET_NOTIFICATION } from "src/store/common/mutation-types";
 import { CLEAR_DATABASE, ADD_BUFFERS } from "src/store/db/mutation-types";
-import { STOP_COMMAND } from "src/store/db/action-types";
+import { STOP_COMMAND, INSERT_COMMAND } from "src/store/db/action-types";
 import { exportCSV, exportJSON, importJSON } from "src/js/exporter";
 import { confirm, notify } from "src/js/framework";
+import { calibrateTime } from "src/js/utils";
+import { frameId } from "src/js/utils";
 
 import { ref, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
@@ -91,28 +87,27 @@ export default {
       "command",
       "reports"
     ]);
-    const {
-      [CLEAR_DATABASE]: clearDatabase,
-      [STOP_COMMAND]: stopCommand,
-      [ADD_BUFFERS]: addBuffers
-    } = db.useMutations([CLEAR_DATABASE, STOP_COMMAND, ADD_BUFFERS]);
-
-    const common = createNamespacedHelpers("common");
-    const { calibration, notification } = common.useState([
-      "calibration",
-      "notification"
+    const { devDevice, devReports } = db.useGetters([
+      "devDevice",
+      "devReports"
     ]);
     const {
-      [SET_CALIBRATION]: setCalibration,
-      [SET_NOTIFICATION]: setNotification
-    } = common.useMutations([SET_CALIBRATION, SET_NOTIFICATION]);
+      [CLEAR_DATABASE]: clearDatabase,
+      [ADD_BUFFERS]: addBuffers
+    } = db.useMutations([CLEAR_DATABASE, STOP_COMMAND, ADD_BUFFERS]);
+    const {
+      [STOP_COMMAND]: stopCommand,
+      [INSERT_COMMAND]: insertCommand
+    } = db.useActions([STOP_COMMAND, INSERT_COMMAND]);
+
+    const common = createNamespacedHelpers("common");
+    const { notification } = common.useState(["notification"]);
+    const { [SET_NOTIFICATION]: setNotification } = common.useMutations([
+      SET_NOTIFICATION
+    ]);
 
     const uploader = ref(null);
 
-    const calibrationState = computed({
-      get: () => calibration.value,
-      set: v => setCalibration(v)
-    });
     const notificationState = computed({
       get: () => notification.value,
       set: v => setNotification(v)
@@ -123,6 +118,20 @@ export default {
     const ignoreCommand = () => {
       notify("Command ignored.", "warning");
       stopCommand();
+    };
+    const calibrate = () => {
+      if (!devDevice) return;
+
+      let report = devReports.value.find(
+        ({ frameID }) => frameID.val == frameId("FULL")
+      );
+      if (!report) return;
+
+      let validTime = calibrateTime(report);
+      if (!validTime) return;
+
+      insertCommand({ payload: `REPORT_RTC=${validTime}` });
+      notify("Calibrating device time..", "info");
     };
     const importData = ([file]) =>
       importJSON(file).then(hexs => {
@@ -136,10 +145,11 @@ export default {
       devices,
       command,
       reports,
+      devReports,
 
-      calibrationState,
       notificationState,
 
+      calibrate,
       clearStore,
       ignoreCommand,
       importData,

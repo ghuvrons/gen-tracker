@@ -18,8 +18,8 @@ export default {
     state.command = command;
   },
 
-  [mutations.TAKE_FINGER_TIME](state, theUnitID) {
-    let idx = state.devices.findIndex(({ unitID }) => unitID === theUnitID);
+  [mutations.TAKE_DEV_FINGER](state, unitID) {
+    let idx = state.devices.findIndex(dev => dev.unitID === unitID);
 
     if (idx >= 0)
       state.devices.splice(idx, 1, {
@@ -27,8 +27,17 @@ export default {
         fingerTime: moment().unix()
       });
   },
+  [mutations.TAKE_DEV_STATUS](state, { unitID, status }) {
+    let idx = state.devices.findIndex(dev => dev.unitID.toString() === unitID);
+
+    if (idx >= 0)
+      state.devices.splice(idx, 1, {
+        ...state.devices[idx],
+        status
+      });
+  },
   [mutations.ADD_BUFFERS](state, payload) {
-    state.buffers.unshift(payload);
+    state.buffers.push(payload);
   },
   [mutations.DEL_BUFFER](state) {
     state.buffers.shift();

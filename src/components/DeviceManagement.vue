@@ -25,6 +25,12 @@
           :clickable="!processing"
           dense
         >
+          <q-item-section side>
+            <q-icon
+              :name="dev.status ? 'play_circle' : 'pause_circle'"
+              :color="dev.status ? 'green' : 'red'"
+            ></q-icon>
+          </q-item-section>
           <q-item-section>
             <q-item-label class="text-subtitle2">
               {{ dev.unitID.toString() }}

@@ -45,7 +45,7 @@ const makeDataJSON = reports => {
 
 const exportJSON = reports => {
   const fileName = `tracking-${moment().format("YYMMDDHHmmss")}`;
-  const data = makeDataJSON(reports);
+  const data = makeDataJSON(reports.slice().reverse());
   const exportType = "json";
 
   exportFromJSON({ data, fileName, exportType });

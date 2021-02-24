@@ -4,7 +4,6 @@ export default function() {
     darker: false,
     tree: false,
     follow: true,
-    calibration: true,
     notification: true
   };
 }

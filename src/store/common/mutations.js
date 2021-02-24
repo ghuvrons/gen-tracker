@@ -4,9 +4,6 @@ export default {
   [mutations.SET_PROCESSING](state, payload) {
     state.processing = payload;
   },
-  [mutations.SET_CALIBRATION](state, value) {
-    state.calibration = value;
-  },
   [mutations.SET_DARKER](state, value) {
     state.darker = value;
   },

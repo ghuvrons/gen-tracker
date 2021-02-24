@@ -10,18 +10,17 @@ import {
   ADD_FINGERS,
   REMOVE_FINGERS,
   CLEAR_FINGERS,
-  TAKE_FINGER_TIME,
+  TAKE_DEV_FINGER,
   ADD_BUFFERS,
-  DEL_BUFFER
+  DEL_BUFFER,
+  TAKE_DEV_STATUS
 } from "src/store/db/mutation-types";
 import { parseCommand, buildCommand, extractCommand } from "src/js/command";
 import { validateFrame } from "src/js/frame";
-import { isString, dilation, frameId } from "src/js/utils";
-import { calibrateTime } from "src/js/utils";
+import { isString, dilation } from "src/js/utils";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
   STOP_COMMAND,
-  INSERT_COMMAND,
   INSERT_REPORTS,
   INSERT_RESPONSES
 } from "src/store/db/action-types";
@@ -43,7 +42,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("common", ["follow", "calibration", "notification"]),
+    ...mapState("common", ["follow", "notification"]),
     ...mapState("db", ["command", "responses", "reports", "buffers"]),
     ...mapGetters("db", ["devDevice", "devReports", "devEvents"])
   },
@@ -55,14 +54,10 @@ export default {
       DEL_BUFFER,
       REMOVE_FINGERS,
       CLEAR_FINGERS,
-      TAKE_FINGER_TIME
+      TAKE_DEV_FINGER,
+      TAKE_DEV_STATUS
     ]),
-    ...mapActions("db", [
-      INSERT_RESPONSES,
-      INSERT_REPORTS,
-      INSERT_COMMAND,
-      STOP_COMMAND
-    ]),
+    ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS, STOP_COMMAND]),
     notifyResponse({ resCode }) {
       let res = parseResCode(resCode);
       let ok = res.title == "OK";
@@ -98,27 +93,15 @@ export default {
       this.notifyResponse(response);
       this.STOP_COMMAND();
     },
-    handleCommandLost(report) {
-      let { sendDatetime, unitID } = report;
+    // handleCommandLost(report) {
+    //   let { sendDatetime, unitID } = report;
 
-      if (this.cmdExecuting.unitID != unitID.val) return;
-      if (dilation(sendDatetime.val, "seconds", this.cmdTick) < 10) return;
+    //   if (this.cmdExecuting.unitID != unitID.val) return;
+    //   if (dilation(sendDatetime.val, "seconds", this.cmdTick) < 10) return;
 
-      notify("Command lost.", "warning");
-      this.STOP_COMMAND();
-    },
-
-    calibrate(report) {
-      if (!this.devDevice) return;
-
-      if (report.frameID.val != frameId("FULL")) return;
-
-      let validTime = calibrateTime(report);
-      if (!validTime) return;
-
-      this.INSERT_COMMAND({ payload: `REPORT_RTC=${validTime}` });
-      notify("Calibrating device time..", "info");
-    },
+    //   notify("Command lost.", "warning");
+    //   this.STOP_COMMAND();
+    // },
     handleResponseFrame(hex) {
       let response = parseResponse(this.cmdExecuting, hex);
       if (get(response, "unitID") !== this.cmdExecuting.unitID) return;
@@ -140,12 +123,8 @@ export default {
     handleReportFrame(hex) {
       let report = parseReport(hex);
 
-      if (dilation(report.logDatetime.val, "years") > 1) {
-        if (this.calibration)
-          if (dilation(report.sendDatetime.val, "years") > 1)
-            this.calibrate(report);
+      if (dilation(report.logDatetime.val, "years") > 1)
         return console.error(`^REPORT (EXPIRED)`);
-      }
 
       if (
         this.reports.some(
@@ -156,17 +135,16 @@ export default {
 
       this.INSERT_REPORTS(report);
 
-      if (get(this.cmdExecuting, "timeout") > 60)
-        this.handleCommandLost(report);
+      // if (get(this.cmdExecuting, "timeout") > 60)
+      //   this.handleCommandLost(report);
 
       return report;
     },
-    validFrame(bin) {
-      let hex = bin.toString("hex").toUpperCase();
+    validFrame(hex) {
       let valid = validateFrame(hex);
 
       if (!valid) return console.error(`CORRUPT ${hex}`);
-      return hex;
+      return hex.toUpperCase();
     }
   },
   timers: {
@@ -176,10 +154,11 @@ export default {
   mounted() {
     this.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });
     this.$mqtt.subscribe("VCU/+/RSP", { qos: 1 });
+    this.$mqtt.subscribe("VCU/+/STS", { qos: 1 });
   },
   mqtt: {
     "VCU/+/RSP": function(data, topic) {
-      let hex = this.validFrame(data);
+      let hex = this.validFrame(data.toString("hex"));
       if (!hex) return;
 
       if (!this.cmdExecuting) return console.error(`RESPONSE ${hex}`);
@@ -188,10 +167,17 @@ export default {
       this.handleResponseFrame(hex);
     },
     "VCU/+/RPT": function(data, topic) {
-      let hex = this.validFrame(data);
+      let hex = this.validFrame(data.toString("hex"));
       if (!hex) return;
 
       this.ADD_BUFFERS(hex);
+    },
+    "VCU/+/STS": function(data, topic) {
+      let status = parseInt(data);
+      let [, unitID] = topic.split("/");
+
+      console.warn(unitID, status);
+      this.TAKE_DEV_STATUS({ unitID, status });
     }
   },
   watch: {
@@ -239,7 +225,7 @@ export default {
       // DRIVER LOGIC
       let { prop, value } = extractCommand(payload);
       if (prop == "FINGER_FETCH") {
-        this.TAKE_FINGER_TIME(unitID);
+        this.TAKE_DEV_FINGER(unitID);
         if (message.length > 0) {
           let ids = message.split(",");
           ids.forEach(fingerID => this.ADD_FINGERS({ unitID, fingerID }));
