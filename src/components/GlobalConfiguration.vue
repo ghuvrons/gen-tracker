@@ -49,6 +49,7 @@
           :factory="importData"
           accept=".json"
           label="Import JSON"
+          auto-upload
         />
       </div>
     </div>
@@ -136,7 +137,7 @@ export default {
     const importData = ([file]) =>
       importJSON(file).then(hexs => {
         hexs.forEach(hex => addBuffers(hex));
-        if (uploader.value) uploader.value.reset();
+        uploader.value.reset();
       });
 
     return {

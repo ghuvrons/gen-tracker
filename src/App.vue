@@ -97,15 +97,6 @@ export default {
       this.notifyResponse(response);
       this.STOP_COMMAND();
     },
-    // handleCommandLost(report) {
-    //   let { sendDatetime, unitID } = report;
-
-    //   if (this.cmdExecuting.unitID != unitID.val) return;
-    //   if (dilation(sendDatetime.val, "seconds", this.cmdTick) < 10) return;
-
-    //   notify("Command lost.", "warning");
-    //   this.STOP_COMMAND();
-    // },
     handleResponseFrame(hex) {
       let response = parseResponse(this.cmdExecuting, hex);
       if (get(response, "unitID") !== this.cmdExecuting.unitID) return;
@@ -138,9 +129,6 @@ export default {
         return console.error(`^REPORT (DUPLICATE)`);
 
       this.INSERT_REPORTS(report);
-
-      // if (get(this.cmdExecuting, "timeout") > 60)
-      //   this.handleCommandLost(report);
 
       return report;
     },

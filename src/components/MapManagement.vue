@@ -1,5 +1,10 @@
 <template>
-  <q-splitter :value="showPano ? 50 : 100">
+  <q-splitter :value="streetView ? 50 : 100">
+    <!--
+        we listen for size changes on this next
+        <div>, so we place the observer as direct child:
+      -->
+    <q-resize-observer @resize="onResize" />
     <template v-slot:before>
       <gmap-map
         class="fit"
@@ -16,7 +21,7 @@
         ></gmap-polyline>
       </gmap-map>
     </template>
-    <template v-if="showPano" v-slot:separator>
+    <template v-if="streetView" v-slot:separator>
       <q-avatar
         color="grey"
         text-color="white"
@@ -24,7 +29,7 @@
         icon="drag_indicator"
       />
     </template>
-    <template v-if="showPano" v-slot:after>
+    <template v-if="streetView" v-slot:after>
       <gmap-street-view-panorama
         class="fit"
         :position="position"
@@ -40,9 +45,8 @@
 <script>
 import config from "src/js/opt/config";
 import { getPosition, getHeading } from "src/js/map";
-import { Screen } from "quasar";
 
-import { reactive, toRefs, computed, watch } from "@vue/composition-api";
+import { reactive, toRefs, watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
@@ -54,6 +58,7 @@ export default {
 
     const { centerIndonesia, zoom } = config.map;
     const state = reactive({
+      streetView: false,
       pov: null,
       pano: null,
       path: [],
@@ -76,8 +81,6 @@ export default {
       }
     });
 
-    const showPano = computed(() => Screen.gt.xs);
-
     const updatePov = pov => (state.pov = pov);
     const updatePano = pano => (state.pano = pano);
     const setPosition = ({ valid, ...location }) => {
@@ -85,6 +88,7 @@ export default {
       state.center = { ...(valid ? location : centerIndonesia) };
       state.position = { ...location, valid };
     };
+    const onResize = ({ width }) => (state.streetView = width > 500);
 
     watch(
       () => devReports.value[0],
@@ -114,10 +118,10 @@ export default {
 
     return {
       ...toRefs(state),
-      showPano,
 
       updatePov,
-      updatePano
+      updatePano,
+      onResize
     };
   }
 };

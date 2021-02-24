@@ -80,53 +80,66 @@
 
 <script>
 import { SET_DARKER } from "src/store/common/mutation-types";
-import { mapState, mapMutations } from "vuex";
 import ReportReader from "components/ReportReader";
 import DeviceManagement from "components/DeviceManagement";
 import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
 import config from "src/js/opt/config";
+import { Platform, Dark } from "quasar";
+
+import {
+  computed,
+  reactive,
+  toRefs,
+  watch,
+  onMounted
+} from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
-  name: "MyLayout",
+  // name: "MyLayout",
   components: {
     ReportReader,
     DeviceManagement,
     ResponseLog,
     CommandManagement
   },
-  data() {
-    return {
+  setup(props) {
+    const { useState, useMutations } = createNamespacedHelpers("common");
+    const { darker } = useState(["darker"]);
+    const { [SET_DARKER]: setDarker } = useMutations([SET_DARKER]);
+
+    const state = reactive({
       drawer: {
-        left: this.$q.platform.is.desktop,
+        left: Platform.is.desktop,
         right: false
       },
       app: config.app,
       splitter: 150
+    });
+
+    const hCommandManagement = computed(() => `height: 120px`);
+    const hResponseLog = computed(
+      () => `height: calc(100vh - ${hCommandManagement.value} - 33px)`
+    );
+    const hDeviceManagement = computed(
+      () => `height: calc(${state.splitter}px - 32px)`
+    );
+
+    watch(
+      () => Dark.isActive,
+      v => setDarker(v)
+    );
+
+    onMounted(() => Dark.set(darker.value));
+
+    return {
+      ...toRefs(state),
+
+      hCommandManagement,
+      hResponseLog,
+      hDeviceManagement
     };
-  },
-  computed: {
-    ...mapState("common", ["darker"]),
-    hCommandManagement() {
-      return `height: 120px`;
-    },
-    hResponseLog() {
-      return `height: calc(100vh - ${this.hCommandManagement} - 33px)`;
-    },
-    hDeviceManagement() {
-      return `height: calc(${this.splitter}px - 32px)`;
-    }
-  },
-  methods: {
-    ...mapMutations("common", [SET_DARKER])
-  },
-  mounted() {
-    this.$q.dark.set(this.darker);
-  },
-  watch: {
-    "$q.dark.isActive": function(v) {
-      this.SET_DARKER(v);
-    }
   }
 };
 </script>
