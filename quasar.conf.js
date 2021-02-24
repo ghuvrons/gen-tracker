@@ -24,7 +24,6 @@ module.exports = function(/* ctx */) {
       "vue-mqtt",
       "vue-native-notification",
       "vue-offline",
-      "vue-timers",
       "vue2-google-maps"
     ],
 

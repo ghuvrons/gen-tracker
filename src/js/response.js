@@ -1,5 +1,6 @@
 import { getValue } from "src/js/utils";
 import { parseFrame } from "src/js/frame";
+import { notify } from "src/js/framework";
 import { VEHICLE_STATES } from "src/js/opt/report";
 import { RESPONSE_LIST, Response } from "src/js/opt/response";
 
@@ -46,4 +47,21 @@ const parseMessage = msg => {
   });
 };
 
-export { RESPONSE_LIST, Response, parseResponse, parseResCode, parseMessage };
+const notifyResponse = ({ resCode }) => {
+  let res = parseResCode(resCode);
+  let ok = res.title == "OK";
+
+  let type = ok ? "positive" : "negative";
+  let msg = ok ? "Command sent." : `Command is ${res.title}`;
+
+  notify(msg, type);
+};
+
+export {
+  RESPONSE_LIST,
+  Response,
+  parseResponse,
+  parseResCode,
+  parseMessage,
+  notifyResponse
+};

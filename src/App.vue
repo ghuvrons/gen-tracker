@@ -10,74 +10,48 @@ import {
   ADD_FINGERS,
   REMOVE_FINGERS,
   CLEAR_FINGERS,
-  TAKE_DEV_FINGER,
-  ADD_BUFFERS,
-  DEL_BUFFER
+  TAKE_DEV_FINGER
 } from "src/store/db/mutation-types";
-import {
-  STOP_COMMAND,
-  INSERT_REPORTS,
-  INSERT_RESPONSES,
-  INSERT_DEV_STATUS
-} from "src/store/db/action-types";
+import { STOP_COMMAND, INSERT_DEV_STATUS } from "src/store/db/action-types";
 import { parseCommand, buildCommand, extractCommand } from "src/js/command";
 import { validateFrame } from "src/js/frame";
-import { isString, dilation } from "src/js/utils";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import { parseReport } from "src/js/report";
-import { parseResponse, parseResCode } from "src/js/response";
-import config from "src/js/opt/config";
+import { isString } from "src/js/utils";
+import { parseResCode } from "src/js/response";
 import { notify } from "src/js/framework";
-import { get } from "lodash";
-import moment from "moment";
 import { readEvent } from "src/js/event";
+import useCommandProcessor from "src/composables/useCommandProcessor";
+import useBufferProcessor from "src/composables/useBufferProcessor";
 
-import { ref, computed, reactive } from "@vue/composition-api";
+import { get } from "lodash";
+import { watch, onMounted } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 
 export default {
-  name: "App",
-  setup(props) {
+  // name: "App",
+  setup(props, { root }) {
     const db = createNamespacedHelpers("db");
-    const { command, responses, reports, buffers } = db.useState([
-      "command",
-      "responses",
-      "reports",
-      "buffers"
-    ]);
-    const { devDevice, devReports, devEvents } = db.useGetters([
+    const { command, responses } = db.useState(["command", "responses"]);
+    const { devDevice, devReports } = db.useGetters([
       "devDevice",
-      "devReports",
-      "devEvents"
+      "devReports"
     ]);
     const {
       [SET_REPORT]: setReport,
       [ADD_FINGERS]: addFingers,
-      [ADD_BUFFERS]: addBuffers,
-      [DEL_BUFFER]: delBuffer,
       [REMOVE_FINGERS]: removeFingers,
       [CLEAR_FINGERS]: clearFingers,
       [TAKE_DEV_FINGER]: takeDevFinger
     } = db.useMutations([
       SET_REPORT,
       ADD_FINGERS,
-      ADD_BUFFERS,
-      DEL_BUFFER,
       REMOVE_FINGERS,
       CLEAR_FINGERS,
       TAKE_DEV_FINGER
     ]);
     const {
-      [INSERT_RESPONSES]: insertResponses,
-      [INSERT_REPORTS]: insertReports,
       [INSERT_DEV_STATUS]: insertDevStatus,
       [STOP_COMMAND]: stopCommand
-    } = db.useActions([
-      INSERT_RESPONSES,
-      INSERT_REPORTS,
-      INSERT_DEV_STATUS,
-      STOP_COMMAND
-    ]);
+    } = db.useActions([INSERT_DEV_STATUS, STOP_COMMAND]);
 
     const common = createNamespacedHelpers("common");
     const { follow, notification } = common.useState([
@@ -85,250 +59,135 @@ export default {
       "notification"
     ]);
 
-    const state = reactive({
-      notifier: null,
-      cmdTick: null,
-      cmdExecuting: null
+    const {
+      executor,
+      starWaitting,
+      stopWaitting,
+      handleResponse
+    } = useCommandProcessor();
+
+    const { addBuffers } = useBufferProcessor();
+
+    onMounted(() => {
+      root.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });
+      root.$mqtt.subscribe("VCU/+/RSP", { qos: 1 });
+      root.$mqtt.subscribe("VCU/+/STS", { qos: 1 });
     });
 
-    const notifyResponse = ({ resCode }) => {
-      let res = parseResCode(resCode);
-      let ok = res.title == "OK";
+    watch(
+      () => command.value.exec,
+      exec => {
+        if (!exec) return stopWaitting();
+        if (!devDevice.value) return notify("No device.");
+        if (executor.value) return notify("Command busy.");
 
-      let type = ok ? "positive" : "negative";
-      let msg = ok ? "Command sent." : `Command is ${res.title}`;
-
-      notify(msg, type);
-    };
-    const starWaitting = exec => {
-      let { timeout } = config.command;
-      if (exec.timeout > timeout) timeout = exec.timeout;
-
-      state.cmdExecuting = exec;
-      state.cmdTick = moment();
-      this.timers.cmdTimeout.time = timeout * 1000;
-      this.$timer.start("cmdTimeout");
-      state.notifier = notify("Sending command....", "info", 0);
-    };
-  },
-  // data() {
-  //   return {
-  //     notifier: null,
-  //     cmdTick: null,
-  //     cmdExecuting: null
-  //   };
-  // },
-  computed: {
-    // ...mapState("common", ["follow", "notification"]),
-    // ...mapState("db", ["command", "responses", "reports", "buffers"]),
-    // ...mapGetters("db", ["devDevice", "devReports", "devEvents"])
-  },
-  methods: {
-    // ...mapMutations("db", [
-    //   SET_REPORT,
-    //   ADD_FINGERS,
-    //   ADD_BUFFERS,
-    //   DEL_BUFFER,
-    //   REMOVE_FINGERS,
-    //   CLEAR_FINGERS,
-    //   TAKE_DEV_FINGER
-    // ]),
-    // ...mapActions("db", [
-    //   INSERT_RESPONSES,
-    //   INSERT_REPORTS,
-    //   INSERT_DEV_STATUS,
-    //   STOP_COMMAND
-    // ]),
-    // notifyResponse({ resCode }) {
-    //   let res = parseResCode(resCode);
-    //   let ok = res.title == "OK";
-
-    //   let type = ok ? "positive" : "negative";
-    //   let msg = ok ? "Command sent." : `Command is ${res.title}`;
-
-    //   notify(msg, type);
-    // },
-
-    // starWaitting(exec) {
-    //   let { timeout } = config.command;
-    //   if (exec.timeout > timeout) timeout = exec.timeout;
-
-    //   this.cmdExecuting = exec;
-    //   this.cmdTick = moment();
-    //   this.timers.cmdTimeout.time = timeout * 1000;
-    //   this.$timer.start("cmdTimeout");
-    //   this.notifier = this.$q.notify({
-    //     message: "Sending command....",
-    //     timeout: 0
-    //   });
-    // },
-    stopWaitting() {
-      if (this.notifier) this.notifier();
-      if (this.timers.cmdTimeout.isRunning) this.$timer.stop("cmdTimeout");
-      if (this.cmdExecuting) this.cmdExecuting = null;
-    },
-    cmdTimeout() {
-      let response = parseResponse(this.cmdExecuting, null);
-
-      this.INSERT_RESPONSES(response);
-      this.notifyResponse(response);
-      this.STOP_COMMAND();
-    },
-    handleResponseFrame(hex) {
-      let response = parseResponse(this.cmdExecuting, hex);
-      if (get(response, "unitID") !== this.cmdExecuting.unitID) return;
-
-      this.INSERT_RESPONSES(response);
-      this.notifyResponse(response);
-      this.STOP_COMMAND();
-
-      return response;
-    },
-    handleBuffers() {
-      if (this.buffers.length > 0) {
-        const hex = this.buffers[0];
-        this.DEL_BUFFER();
-        console.log(`REPORT ${hex}`);
-        this.handleReportFrame(hex);
-      }
-    },
-    handleReportFrame(hex) {
-      let report = parseReport(hex);
-
-      if (dilation(report.logDatetime.val, "years") > 1)
-        return console.error(`^REPORT (EXPIRED)`);
-
-      if (
-        this.reports.some(
-          ({ logDatetime }) => logDatetime.val == report.logDatetime.val
-        )
-      )
-        return console.error(`^REPORT (DUPLICATE)`);
-
-      this.INSERT_REPORTS(report);
-
-      return report;
-    },
-    validFrame(hex) {
-      let valid = validateFrame(hex);
-
-      if (!valid) return console.error(`CORRUPT ${hex}`);
-      return hex.toUpperCase();
-    }
-  },
-  timers: {
-    cmdTimeout: { time: 0 },
-    handleBuffers: { time: 100, autostart: true, repeat: true, immediate: true }
-  },
-  mounted() {
-    this.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });
-    this.$mqtt.subscribe("VCU/+/RSP", { qos: 1 });
-    this.$mqtt.subscribe("VCU/+/STS", { qos: 1 });
-  },
-  mqtt: {
-    "VCU/+/RSP": function(data, topic) {
-      let hex = this.validFrame(data.toString("hex"));
-      if (!hex) return;
-
-      if (!this.cmdExecuting) return console.error(`RESPONSE ${hex}`);
-
-      console.warn(`RESPONSE ${hex}`);
-      this.handleResponseFrame(hex);
-    },
-    "VCU/+/RPT": function(data, topic) {
-      let hex = this.validFrame(data.toString("hex"));
-      if (!hex) return;
-
-      this.ADD_BUFFERS(hex);
-    },
-    "VCU/+/STS": function(data, topic) {
-      let status = parseInt(data);
-      let unitID = parseInt(topic.split("/")[1]);
-
-      console.warn(unitID, status);
-      this.INSERT_DEV_STATUS({ unitID, status });
-    }
-  },
-  watch: {
-    "command.exec": {
-      immediate: true,
-      handler(exec) {
-        if (exec) {
-          if (!this.devDevice) return notify("No device.");
-          if (this.cmdExecuting) return notify("Command busy.");
-
-          let { payload } = this.command;
-          let cmd = parseCommand(payload);
-          if (isString(cmd)) {
-            this.STOP_COMMAND();
-            return notify(cmd);
-          }
-
-          let { unitID } = this.devDevice;
-          let hexCmd = buildCommand(cmd, unitID);
-          let binData = Buffer.from(hexCmd, "hex");
-
-          this.$mqtt.publish(`VCU/${unitID}/CMD`, binData, { qos: 2 });
-          console.log(`COMMAND ${hexCmd}`);
-
-          this.starWaitting({
-            ...cmd,
-            unitID,
-            payload,
-            hexCmd
-          });
-        } else {
-          this.stopWaitting();
+        let { payload } = command.value;
+        let cmd = parseCommand(payload);
+        if (isString(cmd)) {
+          stopCommand();
+          return notify(cmd);
         }
+
+        let { unitID } = devDevice.value;
+        let hexCmd = buildCommand(cmd, unitID);
+        let binData = Buffer.from(hexCmd, "hex");
+
+        root.$mqtt.publish(`VCU/${unitID}/CMD`, binData, { qos: 2 });
+        console.log(`COMMAND ${hexCmd}`);
+
+        starWaitting({
+          ...cmd,
+          unitID,
+          payload,
+          hexCmd
+        });
+      },
+      { lazy: false }
+    );
+
+    watch(
+      () => responses.value[0],
+      response => {
+        if (!response) return;
+
+        let { payload, unitID, message, resCode } = response;
+        let res = parseResCode(resCode);
+        let ok = res.title == "OK";
+
+        if (!ok) return;
+
+        // DRIVER LOGIC
+        let { prop, value } = extractCommand(payload);
+        if (prop == "FINGER_FETCH") {
+          takeDevFinger(unitID);
+          if (message.length > 0)
+            message
+              .split(",")
+              .forEach(fingerID => addFingers({ unitID, fingerID }));
+        } else if (prop == "FINGER_ADD")
+          addFingers({ unitID, fingerID: message });
+        else if (prop == "FINGER_DEL")
+          removeFingers({ unitID, fingerID: value });
+        else if (prop == "FINGER_RST") clearFingers({ unitID });
       }
-    },
-    "responses.0": function(response) {
-      if (!response) return;
+    );
 
-      let { payload, unitID, message, resCode } = response;
-      let res = parseResCode(resCode);
-      let ok = res.title == "OK";
-
-      if (!ok) return;
-
-      // DRIVER LOGIC
-      let { prop, value } = extractCommand(payload);
-      if (prop == "FINGER_FETCH") {
-        this.TAKE_DEV_FINGER(unitID);
-        if (message.length > 0) {
-          let ids = message.split(",");
-          ids.forEach(fingerID => this.ADD_FINGERS({ unitID, fingerID }));
-        }
-      } else if (prop == "FINGER_ADD")
-        this.ADD_FINGERS({ unitID, fingerID: message });
-      else if (prop == "FINGER_DEL")
-        this.REMOVE_FINGERS({ unitID, fingerID: value });
-      else if (prop == "FINGER_RST") this.CLEAR_FINGERS({ unitID });
-    },
-    "devReports.0": {
-      immediate: true,
-      handler(devReport, oldDevReport) {
-        if (!devReport) return this.SET_REPORT(null);
+    watch(
+      () => devReports.value[0],
+      (devReport, oldDevReport) => {
+        if (!devReport) return setReport(null);
 
         if (
           devReport.unitID.val != get(oldDevReport, "unitID.val") ||
-          this.follow
+          follow.value
         )
-          this.SET_REPORT(devReport);
+          setReport(devReport);
 
-        if (this.notification && oldDevReport) {
+        if (notification.value && oldDevReport) {
           let curEvents = readEvent(devReport);
           let oldEvents = readEvent(oldDevReport);
           let newEvents = curEvents.filter(evt => !oldEvents.includes(evt));
-          newEvents.forEach(evt => {
-            this.$notification.show(
+          newEvents.forEach(evt =>
+            root.$notification.show(
               evt,
               { body: devReport.logDatetime.out },
               {}
-            );
-          });
+            )
+          );
         }
-      }
+      },
+      { lazy: false }
+    );
+
+    return {
+      executor,
+
+      addBuffers,
+      handleResponse,
+      insertDevStatus
+    };
+  },
+  mqtt: {
+    "VCU/+/RSP": function(data, topic) {
+      let hex = data.toString("hex").toUpperCase();
+      if (!validateFrame(hex)) return console.error(`CORRUPT ${hex}`);
+
+      if (!this.executor) return console.error(`RESPONSE ${hex}`);
+      console.warn(`RESPONSE ${hex}`);
+      this.handleResponse(hex);
+    },
+    "VCU/+/RPT": function(data, topic) {
+      let hex = data.toString("hex").toUpperCase();
+      if (!validateFrame(hex)) return console.error(`CORRUPT ${hex}`);
+
+      this.addBuffers(hex);
+    },
+    "VCU/+/STS": function(data, topic) {
+      let unitID = parseInt(topic.split("/")[1]);
+      let status = parseInt(data);
+
+      console.warn(unitID, status);
+      this.insertDevStatus({ unitID, status });
     }
   }
 };

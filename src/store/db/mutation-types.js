@@ -9,7 +9,7 @@ export const SET_REPORT = "SET_REPORT";
 export const SET_COMMAND = "SET_COMMAND";
 
 export const ADD_BUFFERS = "ADD_BUFFERS";
-export const DEL_BUFFER = "DEL_BUFFER";
+export const FREE_BUFFER = "FREE_BUFFER";
 
 export const ADD_DEVICES = "ADD_DEVICES";
 export const ADD_REPORTS = "ADD_REPORTS";

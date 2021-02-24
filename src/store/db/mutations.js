@@ -39,7 +39,7 @@ export default {
   [mutations.ADD_BUFFERS](state, payload) {
     state.buffers.push(payload);
   },
-  [mutations.DEL_BUFFER](state) {
+  [mutations.FREE_BUFFER](state) {
     state.buffers.shift();
   },
 
