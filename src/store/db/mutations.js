@@ -28,7 +28,7 @@ export default {
       });
   },
   [mutations.TAKE_DEV_STATUS](state, { unitID, status }) {
-    let idx = state.devices.findIndex(dev => dev.unitID.toString() === unitID);
+    let idx = state.devices.findIndex(dev => dev.unitID === unitID);
 
     if (idx >= 0)
       state.devices.splice(idx, 1, {

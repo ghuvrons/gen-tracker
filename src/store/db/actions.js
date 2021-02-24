@@ -14,6 +14,10 @@ export default {
     commit(mutations.ADD_DEVICES, { unitID: payload.unitID });
     commit(mutations.ADD_RESPONSES, payload);
   },
+  [actions.INSERT_DEV_STATUS]({ state, commit }, payload) {
+    commit(mutations.ADD_DEVICES, { unitID: payload.unitID });
+    commit(mutations.TAKE_DEV_STATUS, payload);
+  },
   [actions.INSERT_COMMAND]({ state, commit }, payload) {
     let command = {
       exec: true,

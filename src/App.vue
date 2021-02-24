@@ -12,8 +12,7 @@ import {
   CLEAR_FINGERS,
   TAKE_DEV_FINGER,
   ADD_BUFFERS,
-  DEL_BUFFER,
-  TAKE_DEV_STATUS
+  DEL_BUFFER
 } from "src/store/db/mutation-types";
 import { parseCommand, buildCommand, extractCommand } from "src/js/command";
 import { validateFrame } from "src/js/frame";
@@ -22,7 +21,8 @@ import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import {
   STOP_COMMAND,
   INSERT_REPORTS,
-  INSERT_RESPONSES
+  INSERT_RESPONSES,
+  INSERT_DEV_STATUS
 } from "src/store/db/action-types";
 import { parseReport } from "src/js/report";
 import { parseResponse, parseResCode } from "src/js/response";
@@ -54,10 +54,14 @@ export default {
       DEL_BUFFER,
       REMOVE_FINGERS,
       CLEAR_FINGERS,
-      TAKE_DEV_FINGER,
-      TAKE_DEV_STATUS
+      TAKE_DEV_FINGER
     ]),
-    ...mapActions("db", [INSERT_RESPONSES, INSERT_REPORTS, STOP_COMMAND]),
+    ...mapActions("db", [
+      INSERT_RESPONSES,
+      INSERT_REPORTS,
+      INSERT_DEV_STATUS,
+      STOP_COMMAND
+    ]),
     notifyResponse({ resCode }) {
       let res = parseResCode(resCode);
       let ok = res.title == "OK";
@@ -174,10 +178,10 @@ export default {
     },
     "VCU/+/STS": function(data, topic) {
       let status = parseInt(data);
-      let [, unitID] = topic.split("/");
+      let unitID = parseInt(topic.split("/")[1]);
 
       console.warn(unitID, status);
-      this.TAKE_DEV_STATUS({ unitID, status });
+      this.INSERT_DEV_STATUS({ unitID, status });
     }
   },
   watch: {
