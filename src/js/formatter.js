@@ -4,11 +4,11 @@ const IntToHex = (num, len) => {
   return num.toString(16).padStart(len, "0");
 };
 
-const HexToUnsignedInt = (hex) => {
+const HexToUnsignedInt = hex => {
   return parseInt(hex, 16);
 };
 
-const HexToSignedInt32 = (hex) => {
+const HexToSignedInt32 = hex => {
   if (hex.length % 2 !== 0) hex = "0" + hex;
   let num = parseInt(hex, 16);
   let maxVal = Math.pow(2, (hex.length / 2) * 8);
@@ -16,13 +16,13 @@ const HexToSignedInt32 = (hex) => {
   return num;
 };
 
-const HexToSignedInt8 = (hex) => {
+const HexToSignedInt8 = hex => {
   let num = parseInt(hex, 16);
   if (num > 127) num -= 256;
   return num;
 };
 
-const HexToAscii = (hexx) => {
+const HexToAscii = hexx => {
   let hex = hexx.toString(); // force conversion
   let str = "";
   for (let i = 0; i < hex.length && hex.substr(i, 2) !== "00"; i += 2)
@@ -30,7 +30,7 @@ const HexToAscii = (hexx) => {
   return str;
 };
 
-const AsciiToHex = (str) => {
+const AsciiToHex = str => {
   let arr = [];
   for (let n = 0, l = str.length; n < l; n++)
     arr.push(Number(str.charCodeAt(n)).toString(16));
@@ -40,11 +40,11 @@ const AsciiToHex = (str) => {
 const Dot = (val, digit = 0) => {
   return Number(val).toLocaleString("id", {
     minimumFractionDigits: digit,
-    maximumFractionDigits: digit,
+    maximumFractionDigits: digit
   });
 };
 
-const ChangeEndian = (string) => {
+const ChangeEndian = string => {
   const result = [];
   let len = string.length - 2;
   while (len >= 0) {
@@ -61,6 +61,6 @@ export {
   HexToSignedInt32,
   HexToAscii,
   AsciiToHex,
-  Dot,
   ChangeEndian,
+  Dot
 };

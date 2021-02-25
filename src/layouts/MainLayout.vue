@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHr LpR lFr">
     <q-header elevated>
-      <q-bar v-if="isOffline" class="bg-red" dense>
+      <q-bar v-if="offline" class="bg-red" dense>
         <q-toolbar-title class="text-caption">Offline mode</q-toolbar-title>
       </q-bar>
       <q-toolbar class="bg-primary text-white">
@@ -16,9 +16,9 @@
 
         <q-toolbar-title>
           {{ app.title }}
-          <q-item-label class="text-white" caption
-            >{{ app.subTitle }} v.{{ app.version }}</q-item-label
-          >
+          <q-item-label class="text-white" caption>
+            {{ app.subTitle }} v.{{ app.version }}
+          </q-item-label>
         </q-toolbar-title>
 
         <q-btn
@@ -85,6 +85,7 @@ import DeviceManagement from "components/DeviceManagement";
 import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
 import config from "src/js/opt/config";
+import useOfflineDetector from "src/composables/useOfflineDetector";
 import { Platform, Dark } from "quasar";
 
 import {
@@ -95,6 +96,7 @@ import {
   onMounted
 } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useState, useMutations } = createNamespacedHelpers("common");
 
 export default {
   // name: "MyLayout",
@@ -105,7 +107,6 @@ export default {
     CommandManagement
   },
   setup(props) {
-    const { useState, useMutations } = createNamespacedHelpers("common");
     const { darker } = useState(["darker"]);
     const { [SET_DARKER]: setDarker } = useMutations([SET_DARKER]);
 
@@ -117,6 +118,8 @@ export default {
       app: config.app,
       splitter: 150
     });
+
+    const { offline } = useOfflineDetector();
 
     const hCommandManagement = computed(() => `height: 120px`);
     const hResponseLog = computed(
@@ -135,6 +138,7 @@ export default {
 
     return {
       ...toRefs(state),
+      offline,
 
       hCommandManagement,
       hResponseLog,

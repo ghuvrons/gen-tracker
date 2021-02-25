@@ -66,6 +66,7 @@ import { SET_FOLLOW } from "src/store/common/mutation-types";
 
 import { computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useState, useGetters, useMutations } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
@@ -76,10 +77,9 @@ export default {
     }
   },
   setup(props) {
-    const db = createNamespacedHelpers("db");
-    const { report } = db.useState(["report"]);
-    const { devReports } = db.useGetters(["devReports"]);
-    const { [SET_REPORT]: setReport } = db.useMutations([SET_REPORT]);
+    const { report } = useState(["report"]);
+    const { devReports } = useGetters(["devReports"]);
+    const { [SET_REPORT]: setReport } = useMutations([SET_REPORT]);
 
     const common = createNamespacedHelpers("common");
     const { follow } = common.useState(["follow"]);

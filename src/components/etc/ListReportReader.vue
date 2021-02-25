@@ -29,9 +29,12 @@
 <script>
 import { Report } from "src/js/report";
 import { getField, frameId } from "src/js/utils";
+
 import { omit } from "lodash";
+import { computed } from "@vue/composition-api";
 
 export default {
+  emits: ["update:selected"],
   props: {
     report: {
       required: true
@@ -43,16 +46,19 @@ export default {
       required: true
     }
   },
-  computed: {
-    fields() {
-      return Object.keys(omit(this.report, "hex"));
-    }
-  },
-  methods: {
-    realtime(field) {
+  setup(props) {
+    const fields = computed(() => Object.keys(omit(props.report, "hex")));
+
+    const realtime = field => {
       let { required } = getField(Report, field);
-      return this.report.frameID.val === frameId("FULL") || required;
-    }
+      return frameId(props.report.frameID.val) == "FULL" || required;
+    };
+
+    return {
+      fields,
+
+      realtime
+    };
   }
 };
 </script>

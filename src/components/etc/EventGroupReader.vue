@@ -24,13 +24,13 @@
 <script>
 import { EVENT_LIST, parseEvent } from "src/js/event";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useGetters } = createNamespacedHelpers("db");
 
 export default {
   props: {
     value: Number
   },
   setup(props) {
-    const { useGetters } = createNamespacedHelpers("db");
     const { devEvents } = useGetters(["devEvents"]);
 
     const activeEvent = theName => {

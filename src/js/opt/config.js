@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "1.65",
+    version: "1.67",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia"
   },
@@ -12,7 +12,7 @@ export default {
     password: ""
   },
   command: {
-    timeout: 20
+    timeout: 10
   },
   prefix: {
     report: "@R",

@@ -72,6 +72,12 @@ import { frameId } from "src/js/utils";
 
 import { ref, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const {
+  useState,
+  useGetters,
+  useMutations,
+  useActions
+} = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
@@ -82,24 +88,20 @@ export default {
     }
   },
   setup(props) {
-    const db = createNamespacedHelpers("db");
-    const { devices, command, reports } = db.useState([
+    const { devices, command, reports } = useState([
       "devices",
       "command",
       "reports"
     ]);
-    const { devDevice, devReports } = db.useGetters([
-      "devDevice",
-      "devReports"
-    ]);
+    const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
     const {
       [CLEAR_DATABASE]: clearDatabase,
       [ADD_BUFFERS]: addBuffers
-    } = db.useMutations([CLEAR_DATABASE, ADD_BUFFERS]);
+    } = useMutations([CLEAR_DATABASE, ADD_BUFFERS]);
     const {
       [STOP_COMMAND]: stopCommand,
       [INSERT_COMMAND]: insertCommand
-    } = db.useActions([STOP_COMMAND, INSERT_COMMAND]);
+    } = useActions([STOP_COMMAND, INSERT_COMMAND]);
 
     const common = createNamespacedHelpers("common");
     const { notification } = common.useState(["notification"]);
@@ -124,7 +126,7 @@ export default {
       if (!devDevice) return;
 
       let report = devReports.value.find(
-        ({ frameID }) => frameID.val == frameId("FULL")
+        ({ frameID }) => frameId(frameID.val) == "FULL"
       );
       if (!report) return;
 

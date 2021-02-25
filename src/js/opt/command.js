@@ -1,5 +1,5 @@
 import { Header } from "src/js/opt/header";
-import { IntToHex, ChangeEndian } from "src/js/helper";
+import { IntToHex, ChangeEndian } from "src/js/formatter";
 import { buildTimestamp } from "src/js/utils";
 import moment from "moment";
 
@@ -14,7 +14,8 @@ const COMMAND_LIST = [
     command: "GEN_QUOTA",
     desc: "Check internet quota",
     code: 0,
-    subCode: 1
+    subCode: 1,
+    timeout: 30
   },
   {
     command: "GEN_LED",
@@ -69,7 +70,7 @@ const COMMAND_LIST = [
     desc: "Get all registered id",
     code: 3,
     subCode: 0,
-    timeout: 10
+    timeout: 15
   },
   {
     command: "FINGER_ADD",
@@ -85,21 +86,21 @@ const COMMAND_LIST = [
     subCode: 2,
     type: "uint8_t",
     range: [1, 5],
-    timeout: 10
+    timeout: 15
   },
   {
     command: "FINGER_RST",
     desc: "Reset all saved fingerprint ID",
     code: 3,
     subCode: 3,
-    timeout: 10
+    timeout: 15
   },
   {
     command: "REMOTE_PAIRING",
     desc: "Pairing pocket keyless",
     code: 4,
     subCode: 0,
-    timeout: 10
+    timeout: 15
   },
   {
     command: "REMOTE_UNITID",

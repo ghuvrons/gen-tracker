@@ -7,7 +7,7 @@ const parseEvent = (value, bit) => {
   return Long.fromNumber(value, 1).shiftRight(bit) & 1;
 };
 
-const readEvent = ({ eventsGroup }) => {
+const readEvent = eventsGroup => {
   return EVENT_LIST.filter(({ bit }) => parseEvent(eventsGroup.val, bit)).map(
     ({ name }) => name
   );

@@ -49,6 +49,7 @@ import { parseResCode, parseMessage } from "src/js/response";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useGetters, useActions } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
@@ -58,7 +59,6 @@ export default {
     }
   },
   setup(props) {
-    const { useGetters, useActions } = createNamespacedHelpers("db");
     const { devResponses } = useGetters(["devResponses"]);
     const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 

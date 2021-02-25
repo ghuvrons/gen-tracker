@@ -8,7 +8,7 @@ const parseReportData = hex => {
 
   let report = Report.filter(
     ({ required }) =>
-      frameID == frameId("FULL") || (frameID == frameId("SIMPLE") && required)
+      frameId(frameID) == "FULL" || (frameId(frameID) == "SIMPLE" && required)
   );
 
   return parseFrame(hex, report);
@@ -58,7 +58,7 @@ const lastFullReport = (report, reports) => {
 
   while (index < reports.length) {
     let prev = reports[index++];
-    if (prev.frameID.val === frameId("FULL")) return prev;
+    if (frameId(prev.frameID.val) == "FULL") return prev;
   }
 };
 

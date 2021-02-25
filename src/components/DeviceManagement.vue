@@ -55,6 +55,7 @@ import { SET_UNITID } from "src/store/db/mutation-types";
 import { get } from "lodash";
 
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useState, useMutations, useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
@@ -64,9 +65,6 @@ export default {
     }
   },
   setup(props) {
-    const { useState, useMutations, useGetters } = createNamespacedHelpers(
-      "db"
-    );
     const { devices } = useState(["devices"]);
     const { [SET_UNITID]: setUnitID } = useMutations([SET_UNITID]);
     const { devDevice, getTotalReports, getLastReport } = useGetters([

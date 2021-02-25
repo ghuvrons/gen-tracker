@@ -83,6 +83,7 @@ import { INSERT_COMMAND } from "src/store/db/action-types";
 
 import { ref } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useGetters, useActions } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
@@ -93,7 +94,6 @@ export default {
     }
   },
   setup(props) {
-    const { useGetters, useActions } = createNamespacedHelpers("db");
     const { devFingers, devDevice } = useGetters(["devFingers", "devDevice"]);
     const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 

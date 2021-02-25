@@ -114,6 +114,7 @@ import {
   grabDatasets
 } from "src/js/chart";
 import useChart from "src/composables/useChart";
+
 import {
   computed,
   reactive,
@@ -122,9 +123,11 @@ import {
   toRefs
 } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
+  emits: ["close"],
   props: {
     field: {
       required: true
@@ -170,7 +173,6 @@ export default {
       }
     });
 
-    const { useGetters } = createNamespacedHelpers("db");
     const { devReports, devEvents } = useGetters(["devReports", "devEvents"]);
 
     const theField = computed(() => getField(Report, props.field));

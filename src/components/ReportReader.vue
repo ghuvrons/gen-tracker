@@ -58,6 +58,7 @@ import ListReportReader from "components/etc/ListReportReader";
 
 import { ref, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useState, useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
@@ -72,9 +73,8 @@ export default {
     ListReportReader
   },
   setup(props) {
-    const db = createNamespacedHelpers("db");
-    const { report } = db.useState(["report"]);
-    const { devReports } = db.useGetters(["devReports"]);
+    const { report } = useState(["report"]);
+    const { devReports } = useGetters(["devReports"]);
 
     const common = createNamespacedHelpers("common");
     const { tree } = common.useState(["tree"]);
@@ -96,7 +96,7 @@ export default {
       if (!report.value) return;
 
       let rpt = readReport(report.value);
-      if (report.value.frameId != frameId("FULL")) {
+      if (frameId(report.value.frameId) != "FULL") {
         let full = lastFullReport(report.value, devReports.value);
 
         if (full)

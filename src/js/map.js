@@ -17,7 +17,7 @@ const getPosition = ({ frameID, gpsLatitude, gpsLongitude }) => {
     valid: false
   };
 
-  if (frameID.val === frameId("FULL")) {
+  if (frameId(frameID.val) == "FULL") {
     pos.lat = gpsLatitude.val;
     pos.lng = gpsLongitude.val;
     pos.valid = isIndonesia(pos);
@@ -27,7 +27,7 @@ const getPosition = ({ frameID, gpsLatitude, gpsLongitude }) => {
 };
 
 const getHeading = ({ frameID, gpsHeading }) => {
-  if (frameID.val === frameId("FULL")) return gpsHeading.val;
+  if (frameId(frameID.val) == "FULL") return gpsHeading.val;
   return 0;
 };
 

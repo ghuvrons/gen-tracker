@@ -7,7 +7,7 @@ import {
   AsciiToHex,
   HexToUnsignedInt,
   IntToHex
-} from "src/js/helper";
+} from "src/js/formatter";
 
 const Header = [
   {

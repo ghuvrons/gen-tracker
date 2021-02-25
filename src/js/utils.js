@@ -1,15 +1,10 @@
 import _ from "lodash";
 import config from "src/js/opt/config";
-import { HexToUnsignedInt, IntToHex } from "src/js/helper";
+import { HexToUnsignedInt, IntToHex } from "src/js/formatter";
 import moment from "moment";
 import "moment-timezone";
 
-// const moment = require("moment-timezone");
 const tzlookup = require("tz-lookup");
-
-const isString = myVar => {
-  return typeof myVar === "string" || myVar instanceof String;
-};
 
 const flowFilter = (array, substr) => {
   return _.filter(
@@ -70,10 +65,15 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
 const parseDatetime = hex => {
   let timestamp = hex.match(/.{1,2}/g);
 
-  return timestamp.reduce((acc, ts) => {
-    let dt = HexToUnsignedInt(ts);
-    return acc.concat(dt.toString().padStart(2, "0"));
-  }, "");
+  return timestamp.reduce(
+    (acc, ts) =>
+      acc.concat(
+        HexToUnsignedInt(ts)
+          .toString()
+          .padStart(2, "0")
+      ),
+    ""
+  );
 };
 
 const buildTimestamp = ascii => {
@@ -86,13 +86,12 @@ const buildTimestamp = ascii => {
   );
 };
 
-const frameId = name => {
-  return config.frames.findIndex(v => v.includes(name));
+const frameId = index => {
+  return config.frames[index];
 };
 
 export {
   flowFilter,
-  isString,
   getField,
   getValue,
   getOutput,

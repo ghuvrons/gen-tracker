@@ -3,6 +3,16 @@ import { Dialog } from "quasar";
 import { Notify } from "quasar";
 import { QSpinnerGears } from "quasar";
 
+const pushNotification = (title, body) => {
+  const showNotification = () => new Notification(title, { body });
+
+  if (Notification.permission === "granted") showNotification();
+  else if (Notification.permission !== "denied")
+    Notification.requestPermission().then(
+      permission => permission === "granted" && showNotification()
+    );
+};
+
 const notify = (message, type = "negative", timeout = 5000) => {
   return Notify.create({
     type,
@@ -35,4 +45,4 @@ const loader = title => {
   });
 };
 
-export { notify, confirm, loader };
+export { pushNotification, notify, confirm, loader };

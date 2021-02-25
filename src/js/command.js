@@ -1,5 +1,4 @@
 import { COMMAND_LIST, Command } from "src/js/opt/command";
-import { isString } from "src/js/utils";
 
 const buildCommand = (cmd, unitID) => {
   if (!cmd) return;
@@ -46,27 +45,27 @@ const extractCommand = payload => {
   return { prop, value };
 };
 
-const parseCommand = payload => {
-  let { prop, value } = extractCommand(payload);
-
+const parseCommand = (payload, log) => {
   // check is no payload
-  if (!payload) return "Empty payload.";
+  if (!payload) return log("Empty payload.");
+
+  let { prop, value } = extractCommand(payload);
 
   // check is command exist
   let cmd = COMMAND_LIST.find(({ command }) => command === prop);
-  if (!cmd) return "Unknown command.";
+  if (!cmd) return log("Unknown command.");
 
   // check is value in range
   if (!cmd.range) {
-    if (value) return "Command dont need value";
+    if (value) return log("Command dont need value");
   } else {
-    if (!value) return "Command need value";
+    if (!value) return log("Command need value");
 
     if (cmd.validator) {
-      if (!cmd.validator(value)) return "Value is invalid";
+      if (!cmd.validator(value)) return log("Value is invalid");
     } else {
       const [min, max] = cmd.range;
-      if (value < min || value > max) return "Value not in range";
+      if (value < min || value > max) return log("Value not in range");
     }
   }
 

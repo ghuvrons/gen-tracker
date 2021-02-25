@@ -48,11 +48,11 @@ import { getPosition, getHeading } from "src/js/map";
 
 import { reactive, toRefs, watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useState, useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
   setup(props) {
-    const { useState, useGetters } = createNamespacedHelpers("db");
     const { report } = useState(["report"]);
     const { devReports } = useGetters(["devReports"]);
 

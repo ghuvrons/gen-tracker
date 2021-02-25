@@ -54,6 +54,7 @@ import { INSERT_COMMAND } from "src/store/db/action-types";
 
 import { ref, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useState, useGetters, useActions } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
@@ -61,7 +62,6 @@ export default {
     CommandListModal
   },
   setup() {
-    const { useState, useGetters, useActions } = createNamespacedHelpers("db");
     const { command } = useState(["command"]);
     const { devDevice } = useGetters(["devDevice"]);
     const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);

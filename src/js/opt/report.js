@@ -10,7 +10,7 @@ import {
   HexToSignedInt32,
   IntToHex,
   Dot
-} from "src/js/helper";
+} from "src/js/formatter";
 
 const VEHICLE_STATES = {
   UNKNOWN: -3,
