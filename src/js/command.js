@@ -45,27 +45,27 @@ const extractCommand = payload => {
   return { prop, value };
 };
 
-const parseCommand = (payload, log) => {
+const parseCommand = payload => {
   // check is no payload
-  if (!payload) return log("Empty payload.");
+  if (!payload) return "Empty payload.";
 
   let { prop, value } = extractCommand(payload);
 
   // check is command exist
   let cmd = COMMAND_LIST.find(({ command }) => command === prop);
-  if (!cmd) return log("Unknown command.");
+  if (!cmd) return "Unknown command.";
 
   // check is value in range
   if (!cmd.range) {
-    if (value) return log("Command dont need value");
+    if (value) return "Command dont need value";
   } else {
-    if (!value) return log("Command need value");
+    if (!value) return "Command need value";
 
     if (cmd.validator) {
-      if (!cmd.validator(value)) return log("Value is invalid");
+      if (!cmd.validator(value)) return "Value is invalid";
     } else {
       const [min, max] = cmd.range;
-      if (value < min || value > max) return log("Value not in range");
+      if (value < min || value > max) return "Value not in range";
     }
   }
 

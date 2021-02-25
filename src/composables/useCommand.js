@@ -39,8 +39,11 @@ export default function(executor, publisher, handleResponse) {
       if (executor.value) return notify("Command busy.");
 
       let { payload } = command.value;
-      let cmd = parseCommand(payload, notify);
-      if (!cmd) return stopCommand();
+      let cmd = parseCommand(payload);
+      if (typeof cmd === "string") {
+        stopCommand();
+        return notify(cmd);
+      }
 
       let { unitID } = devDevice.value;
       let hexCmd = buildCommand(cmd, unitID);
