@@ -13,7 +13,7 @@ const {
   useActions
 } = createNamespacedHelpers("db");
 
-export default function({ handleEvents }) {
+export default function({ handleEvents, handleLostCommand }) {
   const { reports } = useState(["reports"]);
   const { devReports } = useGetters(["devReports"]);
   const { [SET_REPORT]: setReport } = useMutations([SET_REPORT]);
@@ -34,6 +34,7 @@ export default function({ handleEvents }) {
       return console.error(`^REPORT (DUPLICATE)`);
 
     insertReports(report);
+    handleLostCommand(report);
   };
 
   watch(

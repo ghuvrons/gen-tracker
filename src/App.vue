@@ -32,10 +32,14 @@ export default {
     const { insertDevices } = useDevice();
     const { handleFinger } = useFinger({ insertDevices });
     const { handleResponse } = useResponse({ executor, handleFinger });
-    useCommand({ executor, publisher, handleResponse });
+    const { handleLostCommand } = useCommand({
+      executor,
+      publisher,
+      handleResponse
+    });
 
     const { handleEvents } = useEvents();
-    const { handleReport } = useReport({ handleEvents });
+    const { handleReport } = useReport({ handleEvents, handleLostCommand });
     const { addBuffers } = useBuffer({ handleReport });
 
     onMounted(() => {

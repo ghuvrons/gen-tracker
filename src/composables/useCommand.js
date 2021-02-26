@@ -1,14 +1,17 @@
 import config from "src/js/opt/config";
+import { dilation } from "src/js/utils";
 import { notify } from "src/js/framework";
 import { buildCommand, parseCommand } from "src/js/command";
 import { STOP_COMMAND } from "src/store/db/action-types";
 
-import { max } from "lodash";
+import dayjs from "src/js/dayjs";
+import { get, max } from "lodash";
 import { ref, watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useGetters, useActions } = createNamespacedHelpers("db");
 
 export default function({ executor, publisher, handleResponse }) {
+  const ticker = ref(null);
   const interval = ref(null);
   const notifier = ref(null);
 
@@ -17,6 +20,7 @@ export default function({ executor, publisher, handleResponse }) {
   const { [STOP_COMMAND]: stopCommand } = useActions([STOP_COMMAND]);
 
   const starWaitting = exec => {
+    ticker.value = dayjs().unix();
     interval.value = setTimeout(
       handleResponse,
       max([exec.timeout, config.command.timeout]) * 1000,
@@ -29,6 +33,18 @@ export default function({ executor, publisher, handleResponse }) {
     if (executor.value) executor.value = null;
     if (notifier.value) notifier.value();
     if (interval.value) clearTimeout(interval.value);
+  };
+  const handleLostCommand = report => {
+    if (!executor.value) return;
+    if (get(executor.value, "timeout") < 60) return;
+
+    let { sendDatetime, unitID } = report;
+    if (executor.value.unitID != unitID.val) return;
+
+    if (dilation(sendDatetime.val, "seconds", ticker.value) < 10) return;
+
+    notify("Command lost.", "warning");
+    stopCommand();
   };
 
   watch(
@@ -61,4 +77,8 @@ export default function({ executor, publisher, handleResponse }) {
     },
     { lazy: false }
   );
+
+  return {
+    handleLostCommand
+  };
 }
