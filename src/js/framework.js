@@ -1,8 +1,8 @@
 import { Dark, Dialog, Notify, QSpinnerGears } from "quasar";
 
 const pushNotification = (title, body) => {
-  const { location } = window;
-  const icon = `${location.protocol}//${location.host}/icons/favicon-32x32.png`;
+  const { protocol, host } = window.location;
+  const icon = `${protocol}//${host}/icons/favicon-32x32.png`;
   const showNotification = () => new Notification(title, { body, icon });
 
   if (Notification.permission === "granted") showNotification();

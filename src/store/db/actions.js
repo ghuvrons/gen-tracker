@@ -8,12 +8,15 @@ export default {
     if (!state.unitID) commit(mutations.SET_UNITID, payload.unitID);
   },
   [actions.INSERT_REPORTS]({ state, commit, dispatch }, payload) {
-    dispatch(actions.INSERT_DEVICES, { unitID: payload.unitID.val });
     commit(mutations.ADD_REPORTS, payload);
+    dispatch(actions.INSERT_DEVICES, {
+      unitID: payload.unitID.val,
+      sendDatetime: payload.sendDatetime.val
+    });
   },
   [actions.INSERT_RESPONSES]({ state, commit, dispatch }, payload) {
-    dispatch(actions.INSERT_DEVICES, { unitID: payload.unitID });
     commit(mutations.ADD_RESPONSES, payload);
+    dispatch(actions.INSERT_DEVICES, { unitID: payload.unitID });
   },
   [actions.INSERT_COMMAND]({ state, commit }, payload) {
     let command = {

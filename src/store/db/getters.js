@@ -1,6 +1,4 @@
 import { eventHistories } from "src/js/event";
-import { lastSendDatetime } from "src/js/report";
-// import * as getters from "./getter-types";
 
 export default {
   reportIdxByUnitID: ({ reports }) => {
@@ -16,18 +14,11 @@ export default {
     );
   },
 
-  getTotalReports: (state, getters) => unitID => {
-    return getters.reportByUnitID(unitID).length;
-  },
-  getLastReport: (state, getters) => unitID => {
-    return lastSendDatetime(getters.reportByUnitID(unitID)[0]);
-  },
-
-  devEvents({ unitID }, getters) {
-    return eventHistories(getters.reportByUnitID(unitID));
-  },
   devReports({ unitID }, getters) {
     return getters.reportByUnitID(unitID);
+  },
+  devEvents(state, getters) {
+    return eventHistories(getters.devReports);
   },
   devDevice({ devices, unitID }) {
     return devices.find(device => device.unitID === unitID);

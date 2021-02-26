@@ -38,10 +38,10 @@
           </q-item-section>
           <q-item-section side>
             <q-item-label :class="{ 'text-white': active(dev) }" caption>
-              {{ getLastReport(dev.unitID) }}
+              {{ lastSendDatetime(dev.sendDatetime) }}
             </q-item-label>
             <q-item-label :class="{ 'text-white': active(dev) }" caption>
-              <b>{{ getTotalReports(dev.unitID) }}</b> reports
+              <b>{{ dev.total }}</b> reports
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -52,8 +52,9 @@
 
 <script>
 import { SET_UNITID } from "src/store/db/mutation-types";
-import { get, orderBy } from "lodash";
+import { lastSendDatetime } from "src/js/report";
 
+import { get, orderBy } from "lodash";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 import { computed } from "@vue/composition-api";
 const { useState, useMutations, useGetters } = createNamespacedHelpers("db");
@@ -68,11 +69,7 @@ export default {
   setup(props) {
     const { devices } = useState(["devices"]);
     const { [SET_UNITID]: setUnitID } = useMutations([SET_UNITID]);
-    const { devDevice, getTotalReports, getLastReport } = useGetters([
-      "devDevice",
-      "getTotalReports",
-      "getLastReport"
-    ]);
+    const { devDevice } = useGetters(["devDevice"]);
 
     const listDevice = computed(() => orderBy(devices.value, "status", "desc"));
 
@@ -80,9 +77,8 @@ export default {
 
     return {
       listDevice,
-      devDevice,
-      getTotalReports,
-      getLastReport,
+
+      lastSendDatetime,
 
       setUnitID,
       active

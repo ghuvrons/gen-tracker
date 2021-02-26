@@ -21,14 +21,7 @@
           </q-item-label>
         </q-toolbar-title>
 
-        <q-btn
-          v-if="$q.fullscreen.isCapable"
-          @click="$q.fullscreen.toggle()"
-          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-          flat
-          dense
-          round
-        ></q-btn>
+        <q-btn @click="reload()" icon="refresh" flat dense round></q-btn>
 
         <q-btn
           @click="$q.dark.toggle()"
@@ -129,6 +122,8 @@ export default {
       () => `height: calc(${state.splitter}px - 32px)`
     );
 
+    const reload = () => window.location.reload();
+
     watch(
       () => Dark.isActive,
       v => setDarker(v)
@@ -142,7 +137,9 @@ export default {
 
       hCommandManagement,
       hResponseLog,
-      hDeviceManagement
+      hDeviceManagement,
+
+      reload
     };
   }
 };

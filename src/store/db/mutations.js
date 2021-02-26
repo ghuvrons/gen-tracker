@@ -22,16 +22,22 @@ export default {
       ({ unitID }) => unitID === payload.unitID
     );
 
+    let increment = payload.sendDatetime ? 1 : 0;
+
     if (idx < 0)
       state.devices.unshift({
         status: 0,
+        total: increment,
         ...payload
       });
-    else
+    else {
+      const device = state.devices[idx];
       state.devices.splice(idx, 1, {
-        ...state.devices[idx],
+        ...device,
+        total: device.total + increment,
         ...payload
       });
+    }
   },
 
   [mutations.ADD_BUFFERS](state, payload) {
@@ -43,7 +49,21 @@ export default {
 
   [mutations.ADD_REPORTS](state, payload) {
     state.reports.unshift(payload);
-    if (state.reports.length > config.maxStorage.reports) state.reports.pop();
+    if (state.reports.length > config.maxStorage.reports) {
+      let report = state.reports.pop();
+
+      let idx = state.devices.findIndex(
+        ({ unitID }) => unitID === report.unitID.val
+      );
+
+      if (idx >= 0) {
+        const device = state.devices[idx];
+        state.devices.splice(idx, 1, {
+          ...device,
+          total: device.total - 1
+        });
+      }
+    }
   },
   [mutations.ADD_RESPONSES](state, payload) {
     state.responses.unshift(payload);

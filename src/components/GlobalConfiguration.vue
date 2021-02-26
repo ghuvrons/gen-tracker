@@ -9,6 +9,13 @@
           @click="clearStore()"
         />
       </div>
+      <div class="col-auto" v-if="$q.fullscreen.isCapable">
+        <q-btn
+          @click="$q.fullscreen.toggle()"
+          :label="$q.fullscreen.isActive ? 'Full OFF' : 'Full ON'"
+          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+        />
+      </div>
       <div class="col-auto">
         <q-btn
           icon="alarm_on"
@@ -20,26 +27,35 @@
       <div class="col-auto">
         <q-btn
           icon="stop"
-          label="Ignore command"
+          label="No command"
           :disable="!command.exec"
           @click="ignoreCommand()"
         />
       </div>
       <div class="col-auto">
-        <q-btn
-          icon="cloud_download"
-          label="Export CSV"
-          :disable="reports.length == 0"
-          @click.native="exportCSV(reports)"
-        />
-      </div>
-      <div class="col-auto">
-        <q-btn
-          icon="cloud_download"
-          label="Export JSON"
-          :disable="reports.length == 0"
-          @click.native="exportJSON(reports)"
-        />
+        <q-btn-dropdown icon="cloud_download" split label="Export">
+          <q-list>
+            <q-item
+              :clickable="reports.length > 0"
+              @click.native="exportCSV(reports)"
+              v-close-popup
+            >
+              <q-item-section>
+                <q-item-label>CSV</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item
+              :clickable="reports.length > 0"
+              @click.native="exportJSON(reports)"
+              v-close-popup
+            >
+              <q-item-section>
+                <q-item-label>JSON</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </div>
     </div>
     <div class="row q-gutter-xs q-mt-xs">

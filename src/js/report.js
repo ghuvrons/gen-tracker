@@ -62,10 +62,10 @@ const lastFullReport = (report, reports) => {
   }
 };
 
-const lastSendDatetime = report => {
-  if (report)
+const lastSendDatetime = sendDatetime => {
+  if (sendDatetime)
     return dayjs
-      .unix(report.sendDatetime.val)
+      .unix(sendDatetime)
       .endOf("second")
       .fromNow();
   return "Unknown ago";
