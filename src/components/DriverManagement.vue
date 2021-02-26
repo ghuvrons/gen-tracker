@@ -77,10 +77,10 @@
 
 <script>
 import { confirm } from "src/js/framework";
-import { get } from "lodash";
-import moment from "moment";
+import dayjs from "src/js/dayjs";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
+import { get } from "lodash";
 import { ref } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useGetters, useActions } = createNamespacedHelpers("db");
@@ -103,7 +103,7 @@ export default {
     const getFingerTime = () => {
       let fingerTime = get(devDevice.value, "fingerTime");
       return fingerTime
-        ? moment.unix(fingerTime).format("DD-MM-YY HH:mm:ss")
+        ? dayjs.unix(fingerTime).format("DD-MM-YY HH:mm:ss")
         : "Unknown";
     };
     const fetch = () => insertCommand({ payload: `FINGER_FETCH` });

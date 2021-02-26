@@ -6,7 +6,7 @@ import { watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useActions } = createNamespacedHelpers("db");
 
-export default function(executor, handleFinger) {
+export default function({ executor, handleFinger }) {
   const { responses } = useState(["responses"]);
   const {
     [INSERT_RESPONSES]: insertResponses,

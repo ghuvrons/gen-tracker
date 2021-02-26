@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "src/js/dayjs";
 import config from "src/js/opt/config";
 import { startCase } from "lodash";
 import { parseDatetime } from "src/js/utils";
@@ -51,9 +51,8 @@ const VCU = ({ required }) => {
           required: true,
           chartable: true,
           size: 7,
-          format: v =>
-            Number(moment(parseDatetime(v), "YYMMDDHHmmss0E").format("X")),
-          display: vf => moment.unix(vf).format("ddd, DD-MM-YY HH:mm:ss")
+          format: v => Number(dayjs(parseDatetime(v), "YYMMDDHHmmss0d").unix()),
+          display: vf => dayjs.unix(vf).format("ddd, DD-MM-YY HH:mm:ss")
         }
       ]);
     }, []),

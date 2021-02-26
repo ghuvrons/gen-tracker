@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import moment from "moment";
+import dayjs from "src/js/dayjs";
 import { SET_REPORT } from "src/store/db/mutation-types";
 import { SET_FOLLOW } from "src/store/common/mutation-types";
 
@@ -91,7 +91,7 @@ export default {
     });
 
     const getDatetime = logDatetime =>
-      moment.unix(logDatetime.val).format("HH:mm:ss");
+      dayjs.unix(logDatetime.val).format("HH:mm:ss");
 
     return {
       report,

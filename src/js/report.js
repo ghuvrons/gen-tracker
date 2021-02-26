@@ -1,7 +1,7 @@
 import { Report } from "src/js/opt/report";
 import { getValue, getField, frameId } from "src/js/utils";
 import { parseFrame } from "src/js/frame";
-import moment from "moment";
+import dayjs from "src/js/dayjs";
 
 const parseReportData = hex => {
   let frameID = getValue(parseFrame(hex, Report), "frameID");
@@ -64,7 +64,7 @@ const lastFullReport = (report, reports) => {
 
 const lastSendDatetime = report => {
   if (report)
-    return moment
+    return dayjs
       .unix(report.sendDatetime.val)
       .endOf("second")
       .fromNow();

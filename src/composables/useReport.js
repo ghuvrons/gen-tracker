@@ -13,7 +13,7 @@ const {
   useActions
 } = createNamespacedHelpers("db");
 
-export default function(handleEvents) {
+export default function({ handleEvents }) {
   const { reports } = useState(["reports"]);
   const { devReports } = useGetters(["devReports"]);
   const { [SET_REPORT]: setReport } = useMutations([SET_REPORT]);

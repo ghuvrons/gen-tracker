@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 const IntToHex = (num, len) => {
   return num.toString(16).padStart(len, "0");
 };
@@ -22,9 +20,9 @@ const HexToSignedInt8 = hex => {
   return num;
 };
 
-const HexToAscii = hexx => {
-  let hex = hexx.toString(); // force conversion
+const HexToAscii = hex => {
   let str = "";
+  hex = hex.toString(); // force conversion
   for (let i = 0; i < hex.length && hex.substr(i, 2) !== "00"; i += 2)
     str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
   return str;

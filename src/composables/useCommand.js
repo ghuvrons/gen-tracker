@@ -8,7 +8,7 @@ import { ref, watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useGetters, useActions } = createNamespacedHelpers("db");
 
-export default function(executor, publisher, handleResponse) {
+export default function({ executor, publisher, handleResponse }) {
   const interval = ref(null);
   const notifier = ref(null);
 

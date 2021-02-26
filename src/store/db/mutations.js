@@ -1,7 +1,6 @@
 import * as mutations from "./mutation-types";
 import initialState from "./state";
 import config from "src/js/opt/config";
-import moment from "moment";
 
 export default {
   [mutations.CLEAR_DATABASE](state) {
@@ -18,24 +17,23 @@ export default {
     state.command = command;
   },
 
-  [mutations.TAKE_DEV_FINGER](state, unitID) {
-    let idx = state.devices.findIndex(dev => dev.unitID === unitID);
+  [mutations.ADD_DEVICES](state, payload) {
+    let idx = state.devices.findIndex(
+      ({ unitID }) => unitID === payload.unitID
+    );
 
-    if (idx >= 0)
+    if (idx < 0)
+      state.devices.unshift({
+        status: 0,
+        ...payload
+      });
+    else
       state.devices.splice(idx, 1, {
         ...state.devices[idx],
-        fingerTime: moment().unix()
+        ...payload
       });
   },
-  [mutations.TAKE_DEV_STATUS](state, { unitID, status }) {
-    let idx = state.devices.findIndex(dev => dev.unitID === unitID);
 
-    if (idx >= 0)
-      state.devices.splice(idx, 1, {
-        ...state.devices[idx],
-        status
-      });
-  },
   [mutations.ADD_BUFFERS](state, payload) {
     state.buffers.push(payload);
   },
@@ -43,10 +41,6 @@ export default {
     state.buffers.shift();
   },
 
-  [mutations.ADD_DEVICES](state, payload) {
-    let exist = state.devices.find(({ unitID }) => unitID === payload.unitID);
-    if (!exist) state.devices.unshift(payload);
-  },
   [mutations.ADD_REPORTS](state, payload) {
     state.reports.unshift(payload);
     if (state.reports.length > config.maxStorage.reports) state.reports.pop();

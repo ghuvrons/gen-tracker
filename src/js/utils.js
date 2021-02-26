@@ -1,21 +1,24 @@
-import _ from "lodash";
 import config from "src/js/opt/config";
 import { HexToUnsignedInt, IntToHex } from "src/js/formatter";
-import moment from "moment";
-import "moment-timezone";
 
+import {
+  filter,
+  flow,
+  identity,
+  values,
+  join,
+  toLower,
+  partialRight,
+  includes,
+  clone
+} from "lodash";
 const tzlookup = require("tz-lookup");
+import dayjs from "src/js/dayjs";
 
-const flowFilter = (array, substr) => {
-  return _.filter(
-    array,
-    _.flow(
-      _.identity,
-      _.values,
-      _.join,
-      _.toLower,
-      _.partialRight(_.includes, substr)
-    )
+const flowFilter = (arr, substr) => {
+  return filter(
+    arr,
+    flow(identity, values, join, toLower, partialRight(includes, substr))
   );
 };
 
@@ -41,25 +44,26 @@ const getOutput = (arr, fields) => {
 };
 
 const dilation = (unix, as, start) => {
-  if (!start) start = moment();
-  let diff = start.diff(moment.unix(unix));
-  return Math.abs(moment.duration(diff).as(as));
+  if (!start) start = dayjs();
+  let diff = start.diff(dayjs.unix(unix));
+  return Math.abs(dayjs.duration(diff).as(as));
 };
 
 const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
-  let timezone = _.clone(config.timezone);
+  let timezone = clone(config.timezone);
 
   // correct timestamp if not sync with server
   if (gpsLatitude.val && gpsLongitude.val)
     timezone = tzlookup(gpsLatitude.val, gpsLongitude.val);
 
-  let serverTime = moment();
-  // let deviceTime = moment.unix(sendDatetime.val);
+  let serverTime = dayjs();
+  // let deviceTime = dayjs.unix(sendDatetime.val);
   // let diff = dilation(deviceTime, "seconds", serverTime);
 
   //  (at least more n minutes different)
   // if (!deviceTime.isValid() || diff > 120)
-  return serverTime.tz(timezone).format("YYMMDDHHmmss0E");
+  console.warn(serverTime.tz(timezone).format("YYMMDDHHmmss0d"));
+  return serverTime.tz(timezone).format("YYMMDDHHmmss0d");
 };
 
 const parseDatetime = hex => {

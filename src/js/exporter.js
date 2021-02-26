@@ -1,7 +1,7 @@
 import { Report } from "src/js/report";
 import { ExportToCsv } from "export-to-csv";
 import exportFromJSON from "export-from-json";
-import moment from "moment";
+import dayjs from "src/js/dayjs";
 
 const makeDataCSV = reports => {
   return reports.map(report => ({
@@ -44,7 +44,7 @@ const makeDataJSON = reports => {
 };
 
 const exportJSON = reports => {
-  const fileName = `tracking-${moment().format("YYMMDDHHmmss")}`;
+  const fileName = `tracking-${dayjs().format("YYMMDDHHmmss")}`;
   const data = makeDataJSON(reports.slice().reverse());
   const exportType = "json";
 

@@ -1,6 +1,8 @@
+import { Platform } from "quasar";
+
 export default {
   app: {
-    version: "1.69",
+    version: "1.70",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia"
   },
@@ -35,7 +37,7 @@ export default {
   },
   timezone: "Asia/Jakarta",
   maxStorage: {
-    reports: 500,
-    responses: 50
+    reports: Platform.is.desktop ? 500 : 250,
+    responses: Platform.is.desktop ? 50 : 25
   }
 };

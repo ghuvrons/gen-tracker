@@ -3,20 +3,17 @@ import * as mutations from "./mutation-types";
 import { SET_PROCESSING } from "src/store/common/mutation-types";
 
 export default {
-  [actions.INSERT_REPORTS]({ state, commit }, payload) {
-    commit(mutations.ADD_DEVICES, {
-      unitID: payload.unitID.val
-    });
-    if (!state.unitID) commit(mutations.SET_UNITID, payload.unitID.val);
+  [actions.INSERT_DEVICES]({ state, commit }, payload) {
+    commit(mutations.ADD_DEVICES, payload);
+    if (!state.unitID) commit(mutations.SET_UNITID, payload.unitID);
+  },
+  [actions.INSERT_REPORTS]({ state, commit, dispatch }, payload) {
+    dispatch(actions.INSERT_DEVICES, { unitID: payload.unitID.val });
     commit(mutations.ADD_REPORTS, payload);
   },
-  [actions.INSERT_RESPONSES]({ state, commit }, payload) {
-    commit(mutations.ADD_DEVICES, { unitID: payload.unitID });
+  [actions.INSERT_RESPONSES]({ state, commit, dispatch }, payload) {
+    dispatch(actions.INSERT_DEVICES, { unitID: payload.unitID });
     commit(mutations.ADD_RESPONSES, payload);
-  },
-  [actions.INSERT_DEV_STATUS]({ state, commit }, payload) {
-    commit(mutations.ADD_DEVICES, { unitID: payload.unitID });
-    commit(mutations.TAKE_DEV_STATUS, payload);
   },
   [actions.INSERT_COMMAND]({ state, commit }, payload) {
     let command = {

@@ -1,8 +1,5 @@
 export const CLEAR_DATABASE = "CLEAR_DATABASE";
 
-export const TAKE_DEV_FINGER = "TAKE_DEV_FINGER";
-export const TAKE_DEV_STATUS = "TAKE_DEV_STATUS";
-
 export const SET_UNITID = "SET_UNITID";
 
 export const SET_REPORT = "SET_REPORT";

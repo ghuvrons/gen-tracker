@@ -4,7 +4,7 @@ import { onBeforeUnmount, onMounted, ref } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useMutations } = createNamespacedHelpers("db");
 
-export default function(handleReport) {
+export default function({ handleReport }) {
   const interval = ref(null);
 
   const { buffers } = useState(["buffers"]);

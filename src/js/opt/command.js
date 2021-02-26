@@ -1,7 +1,7 @@
 import { Header } from "src/js/opt/header";
 import { IntToHex, ChangeEndian } from "src/js/formatter";
 import { buildTimestamp } from "src/js/utils";
-import moment from "moment";
+import dayjs from "src/js/dayjs";
 
 const COMMAND_LIST = [
   {
@@ -35,13 +35,13 @@ const COMMAND_LIST = [
   },
   {
     command: "REPORT_RTC",
-    desc: "Set RTC value ( E start from 1=Monday )",
+    desc: "Set RTC value ( d start from 0=Sunday )",
     code: 1,
     subCode: 0,
     type: "uint8_t[7]",
-    range: ["YYMMDDHHmmss0E"],
+    range: ["YYMMDDHHmmss0d"],
     formatCmd: val => buildTimestamp(val),
-    validator: val => moment(val, "YYMMDDHHmmss0E").isValid()
+    validator: val => dayjs(val, "YYMMDDHHmmss0d", true).isValid()
   },
   {
     command: "REPORT_ODOM",

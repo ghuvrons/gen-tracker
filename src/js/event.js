@@ -1,6 +1,6 @@
 import { EVENT_LIST } from "src/js/opt/event";
 import { groupBy } from "lodash";
-import moment from "moment";
+import dayjs from "src/js/dayjs";
 const Long = require("long");
 
 const parseEvent = (value, bit) => {
@@ -21,7 +21,7 @@ const eventHistories = report => {
           ...EVENT_LIST.filter(({ bit }) =>
             parseEvent(eventsGroup.val, bit)
           ).map(({ name }) => ({
-            time: moment.unix(logDatetime.val).format("HH:mm:ss"),
+            time: dayjs.unix(logDatetime.val).format("HH:mm:ss"),
             name
           }))
         ),

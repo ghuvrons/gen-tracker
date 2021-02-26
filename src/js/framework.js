@@ -1,10 +1,9 @@
-import { Dark } from "quasar";
-import { Dialog } from "quasar";
-import { Notify } from "quasar";
-import { QSpinnerGears } from "quasar";
+import { Dark, Dialog, Notify, QSpinnerGears } from "quasar";
 
 const pushNotification = (title, body) => {
-  const showNotification = () => new Notification(title, { body });
+  const { location } = window;
+  const icon = `${location.protocol}//${location.host}/icons/favicon-32x32.png`;
+  const showNotification = () => new Notification(title, { body, icon });
 
   if (Notification.permission === "granted") showNotification();
   else if (Notification.permission !== "denied")
