@@ -161,7 +161,7 @@ export default {
     };
     const importData = ([file]) =>
       importJSON(file).then(hexs => {
-        hexs.forEach(hex => addBuffers(hex));
+        addBuffers(hexs);
         uploader.value.reset();
       });
 

@@ -27,6 +27,7 @@ export default {
     if (idx < 0)
       state.devices.unshift({
         status: 0,
+        sendDatetime: 0,
         total: increment,
         ...payload
       });
@@ -41,9 +42,8 @@ export default {
   },
 
   [mutations.ADD_BUFFERS](state, payload) {
-    const data = { ...payload };
-    Object.freeze(data);
-    state.buffers.push(data);
+    if (Array.isArray(payload)) state.buffers.push(...payload);
+    else state.buffers.push(payload);
   },
   [mutations.FREE_BUFFER](state) {
     state.buffers.shift();

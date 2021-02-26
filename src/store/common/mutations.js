@@ -3,7 +3,8 @@ import initialState from "./state";
 
 export default {
   [mutations.CLEAR_COMMON](state) {
-    Object.assign(state, initialState());
+    // Object.assign(state, initialState());
+    state.processing = false;
   },
   [mutations.SET_PROCESSING](state, payload) {
     state.processing = payload;

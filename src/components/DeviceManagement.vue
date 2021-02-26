@@ -71,7 +71,9 @@ export default {
     const { [SET_UNITID]: setUnitID } = useMutations([SET_UNITID]);
     const { devDevice } = useGetters(["devDevice"]);
 
-    const listDevice = computed(() => orderBy(devices.value, "status", "desc"));
+    const listDevice = computed(() =>
+      orderBy(devices.value, "sendDatetime", "desc")
+    );
 
     const active = ({ unitID }) => unitID === get(devDevice.value, "unitID");
 
