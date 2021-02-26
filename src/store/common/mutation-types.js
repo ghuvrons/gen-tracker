@@ -1,3 +1,4 @@
+export const CLEAR_COMMON = "CLEAR_COMMON";
 export const SET_PROCESSING = "SET_PROCESSING";
 export const SET_DARKER = "SET_DARKER";
 export const SET_TREE = "SET_TREE";

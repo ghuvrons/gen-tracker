@@ -62,7 +62,10 @@
 </template>
 
 <script>
-import { SET_NOTIFICATION } from "src/store/common/mutation-types";
+import {
+  SET_NOTIFICATION,
+  CLEAR_COMMON
+} from "src/store/common/mutation-types";
 import { CLEAR_DATABASE, ADD_BUFFERS } from "src/store/db/mutation-types";
 import { STOP_COMMAND, INSERT_COMMAND } from "src/store/db/action-types";
 import { exportCSV, exportJSON, importJSON } from "src/js/exporter";
@@ -105,9 +108,10 @@ export default {
 
     const common = createNamespacedHelpers("common");
     const { notification } = common.useState(["notification"]);
-    const { [SET_NOTIFICATION]: setNotification } = common.useMutations([
-      SET_NOTIFICATION
-    ]);
+    const {
+      [CLEAR_COMMON]: clearCommon,
+      [SET_NOTIFICATION]: setNotification
+    } = common.useMutations([CLEAR_COMMON, SET_NOTIFICATION]);
 
     const uploader = ref(null);
 
@@ -117,7 +121,10 @@ export default {
     });
 
     const clearStore = () =>
-      confirm(`Are you sure to remove all data?`).onOk(() => clearDatabase());
+      confirm(`Are you sure to remove all data?`).onOk(() => {
+        clearCommon();
+        clearDatabase();
+      });
     const ignoreCommand = () => {
       notify("Command ignored.", "warning");
       stopCommand();
