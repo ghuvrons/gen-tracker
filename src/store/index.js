@@ -13,10 +13,10 @@ Vue.use(Vuex);
  */
 const vuexLocal = new VuexPersistence({
   key: "STORAGE_KEY",
-  storage: window.localStorage,
-  reducer: state => ({
-    common: { ...state.common }
-  })
+  storage: window.localStorage
+  // reducer: state => ({
+  //   common: { ...state.common }
+  // })
 });
 
 export default function(/* { ssrContext } */) {

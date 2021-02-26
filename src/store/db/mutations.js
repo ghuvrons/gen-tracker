@@ -41,14 +41,19 @@ export default {
   },
 
   [mutations.ADD_BUFFERS](state, payload) {
-    state.buffers.push(payload);
+    const data = { ...payload };
+    Object.freeze(data);
+    state.buffers.push(data);
   },
   [mutations.FREE_BUFFER](state) {
     state.buffers.shift();
   },
 
   [mutations.ADD_REPORTS](state, payload) {
-    state.reports.unshift(payload);
+    const data = { ...payload };
+    Object.freeze(data);
+    state.reports.unshift(data);
+
     if (state.reports.length > config.maxStorage.reports) {
       let report = state.reports.pop();
 
@@ -66,7 +71,10 @@ export default {
     }
   },
   [mutations.ADD_RESPONSES](state, payload) {
-    state.responses.unshift(payload);
+    const data = { ...payload };
+    Object.freeze(data);
+    state.responses.unshift(data);
+
     if (state.responses.length > config.maxStorage.responses)
       state.responses.pop();
   },

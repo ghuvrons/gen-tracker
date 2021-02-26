@@ -33,7 +33,7 @@
         />
       </div>
       <div class="col-auto">
-        <q-btn-dropdown icon="cloud_download" split label="Export">
+        <q-btn-dropdown icon="cloud_download" label="Export">
           <q-list>
             <q-item
               :clickable="reports.length > 0"
