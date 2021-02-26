@@ -13,6 +13,7 @@ import useCommand from "src/composables/useCommand";
 import useBuffer from "src/composables/useBuffer";
 import useReport from "src/composables/useReport";
 import useEvents from "src/composables/useEvents";
+import useDevice from "src/composables/useDevice";
 
 import { onMounted, ref } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
@@ -38,6 +39,7 @@ export default {
     const { handleFinger } = useFinger();
     const { handleResponse } = useResponse(executor, handleFinger);
     useCommand(executor, publisher, handleResponse);
+    useDevice();
 
     const { handleEvents } = useEvents();
     const { handleReport } = useReport(handleEvents);
