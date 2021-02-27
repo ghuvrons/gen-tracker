@@ -6,6 +6,7 @@ export default function() {
     },
     unitID: null,
     report: null,
+
     devices: [],
     buffers: [],
     reports: [],

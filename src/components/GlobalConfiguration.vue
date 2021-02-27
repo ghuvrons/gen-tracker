@@ -85,11 +85,11 @@ import {
 import { CLEAR_DATABASE, ADD_BUFFERS } from "src/store/db/mutation-types";
 import { STOP_COMMAND, INSERT_COMMAND } from "src/store/db/action-types";
 import { exportCSV, exportJSON, importJSON } from "src/js/exporter";
-import { confirm, notify } from "src/js/framework";
+import { confirm, notify, loader } from "src/js/framework";
 import { calibrateTime } from "src/js/utils";
 import { frameId } from "src/js/utils";
 
-import { ref, computed } from "@vue/composition-api";
+import { ref, computed, watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const {
   useState,
@@ -107,7 +107,8 @@ export default {
     }
   },
   setup(props) {
-    const { devices, command, reports } = useState([
+    const { buffers, devices, command, reports } = useState([
+      "buffers",
       "devices",
       "command",
       "reports"
@@ -130,6 +131,8 @@ export default {
     } = common.useMutations([CLEAR_COMMON, SET_NOTIFICATION]);
 
     const uploader = ref(null);
+    const importing = ref(false);
+    const loading = ref(false);
 
     const notificationState = computed({
       get: () => notification.value,
@@ -159,11 +162,23 @@ export default {
       insertCommand({ payload: `REPORT_RTC=${validTime}` });
       notify("Calibrating device time..", "info");
     };
-    const importData = ([file]) =>
-      importJSON(file).then(hexs => {
-        addBuffers(hexs);
+    const importData = ([file]) => {
+      importing.value = true;
+      loading.value = loader("Importing...", "Please wait a moment");
+      importJSON(file).then(hexs => addBuffers(hexs));
+    };
+
+    watch(
+      () => buffers.value.length,
+      len => {
+        if (len > 0) return;
+        if (!importing.value) return;
+
         uploader.value.reset();
-      });
+        loading.value.hide();
+        importing.value = false;
+      }
+    );
 
     return {
       uploader,

@@ -4,10 +4,10 @@ import { notifyResponse, parseResCode, parseResponse } from "src/js/response";
 import { get } from "lodash";
 import { watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-const { useState, useActions } = createNamespacedHelpers("db");
+const { useGetters, useActions } = createNamespacedHelpers("db");
 
 export default function({ executor, handleFinger }) {
-  const { responses } = useState(["responses"]);
+  const { devDevice } = useGetters(["devDevice"]);
   const {
     [INSERT_RESPONSES]: insertResponses,
     [STOP_COMMAND]: stopCommand
@@ -26,15 +26,17 @@ export default function({ executor, handleFinger }) {
   };
 
   watch(
-    () => responses.value[0],
-    response => {
-      if (!response) return;
+    () => devDevice.value,
+    dev => {
+      const lastResponse = get(dev, "lastResponse");
+      if (!lastResponse) return;
 
-      let res = parseResCode(response.resCode);
+      let res = parseResCode(lastResponse.resCode);
       if (res.title != "OK") return;
 
-      handleFinger(response);
-    }
+      handleFinger(lastResponse);
+    },
+    { deep: true }
   );
 
   return {

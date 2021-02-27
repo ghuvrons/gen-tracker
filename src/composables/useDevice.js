@@ -12,10 +12,10 @@ export default function() {
 
   watch(
     () => devDevice.value,
-    (curDevice, oldDevice) => {
-      if (!curDevice || !oldDevice) return;
-      const { status: oldStatus } = oldDevice;
-      const { status: curStatus } = curDevice;
+    (curDev, oldDev) => {
+      if (!curDev || !oldDev) return;
+      const { status: oldStatus } = oldDev;
+      const { status: curStatus } = curDev;
 
       if (oldStatus == curStatus) return;
 

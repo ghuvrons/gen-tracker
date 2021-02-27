@@ -39,8 +39,8 @@ export default {
     });
 
     const { handleEvents } = useEvents();
-    const { handleReport } = useReport({ handleEvents, handleLostCommand });
-    const { addBuffers } = useBuffer({ handleReport });
+    const { handleReports } = useReport({ handleEvents, handleLostCommand });
+    const { addBuffers } = useBuffer({ handleReports });
 
     onMounted(() => {
       root.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });

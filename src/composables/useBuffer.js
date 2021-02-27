@@ -4,7 +4,7 @@ import { onBeforeUnmount, onMounted, ref } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useMutations } = createNamespacedHelpers("db");
 
-export default function({ handleReport }) {
+export default function({ handleReports }) {
   const interval = ref(null);
 
   const { buffers } = useState(["buffers"]);
@@ -15,13 +15,13 @@ export default function({ handleReport }) {
 
   const processBuffer = () => {
     if (buffers.value.length > 0) {
-      const [hex] = buffers.value;
-      freeBuffer();
-      handleReport(hex);
+      const hexs = buffers.value;
+      handleReports(hexs);
+      freeBuffer(hexs);
     }
   };
 
-  onMounted(() => (interval.value = setInterval(processBuffer, 100)));
+  onMounted(() => (interval.value = setInterval(processBuffer, 1000)));
   onBeforeUnmount(() => clearInterval(interval.value));
 
   return {

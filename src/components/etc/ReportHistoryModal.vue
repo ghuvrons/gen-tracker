@@ -115,6 +115,7 @@ import {
 } from "src/js/chart";
 import useChart from "src/composables/useChart";
 
+import { get } from "lodash";
 import {
   computed,
   reactive,
@@ -173,7 +174,11 @@ export default {
       }
     });
 
-    const { devReports, devEvents } = useGetters(["devReports", "devEvents"]);
+    const { devDevice, devReports, devEvents } = useGetters([
+      "devDevice",
+      "devReports",
+      "devEvents"
+    ]);
 
     const theField = computed(() => getField(Report, props.field));
     const currentValue = computed(() => {
@@ -254,14 +259,16 @@ export default {
       { lazy: false }
     );
     watch(
-      () => devReports.value[0],
-      devReport => {
-        if (!devReport) return;
-        if (!devReport[props.field]) return;
+      () => devDevice.value,
+      dev => {
+        const lastReport = get(dev, "lastReport");
+        if (!lastReport) return;
+        if (!lastReport[props.field]) return;
 
-        writeChart([devReport]);
+        writeChart([lastReport]);
         applyRange();
-      }
+      },
+      { deep: true }
     );
     watch(
       () => state.control.maximize,

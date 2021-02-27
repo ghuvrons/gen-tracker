@@ -46,6 +46,7 @@
 import config from "src/js/opt/config";
 import { getPosition, getHeading } from "src/js/map";
 
+import { get } from "lodash";
 import { reactive, toRefs, watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useGetters } = createNamespacedHelpers("db");
@@ -54,7 +55,7 @@ export default {
   // name: 'ComponentName',
   setup(props) {
     const { report } = useState(["report"]);
-    const { devReports } = useGetters(["devReports"]);
+    const { devDevice } = useGetters(["devDevice"]);
 
     const { centerIndonesia, zoom } = config.map;
     const state = reactive({
@@ -91,14 +92,15 @@ export default {
     const onResize = ({ width }) => (state.streetView = width > 500);
 
     watch(
-      () => devReports.value[0],
-      devReport => {
-        if (!devReport) return;
+      () => devDevice.value,
+      dev => {
+        const lastReport = get(dev, "lastReport");
+        if (!lastReport) return;
 
-        let pos = getPosition(devReport);
+        let pos = getPosition(lastReport);
         if (pos.valid) state.path.push(pos);
       },
-      { lazy: false }
+      { lazy: false, deep: true }
     );
 
     watch(

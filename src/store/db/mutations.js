@@ -22,58 +22,34 @@ export default {
       ({ unitID }) => unitID === payload.unitID
     );
 
-    let increment = payload.sendDatetime ? 1 : 0;
-
     if (idx < 0)
       state.devices.unshift({
         status: 0,
         sendDatetime: 0,
-        total: increment,
         ...payload
       });
-    else {
-      const device = state.devices[idx];
+    else
       state.devices.splice(idx, 1, {
-        ...device,
-        total: device.total + increment,
+        ...state.devices[idx],
         ...payload
       });
-    }
   },
 
-  [mutations.ADD_BUFFERS](state, payload) {
-    if (Array.isArray(payload)) state.buffers.push(...payload);
-    else state.buffers.push(payload);
+  [mutations.ADD_BUFFERS](state, payloads) {
+    if (!Array.isArray(payloads)) payloads = [payloads];
+    state.buffers.push(...payloads);
   },
-  [mutations.FREE_BUFFER](state) {
-    state.buffers.shift();
+  [mutations.FREE_BUFFER](state, hexs) {
+    state.buffers = [...state.buffers.filter(hex => !hexs.includes(hex))];
   },
 
-  [mutations.ADD_REPORTS](state, payload) {
-    const data = { ...payload };
-    Object.freeze(data);
-    state.reports.unshift(data);
+  [mutations.ADD_REPORTS](state, payloads) {
+    state.reports.unshift(...payloads.reverse());
 
-    if (state.reports.length > config.maxStorage.reports) {
-      let report = state.reports.pop();
-
-      let idx = state.devices.findIndex(
-        ({ unitID }) => unitID === report.unitID.val
-      );
-
-      if (idx >= 0) {
-        const device = state.devices[idx];
-        state.devices.splice(idx, 1, {
-          ...device,
-          total: device.total - 1
-        });
-      }
-    }
+    if (state.reports.length > config.maxStorage.reports) state.reports.pop();
   },
   [mutations.ADD_RESPONSES](state, payload) {
-    const data = { ...payload };
-    Object.freeze(data);
-    state.responses.unshift(data);
+    state.responses.unshift(payload);
 
     if (state.responses.length > config.maxStorage.responses)
       state.responses.pop();

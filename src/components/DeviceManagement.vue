@@ -25,12 +25,12 @@
           :clickable="!processing"
           dense
         >
-          <q-item-section side>
+          <!-- <q-item-section side>
             <q-icon
               :name="dev.status ? 'play_circle' : 'pause_circle'"
               :color="dev.status ? 'green' : 'red'"
             ></q-icon>
-          </q-item-section>
+          </q-item-section> -->
           <q-item-section>
             <q-item-label class="text-subtitle2">
               {{ dev.unitID.toString() }}
@@ -41,7 +41,8 @@
               {{ lastSendDatetime(dev.sendDatetime) }}
             </q-item-label>
             <q-item-label :class="{ 'text-white': active(dev) }" caption>
-              <b>{{ dev.total }}</b> reports
+              <b v-if="dev.status">Online</b>
+              <i v-else>Offline</i>
             </q-item-label>
           </q-item-section>
         </q-item>

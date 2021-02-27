@@ -30,10 +30,10 @@ const confirm = message => {
   });
 };
 
-const loader = title => {
+const loader = (title, message) => {
   return Dialog.create({
     title,
-    message: "0%",
+    message,
     dark: Dark.isActive,
     persistent: true,
     ok: false,

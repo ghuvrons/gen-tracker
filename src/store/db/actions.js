@@ -1,22 +1,35 @@
 import * as actions from "./action-types";
 import * as mutations from "./mutation-types";
 import { SET_PROCESSING } from "src/store/common/mutation-types";
+import { frameId } from "src/js/utils";
 
 export default {
   [actions.INSERT_DEVICES]({ state, commit }, payload) {
     commit(mutations.ADD_DEVICES, payload);
     if (!state.unitID) commit(mutations.SET_UNITID, payload.unitID);
   },
-  [actions.INSERT_REPORTS]({ state, commit, dispatch }, payload) {
-    commit(mutations.ADD_REPORTS, payload);
-    dispatch(actions.INSERT_DEVICES, {
-      unitID: payload.unitID.val,
-      sendDatetime: payload.sendDatetime.val
+  [actions.INSERT_REPORTS]({ state, commit, dispatch }, payloads) {
+    if (!Array.isArray(payloads)) payloads = [payloads];
+
+    commit(mutations.ADD_REPORTS, payloads);
+
+    payloads.forEach(payload => {
+      dispatch(actions.INSERT_DEVICES, {
+        unitID: payload.unitID.val,
+        sendDatetime: payload.sendDatetime.val,
+        lastReport: payload,
+        ...(frameId(payload.frameID.val) == "FULL" && {
+          lastFullReport: payload
+        })
+      });
     });
   },
   [actions.INSERT_RESPONSES]({ state, commit, dispatch }, payload) {
     commit(mutations.ADD_RESPONSES, payload);
-    dispatch(actions.INSERT_DEVICES, { unitID: payload.unitID });
+    dispatch(actions.INSERT_DEVICES, {
+      unitID: payload.unitID,
+      lastResponse: payload
+    });
   },
   [actions.INSERT_COMMAND]({ state, commit }, payload) {
     let command = {

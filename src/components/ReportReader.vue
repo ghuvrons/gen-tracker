@@ -49,14 +49,13 @@
 
 <script>
 import ReportHistoryModal from "components/etc/ReportHistoryModal";
-import { Report, lastFullReport, readReport } from "src/js/report";
+import { Report, readReport } from "src/js/report";
 import { SET_TREE } from "src/store/common/mutation-types";
 import { getField, frameId } from "src/js/utils";
-import { get } from "lodash";
 import TreeReportReader from "components/etc/TreeReportReader";
 import ListReportReader from "components/etc/ListReportReader";
 
-import { ref, computed } from "@vue/composition-api";
+import { ref, computed, watch, reactive, toRefs } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useGetters } = createNamespacedHelpers("db");
 
@@ -74,7 +73,7 @@ export default {
   },
   setup(props) {
     const { report } = useState(["report"]);
-    const { devReports } = useGetters(["devReports"]);
+    const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
 
     const common = createNamespacedHelpers("common");
     const { tree } = common.useState(["tree"]);
@@ -82,50 +81,58 @@ export default {
 
     const field = ref(null);
 
-    const hList = computed(
-      () => `height: calc(100vh - ${props.height}px - 34px)`
-    );
-    const hTree = computed(
-      () => ` height: calc(100vh - ${props.height}px - 73px)`
-    );
     const treeState = computed({
       get: () => tree.value,
       set: v => setTree(v)
     });
+
+    const open = target => {
+      if (!target) return;
+
+      let theField = getField(Report, target);
+      if (!theField.hasOwnProperty("chartable")) return;
+
+      let related = devReports.value.filter(({ [target]: _field }) => _field);
+      if (related.length < 2) return;
+
+      field.value = target;
+    };
+
     const theReport = computed(() => {
-      if (!report.value) return;
+      if (!report.value) return null;
 
-      let rpt = readReport(report.value);
-      if (frameId(report.value.frameId) != "FULL") {
-        let full = lastFullReport(report.value, devReports.value);
+      let data = readReport(report.value);
+      if (frameId(data.frameID.val) != "FULL") {
+        const { lastFullReport } = devDevice.value;
 
-        if (full)
-          rpt = {
-            ...readReport(full),
-            ...rpt
+        if (lastFullReport)
+          data = {
+            ...readReport(lastFullReport),
+            ...data
           };
       }
 
-      return rpt;
+      return data;
     });
 
-    const open = fld => {
-      if (!fld) return;
-
-      let theField = getField(Report, fld);
-      if (!get(theField, "chartable")) return;
-
-      let related = devReports.value.filter(({ [fld]: _field }) => _field);
-      if (related.length < 2) return;
-
-      field.value = fld;
-    };
+    const state = reactive({
+      hList: 0,
+      hTree: 0
+    });
+    watch(
+      () => props.height,
+      h => {
+        state.hList = `height: calc(100vh - ${h}px - 34px)`;
+        state.hTree = ` height: calc(100vh - ${h}px - 73px)`;
+      },
+      { lazy: false }
+    );
 
     return {
+      ...toRefs(state),
       field,
+      theReport,
 
-      hList,
-      hTree,
       treeState,
       theReport,
 

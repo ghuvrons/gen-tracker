@@ -15,31 +15,43 @@ const {
 
 export default function({ handleEvents, handleLostCommand }) {
   const { reports } = useState(["reports"]);
-  const { devReports } = useGetters(["devReports"]);
+  const { devDevice } = useGetters(["devDevice"]);
   const { [SET_REPORT]: setReport } = useMutations([SET_REPORT]);
   const { [INSERT_REPORTS]: insertReports } = useActions([INSERT_REPORTS]);
 
   const common = createNamespacedHelpers("common");
   const { follow } = common.useState(["follow"]);
 
-  const handleReport = hex => {
-    let report = parseReport(hex);
+  const validate = report => {
     const { val: dt } = report.logDatetime;
-
-    console.log(`REPORT ${hex}`);
 
     if (dilation(dt, "years") > 1) return console.error(`^REPORT (EXPIRED)`);
 
     if (reports.value.some(({ logDatetime }) => logDatetime.val == dt))
       return console.error(`^REPORT (DUPLICATE)`);
 
-    insertReports(report);
-    handleLostCommand(report);
+    return report;
+  };
+  const handleReports = hexs => {
+    let reports = hexs.reduce((acc, hex) => {
+      console.log(`REPORT ${hex}`);
+      let report = validate(parseReport(hex));
+
+      if (!report) return acc;
+      handleLostCommand(report);
+
+      return [...acc, report];
+    }, []);
+
+    insertReports(reports);
   };
 
   watch(
-    () => devReports.value[0],
-    (curReport, oldReport) => {
+    () => devDevice.value,
+    (curDev, oldDev) => {
+      const curReport = get(curDev, "lastReport");
+      const oldReport = get(oldDev, "lastReport");
+
       if (!curReport) return setReport(null);
 
       if (curReport.unitID.val != get(oldReport, "unitID.val") || follow.value)
@@ -47,10 +59,10 @@ export default function({ handleEvents, handleLostCommand }) {
 
       handleEvents(curReport, oldReport);
     },
-    { lazy: false }
+    { lazy: false, deep: true }
   );
 
   return {
-    handleReport
+    handleReports
   };
 }
