@@ -44,7 +44,7 @@ export default {
   },
 
   [mutations.ADD_REPORTS](state, payloads) {
-    state.reports.unshift(...payloads.reverse());
+    state.reports.unshift(...payloads);
 
     if (state.reports.length > config.maxStorage.reports) state.reports.pop();
   },

@@ -11,7 +11,7 @@ export default {
   [actions.INSERT_REPORTS]({ state, commit, dispatch }, payloads) {
     if (!Array.isArray(payloads)) payloads = [payloads];
 
-    commit(mutations.ADD_REPORTS, payloads);
+    commit(mutations.ADD_REPORTS, payloads.slice().reverse());
 
     payloads.forEach(payload => {
       dispatch(actions.INSERT_DEVICES, {

@@ -19,7 +19,6 @@ export default ({ app, router, store, Vue }) => {
     username: mqtt.username,
     password: mqtt.password,
     clientId,
-    clean: true
-    // clean: Platform.is.mobile
+    clean: Platform.is.mobile
   });
 };

@@ -54,8 +54,12 @@ export default function({ handleEvents, handleLostCommand }) {
 
       if (!curReport) return setReport(null);
 
-      if (curReport.unitID.val != get(oldReport, "unitID.val") || follow.value)
+      if (
+        curReport.unitID.val != get(oldReport, "unitID.val") ||
+        follow.value
+      ) {
         setReport(curReport);
+      }
 
       handleEvents(curReport, oldReport);
     },

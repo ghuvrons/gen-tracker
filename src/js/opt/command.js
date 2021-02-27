@@ -6,7 +6,7 @@ import dayjs from "src/js/dayjs";
 const COMMAND_LIST = [
   {
     command: "GEN_INFO",
-    desc: "Get VCU firmware information",
+    desc: "Gather device information",
     code: 0,
     subCode: 0
   },
@@ -19,7 +19,7 @@ const COMMAND_LIST = [
   },
   {
     command: "GEN_LED",
-    desc: "Set test LED value",
+    desc: "Control system led",
     code: 0,
     subCode: 2,
     type: "bool",
@@ -27,7 +27,7 @@ const COMMAND_LIST = [
   },
   {
     command: "GEN_OVERRIDE",
-    desc: "Override the vehicle state",
+    desc: "Override vehicle state",
     code: 0,
     subCode: 3,
     type: "uint8_t",
@@ -35,7 +35,7 @@ const COMMAND_LIST = [
   },
   {
     command: "REPORT_RTC",
-    desc: "Set RTC value ( d start from 0=Sunday )",
+    desc: "Set datetime ( d [0=Sunday] )",
     code: 1,
     subCode: 0,
     type: "uint8_t[7]",
@@ -45,7 +45,7 @@ const COMMAND_LIST = [
   },
   {
     command: "REPORT_ODOM",
-    desc: "Set odometer value (km)",
+    desc: "Set odometer (km)",
     code: 1,
     subCode: 1,
     type: "uint32_t",
@@ -53,13 +53,13 @@ const COMMAND_LIST = [
   },
   {
     command: "AUDIO_BEEP",
-    desc: "Set beep the audio module",
+    desc: "Beep the audio module",
     code: 2,
     subCode: 0
   },
   {
     command: "AUDIO_MUTE",
-    desc: "Set the audio module mute mode",
+    desc: "Mute the audio module",
     code: 2,
     subCode: 1,
     type: "bool",
@@ -74,14 +74,14 @@ const COMMAND_LIST = [
   },
   {
     command: "FINGER_ADD",
-    desc: "Add new fingerprint",
+    desc: "Add a new fingerprint",
     code: 3,
     subCode: 1,
     timeout: 20
   },
   {
     command: "FINGER_DEL",
-    desc: "Delete fingerprint ID",
+    desc: "Delete a fingerprint",
     code: 3,
     subCode: 2,
     type: "uint8_t",
@@ -90,21 +90,21 @@ const COMMAND_LIST = [
   },
   {
     command: "FINGER_RST",
-    desc: "Reset all saved fingerprint ID",
+    desc: "Reset all fingerprints",
     code: 3,
     subCode: 3,
     timeout: 15
   },
   {
     command: "REMOTE_PAIRING",
-    desc: "Pairing pocket keyless",
+    desc: "Keyless pairing mode",
     code: 4,
     subCode: 0,
     timeout: 15
   },
   {
     command: "REMOTE_UNITID",
-    desc: "Set unit ID of VCU",
+    desc: "Set device unique id",
     code: 4,
     subCode: 1,
     type: "uint32_t",
