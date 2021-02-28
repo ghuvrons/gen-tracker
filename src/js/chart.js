@@ -1,9 +1,9 @@
 import { min, max, findLastIndex } from "lodash";
 
 const findRange = ({ labels }, { min, max }) => {
-  let iMin = min ? labels.findIndex((val) => val >= min) : 0;
+  let iMin = min ? labels.findIndex((val, idx) => idx >= min) : 0;
   let iMax = max
-    ? findLastIndex(labels, (val) => val <= max)
+    ? findLastIndex(labels, (val, idx) => idx <= max)
     : labels.length - 1;
 
   return { iMin, iMax };
@@ -43,7 +43,7 @@ const grabDatasets = (reports, field) => {
   let datasets = [];
   let labels = [];
 
-  reports.forEach((report) => {
+  reports.forEach(report => {
     if (report[field]) {
       datasets.push(report[field].val);
       labels.push(report.logDatetime.val);
@@ -52,7 +52,7 @@ const grabDatasets = (reports, field) => {
 
   return {
     datasets: datasets.reverse(),
-    labels: labels.reverse(),
+    labels: labels.reverse()
   };
 };
 

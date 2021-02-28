@@ -39,7 +39,7 @@
                   :min="range.min"
                   :max="range.max"
                   :disable="range.disable"
-                  :drag-range="control.drag"
+                  :drag-range="control.lock"
                   snap
                   square
                 />
@@ -51,7 +51,7 @@
                       class="q-ma-xs"
                     />
                     <q-toggle
-                      v-model="control.drag"
+                      v-model="control.lock"
                       :disable="control.maximize"
                       label="Lock Window"
                       class="q-ma-xs"
@@ -152,9 +152,9 @@ export default {
       modalOpen: false,
       tmp: {
         max: null,
-        sample: null,
+        min: null,
         follow: false,
-        drag: false
+        lock: false
       },
       range: {
         disable: false,
@@ -170,7 +170,7 @@ export default {
         beginAtZero: false,
         maximize: true,
         follow: false,
-        drag: false
+        lock: false
       }
     });
 
@@ -190,42 +190,50 @@ export default {
         props.field == "eventsGroup" && Object.keys(devEvents.value).length > 0
     );
     const rangeSample = computed(() => {
-      let { iMin, iMax } = findRange(chart.value.data, state.range.value);
-      return iMax - iMin + 1;
+      // let { iMin, iMax } = findRange(chart.value.data, state.range.value);
+      // return iMax - iMin + 1;
+      return state.range.value.max - state.range.value.min;
     });
 
-    const applyRange = sample => {
-      let { iMin, iMax } = findRange(chart.value.data, state.range.value);
-      let { xMax } = findRangeX(chart.value.data, { iMin, iMax });
-      let oldSample = iMax - iMin;
+    const applyRange = () => {
+      let { min: iMin, max: iMax } = state.range.value;
+      // let { xMax } = findRangeX(chart.value.data, { iMin, iMax });
+      let sample = iMax - iMin;
 
-      if (state.control.maximize || state.control.follow) {
+      if (iMax == 0) {
         iMax = chart.value.data.labels.length - 1;
-        xMax = getLabel(chart.value.data, iMax);
-        if (state.control.maximize) iMin = 0;
+        sample = state.range.sample;
       }
 
-      if (!sample) {
-        sample = iMax - iMin;
-        if (state.control.drag) {
-          sample = oldSample;
-          if (!state.control.follow)
-            xMax = getLabel(chart.value.data, iMin + sample);
-        }
-      } else sample--;
+      if (state.control.follow) {
+        iMax = chart.value.data.labels.length - 1;
+
+        if (!state.control.lock) sample = iMax - iMin + 1;
+      } else {
+        // if (state.control.lock)
+        iMax--;
+      }
+
+      if (state.control.maximize) {
+        sample = chart.value.data.labels.length;
+        iMax = sample - 1;
+      }
 
       state.range.value = {
-        min: getLabel(chart.value.data, iMax - sample),
-        max: xMax
+        // min: getLabel(chart.value.data, iMax - sample),
+        // max: xMax,
+        min: iMax - sample,
+        max: iMax
       };
     };
     const scaleChart = () => {
-      let indexes = findRange(chart.value.data, state.range.value);
-      let { xMin, xMax } = findRangeX(chart.value.data, indexes);
+      let { min: iMin, max: iMax } = state.range.value;
+      // let indexes = findRange(chart.value.data, state.range.value);
+      let { xMin, xMax } = findRangeX(chart.value.data, { iMin, iMax });
       let { yMin, yMax } = findRangeY(
         chart.value.data.datasets[0],
         state.control,
-        indexes
+        { iMin, iMax }
       );
 
       setScales({ xMin, xMax, yMin, yMax }, state.control);
@@ -234,8 +242,10 @@ export default {
     const writeChart = reports => {
       setData(grabDatasets(reports, props.field));
 
-      state.range.min = getLabel(chart.value.data, 0);
-      state.range.max = getLabel(chart.value.data, -1);
+      // state.range.min = getLabel(chart.value.data, 0);
+      // state.range.max = getLabel(chart.value.data, -1);
+      state.range.min = 0;
+      state.range.max = reports.length - 1;
     };
 
     onMounted(() => {
@@ -283,24 +293,23 @@ export default {
     watch(
       () => state.control.maximize,
       max => {
-        let sample = null;
         if (max) {
           state.tmp.max = state.range.value.max;
-          state.tmp.sample = state.rangeSample;
-          state.tmp.drag = state.control.drag;
+          state.tmp.min = state.range.value.min;
+          state.tmp.lock = state.control.lock;
           state.tmp.follow = state.control.follow;
           state.range.disable = true;
 
           state.control.follow = false;
-          state.control.drag = false;
+          state.control.lock = false;
         } else {
           state.range.disable = false;
           state.control.follow = state.tmp.follow;
-          state.control.drag = state.tmp.drag;
+          state.control.lock = state.tmp.lock;
           state.range.value.max = state.tmp.max;
-          sample = state.tmp.sample;
+          state.range.value.min = state.tmp.min;
         }
-        applyRange(sample);
+        applyRange();
       },
       { lazy: false, immediate: true }
     );
