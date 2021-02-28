@@ -1,14 +1,14 @@
 import { pushNotification } from "src/js/framework";
-import { INSERT_DEVICES } from "src/store/db/action-types";
+import { ADD_DEVICES } from "src/store/db/mutation-types";
 
 import dayjs from "src/js/dayjs";
 import { watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-const { useGetters, useActions } = createNamespacedHelpers("db");
+const { useGetters, useMutations } = createNamespacedHelpers("db");
 
 export default function() {
   const { devDevice } = useGetters(["devDevice"]);
-  const { [INSERT_DEVICES]: insertDevices } = useActions([INSERT_DEVICES]);
+  const { [ADD_DEVICES]: addDevices } = useMutations([ADD_DEVICES]);
 
   watch(
     () => devDevice.value,
@@ -30,6 +30,6 @@ export default function() {
   );
 
   return {
-    insertDevices
+    addDevices
   };
 }

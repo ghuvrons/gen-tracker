@@ -23,8 +23,10 @@ export default function() {
     state.history.update.options = !state.history.update.options;
   };
   const setData = ({ labels, datasets }) => {
-    state.chart.data.labels.push(...labels);
-    state.chart.data.datasets[0].data.push(...datasets);
+    // state.chart.data.labels.push(...labels);
+    // state.chart.data.datasets[0].data.push(...datasets);
+    state.chart.data.labels = labels;
+    state.chart.data.datasets[0].data = datasets;
 
     state.history.update.data = !state.history.update.data;
   };

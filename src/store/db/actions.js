@@ -4,29 +4,26 @@ import { SET_PROCESSING } from "src/store/common/mutation-types";
 import { frameId } from "src/js/utils";
 
 export default {
-  [actions.INSERT_DEVICES]({ state, commit }, payload) {
-    commit(mutations.ADD_DEVICES, payload);
-    if (!state.unitID) commit(mutations.SET_UNITID, payload.unitID);
-  },
-  [actions.INSERT_REPORTS]({ state, commit, dispatch }, payloads) {
+  [actions.INSERT_REPORTS]({ state, commit }, payloads) {
     if (!Array.isArray(payloads)) payloads = [payloads];
 
     commit(mutations.ADD_REPORTS, payloads.slice().reverse());
 
-    payloads.forEach(payload => {
-      dispatch(actions.INSERT_DEVICES, {
+    commit(
+      mutations.ADD_DEVICES,
+      payloads.map(payload => ({
         unitID: payload.unitID.val,
         sendDatetime: payload.sendDatetime.val,
         lastReport: payload,
         ...(frameId(payload.frameID.val) == "FULL" && {
           lastFullReport: payload
         })
-      });
-    });
+      }))
+    );
   },
   [actions.INSERT_RESPONSES]({ state, commit, dispatch }, payload) {
     commit(mutations.ADD_RESPONSES, payload);
-    dispatch(actions.INSERT_DEVICES, {
+    commit(mutations.ADD_DEVICES, {
       unitID: payload.unitID,
       lastResponse: payload
     });

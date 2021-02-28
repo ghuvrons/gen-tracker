@@ -9,7 +9,7 @@ import dayjs from "src/js/dayjs";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useMutations } = createNamespacedHelpers("db");
 
-export default function({ insertDevices }) {
+export default function({ addDevices }) {
   const {
     [ADD_FINGERS]: addFingers,
     [REMOVE_FINGERS]: removeFingers,
@@ -24,7 +24,7 @@ export default function({ insertDevices }) {
         message
           .split(",")
           .forEach(fingerID => addFingers({ unitID, fingerID }));
-      insertDevices({ unitID, fingerTime: dayjs().unix() });
+      addDevices({ unitID, fingerTime: dayjs().unix() });
     } else if (prop == "FINGER_ADD") addFingers({ unitID, fingerID: message });
     else if (prop == "FINGER_DEL") removeFingers({ unitID, fingerID: value });
     else if (prop == "FINGER_RST") clearFingers({ unitID });

@@ -1,6 +1,7 @@
 export const CLEAR_DATABASE = "CLEAR_DATABASE";
 
 export const SET_UNITID = "SET_UNITID";
+export const STOP_BUFFERING = "STOP_BUFFERING";
 
 export const SET_REPORT = "SET_REPORT";
 export const SET_COMMAND = "SET_COMMAND";

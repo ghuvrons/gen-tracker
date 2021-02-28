@@ -1,5 +1,6 @@
 import { parseReport } from "src/js/report";
 import { dilation } from "src/js/utils";
+import { notify } from "src/js/framework";
 import { INSERT_REPORTS } from "src/store/db/action-types";
 import { SET_REPORT } from "src/store/db/mutation-types";
 
@@ -25,10 +26,15 @@ export default function({ handleEvents, handleLostCommand }) {
   const validate = report => {
     const { val: dt } = report.logDatetime;
 
-    if (dilation(dt, "years") > 1) return console.error(`^REPORT (EXPIRED)`);
+    // if (dilation(dt, "years") > 1) {
+    //   notify("Report expired", "info");
+    //   return console.error(`^REPORT (EXPIRED)`);
+    // }
 
-    if (reports.value.some(({ logDatetime }) => logDatetime.val == dt))
+    if (reports.value.some(({ logDatetime }) => logDatetime.val == dt)) {
+      notify("Report duplicate", "info");
       return console.error(`^REPORT (DUPLICATE)`);
+    }
 
     return report;
   };
@@ -38,7 +44,7 @@ export default function({ handleEvents, handleLostCommand }) {
       let report = validate(parseReport(hex));
 
       if (!report) return acc;
-      handleLostCommand(report);
+      // handleLostCommand(report);
 
       return [...acc, report];
     }, []);
@@ -63,7 +69,7 @@ export default function({ handleEvents, handleLostCommand }) {
 
       handleEvents(curReport, oldReport);
     },
-    { lazy: false, deep: true }
+    { lazy: false, immediate: true, deep: true }
   );
 
   return {

@@ -29,8 +29,8 @@ export default {
     const publisher = ({ unitID, binCmd }) =>
       root.$mqtt.publish(`VCU/${unitID}/CMD`, binCmd, { qos: 2 });
 
-    const { insertDevices } = useDevice();
-    const { handleFinger } = useFinger({ insertDevices });
+    const { addDevices } = useDevice();
+    const { handleFinger } = useFinger({ addDevices });
     const { handleResponse } = useResponse({ executor, handleFinger });
     const { handleLostCommand } = useCommand({
       executor,
@@ -52,7 +52,7 @@ export default {
       validFrame,
       addBuffers,
       handleResponse,
-      insertDevices
+      addDevices
     };
   },
   mqtt: {
@@ -69,7 +69,7 @@ export default {
       let status = parseInt(data);
 
       console.warn(`STATUS ${unitID},${status}`);
-      this.insertDevices({ unitID, status });
+      this.addDevices({ unitID, status });
     }
   }
 };

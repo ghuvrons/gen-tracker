@@ -75,7 +75,7 @@ export default function({ executor, publisher, handleResponse }) {
       console.log(`COMMAND ${hexCmd}`);
       publisher({ unitID, binCmd });
     },
-    { lazy: false }
+    { lazy: false, immediate: true }
   );
 
   return {

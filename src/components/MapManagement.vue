@@ -4,7 +4,7 @@
         we listen for size changes on this next
         <div>, so we place the observer as direct child:
       -->
-    <q-resize-observer @resize="onResize" />
+    <q-resize-observer @resize="width = $event.width" />
     <template v-slot:before>
       <gmap-map
         class="fit"
@@ -44,22 +44,24 @@
 
 <script>
 import config from "src/js/opt/config";
+import { nearestFullReport } from "src/js/report";
 import { getPosition, getHeading } from "src/js/map";
 
 import { get } from "lodash";
-import { reactive, toRefs, watch } from "@vue/composition-api";
+import { reactive, toRefs, watch, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { frameId } from "src/js/utils";
 const { useState, useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
   setup(props) {
     const { report } = useState(["report"]);
-    const { devDevice } = useGetters(["devDevice"]);
+    const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
 
     const { centerIndonesia, zoom } = config.map;
     const state = reactive({
-      streetView: false,
+      width: 0,
       pov: null,
       pano: null,
       path: [],
@@ -82,48 +84,61 @@ export default {
       }
     });
 
-    const updatePov = pov => (state.pov = pov);
+    const updatePov = pov => (state.pov = { ...pov, zoom: 0 });
     const updatePano = pano => (state.pano = pano);
     const setPosition = ({ valid, ...location }) => {
       state.zoom = valid ? 17 : zoom;
       state.center = { ...(valid ? location : centerIndonesia) };
       state.position = { ...location, valid };
     };
-    const onResize = ({ width }) => (state.streetView = width > 500);
+
+    const streetView = computed(
+      () => state.position.valid && state.width > 500
+    );
 
     watch(
       () => devDevice.value,
-      dev => {
-        const lastReport = get(dev, "lastReport");
-        if (!lastReport) return;
-
-        let pos = getPosition(lastReport);
-        if (pos.valid) state.path.push(pos);
+      (curDev, oldDev) => {
+        if (get(curDev, "unitID") != get(oldDev, "unitID")) state.path = [];
+        else {
+          const fullReport = get(curDev, "lastFullReport");
+          const pos = getPosition(fullReport);
+          if (pos.valid) state.path.push(pos);
+        }
       },
-      { lazy: false, deep: true }
+      { lazy: false, immediate: true, deep: true }
     );
 
     watch(
       () => report.value,
-      report => {
-        if (!report) return;
-        setPosition(getPosition(report));
+      (curReport, oldReport) => {
+        const fullFrame = frameId(get(curReport, "frameID.val")) == "FULL";
+        const fullReport = fullFrame
+          ? curReport
+          : nearestFullReport(curReport, devReports.value);
 
-        if (!state.pov) return;
-        updatePov({
-          ...state.pov,
-          heading: getHeading(report)
-        });
+        const pos = getPosition(fullReport);
+        setPosition(pos);
+
+        if (get(curReport, "unitID.val") != get(oldReport, "unitID.val"))
+          setPosition(pos);
+        else if (pos.valid) setPosition(pos);
+
+        if (state.pov)
+          updatePov({
+            ...state.pov,
+            heading: getHeading(curReport)
+          });
       },
-      { lazy: false }
+      { lazy: false, immediate: true }
     );
 
     return {
       ...toRefs(state),
+      streetView,
 
       updatePov,
-      updatePano,
-      onResize
+      updatePano
     };
   }
 };

@@ -1,6 +1,8 @@
 import * as mutations from "./mutation-types";
 import initialState from "./state";
 import config from "src/js/opt/config";
+import { orderBy } from "lodash";
+import { loader } from "src/js/framework";
 
 export default {
   [mutations.CLEAR_DATABASE](state) {
@@ -17,26 +19,40 @@ export default {
     state.command = command;
   },
 
-  [mutations.ADD_DEVICES](state, payload) {
-    let idx = state.devices.findIndex(
-      ({ unitID }) => unitID === payload.unitID
-    );
+  [mutations.ADD_DEVICES](state, payloads) {
+    if (!Array.isArray(payloads)) payloads = [payloads];
 
-    if (idx < 0)
-      state.devices.unshift({
-        status: 0,
-        sendDatetime: 0,
-        ...payload
-      });
-    else
-      state.devices.splice(idx, 1, {
-        ...state.devices[idx],
-        ...payload
-      });
+    payloads.forEach(payload => {
+      let idx = state.devices.findIndex(
+        ({ unitID }) => unitID === payload.unitID
+      );
+
+      if (idx < 0)
+        state.devices.unshift({
+          status: 0,
+          sendDatetime: 0,
+          ...payload
+        });
+      else
+        state.devices.splice(idx, 1, {
+          ...state.devices[idx],
+          ...payload
+        });
+    });
+
+    if (!state.unitID) state.unitID = payloads[payloads.length - 1].unitID;
   },
 
+  [mutations.STOP_BUFFERING](state) {
+    if (state.buffering) {
+      state.buffering.hide();
+      state.buffering = null;
+    }
+  },
   [mutations.ADD_BUFFERS](state, payloads) {
     if (!Array.isArray(payloads)) payloads = [payloads];
+    else if (!state.buffering)
+      state.buffering = loader("Syncing...", "Please wait a moment");
     state.buffers.push(...payloads);
   },
   [mutations.FREE_BUFFER](state, hexs) {
@@ -46,7 +62,13 @@ export default {
   [mutations.ADD_REPORTS](state, payloads) {
     state.reports.unshift(...payloads);
 
-    if (state.reports.length > config.maxStorage.reports) state.reports.pop();
+    state.reports = [...orderBy(state.reports, "logDatetime.val", "desc")];
+
+    if (state.reports.length > config.maxStorage.reports)
+      state.reports.splice(
+        config.maxStorage.reports - 1,
+        state.reports.length - config.maxStorage.reports
+      );
   },
   [mutations.ADD_RESPONSES](state, payload) {
     state.responses.unshift(payload);

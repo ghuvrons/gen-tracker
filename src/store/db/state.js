@@ -1,11 +1,13 @@
 export default function() {
   return {
+    buffering: null,
+
+    unitID: null,
+    report: null,
     command: {
       payload: "",
       exec: false
     },
-    unitID: null,
-    report: null,
 
     devices: [],
     buffers: [],

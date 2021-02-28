@@ -256,19 +256,29 @@ export default {
     watch(
       () => Dark.isActive,
       dark => setColor(dark ? "#FFF" : "#666"),
-      { lazy: false }
+      { lazy: false, immediate: true }
     );
-    watch(
-      () => devDevice.value,
-      dev => {
-        const lastReport = get(dev, "lastReport");
-        if (!lastReport) return;
-        if (!lastReport[props.field]) return;
+    // watch(
+    //   () => devDevice.value,
+    //   dev => {
+    //     const lastReport = get(dev, "lastReport");
+    //     if (!lastReport) return;
+    //     if (!lastReport[props.field]) return;
 
-        writeChart([lastReport]);
+    //     writeChart([lastReport]);
+    //     applyRange();
+    //   },
+    //   { deep: true }
+    // );
+    watch(
+      () => devReports.value.length,
+      len => {
+        if (!len) return;
+
+        writeChart(devReports.value);
         applyRange();
       },
-      { deep: true }
+      { lazy: false, deep: true }
     );
     watch(
       () => state.control.maximize,
@@ -292,7 +302,7 @@ export default {
         }
         applyRange(sample);
       },
-      { lazy: false }
+      { lazy: false, immediate: true }
     );
 
     return {

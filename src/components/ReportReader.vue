@@ -125,12 +125,13 @@ export default {
         state.hList = `height: calc(100vh - ${h}px - 34px)`;
         state.hTree = ` height: calc(100vh - ${h}px - 73px)`;
       },
-      { lazy: false }
+      { lazy: false, immediate: true }
     );
 
     return {
       ...toRefs(state),
       field,
+
       theReport,
 
       treeState,

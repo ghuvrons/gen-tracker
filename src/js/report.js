@@ -50,17 +50,17 @@ const readReport = report => {
   }, {});
 };
 
-// const lastFullReport = (report, reports) => {
-//   if (!report) return;
+const nearestFullReport = (report, reports) => {
+  if (!report) return;
 
-//   let index = reports.findIndex(({ hex }) => hex === report.hex);
-//   if (index < 0) return;
+  let index = reports.findIndex(({ hex }) => hex === report.hex);
+  if (index < 0) return;
 
-//   while (index < reports.length) {
-//     let prev = reports[index++];
-//     if (frameId(prev.frameID.val) == "FULL") return prev;
-//   }
-// };
+  while (index < reports.length) {
+    let prev = reports[index++];
+    if (frameId(prev.frameID.val) == "FULL") return prev;
+  }
+};
 
 const lastSendDatetime = sendDatetime => {
   if (sendDatetime)
@@ -75,7 +75,7 @@ export {
   Report,
   parseReport,
   parseReportData,
-  // lastFullReport,
+  nearestFullReport,
   readReport,
   lastSendDatetime
 };

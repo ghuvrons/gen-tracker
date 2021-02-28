@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import config from "src/js/opt/config";
 import { frameId } from "src/js/utils";
 
@@ -11,23 +12,24 @@ const isIndonesia = ({ lng, lat }) => {
   );
 };
 
-const getPosition = ({ frameID, gpsLatitude, gpsLongitude }) => {
+const getPosition = report => {
   let pos = {
     ...config.map.centerIndonesia,
     valid: false
   };
 
-  if (frameId(frameID.val) == "FULL") {
-    pos.lat = gpsLatitude.val;
-    pos.lng = gpsLongitude.val;
+  if (frameId(get(report, "frameID.val")) == "FULL") {
+    pos.lat = get(report, "gpsLatitude.val");
+    pos.lng = get(report, "gpsLongitude.val");
     pos.valid = isIndonesia(pos);
   }
 
   return pos;
 };
 
-const getHeading = ({ frameID, gpsHeading }) => {
-  if (frameId(frameID.val) == "FULL") return gpsHeading.val;
+const getHeading = report => {
+  if (frameId(get(report, "frameID.val")) == "FULL")
+    return get(report, "gpsHeading.val");
   return 0;
 };
 
