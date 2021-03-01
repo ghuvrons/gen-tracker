@@ -60,14 +60,14 @@ export default {
   },
 
   [mutations.ADD_REPORTS](state, payloads) {
-    state.reports.unshift(...payloads);
-
-    state.reports = [...orderBy(state.reports, "logDatetime.val", "desc")];
+    state.reports = [
+      ...orderBy([...state.reports, ...payloads], "logDatetime.val", "desc")
+    ];
 
     if (state.reports.length > config.maxStorage.reports)
       state.reports.splice(
         config.maxStorage.reports - 1,
-        state.reports.length - config.maxStorage.reports
+        state.reports.length - config.maxStorage.reports - 1
       );
   },
   [mutations.ADD_RESPONSES](state, payload) {

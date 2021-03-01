@@ -90,7 +90,7 @@
               class="col-xs-12 col-sm-12 col-md-4 col-lg-3"
             >
               <div class="q-pa-sm scroll">
-                <event-group-reader :value="currentValue"></event-group-reader>
+                <event-group-reader :value="latestValue"></event-group-reader>
               </div>
             </div>
           </div>
@@ -106,16 +106,9 @@ import { Report } from "src/js/report";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
 import { Dark } from "quasar";
-import {
-  findRange,
-  findRangeX,
-  findRangeY,
-  getLabel,
-  grabDatasets
-} from "src/js/chart";
+import { findRangeX, findRangeY, grabDatasets } from "src/js/chart";
 import useChart from "src/composables/useChart";
 
-import { get } from "lodash";
 import {
   computed,
   reactive,
@@ -174,66 +167,54 @@ export default {
       }
     });
 
-    const { devDevice, devReports, devEvents } = useGetters([
-      "devDevice",
-      "devReports",
-      "devEvents"
-    ]);
+    const { devReports, devEvents } = useGetters(["devReports", "devEvents"]);
 
     const theField = computed(() => getField(Report, props.field));
-    const currentValue = computed(() => {
-      let { data } = chart.value.data.datasets[0];
-      return data[data.length - 1];
-    });
     const eventGroup = computed(
       () =>
         props.field == "eventsGroup" && Object.keys(devEvents.value).length > 0
     );
-    const rangeSample = computed(() => {
-      // let { iMin, iMax } = findRange(chart.value.data, state.range.value);
-      // return iMax - iMin + 1;
-      return state.range.value.max - state.range.value.min;
-    });
+    const latestValue = computed(
+      () => chart.value.data.datasets[0].data.slice(-1)[0]
+    );
+    const rangeSample = computed(
+      () => state.range.value.max - state.range.value.min
+    );
 
     const applyRange = () => {
-      let { min: iMin, max: iMax } = state.range.value;
-      // let { xMax } = findRangeX(chart.value.data, { iMin, iMax });
-      let sample = iMax - iMin;
+      let { min, max } = state.range.value;
+      let sample = max - min;
 
-      if (iMax == 0) {
-        iMax = chart.value.data.labels.length - 1;
-        sample = state.range.sample;
-      }
+      if (!state.control.maximize) {
+        if (!max) {
+          max = chart.value.data.labels.length - 1;
+          sample = state.range.sample;
+        }
 
-      if (state.control.follow) {
-        iMax = chart.value.data.labels.length - 1;
+        if (state.control.follow) {
+          max = chart.value.data.labels.length - 1;
 
-        if (!state.control.lock) sample = iMax - iMin + 1;
+          if (!state.control.lock) sample = max - min + 1;
+        } else {
+          if (!state.control.lock) sample++;
+        }
       } else {
-        // if (state.control.lock)
-        iMax--;
-      }
-
-      if (state.control.maximize) {
         sample = chart.value.data.labels.length;
-        iMax = sample - 1;
+        max = sample - 1;
       }
 
+      min = max - sample;
       state.range.value = {
-        // min: getLabel(chart.value.data, iMax - sample),
-        // max: xMax,
-        min: iMax - sample,
-        max: iMax
+        min: min < 0 ? 0 : min,
+        max: max
       };
     };
     const scaleChart = () => {
-      let { min: iMin, max: iMax } = state.range.value;
-      // let indexes = findRange(chart.value.data, state.range.value);
-      let { xMin, xMax } = findRangeX(chart.value.data, { iMin, iMax });
+      let { xMin, xMax } = findRangeX(chart.value.data, state.range.value);
       let { yMin, yMax } = findRangeY(
         chart.value.data.datasets[0],
         state.control,
-        { iMin, iMax }
+        state.range.value
       );
 
       setScales({ xMin, xMax, yMin, yMax }, state.control);
@@ -242,8 +223,6 @@ export default {
     const writeChart = reports => {
       setData(grabDatasets(reports, props.field));
 
-      // state.range.min = getLabel(chart.value.data, 0);
-      // state.range.max = getLabel(chart.value.data, -1);
       state.range.min = 0;
       state.range.max = reports.length - 1;
     };
@@ -264,22 +243,22 @@ export default {
       _ => scaleChart()
     );
     watch(
+      () => state.control.follow,
+      follow => {
+        if (follow) {
+          let sample = state.range.value.max - state.range.value.min;
+          state.range.value.max = chart.value.data.labels.length - 1;
+          if (state.control.lock)
+            state.range.value.min = state.range.value.max - sample;
+          applyRange();
+        }
+      }
+    );
+    watch(
       () => Dark.isActive,
       dark => setColor(dark ? "#FFF" : "#666"),
       { lazy: false, immediate: true }
     );
-    // watch(
-    //   () => devDevice.value,
-    //   dev => {
-    //     const lastReport = get(dev, "lastReport");
-    //     if (!lastReport) return;
-    //     if (!lastReport[props.field]) return;
-
-    //     writeChart([lastReport]);
-    //     applyRange();
-    //   },
-    //   { deep: true }
-    // );
     watch(
       () => devReports.value.length,
       len => {
@@ -320,7 +299,7 @@ export default {
       ...toRefs(state),
 
       theField,
-      currentValue,
+      latestValue,
       eventGroup,
       rangeSample
     };

@@ -14,10 +14,10 @@ export default function() {
   });
 
   const setScales = ({ xMin, xMax, yMin, yMax }, { beginAtZero }) => {
-    state.chart.options.scales.xAxes[0].ticks.max = xMax;
     state.chart.options.scales.xAxes[0].ticks.min = xMin;
-    state.chart.options.scales.yAxes[0].ticks.max = yMax;
+    state.chart.options.scales.xAxes[0].ticks.max = xMax;
     state.chart.options.scales.yAxes[0].ticks.min = yMin;
+    state.chart.options.scales.yAxes[0].ticks.max = yMax;
     state.chart.options.scales.yAxes[0].ticks.beginAtZero = beginAtZero;
 
     state.history.update.options = !state.history.update.options;

@@ -1,25 +1,16 @@
-import { min, max, findLastIndex } from "lodash";
+import { min as getMin, max as getMax } from "lodash";
 
-const findRange = ({ labels }, { min, max }) => {
-  let iMin = min ? labels.findIndex((val, idx) => idx >= min) : 0;
-  let iMax = max
-    ? findLastIndex(labels, (val, idx) => idx <= max)
-    : labels.length - 1;
-
-  return { iMin, iMax };
-};
-
-const findRangeX = ({ labels }, { iMin, iMax }) => {
-  let xMin = labels[iMin];
-  let xMax = labels[iMax];
+const findRangeX = ({ labels }, { min, max }) => {
+  let xMin = labels[min];
+  let xMax = labels[max];
 
   return { xMin, xMax };
 };
 
-const findRangeY = ({ data }, { beginAtZero }, { iMin, iMax }) => {
-  let scope = data.filter((_, i) => i >= iMin && i <= iMax);
-  let yMin = min(scope);
-  let yMax = max(scope);
+const findRangeY = ({ data }, { beginAtZero }, { min, max }) => {
+  let scope = data.filter((_, i) => i >= min && i <= max);
+  let yMin = getMin(scope);
+  let yMax = getMax(scope);
 
   // correction
   if (beginAtZero) {
@@ -34,26 +25,21 @@ const findRangeY = ({ data }, { beginAtZero }, { iMin, iMax }) => {
   return { yMin, yMax };
 };
 
-const getLabel = ({ labels }, index) => {
-  if (index >= 0) return labels[index];
-  return labels[labels.length - 1];
-};
-
 const grabDatasets = (reports, field) => {
   let datasets = [];
   let labels = [];
 
-  reports.forEach(report => {
-    if (report[field]) {
-      datasets.push(report[field].val);
-      labels.push(report.logDatetime.val);
-    }
-  });
+  reports
+    .filter(report => report[field])
+    .forEach(report => {
+      datasets.unshift(report[field].val);
+      labels.unshift(report.logDatetime.val);
+    });
 
   return {
-    datasets: datasets.reverse(),
-    labels: labels.reverse()
+    datasets,
+    labels
   };
 };
 
-export { findRange, findRangeX, findRangeY, getLabel, grabDatasets };
+export { findRangeX, findRangeY, grabDatasets };
