@@ -2,7 +2,7 @@ import { Platform } from "quasar";
 
 export default {
   app: {
-    version: "1.86",
+    version: "1.87",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia"
   },
