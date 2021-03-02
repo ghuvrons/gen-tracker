@@ -36,7 +36,7 @@ register(process.env.SERVICE_WORKER_FILE, {
           label: "Refresh",
           color: "yellow",
           handler: () => {
-            window.localStorage.removeItem("db");
+            window.localStorage.removeItem("db_key");
             window.location.reload();
           }
         },
