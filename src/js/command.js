@@ -16,6 +16,9 @@ const buildCommand = (cmd, unitID) => {
       case "code":
         acc = formatCmd(cmd[field]) + acc;
         break;
+      case "sendDatetime":
+        acc = formatCmd() + acc;
+        break;
       case "unitID":
         acc = formatCmd(unitID) + acc;
         break;

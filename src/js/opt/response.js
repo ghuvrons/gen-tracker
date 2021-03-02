@@ -41,25 +41,25 @@ const Response = [
     title: "Code",
     required: true,
     size: 1,
-    format: val => HexToUnsignedInt(val),
-    display: valFormat => valFormat
+    format: v => HexToUnsignedInt(v),
+    display: vf => vf
   },
   {
     field: "subCode",
     title: "Sub Code",
     required: true,
     size: 1,
-    format: val => HexToUnsignedInt(val),
-    display: valFormat => valFormat
+    format: v => HexToUnsignedInt(v),
+    display: vf => vf
   },
   {
     field: "resCode",
     title: "Response Code",
     required: true,
     size: 1,
-    format: val => HexToUnsignedInt(val),
-    display: valFormat => {
-      let res = RESPONSE_LIST.find(({ resCode }) => resCode === valFormat);
+    format: v => HexToUnsignedInt(v),
+    display: vf => {
+      let res = RESPONSE_LIST.find(({ resCode }) => resCode === vf);
 
       if (res) return res.title;
       return RESPONSE_LIST.find(({ name }) => name === "unknown").title;
@@ -70,8 +70,8 @@ const Response = [
     title: "Message",
     required: true,
     size: 200,
-    format: val => HexToAscii(val),
-    display: valFormat => valFormat
+    format: v => HexToAscii(v),
+    display: vf => vf
   }
 ];
 

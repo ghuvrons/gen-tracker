@@ -1,4 +1,5 @@
 import config from "src/js/opt/config";
+import dayjs from "src/js/dayjs";
 // import { CRC32 } from "src/js/crc32-mpeg2";
 import {
   ChangeEndian,
@@ -8,6 +9,7 @@ import {
   HexToUnsignedInt,
   IntToHex
 } from "src/js/formatter";
+import { buildTimestamp, parseDatetime } from "src/js/utils";
 
 const Header = [
   {
@@ -17,8 +19,8 @@ const Header = [
     header: true,
     required: true,
     size: 2,
-    format: val => HexToAscii(ChangeEndian(val)),
-    display: valFormat => valFormat,
+    format: v => HexToAscii(ChangeEndian(v)),
+    display: vf => vf,
     formatCmd: _ => ChangeEndian(AsciiToHex(config.prefix.command))
   },
   // {
@@ -29,9 +31,9 @@ const Header = [
   //   required: true,
   //   chartable: true,
   //   size: 4,
-  //   format: val => HexToUnsignedInt(ChangeEndian(val)),
-  //   display: valFormat => IntToHex(valFormat, 8).toUpperCase(),
-  //   formatCmd: val => ChangeEndian(CRC32(val).padStart(4 * 2, "0"))
+  //   format: v => HexToUnsignedInt(ChangeEndian(v)),
+  //   display: vf => IntToHex(vf, 8).toUpperCase(),
+  //   formatCmd: v => ChangeEndian(CRC32(v).padStart(4 * 2, "0"))
   // },
   {
     group: "packet",
@@ -42,8 +44,8 @@ const Header = [
     chartable: true,
     unit: "Bytes",
     size: 1,
-    format: val => HexToUnsignedInt(ChangeEndian(val)),
-    display: valFormat => Dot(valFormat),
+    format: v => HexToUnsignedInt(ChangeEndian(v)),
+    display: vf => Dot(vf),
     formatCmd: hex => ChangeEndian(IntToHex(hex.length / 2, 1 * 2))
   },
   {
@@ -53,9 +55,21 @@ const Header = [
     header: true,
     required: true,
     size: 4,
-    format: val => HexToUnsignedInt(ChangeEndian(val)),
-    display: valFormat => valFormat,
-    formatCmd: val => ChangeEndian(IntToHex(val, 4 * 2))
+    format: v => HexToUnsignedInt(ChangeEndian(v)),
+    display: vf => vf,
+    formatCmd: v => ChangeEndian(IntToHex(v, 4 * 2))
+  },
+  {
+    group: "packet.datetime",
+    field: "sendDatetime",
+    title: "Send Datetime",
+    header: true,
+    required: true,
+    chartable: true,
+    size: 7,
+    format: v => Number(dayjs(parseDatetime(v), "YYMMDDHHmmss0d").unix()),
+    display: vf => dayjs.unix(vf).format("ddd, DD-MM-YY HH:mm:ss"),
+    formatCmd: () => buildTimestamp(dayjs().format("YYMMDDHHmmss0d"))
   }
 ];
 

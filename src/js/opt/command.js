@@ -40,8 +40,8 @@ const COMMAND_LIST = [
     subCode: 0,
     type: "uint8_t[7]",
     range: ["YYMMDDHHmmss0d"],
-    formatCmd: val => buildTimestamp(val),
-    validator: val => dayjs(val, "YYMMDDHHmmss0d", true).isValid()
+    formatCmd: v => buildTimestamp(v) + "00",
+    validator: v => dayjs(v, "YYMMDDHHmmss0d", true).isValid()
   },
   {
     command: "REPORT_ODOM",
@@ -132,19 +132,19 @@ const Command = [
     field: "code",
     title: "Code",
     size: 1,
-    formatCmd: val => ChangeEndian(IntToHex(val, 1 * 2))
+    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
   },
   {
     field: "subCode",
     title: "Sub Code",
     size: 1,
-    formatCmd: val => ChangeEndian(IntToHex(val, 1 * 2))
+    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
   },
   {
     field: "value",
     title: "Value",
     size: 8,
-    formatCmd: val => ChangeEndian(IntToHex(parseInt(val), 8 * 2))
+    formatCmd: v => ChangeEndian(IntToHex(parseInt(v), 8 * 2))
   }
 ];
 

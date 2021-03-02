@@ -22,15 +22,12 @@ const VEHICLE_STATES = {
   RUN: 3
 };
 
-const getVehicleState = state => {
-  return Object.keys(VEHICLE_STATES)[
+const getVehicleState = state =>
+  Object.keys(VEHICLE_STATES)[
     Object.values(VEHICLE_STATES).findIndex(v => v === parseInt(state))
   ];
-};
 
 const VCU = ({ required }) => {
-  const RTC = ["sendDatetime", "logDatetime"];
-
   return [
     {
       group: "packet",
@@ -42,20 +39,16 @@ const VCU = ({ required }) => {
       format: val => HexToUnsignedInt(ChangeEndian(val)),
       display: valFormat => config.frames[valFormat]
     },
-    ...RTC.reduce((acc, rtc) => {
-      return acc.concat([
-        {
-          group: "packet.datetime",
-          field: rtc,
-          title: startCase(rtc),
-          required: true,
-          chartable: true,
-          size: 7,
-          format: v => Number(dayjs(parseDatetime(v), "YYMMDDHHmmss0d").unix()),
-          display: vf => dayjs.unix(vf).format("ddd, DD-MM-YY HH:mm:ss")
-        }
-      ]);
-    }, []),
+    {
+      group: "packet.datetime",
+      field: "logDatetime",
+      title: "Log Datetime",
+      required: true,
+      chartable: true,
+      size: 7,
+      format: v => Number(dayjs(parseDatetime(v), "YYMMDDHHmmss0d").unix()),
+      display: vf => dayjs.unix(vf).format("ddd, DD-MM-YY HH:mm:ss")
+    },
     {
       group: "vcu",
       field: "driverID",
@@ -320,7 +313,7 @@ const BMS = ({ required }) => {
     .filter(({ required: req }) => req === required);
 };
 
-const TEST = () => {
+const DEBUG = () => {
   const TASK_LIST = [
     "managerTask",
     "iotTask",
@@ -389,7 +382,7 @@ const Report = [
   ...BMS({ required: true }),
   ...VCU({ required: false }),
   ...BMS({ required: false }),
-  ...TEST()
+  ...DEBUG()
 ].map((el, idx) => ({
   ...el,
   no: idx

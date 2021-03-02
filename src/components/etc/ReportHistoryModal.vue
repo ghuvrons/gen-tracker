@@ -182,21 +182,25 @@ export default {
     );
 
     const applyRange = () => {
+      let top = chart.value.data.labels.length - 1;
       let { min, max } = state.range.value;
       let sample = max - min;
 
       if (!state.control.maximize) {
         if (!max) {
-          max = chart.value.data.labels.length - 1;
+          max = top;
           sample = state.range.sample;
         }
 
         if (state.control.follow) {
-          max = chart.value.data.labels.length - 1;
+          max = top;
 
-          if (!state.control.lock) sample = max - min + 1;
+          if (!state.control.lock) sample = max - min;
         } else {
-          if (!state.control.lock) sample++;
+          if (!state.control.lock) {
+            if (max == top) sample++;
+            else max++;
+          }
         }
       } else {
         sample = chart.value.data.labels.length;
@@ -246,12 +250,18 @@ export default {
       () => state.control.follow,
       follow => {
         if (follow) {
-          let sample = state.range.value.max - state.range.value.min;
+          state.tmp.max = state.range.value.max;
+
           state.range.value.max = chart.value.data.labels.length - 1;
-          if (state.control.lock)
+          if (state.control.lock) {
+            let sample = state.range.value.max - state.range.value.min;
             state.range.value.min = state.range.value.max - sample;
-          applyRange();
+          }
+        } else {
+          state.range.value.max = state.tmp.max;
         }
+
+        applyRange();
       }
     );
     watch(

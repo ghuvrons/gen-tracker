@@ -64,7 +64,7 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
 
   //  (at least more n minutes different)
   // if (!deviceTime.isValid() || Math.abs(diff) > 120)
-  console.warn(serverTime.tz(timezone).format("YYMMDDHHmmss0d"));
+
   return serverTime.tz(timezone).format("YYMMDDHHmmss0d");
 };
 
@@ -85,11 +85,9 @@ const parseDatetime = hex => {
 const buildTimestamp = ascii => {
   let datetime = ascii.match(/.{1,2}/g);
 
-  return (
-    datetime
-      .reduce((acc, dt) => acc.concat(IntToHex(parseInt(dt), 2)), "")
-      .toUpperCase() + "00"
-  );
+  return datetime
+    .reduce((acc, dt) => acc.concat(IntToHex(parseInt(dt), 2)), "")
+    .toUpperCase();
 };
 
 const frameId = index => {
