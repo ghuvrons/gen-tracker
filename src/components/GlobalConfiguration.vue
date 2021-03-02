@@ -82,8 +82,12 @@ import {
   SET_NOTIFICATION,
   CLEAR_COMMON
 } from "src/store/common/mutation-types";
-import { CLEAR_DATABASE, ADD_BUFFERS } from "src/store/db/mutation-types";
-import { STOP_COMMAND, INSERT_COMMAND } from "src/store/db/action-types";
+import { CLEAR_DATABASE } from "src/store/db/mutation-types";
+import {
+  STOP_COMMAND,
+  INSERT_COMMAND,
+  INSERT_BUFFERS
+} from "src/store/db/action-types";
 import { exportCSV, exportJSON, importJSON } from "src/js/exporter";
 import { confirm, notify } from "src/js/framework";
 import { calibrateTime } from "src/js/utils";
@@ -114,14 +118,12 @@ export default {
       "reports"
     ]);
     const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
-    const {
-      [CLEAR_DATABASE]: clearDatabase,
-      [ADD_BUFFERS]: addBuffers
-    } = useMutations([CLEAR_DATABASE, ADD_BUFFERS]);
+    const { [CLEAR_DATABASE]: clearDatabase } = useMutations([CLEAR_DATABASE]);
     const {
       [STOP_COMMAND]: stopCommand,
-      [INSERT_COMMAND]: insertCommand
-    } = useActions([STOP_COMMAND, INSERT_COMMAND]);
+      [INSERT_COMMAND]: insertCommand,
+      [INSERT_BUFFERS]: insertBuffers
+    } = useActions([STOP_COMMAND, INSERT_COMMAND, INSERT_BUFFERS]);
 
     const common = createNamespacedHelpers("common");
     const { notification } = common.useState(["notification"]);
@@ -161,7 +163,7 @@ export default {
       notify("Calibrating device time..", "info");
     };
     const importData = ([file]) => {
-      importJSON(file).then(hexs => addBuffers(hexs));
+      importJSON(file).then(hexs => insertBuffers(hexs));
     };
 
     watch(

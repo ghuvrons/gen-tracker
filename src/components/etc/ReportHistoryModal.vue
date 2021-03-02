@@ -39,8 +39,8 @@
                   :min="range.min"
                   :max="range.max"
                   :disable="range.disable"
-                  :drag-range="control.lock"
-                  snap
+                  :drag-only-range="control.lock"
+                  label-always
                   square
                 />
                 <div class="row justify-between items-center content-center">

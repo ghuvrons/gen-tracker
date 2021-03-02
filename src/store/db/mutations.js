@@ -20,8 +20,6 @@ export default {
   },
 
   [mutations.ADD_DEVICES](state, payloads) {
-    if (!Array.isArray(payloads)) payloads = [payloads];
-
     payloads.forEach(payload => {
       let idx = state.devices.findIndex(
         ({ unitID }) => unitID === payload.unitID
@@ -43,6 +41,10 @@ export default {
     if (!state.unitID) state.unitID = payloads[payloads.length - 1].unitID;
   },
 
+  [mutations.START_BUFFERING](state) {
+    if (!state.buffering)
+      state.buffering = loader("Syncing...", "Please wait a moment");
+  },
   [mutations.STOP_BUFFERING](state) {
     if (state.buffering) {
       state.buffering.hide();
@@ -50,9 +52,6 @@ export default {
     }
   },
   [mutations.ADD_BUFFERS](state, payloads) {
-    if (!Array.isArray(payloads)) payloads = [payloads];
-    else if (!state.buffering)
-      state.buffering = loader("Syncing...", "Please wait a moment");
     state.buffers.push(...payloads);
   },
   [mutations.FREE_BUFFER](state, hexs) {
@@ -66,15 +65,16 @@ export default {
       ...orderBy([...state.reports, ...freezed], "logDatetime.val", "desc")
     ];
 
-    if (state.reports.length > config.maxStorage.reports)
+    if (state.reports.length > config.maxStorage.reports - 1)
       state.reports.splice(
-        config.maxStorage.reports - 1,
-        state.reports.length - config.maxStorage.reports - 1
+        config.maxStorage.reports,
+        state.reports.length - config.maxStorage.reports
       );
   },
   [mutations.ADD_RESPONSES](state, payload) {
     const freezed = { ...payload };
     Object.freeze(freezed);
+
     state.responses.unshift(freezed);
 
     if (state.responses.length > config.maxStorage.responses)

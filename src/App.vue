@@ -40,7 +40,7 @@ export default {
 
     const { handleEvents } = useEvents();
     const { handleReports } = useReport({ handleEvents, handleLostCommand });
-    const { addBuffers } = useBuffer({ handleReports });
+    const { insertBuffers } = useBuffer({ handleReports });
 
     onMounted(() => {
       root.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });
@@ -50,7 +50,7 @@ export default {
 
     return {
       validFrame,
-      addBuffers,
+      insertBuffers,
       handleResponse,
       addDevices
     };
@@ -62,14 +62,14 @@ export default {
     },
     "VCU/+/RPT": function(data, topic) {
       const hex = this.validFrame(data, topic);
-      if (hex) this.addBuffers(hex);
+      if (hex) this.insertBuffers([hex]);
     },
     "VCU/+/STS": function(data, topic) {
       let unitID = parseInt(topic.split("/")[1]);
       let status = parseInt(data);
 
       console.warn(`STATUS ${unitID},${status}`);
-      this.addDevices({ unitID, status });
+      this.addDevices([{ unitID, status }]);
     }
   }
 };

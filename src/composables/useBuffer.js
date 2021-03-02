@@ -1,22 +1,19 @@
-import {
-  ADD_BUFFERS,
-  FREE_BUFFER,
-  STOP_BUFFERING
-} from "src/store/db/mutation-types";
+import { FREE_BUFFER, STOP_BUFFERING } from "src/store/db/mutation-types";
 
 import { onBeforeUnmount, onMounted, ref } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-const { useState, useMutations } = createNamespacedHelpers("db");
+import { INSERT_BUFFERS } from "src/store/db/action-types";
+const { useState, useMutations, useActions } = createNamespacedHelpers("db");
 
 export default function({ handleReports }) {
   const interval = ref(null);
 
   const { buffers } = useState(["buffers"]);
   const {
-    [ADD_BUFFERS]: addBuffers,
     [FREE_BUFFER]: freeBuffer,
     [STOP_BUFFERING]: stopBuferring
-  } = useMutations([ADD_BUFFERS, FREE_BUFFER, STOP_BUFFERING]);
+  } = useMutations([FREE_BUFFER, STOP_BUFFERING]);
+  const { [INSERT_BUFFERS]: insertBuffers } = useActions([INSERT_BUFFERS]);
 
   const processBuffer = () => {
     if (buffers.value.length > 0) {
@@ -30,6 +27,6 @@ export default function({ handleReports }) {
   onBeforeUnmount(() => clearInterval(interval.value));
 
   return {
-    addBuffers
+    insertBuffers
   };
 }

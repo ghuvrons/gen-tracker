@@ -24,7 +24,7 @@ export default function({ addDevices }) {
         message
           .split(",")
           .forEach(fingerID => addFingers({ unitID, fingerID }));
-      addDevices({ unitID, fingerTime: dayjs().unix() });
+      addDevices([{ unitID, fingerTime: dayjs().unix() }]);
     } else if (prop == "FINGER_ADD") addFingers({ unitID, fingerID: message });
     else if (prop == "FINGER_DEL") removeFingers({ unitID, fingerID: value });
     else if (prop == "FINGER_RST") clearFingers({ unitID });

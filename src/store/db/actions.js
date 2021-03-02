@@ -4,8 +4,13 @@ import { SET_PROCESSING } from "src/store/common/mutation-types";
 import { frameId } from "src/js/utils";
 
 export default {
+  [actions.INSERT_BUFFERS]({ state, commit }, payloads) {
+    if (payloads.length > 1) commit(mutations.START_BUFFERING);
+
+    commit(mutations.ADD_BUFFERS, payloads);
+  },
   [actions.INSERT_REPORTS]({ state, commit }, payloads) {
-    if (!Array.isArray(payloads)) payloads = [payloads];
+    if (payloads.length > 1) commit(mutations.START_BUFFERING);
 
     commit(mutations.ADD_REPORTS, payloads.slice().reverse());
 
@@ -23,10 +28,12 @@ export default {
   },
   [actions.INSERT_RESPONSES]({ state, commit, dispatch }, payload) {
     commit(mutations.ADD_RESPONSES, payload);
-    commit(mutations.ADD_DEVICES, {
-      unitID: payload.unitID,
-      lastResponse: payload
-    });
+    commit(mutations.ADD_DEVICES, [
+      {
+        unitID: payload.unitID,
+        lastResponse: payload
+      }
+    ]);
   },
   [actions.INSERT_COMMAND]({ state, commit }, payload) {
     let command = {
