@@ -7,9 +7,9 @@
       No report yet
     </q-banner>
     <q-virtual-scroll v-else :items="devReports" separator>
-      <template v-slot="{ item: devReport, index }">
+      <template v-slot="{ item: devReport }">
         <q-item
-          :key="index"
+          :key="devReport.sendDatetime.val"
           :active="devReport.hex === report.hex"
           active-class="bg-primary text-white"
           @click="setReport(devReport)"

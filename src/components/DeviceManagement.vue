@@ -41,8 +41,8 @@
               {{ lastSendDatetime(dev.sendDatetime) }}
             </q-item-label>
             <q-item-label :class="{ 'text-white': active(dev) }" caption>
-              <b v-if="dev.status">Online</b>
-              <i v-else>Offline</i>
+              <u v-if="dev.status"><b>ONLINE</b></u>
+              <i v-else>OFFLINE</i>
             </q-item-label>
           </q-item-section>
         </q-item>

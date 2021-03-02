@@ -48,7 +48,7 @@ const dilation = (unix, as, startUnix) => {
   if (startUnix) start = dayjs.unix(startUnix);
 
   let diff = start.diff(dayjs.unix(unix));
-  return Math.abs(dayjs.duration(diff).as(as));
+  return dayjs.duration(diff).as(as);
 };
 
 const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
@@ -63,7 +63,7 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
   // let diff = dilation(deviceTime, "seconds", serverTime.unix());
 
   //  (at least more n minutes different)
-  // if (!deviceTime.isValid() || diff > 120)
+  // if (!deviceTime.isValid() || Math.abs(diff) > 120)
   console.warn(serverTime.tz(timezone).format("YYMMDDHHmmss0d"));
   return serverTime.tz(timezone).format("YYMMDDHHmmss0d");
 };

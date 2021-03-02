@@ -60,8 +60,10 @@ export default {
   },
 
   [mutations.ADD_REPORTS](state, payloads) {
+    const freezed = payloads.map(payload => Object.freeze(payload));
+
     state.reports = [
-      ...orderBy([...state.reports, ...payloads], "logDatetime.val", "desc")
+      ...orderBy([...state.reports, ...freezed], "logDatetime.val", "desc")
     ];
 
     if (state.reports.length > config.maxStorage.reports)
@@ -71,7 +73,9 @@ export default {
       );
   },
   [mutations.ADD_RESPONSES](state, payload) {
-    state.responses.unshift(payload);
+    const freezed = { ...payload };
+    Object.freeze(freezed);
+    state.responses.unshift(freezed);
 
     if (state.responses.length > config.maxStorage.responses)
       state.responses.pop();

@@ -16,9 +16,9 @@
       No response yet
     </q-banner>
     <q-virtual-scroll v-else :items="devResponses" :style="height" separator>
-      <template v-slot="{ item: cmd, index }">
+      <template v-slot="{ item: cmd }">
         <q-item
-          :key="index"
+          :key="cmd.hexRes"
           @click="writeCommand(cmd)"
           :clickable="!processing"
         >

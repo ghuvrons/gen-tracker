@@ -41,7 +41,7 @@ export default function({ executor, publisher, handleResponse }) {
     let { sendDatetime, unitID } = report;
     if (executor.value.unitID != unitID.val) return;
 
-    if (dilation(sendDatetime.val, "seconds", ticker.value) < 10) return;
+    if (dilation(ticker.value, "seconds", sendDatetime.val) < 10) return;
 
     notify("Command lost.", "warning");
     stopCommand();

@@ -41,9 +41,9 @@
             No matching commands
           </q-banner>
           <q-virtual-scroll v-else :items="searchResults" separator>
-            <template v-slot="{ item: cmd, index }">
+            <template v-slot="{ item: cmd }">
               <q-item
-                :key="index"
+                :key="cmd.command"
                 @click="selectCommand(cmd)"
                 :clickable="!processing"
               >

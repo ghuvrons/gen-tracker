@@ -8,8 +8,8 @@
       No finger driver yet
     </q-banner>
     <q-virtual-scroll v-else :items="devFingers" separator>
-      <template v-slot="{ item: driver, index }">
-        <q-item :key="index" dense>
+      <template v-slot="{ item: driver }">
+        <q-item :key="driver.fingerID" dense>
           <q-item-section avatar>
             <q-chip color="primary" dark square>{{ driver.fingerID }}</q-chip>
           </q-item-section>

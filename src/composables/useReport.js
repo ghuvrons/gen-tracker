@@ -26,7 +26,7 @@ export default function({ handleEvents, handleLostCommand }) {
   const validate = report => {
     const { val: dt } = report.logDatetime;
 
-    // if (dilation(dt, "years") > 1) {
+    // if (Math.abs(dilation(dt, "years")) > 1) {
     //   notify("Report expired", "info");
     //   return console.error(`^REPORT (EXPIRED)`);
     // }
@@ -44,7 +44,7 @@ export default function({ handleEvents, handleLostCommand }) {
       let report = validate(parseReport(hex));
 
       if (!report) return acc;
-      // handleLostCommand(report);
+      handleLostCommand(report);
 
       return [...acc, report];
     }, []);
