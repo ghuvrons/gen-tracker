@@ -36,18 +36,18 @@ register(process.env.SERVICE_WORKER_FILE, {
           label: "Refresh",
           color: "yellow",
           handler: () => {
-            window.localStorage.clear();
+            window.localStorage.removeItem("db");
             window.location.reload();
-          },
+          }
         },
         {
           label: "Dismiss",
           color: "white",
           handler: () => {
             /* ... */
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
   },
   offline() {
@@ -57,7 +57,7 @@ register(process.env.SERVICE_WORKER_FILE, {
   },
   error(err) {
     console.error("Error during service worker registration:", err);
-  },
+  }
 });
 
 // ServiceWorkerRegistration: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration
