@@ -4,22 +4,23 @@ const pushNotification = (title, body) => {
   const { protocol, host } = window.location;
   const icon = `${protocol}//${host}/icons/favicon-32x32.png`;
 
-  const showNotification = () => {
+  const swNotify = () => {
     if (!("serviceWorker" in navigator))
       return console.error("No service worker");
 
     navigator.serviceWorker.getRegistration().then(registration => {
-      registration.showNotification(title, { body, icon });
+      if (registration) registration.showNotification(title, { body, icon });
+      else new Notification(title, { body, icon });
     });
   };
 
   if (!("Notification" in window))
     return console.error("No notification support");
 
-  if (Notification.permission === "granted") showNotification();
+  if (Notification.permission === "granted") swNotify();
   else if (Notification.permission !== "denied")
     Notification.requestPermission().then(
-      permission => permission === "granted" && showNotification()
+      permission => permission === "granted" && swNotify()
     );
 };
 

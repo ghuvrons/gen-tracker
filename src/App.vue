@@ -43,6 +43,7 @@ export default {
     const { insertBuffers } = useBuffer({ handleReports });
 
     onMounted(() => {
+      root.$mqtt.subscribe("VCU/+/CMD", { qos: 1 });
       root.$mqtt.subscribe("VCU/+/RPT", { qos: 1 });
       root.$mqtt.subscribe("VCU/+/RSP", { qos: 1 });
       root.$mqtt.subscribe("VCU/+/STS", { qos: 1 });
@@ -56,6 +57,10 @@ export default {
     };
   },
   mqtt: {
+    "VCU/+/CMD": function(data, topic) {
+      const hex = this.validFrame(data, topic);
+      if (hex) console.warn(topic, hex);
+    },
     "VCU/+/RSP": function(data, topic) {
       const hex = this.validFrame(data, topic);
       if (hex) this.handleResponse(hex);

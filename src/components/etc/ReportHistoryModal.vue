@@ -225,8 +225,11 @@ export default {
       len => {
         if (!len) return;
         writeChartRange();
+      },
+      {
+        // lazy: false, immediate: true,
+        deep: true
       }
-      // { lazy: false, immediate: true, deep: true }
     );
     watch(
       () => state.range.val,

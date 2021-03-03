@@ -29,10 +29,10 @@ const parseFrame = (hex, frame) => {
 
 const validateFrame = hex => {
   let header = parseFrame(hex, Header);
-  let { report, response } = config.prefix;
+  let { report, response, command } = config.prefix;
 
   let prefix = getValue(header, "prefix");
-  if (![report, response].includes(prefix))
+  if (![report, response, command].includes(prefix))
     return console.warn(`CORRUPT: Prefix not same`);
 
   // let crc = getOutput(header, "crc");
