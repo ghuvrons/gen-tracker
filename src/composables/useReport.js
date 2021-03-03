@@ -26,7 +26,7 @@ export default function({ handleEvents, handleLostCommand }) {
   const validate = report => {
     const { val: dt } = report.sendDatetime;
 
-    if (dilation(dt, "years") < 1) {
+    if (Math.abs(dilation(dt, "years")) > 1) {
       notify("Report expired", "info");
       console.error(`^REPORT (EXPIRED)`);
     }
