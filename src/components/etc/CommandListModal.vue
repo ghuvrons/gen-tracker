@@ -1,7 +1,8 @@
 <template>
   <q-dialog
-    v-model="modalOpen"
+    :value="true"
     :maximized="$q.screen.lt.md"
+    persistent
     full-width
     full-height
   >
@@ -11,9 +12,9 @@
           <template v-if="$q.screen.gt.xs">
             <q-toolbar-title>
               <span class="text-weight-bold">COMMAND LIST</span>
-              <q-chip v-if="COMMAND_LIST.length > 0" dark dense square>{{
-                COMMAND_LIST.length
-              }}</q-chip>
+              <q-chip v-if="COMMAND_LIST.length > 0" dark dense square>
+                {{ COMMAND_LIST.length }}
+              </q-chip>
             </q-toolbar-title>
             <q-space></q-space>
           </template>
@@ -28,7 +29,14 @@
             dense
           ></q-input>
           <!-- <q-space></q-space> -->
-          <q-btn class="q-ml-sm" flat round dense icon="close" v-close-popup />
+          <q-btn
+            class="q-ml-sm"
+            push
+            round
+            dense
+            icon="close"
+            @click="$emit('close')"
+          />
         </q-toolbar>
       </q-header>
 
@@ -53,14 +61,14 @@
                 </q-item-section>
                 <q-item-section v-if="cmd.type" side>
                   <q-item-label lines="1">
-                    <q-chip dark dense square color="grey">{{
-                      cmd.type
-                    }}</q-chip>
+                    <q-chip dark dense square color="grey">
+                      {{ cmd.type }}
+                    </q-chip>
                   </q-item-label>
                   <q-item-label v-if="cmd.range" lines="2">
-                    <q-chip dark dense square color="primary">{{
-                      getRange(cmd.range)
-                    }}</q-chip>
+                    <q-chip dark dense square color="primary">
+                      {{ getRange(cmd.range) }}
+                    </q-chip>
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -79,20 +87,20 @@ import { flowFilter } from "src/js/utils";
 import { ref, computed } from "@vue/composition-api";
 
 export default {
-  emits: ["input", "select"],
-  props: {
-    value: {
-      required: true,
-      type: Boolean
-    }
-  },
+  emits: ["close", "select"],
+  // props: {
+  //   value: {
+  //     required: true,
+  //     type: Boolean
+  //   }
+  // },
   setup(props, { emit }) {
     const keyword = ref("");
 
-    const modalOpen = computed({
-      get: () => props.value,
-      set: v => emit("input", v)
-    });
+    // const modalOpen = computed({
+    //   get: () => props.value,
+    //   set: v => emit("input", v)
+    // });
     const searchResults = computed(() =>
       flowFilter(COMMAND_LIST, keyword.value || "")
     );
@@ -100,7 +108,7 @@ export default {
     const getRange = ([min, max]) =>
       max ? `[ ${min}, ${max} ]` : `[ ${min} ]`;
     const selectCommand = ({ command }) => {
-      modalOpen.value = false;
+      // modalOpen.value = false;
       emit("select", command);
     };
 
@@ -108,7 +116,7 @@ export default {
       COMMAND_LIST,
       keyword,
 
-      modalOpen,
+      // modalOpen,
       searchResults,
 
       getRange,

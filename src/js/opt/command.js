@@ -22,6 +22,7 @@ const COMMAND_LIST = [
     desc: "Control system led",
     code: 0,
     subCode: 2,
+    size: 1,
     type: "bool",
     range: [0, 1]
   },
@@ -30,6 +31,7 @@ const COMMAND_LIST = [
     desc: "Override vehicle state",
     code: 0,
     subCode: 3,
+    size: 1,
     type: "uint8_t",
     range: [1, 3]
   },
@@ -38,9 +40,10 @@ const COMMAND_LIST = [
     desc: "Set datetime ( d [0=Sunday] )",
     code: 1,
     subCode: 0,
+    size: 7,
     type: "uint8_t[7]",
     range: ["YYMMDDHHmmss0d"],
-    formatCmd: v => buildTimestamp(v) + "00",
+    formatCmd: v => buildTimestamp(v),
     validator: v => dayjs(v, "YYMMDDHHmmss0d", true).isValid()
   },
   {
@@ -48,6 +51,7 @@ const COMMAND_LIST = [
     desc: "Set odometer (km)",
     code: 1,
     subCode: 1,
+    size: 4,
     type: "uint32_t",
     range: [0, 99999]
   },
@@ -62,6 +66,7 @@ const COMMAND_LIST = [
     desc: "Mute the audio module",
     code: 2,
     subCode: 1,
+    size: 1,
     type: "bool",
     range: [0, 1]
   },
@@ -84,6 +89,7 @@ const COMMAND_LIST = [
     desc: "Delete a fingerprint",
     code: 3,
     subCode: 2,
+    size: 1,
     type: "uint8_t",
     range: [1, 5],
     timeout: 15
@@ -107,6 +113,7 @@ const COMMAND_LIST = [
     desc: "Set device unique id",
     code: 4,
     subCode: 1,
+    size: 4,
     type: "uint32_t",
     range: [0, 4294967295]
   },
@@ -143,8 +150,9 @@ const Command = [
   {
     field: "value",
     title: "Value",
-    size: 8,
-    formatCmd: v => ChangeEndian(IntToHex(parseInt(v), 8 * 2))
+    size: 200,
+    formatCmd: (v, sz) =>
+      ChangeEndian(IntToHex(parseInt(v || 0), (sz || 0) * 2))
   }
 ];
 

@@ -4,13 +4,13 @@ const buildCommand = (cmd, unitID) => {
   if (!cmd) return;
 
   return Command.reduce((acc, el, idx) => {
-    let { field, formatCmd } = Command[Command.length - idx - 1];
+    let { field, size, formatCmd } = Command[Command.length - idx - 1];
 
     switch (field) {
       case "value":
         if (cmd.hasOwnProperty("formatCmd"))
           acc = cmd.formatCmd(cmd.value) + acc;
-        else acc = formatCmd(cmd.value || 0) + acc;
+        else acc = formatCmd(cmd.value, cmd.size) + acc;
         break;
       case "subCode":
       case "code":

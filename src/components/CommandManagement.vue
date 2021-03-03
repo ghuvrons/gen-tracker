@@ -40,7 +40,8 @@
     </div>
 
     <command-list-modal
-      v-model="modalOpen"
+      v-if="modalOpen"
+      @close="modalOpen = false"
       @select="writeCommand"
     ></command-list-modal>
   </div>
@@ -75,7 +76,10 @@ export default {
       }
     });
 
-    const writeCommand = v => (payload.value = v);
+    const writeCommand = v => {
+      payload.value = v;
+      modalOpen.value = false;
+    };
     const execCommand = () => insertCommand({ payload: payload.value });
 
     return {

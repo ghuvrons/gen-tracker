@@ -1,8 +1,8 @@
 <template>
   <q-dialog
-    v-model="modalOpen"
-    @hide="$emit('close')"
+    :value="true"
     :maximized="$q.screen.lt.md"
+    persistent
     full-height
     full-width
   >
@@ -12,11 +12,11 @@
           <q-toolbar-title>
             <span v-if="$q.screen.gt.sm" class="text-weight-bold">HISTORY</span>
             {{ this.theField.title }}
-            <q-chip v-if="chart.data" dark dense square>{{
-              chart.data.labels.length
-            }}</q-chip>
+            <q-chip dark dense square>
+              {{ range.bar.max }}
+            </q-chip>
           </q-toolbar-title>
-          <q-btn flat round dense icon="close" v-close-popup />
+          <q-btn round dense push icon="close" @click="$emit('close')" />
         </q-toolbar>
       </q-header>
 
@@ -35,9 +35,9 @@
                   :update="history.update"
                 />
                 <q-range
-                  v-model="range.value"
-                  :min="range.min"
-                  :max="range.max"
+                  v-model="range.val"
+                  :min="range.bar.min"
+                  :max="range.bar.max"
                   :disable="range.disable"
                   :drag-only-range="control.lock"
                   label-always
@@ -70,7 +70,7 @@
                   </div>
                   <div class="col-auto">
                     <q-input
-                      :value="rangeSample"
+                      :value="range.bar.max - range.bar.min"
                       type="number"
                       class="q-ma-xs"
                       style="width: 130px"
@@ -106,7 +106,6 @@ import { Report } from "src/js/report";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
 import { Dark } from "quasar";
-import { findRangeX, findRangeY, grabDatasets } from "src/js/chart";
 import useChart from "src/composables/useChart";
 
 import {
@@ -133,16 +132,16 @@ export default {
   },
   setup(props) {
     const {
+      latestValue,
       chart,
       history,
-      setScales,
-      setData,
       setLabel,
-      setColor
+      setColor,
+      scaleChart,
+      writeChart
     } = useChart();
 
     const state = reactive({
-      modalOpen: false,
       tmp: {
         max: null,
         min: null,
@@ -152,9 +151,11 @@ export default {
       range: {
         disable: false,
         sample: 10,
-        min: 0,
-        max: null,
-        value: {
+        bar: {
+          min: 0,
+          max: null
+        },
+        val: {
           min: 0,
           max: null
         }
@@ -174,16 +175,10 @@ export default {
       () =>
         props.field == "eventsGroup" && Object.keys(devEvents.value).length > 0
     );
-    const latestValue = computed(
-      () => chart.value.data.datasets[0].data.slice(-1)[0]
-    );
-    const rangeSample = computed(
-      () => state.range.value.max - state.range.value.min
-    );
 
     const applyRange = () => {
-      let top = chart.value.data.labels.length - 1;
-      let { min, max } = state.range.value;
+      const top = state.range.bar.max - 1;
+      let { min, max } = state.range.val;
       let sample = max - min;
 
       if (!state.control.maximize) {
@@ -203,88 +198,65 @@ export default {
           }
         }
       } else {
-        sample = chart.value.data.labels.length;
-        max = sample - 1;
+        max = top;
+        sample = top + 1;
       }
 
       min = max - sample;
-      state.range.value = {
-        min: min < 0 ? 0 : min,
+
+      state.range.val = {
+        min: min > 0 ? min : 0,
         max: max
       };
     };
-    const scaleChart = () => {
-      let { xMin, xMax } = findRangeX(chart.value.data, state.range.value);
-      let { yMin, yMax } = findRangeY(
-        chart.value.data.datasets[0],
-        state.control,
-        state.range.value
-      );
-
-      setScales({ xMin, xMax, yMin, yMax }, state.control);
-      state.modalOpen = true;
+    const writeChartRange = () => {
+      state.range.bar = writeChart(devReports.value, props.field);
+      applyRange();
     };
-    const writeChart = reports => {
-      setData(grabDatasets(reports, props.field));
-
-      state.range.min = 0;
-      state.range.max = reports.length - 1;
-    };
+    const scaleChartOpen = () => scaleChart(state.control, state.range.val);
 
     onMounted(() => {
       setLabel(props.field);
-      writeChart(devReports.value);
-      applyRange();
+      writeChartRange();
     });
 
-    watch(
-      () => state.range.value,
-      _ => scaleChart(),
-      { deep: true }
-    );
-    watch(
-      () => state.control.beginAtZero,
-      _ => scaleChart()
-    );
-    watch(
-      () => state.control.follow,
-      follow => {
-        if (follow) {
-          state.tmp.max = state.range.value.max;
-
-          state.range.value.max = chart.value.data.labels.length - 1;
-          if (state.control.lock) {
-            let sample = state.range.value.max - state.range.value.min;
-            state.range.value.min = state.range.value.max - sample;
-          }
-        } else {
-          state.range.value.max = state.tmp.max;
-        }
-
-        applyRange();
-      }
-    );
-    watch(
-      () => Dark.isActive,
-      dark => setColor(dark ? "#FFF" : "#666"),
-      { lazy: false, immediate: true }
-    );
     watch(
       () => devReports.value.length,
       len => {
         if (!len) return;
+        writeChartRange();
+      }
+      // { lazy: false, immediate: true, deep: true }
+    );
+    watch(
+      () => state.range.val,
+      _ => scaleChartOpen(),
+      { deep: true }
+    );
+    watch(
+      () => state.control.beginAtZero,
+      _ => scaleChartOpen()
+    );
+    watch(
+      () => state.control.follow,
+      follow => {
+        const { min, max } = state.range.val;
+        if (follow) {
+          state.tmp.max = state.max;
 
-        writeChart(devReports.value);
+          state.range.val.max = state.range.bar.max - 1;
+          if (state.control.lock) state.range.val.min = max - (max - min);
+        } else state.range.val.max = state.tmp.max;
+
         applyRange();
-      },
-      { lazy: false, deep: true }
+      }
     );
     watch(
       () => state.control.maximize,
       max => {
         if (max) {
-          state.tmp.max = state.range.value.max;
-          state.tmp.min = state.range.value.min;
+          state.tmp.max = state.range.val.max;
+          state.tmp.min = state.range.val.min;
           state.tmp.lock = state.control.lock;
           state.tmp.follow = state.control.follow;
           state.range.disable = true;
@@ -295,11 +267,16 @@ export default {
           state.range.disable = false;
           state.control.follow = state.tmp.follow;
           state.control.lock = state.tmp.lock;
-          state.range.value.max = state.tmp.max;
-          state.range.value.min = state.tmp.min;
+          state.range.val.max = state.tmp.max;
+          state.range.val.min = state.tmp.min;
         }
         applyRange();
       },
+      { lazy: false, immediate: true }
+    );
+    watch(
+      () => Dark.isActive,
+      dark => setColor(dark ? "#FFF" : "#666"),
       { lazy: false, immediate: true }
     );
 
@@ -310,8 +287,7 @@ export default {
 
       theField,
       latestValue,
-      eventGroup,
-      rangeSample
+      eventGroup
     };
   }
 };

@@ -24,14 +24,14 @@ export default function({ handleEvents, handleLostCommand }) {
   const { follow } = common.useState(["follow"]);
 
   const validate = report => {
-    const { val: dt } = report.logDatetime;
+    const { val: dt } = report.sendDatetime;
 
-    // if (Math.abs(dilation(dt, "years")) > 1) {
-    //   notify("Report expired", "info");
-    //   return console.error(`^REPORT (EXPIRED)`);
-    // }
+    if (dilation(dt, "years") < 1) {
+      notify("Report expired", "info");
+      console.error(`^REPORT (EXPIRED)`);
+    }
 
-    if (reports.value.some(({ logDatetime }) => logDatetime.val == dt)) {
+    if (reports.value.some(({ sendDatetime }) => sendDatetime.val == dt)) {
       notify("Report duplicate", "info");
       return console.error(`^REPORT (DUPLICATE)`);
     }

@@ -100,6 +100,7 @@ export default {
 
     const theReport = computed(() => {
       if (!report.value) return null;
+      if (devReports.value.length == 0) return null;
 
       let data = readReport(report.value);
       if (frameId(data.frameID.val) != "FULL") {
@@ -131,8 +132,6 @@ export default {
     return {
       ...toRefs(state),
       field,
-
-      theReport,
 
       treeState,
       theReport,

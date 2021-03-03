@@ -1,7 +1,7 @@
 import VueMqtt from "vue-mqtt";
 import { Platform, LocalStorage } from "quasar";
 import config from "src/js/opt/config";
-let { mqtt } = config;
+const { mqtt } = config;
 
 // leave the export, even if you don't use it
 export default ({ app, router, store, Vue }) => {

@@ -1,6 +1,8 @@
-import { cloneDeep } from "lodash";
-import { toRefs, reactive } from "@vue/composition-api";
 import chart from "src/js/opt/chart";
+import { findRangeX, findRangeY, grabDatasets } from "src/js/chart";
+
+import { cloneDeep } from "lodash";
+import { toRefs, reactive, computed } from "@vue/composition-api";
 
 export default function() {
   const state = reactive({
@@ -13,6 +15,10 @@ export default function() {
     }
   });
 
+  const latestValue = computed(
+    () => chart.value.data.datasets[0].data.slice(-1)[0]
+  );
+
   const setScales = ({ xMin, xMax, yMin, yMax }, { beginAtZero }) => {
     state.chart.options.scales.xAxes[0].ticks.min = xMin;
     state.chart.options.scales.xAxes[0].ticks.max = xMax;
@@ -23,8 +29,6 @@ export default function() {
     state.history.update.options = !state.history.update.options;
   };
   const setData = ({ labels, datasets }) => {
-    // state.chart.data.labels.push(...labels);
-    // state.chart.data.datasets[0].data.push(...datasets);
     state.chart.data.labels = labels;
     state.chart.data.datasets[0].data = datasets;
 
@@ -49,12 +53,35 @@ export default function() {
     state.history.update.options = !state.history.update.options;
   };
 
+  const scaleChart = ({ beginAtZero }, { min, max }) => {
+    let { xMin, xMax } = findRangeX(state.chart.data, { min, max });
+    let { yMin, yMax } = findRangeY(
+      state.chart.data.datasets[0],
+      { beginAtZero },
+      { min, max }
+    );
+
+    setScales({ xMin, xMax, yMin, yMax }, { beginAtZero });
+  };
+  const writeChart = (reports, field) => {
+    const { datasets, labels } = grabDatasets(reports, field);
+
+    setData({ datasets, labels });
+
+    return {
+      min: 0,
+      max: labels.length - 1
+    };
+  };
+
   return {
     ...toRefs(state),
+    latestValue,
 
-    setScales,
-    setData,
     setLabel,
-    setColor
+    setColor,
+
+    scaleChart,
+    writeChart
   };
 }

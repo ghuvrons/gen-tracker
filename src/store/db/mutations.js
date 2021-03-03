@@ -1,7 +1,7 @@
 import * as mutations from "./mutation-types";
 import initialState from "./state";
 import config from "src/js/opt/config";
-import { orderBy } from "lodash";
+import { orderBy, isFunction } from "lodash";
 import { loader } from "src/js/framework";
 
 export default {
@@ -47,6 +47,7 @@ export default {
   },
   [mutations.STOP_BUFFERING](state) {
     if (state.buffering) {
+      // if (isFunction(state.buffering))
       state.buffering.hide();
       state.buffering = null;
     }
