@@ -84,7 +84,7 @@ import {
 } from "src/store/common/mutation-types";
 import { CLEAR_DATABASE } from "src/store/db/mutation-types";
 import {
-  STOP_COMMAND,
+  CANCEL_COMMAND,
   INSERT_COMMAND,
   INSERT_BUFFERS
 } from "src/store/db/action-types";
@@ -120,10 +120,10 @@ export default {
     const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
     const { [CLEAR_DATABASE]: clearDatabase } = useMutations([CLEAR_DATABASE]);
     const {
-      [STOP_COMMAND]: stopCommand,
+      [CANCEL_COMMAND]: cancelCommand,
       [INSERT_COMMAND]: insertCommand,
       [INSERT_BUFFERS]: insertBuffers
-    } = useActions([STOP_COMMAND, INSERT_COMMAND, INSERT_BUFFERS]);
+    } = useActions([CANCEL_COMMAND, INSERT_COMMAND, INSERT_BUFFERS]);
 
     const common = createNamespacedHelpers("common");
     const { notification } = common.useState(["notification"]);
@@ -146,7 +146,7 @@ export default {
       });
     const ignoreCommand = () => {
       notify("Command ignored.", "warning");
-      stopCommand();
+      cancelCommand();
     };
     const calibrate = () => {
       if (!devDevice) return;
@@ -159,7 +159,7 @@ export default {
       let validTime = calibrateTime(report);
       if (!validTime) return;
 
-      insertCommand({ payload: `REPORT_RTC=${validTime}` });
+      insertCommand(`REPORT_RTC=${validTime}`);
       notify("Calibrating device time..", "info");
     };
     const importData = ([file]) => {

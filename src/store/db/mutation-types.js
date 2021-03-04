@@ -12,6 +12,8 @@ export const FREE_BUFFER = "FREE_BUFFER";
 
 export const ADD_DEVICES = "ADD_DEVICES";
 export const ADD_REPORTS = "ADD_REPORTS";
+export const ADD_COMMANDS = "ADD_COMMANDS";
+export const ADD_RESPONSE = "ADD_RESPONSE";
 export const ADD_RESPONSES = "ADD_RESPONSES";
 
 export const ADD_FINGERS = "ADD_FINGERS";

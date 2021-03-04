@@ -6,6 +6,7 @@
 
 <script>
 import { validateFrame } from "src/js/frame";
+import config from "src/js/opt/config";
 import useFinger from "src/composables/useFinger";
 import useResponse from "src/composables/useResponse";
 import useCommand from "src/composables/useCommand";
@@ -14,25 +15,26 @@ import useReport from "src/composables/useReport";
 import useEvents from "src/composables/useEvents";
 import useDevice from "src/composables/useDevice";
 
-import { onMounted, ref } from "@vue/composition-api";
+import { onMounted, ref, provide } from "@vue/composition-api";
 
 export default {
   // name: "App",
   setup(props, { root }) {
     const executor = ref(null);
 
-    const validFrame = (data, topic) => {
-      let hex = data.toString("hex").toUpperCase();
-      if (!validateFrame(hex)) return console.error(`CORRUPT ${hex}`);
-      return hex;
+    const publisher = (unitID, data) => {
+      console.warn(unitID, data);
+      root.$mqtt.publish(`VCU/${unitID}/CMD`, data, { qos: 2 });
     };
-    const publisher = ({ unitID, binCmd }) =>
-      root.$mqtt.publish(`VCU/${unitID}/CMD`, binCmd, { qos: 2 });
 
     const { addDevices } = useDevice();
     const { handleFinger } = useFinger({ addDevices });
-    const { handleResponse } = useResponse({ executor, handleFinger });
-    const { handleLostCommand } = useCommand({
+    const { handleResponse } = useResponse({
+      executor,
+      publisher,
+      handleFinger
+    });
+    const { handleLostCommand, cancelCommand } = useCommand({
       executor,
       publisher,
       handleResponse
@@ -48,9 +50,10 @@ export default {
       root.$mqtt.subscribe("VCU/+/RSP", { qos: 1 });
       root.$mqtt.subscribe("VCU/+/STS", { qos: 1 });
     });
+    provide();
 
     return {
-      validFrame,
+      validateFrame,
       insertBuffers,
       handleResponse,
       addDevices
@@ -58,20 +61,29 @@ export default {
   },
   mqtt: {
     "VCU/+/CMD": function(data, topic) {
-      const hex = this.validFrame(data, topic);
-      if (hex) console.warn(topic, hex);
+      const unitID = parseInt(topic.split("/")[1]);
+      const hex = data.toString("hex").toUpperCase();
+
+      console.warn(`COMMANDABLE ${unitID}, ${!hex}`);
+      this.addDevices([{ unitID, commandable: !hex }]);
     },
     "VCU/+/RSP": function(data, topic) {
-      const hex = this.validFrame(data, topic);
-      if (hex) this.handleResponse(hex);
+      const hex = data.toString("hex").toUpperCase();
+      if (!hex) return;
+      if (!validateFrame(hex, config.prefix.response))
+        return console.error(`CORRUPT ${hex}`);
+      this.handleResponse(hex);
     },
     "VCU/+/RPT": function(data, topic) {
-      const hex = this.validFrame(data, topic);
-      if (hex) this.insertBuffers([hex]);
+      const hex = data.toString("hex").toUpperCase();
+      if (!hex) return;
+      if (!validateFrame(hex, config.prefix.report))
+        return console.error(`CORRUPT ${hex}`);
+      this.insertBuffers([hex]);
     },
     "VCU/+/STS": function(data, topic) {
-      let unitID = parseInt(topic.split("/")[1]);
-      let status = parseInt(data);
+      const unitID = parseInt(topic.split("/")[1]);
+      const status = parseInt(data);
 
       console.warn(`STATUS ${unitID},${status}`);
       this.addDevices([{ unitID, status }]);

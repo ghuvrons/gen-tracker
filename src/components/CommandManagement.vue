@@ -20,7 +20,8 @@
     <div class="q-pa-sm">
       <q-input
         v-model.lazy="payload"
-        @keyup.enter="execCommand()"
+        @keyup.enter="insertCommand(payload)"
+        class="text-uppercase"
         label="Input Command:"
         hint="Press ENTER to send."
         type="text"
@@ -33,7 +34,7 @@
           <q-icon
             name="send"
             class="cursor-pointer"
-            @click="execCommand()"
+            @click="insertCommand(payload)"
           ></q-icon>
         </template>
       </q-input>
@@ -68,19 +69,12 @@ export default {
     const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 
     const modalOpen = ref(false);
-
-    const payload = computed({
-      get: () => command.value.payload,
-      set: v => {
-        insertCommand({ payload: v.toUpperCase(), exec: false });
-      }
-    });
+    const payload = ref(null);
 
     const writeCommand = v => {
       payload.value = v;
       modalOpen.value = false;
     };
-    const execCommand = () => insertCommand({ payload: payload.value });
 
     return {
       COMMAND_LIST,
@@ -90,7 +84,7 @@ export default {
       devDevice,
 
       writeCommand,
-      execCommand
+      insertCommand
     };
   }
 };

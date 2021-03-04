@@ -3,40 +3,36 @@
     <q-bar class="bg-blue text-white">
       <q-toolbar-title class="text-subtitle1">
         Response Log
-        <q-badge v-if="devResponses.length > 0" color="red" align="top">{{
-          devResponses.length
+        <q-badge v-if="devCommands.length > 0" color="red" align="top">{{
+          devCommands.length
         }}</q-badge>
       </q-toolbar-title>
     </q-bar>
 
-    <q-banner v-if="devResponses.length == 0">
+    <q-banner v-if="devCommands.length == 0">
       <template v-slot:avatar>
         <q-icon name="info"></q-icon>
       </template>
       No response yet
     </q-banner>
-    <q-virtual-scroll v-else :items="devResponses" :style="height" separator>
-      <template v-slot="{ item: cmd }">
+    <q-virtual-scroll v-else :items="devCommands" :style="height" separator>
+      <template v-slot="{ item: cmd, index }">
         <q-item
-          :key="cmd.hexCmd"
+          :key="index"
           @click="writeCommand(cmd)"
           :clickable="!processing"
         >
           <q-item-section>
             <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
             <!-- <q-item-label lines="2" caption> -->
-            {{ parseMessage(cmd.message) }}
+            {{ readMessage(cmd.message) }}
             <!-- </q-item-label> -->
           </q-item-section>
 
-          <q-item-section side>
-            <q-chip
-              :color="parseResCode(cmd.resCode).color"
-              dark
-              dense
-              square
-              >{{ parseResCode(cmd.resCode).title }}</q-chip
-            >
+          <q-item-section @click="ignoreCommand(cmd)" side>
+            <q-chip :color="readColor(cmd.resCode)" dark dense square>
+              {{ readTitle(cmd.resCode) }}
+            </q-chip>
           </q-item-section>
         </q-item>
       </template>
@@ -46,8 +42,9 @@
 
 <script>
 import { parseResCode, parseMessage } from "src/js/response";
-import { INSERT_COMMAND } from "src/store/db/action-types";
+import { INSERT_COMMAND, CANCEL_COMMAND } from "src/store/db/action-types";
 
+import { get } from "lodash";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useGetters, useActions } = createNamespacedHelpers("db");
 
@@ -59,15 +56,33 @@ export default {
     }
   },
   setup(props) {
-    const { devResponses } = useGetters(["devResponses"]);
-    const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
+    const { devCommands } = useGetters(["devCommands"]);
+    const {
+      [INSERT_COMMAND]: insertCommand,
+      [CANCEL_COMMAND]: cancelCommand
+    } = useActions([INSERT_COMMAND, CANCEL_COMMAND]);
 
-    const writeCommand = ({ payload }) =>
-      insertCommand({ payload, exec: false });
+    const readMessage = message => parseMessage(message) || "Waitting";
+    const readTitle = resCode => get(parseResCode(resCode), "title") || "WAIT";
+    const readColor = resCode =>
+      get(parseResCode(resCode), "color") || "yellow";
+
+    const ignoreCommand = cmd =>
+      cmd.hasOwnProperty("resCode") && cancelCommand();
+
+    const writeCommand = ({ payload }) => {
+      return; // FIXME
+      insertCommand(payload);
+    };
 
     return {
-      devResponses,
+      devCommands,
 
+      readMessage,
+      readColor,
+      readTitle,
+
+      ignoreCommand,
       writeCommand,
       parseResCode,
       parseMessage

@@ -14,6 +14,10 @@ export default {
     );
   },
 
+  getDeviceByUnitID: ({ devices }, getters) => unitID => {
+    return devices.find(device => device.unitID === unitID);
+  },
+
   devReports({ unitID }, getters) {
     return getters.reportByUnitID(unitID);
   },
@@ -22,6 +26,9 @@ export default {
   },
   devDevice({ devices, unitID }) {
     return devices.find(device => device.unitID === unitID);
+  },
+  devCommands({ commands, unitID }) {
+    return commands.filter(command => command.unitID === unitID);
   },
   devResponses({ responses, unitID }) {
     return responses.filter(response => response.unitID === unitID);

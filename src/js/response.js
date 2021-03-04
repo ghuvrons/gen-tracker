@@ -4,28 +4,32 @@ import { notify } from "src/js/framework";
 import { VEHICLE_STATES } from "src/js/opt/report";
 import { RESPONSE_LIST, Response } from "src/js/opt/response";
 
-const parseResponse = ({ payload, unitID, code, subCode, hexCmd }, hexRes) => {
+const parseResponse = hex => {
+  return parseFrame(hex, Response);
+};
+
+const validResponse = (command, response) => {
+  if (getValue(response, "unitID") !== command.unitID) return;
+  if (getValue(response, "code") != command.code) return;
+  if (getValue(response, "subCode") != command.subCode) return;
+  return true;
+};
+
+const mergeResponse = (command, response, hex) => {
   let res = RESPONSE_LIST.find(({ name }) => name === "timeout");
-  let message = null;
+  let message = "Timeout/Cancelled";
 
-  if (hexRes) {
-    let data = parseFrame(hexRes, Response);
-
-    if (getValue(data, "code") != code) return;
-
-    if (getValue(data, "subCode") != subCode) return;
-
+  if (response) {
     res = RESPONSE_LIST.find(
-      ({ resCode }) => resCode === getValue(data, "resCode")
+      ({ resCode }) => resCode === getValue(response, "resCode")
     );
-    message = getValue(data, "message");
+    message = getValue(response, "message");
   }
 
   return {
-    hexCmd,
-    hexRes,
-    unitID,
-    payload,
+    ...command,
+    ...response,
+    hexRes: hex,
     resCode: res.resCode,
     message
   };
@@ -47,12 +51,12 @@ const parseMessage = msg => {
   });
 };
 
-const notifyResponse = ({ resCode }) => {
+const notifyResponse = resCode => {
   let res = parseResCode(resCode);
   let ok = res.title == "OK";
 
   let type = ok ? "positive" : "negative";
-  let msg = ok ? "Command sent." : `Command is ${res.title}`;
+  let msg = ok ? "Command sent." : `Command ${res.title}`;
 
   notify(msg, type);
 };
@@ -61,6 +65,8 @@ export {
   RESPONSE_LIST,
   Response,
   parseResponse,
+  validResponse,
+  mergeResponse,
   parseResCode,
   parseMessage,
   notifyResponse

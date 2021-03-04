@@ -16,7 +16,7 @@ export default function() {
   });
 
   const latestValue = computed(
-    () => chart.value.data.datasets[0].data.slice(-1)[0]
+    () => state.chart.data.datasets[0].data.slice(-1)[0]
   );
 
   const setScales = ({ xMin, xMax, yMin, yMax }, { beginAtZero }) => {

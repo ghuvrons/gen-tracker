@@ -49,9 +49,6 @@ const extractCommand = payload => {
 };
 
 const parseCommand = payload => {
-  // check is no payload
-  if (!payload) return "Empty payload.";
-
   let { prop, value } = extractCommand(payload);
 
   // check is command exist

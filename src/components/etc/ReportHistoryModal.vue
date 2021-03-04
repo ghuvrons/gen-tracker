@@ -13,7 +13,7 @@
             <span v-if="$q.screen.gt.sm" class="text-weight-bold">HISTORY</span>
             {{ this.theField.title }}
             <q-chip dark dense square>
-              {{ range.bar.max }}
+              {{ range.bar.max + 1 }}
             </q-chip>
           </q-toolbar-title>
           <q-btn round dense push icon="close" @click="$emit('close')" />
@@ -40,6 +40,8 @@
                   :max="range.bar.max"
                   :disable="range.disable"
                   :drag-only-range="control.lock"
+                  :left-label-value="range.val.min + 1"
+                  :right-label-value="range.val.max + 1"
                   label-always
                   square
                 />
@@ -70,7 +72,7 @@
                   </div>
                   <div class="col-auto">
                     <q-input
-                      :value="range.bar.max - range.bar.min"
+                      :value="range.bar.max + 1 - range.bar.min"
                       type="number"
                       class="q-ma-xs"
                       style="width: 130px"
@@ -132,9 +134,9 @@ export default {
   },
   setup(props) {
     const {
-      latestValue,
       chart,
       history,
+      latestValue,
       setLabel,
       setColor,
       scaleChart,
@@ -177,7 +179,7 @@ export default {
     );
 
     const applyRange = () => {
-      const top = state.range.bar.max - 1;
+      const top = state.range.bar.max;
       let { min, max } = state.range.val;
       let sample = max - min;
 
@@ -240,20 +242,20 @@ export default {
       () => state.control.beginAtZero,
       _ => scaleChartOpen()
     );
-    watch(
-      () => state.control.follow,
-      follow => {
-        const { min, max } = state.range.val;
-        if (follow) {
-          state.tmp.max = state.max;
+    // watch(
+    //   () => state.control.follow,
+    //   follow => {
+    //     const { min, max } = state.range.val;
+    //     if (follow) {
+    //       state.tmp.max = state.max;
 
-          state.range.val.max = state.range.bar.max - 1;
-          if (state.control.lock) state.range.val.min = max - (max - min);
-        } else state.range.val.max = state.tmp.max;
+    //       state.range.val.max = state.range.bar.max;
+    //       if (state.control.lock) state.range.val.min = max - (max - min);
+    //     } else state.range.val.max = state.tmp.max;
 
-        applyRange();
-      }
-    );
+    //     applyRange();
+    //   }
+    // );
     watch(
       () => state.control.maximize,
       max => {

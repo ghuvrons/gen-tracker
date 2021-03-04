@@ -9,6 +9,8 @@ export default function() {
       exec: false
     },
 
+    commands: [],
+
     devices: [],
     buffers: [],
     reports: [],

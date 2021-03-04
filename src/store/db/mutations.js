@@ -1,7 +1,7 @@
 import * as mutations from "./mutation-types";
 import initialState from "./state";
 import config from "src/js/opt/config";
-import { orderBy, isFunction } from "lodash";
+import { orderBy } from "lodash";
 import { loader } from "src/js/framework";
 
 export default {
@@ -29,6 +29,7 @@ export default {
         state.devices.unshift({
           status: 0,
           sendDatetime: 0,
+          commandable: true,
           ...payload
         });
       else
@@ -47,7 +48,6 @@ export default {
   },
   [mutations.STOP_BUFFERING](state) {
     if (state.buffering) {
-      // if (isFunction(state.buffering))
       state.buffering.hide();
       state.buffering = null;
     }
@@ -71,6 +71,19 @@ export default {
         config.maxStorage.reports,
         state.reports.length - config.maxStorage.reports
       );
+  },
+  [mutations.ADD_COMMANDS](state, payload) {
+    state.commands.unshift(payload);
+
+    if (state.commands.length > config.maxStorage.commands)
+      state.commands.pop();
+  },
+  [mutations.ADD_RESPONSE](state, payload) {
+    let idx = state.commands.findIndex(
+      ({ unitID }) => unitID === payload.unitID
+    );
+
+    if (idx >= 0) state.commands.splice(idx, 1, payload);
   },
   [mutations.ADD_RESPONSES](state, payload) {
     const freezed = { ...payload };

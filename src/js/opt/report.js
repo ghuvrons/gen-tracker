@@ -326,8 +326,8 @@ const DEBUG = () => {
     "audioTask",
     "gateTask",
     "canRxTask",
-    "canTxTask",
-    "hmi2PowerTask"
+    "canTxTask"
+    // "hmi2PowerTask"
   ];
   const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
 
@@ -351,7 +351,7 @@ const DEBUG = () => {
           title: `${startCase(task)} stack`,
           required: false,
           chartable: true,
-          unit: "words",
+          unit: "Bytes",
           size: 2,
           format: v => HexToUnsignedInt(ChangeEndian(v)),
           display: vf => Dot(vf)

@@ -38,6 +38,7 @@ export default {
   timezone: "Asia/Jakarta",
   maxStorage: {
     reports: Platform.is.desktop ? 500 : 100,
-    responses: Platform.is.desktop ? 50 : 10
+    responses: Platform.is.desktop ? 50 : 10,
+    commands: Platform.is.desktop ? 50 : 10
   }
 };

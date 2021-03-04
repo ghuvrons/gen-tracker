@@ -106,15 +106,15 @@ export default {
         ? dayjs.unix(fingerTime).format("DD-MM-YY HH:mm:ss")
         : "Unknown";
     };
-    const fetch = () => insertCommand({ payload: `FINGER_FETCH` });
-    const add = () => insertCommand({ payload: `FINGER_ADD` });
+    const fetch = () => insertCommand(`FINGER_FETCH`);
+    const add = () => insertCommand(`FINGER_ADD`);
     const remove = ({ fingerID }) =>
       confirm(
         `Are you sure to remove this fingerprint ${fingerID} ?`
-      ).onOk(() => insertCommand({ payload: `FINGER_DEL=${fingerID}` }));
+      ).onOk(() => insertCommand(`FINGER_DEL=${fingerID}`));
     const clear = () =>
       confirm(`Are you sure to clear all fingerprints  ?`).onOk(() =>
-        insertCommand({ payload: `FINGER_RST` })
+        insertCommand(`FINGER_RST`)
       );
 
     return {
