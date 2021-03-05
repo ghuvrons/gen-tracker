@@ -49,11 +49,13 @@
 
 <script>
 import ReportHistoryModal from "components/etc/ReportHistoryModal";
-import { Report, readReport } from "src/js/report";
-import { SET_TREE } from "src/store/common/mutation-types";
-import { getField, frameId } from "src/js/utils";
 import TreeReportReader from "components/etc/TreeReportReader";
 import ListReportReader from "components/etc/ListReportReader";
+
+import { Report, readReport } from "src/js/report";
+import { getField, frameId } from "src/js/utils";
+
+import { SET_TREE } from "src/store/common/mutation-types";
 
 import { ref, computed, watch, reactive, toRefs } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";

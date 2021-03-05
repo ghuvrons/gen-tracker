@@ -1,36 +1,36 @@
-import {
-  INSERT_RESPONSE
-  // STOP_COMMAND
-} from "src/store/db/action-types";
+import { INSERT_RESPONSE } from "src/store/db/action-types";
+import { getValue } from "src/js/utils";
+import { awaitCommand } from "src/js/command";
 import {
   notifyResponse,
-  parseResCode,
-  mergeResponse,
-  Response,
+  makeResponse,
   parseResponse,
-  validResponse
+  validResponse,
+  RESCODES
 } from "src/js/response";
 
 import { get } from "lodash";
 import { watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-import { parseFrame } from "src/js/frame";
-import { getValue } from "src/js/utils";
 const { useGetters, useActions } = createNamespacedHelpers("db");
 
-export default function({ executor, publisher, handleFinger }) {
+export default function({ publisher, handleFinger }) {
   const { devDevice, getDeviceByUnitID } = useGetters([
     "devDevice",
     "getDeviceByUnitID"
   ]);
-  const {
-    [INSERT_RESPONSE]: insertResponse
-    // [STOP_COMMAND]: stopCommand
-  } = useActions([
-    INSERT_RESPONSE
-    // STOP_COMMAND
-  ]);
+  const { [INSERT_RESPONSE]: insertResponse } = useActions([INSERT_RESPONSE]);
 
+  const processResponse = (command, response) => {
+    const { unitID } = command;
+
+    if (awaitCommand(command)) {
+      const resp = makeResponse(response);
+      notifyResponse(resp);
+      insertResponse({ ...command, ...resp });
+    }
+    publisher(unitID, null);
+  };
   const handleResponse = hex => {
     let response = parseResponse(hex);
     const unitID = getValue(response, "unitID");
@@ -38,18 +38,16 @@ export default function({ executor, publisher, handleFinger }) {
     const device = getDeviceByUnitID.value(unitID);
     if (!device) return;
 
-    const { commanding, lastCommand } = device;
-    if (!commanding) return console.error(`RESPONSE ${hex}`);
-    // if (!executor.value) return console.error(`RESPONSE ${hex}`);
+    const { lastCommand } = device;
+    if (!awaitCommand(lastCommand)) return console.error(`RESPONSE ${hex}`);
     console.warn(`RESPONSE ${hex}`);
 
     if (!validResponse(lastCommand, response)) return;
-    response = mergeResponse(lastCommand, response, hex);
-
-    notifyResponse(response.resCode);
-    insertResponse(response);
-    publisher(unitID, null);
-    // stopCommand();
+    processResponse(lastCommand, response);
+  };
+  const ignoreResponse = resCode => {
+    const lastCommand = get(devDevice.value, "lastCommand");
+    processResponse(lastCommand, resCode || RESCODES.CANCELLED);
   };
 
   watch(
@@ -58,10 +56,8 @@ export default function({ executor, publisher, handleFinger }) {
       const lastCommand = get(dev, "lastCommand");
       if (!lastCommand) return;
 
-      if (!lastCommand.hasOwnProperty("resCode")) return;
-
-      let res = parseResCode(lastCommand.resCode);
-      if (res.title != "OK") return;
+      if (awaitCommand(lastCommand)) return;
+      if (lastCommand.resCode != RESCODES.OK) return;
 
       handleFinger(lastCommand);
     },
@@ -69,6 +65,7 @@ export default function({ executor, publisher, handleFinger }) {
   );
 
   return {
+    ignoreResponse,
     handleResponse
   };
 }

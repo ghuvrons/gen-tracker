@@ -69,7 +69,7 @@ const Header = [
     size: 7,
     format: v => Number(dayjs(parseDatetime(v), "YYMMDDHHmmss0d").unix()),
     display: vf => dayjs.unix(vf).format("ddd, DD-MM-YY HH:mm:ss"),
-    formatCmd: () => buildTimestamp(dayjs().format("YYMMDDHHmmss0d"))
+    formatCmd: unix => buildTimestamp(dayjs.unix(unix).format("YYMMDDHHmmss0d"))
   }
 ];
 

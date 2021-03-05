@@ -7,6 +7,7 @@
 <script>
 import { validateFrame } from "src/js/frame";
 import config from "src/js/opt/config";
+
 import useFinger from "src/composables/useFinger";
 import useResponse from "src/composables/useResponse";
 import useCommand from "src/composables/useCommand";
@@ -15,29 +16,23 @@ import useReport from "src/composables/useReport";
 import useEvents from "src/composables/useEvents";
 import useDevice from "src/composables/useDevice";
 
-import { onMounted, ref, provide } from "@vue/composition-api";
+import { onMounted, provide } from "@vue/composition-api";
 
 export default {
   // name: "App",
   setup(props, { root }) {
-    const executor = ref(null);
-
-    const publisher = (unitID, data) => {
-      console.warn(unitID, data);
+    const publisher = (unitID, data) =>
       root.$mqtt.publish(`VCU/${unitID}/CMD`, data, { qos: 2 });
-    };
 
     const { addDevices } = useDevice();
     const { handleFinger } = useFinger({ addDevices });
-    const { handleResponse } = useResponse({
-      executor,
+    const { handleResponse, ignoreResponse } = useResponse({
       publisher,
       handleFinger
     });
-    const { handleLostCommand, cancelCommand } = useCommand({
-      executor,
+    const { sendCommand, handleLostCommand } = useCommand({
       publisher,
-      handleResponse
+      ignoreResponse
     });
 
     const { handleEvents } = useEvents();
@@ -50,7 +45,9 @@ export default {
       root.$mqtt.subscribe("VCU/+/RSP", { qos: 1 });
       root.$mqtt.subscribe("VCU/+/STS", { qos: 1 });
     });
-    provide();
+
+    provide("ignoreResponse", ignoreResponse);
+    provide("sendCommand", sendCommand);
 
     return {
       validateFrame,

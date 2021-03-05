@@ -2,13 +2,6 @@ import * as mutations from "./mutation-types";
 import initialState from "./state";
 
 export default {
-  [mutations.CLEAR_COMMON](state) {
-    // Object.assign(state, initialState());
-    state.processing = false;
-  },
-  [mutations.SET_PROCESSING](state, payload) {
-    state.processing = payload;
-  },
   [mutations.SET_DARKER](state, value) {
     state.darker = value;
   },

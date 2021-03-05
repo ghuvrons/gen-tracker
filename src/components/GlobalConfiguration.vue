@@ -25,12 +25,7 @@
         />
       </div>
       <div class="col-auto">
-        <q-btn
-          icon="stop"
-          label="No command"
-          :disable="!command.exec"
-          @click="ignoreCommand()"
-        />
+        <q-btn icon="stop" label="Free command" @click="ignoreResponse()" />
       </div>
       <div class="col-auto">
         <q-btn-dropdown icon="cloud_download" label="Export">
@@ -78,22 +73,16 @@
 </template>
 
 <script>
-import {
-  SET_NOTIFICATION,
-  CLEAR_COMMON
-} from "src/store/common/mutation-types";
-import { CLEAR_DATABASE } from "src/store/db/mutation-types";
-import {
-  CANCEL_COMMAND,
-  INSERT_COMMAND,
-  INSERT_BUFFERS
-} from "src/store/db/action-types";
 import { exportCSV, exportJSON, importJSON } from "src/js/exporter";
 import { confirm, notify } from "src/js/framework";
 import { calibrateTime } from "src/js/utils";
 import { frameId } from "src/js/utils";
 
-import { ref, computed, watch } from "@vue/composition-api";
+import { SET_NOTIFICATION } from "src/store/common/mutation-types";
+import { CLEAR_DATABASE } from "src/store/db/mutation-types";
+import { INSERT_BUFFERS } from "src/store/db/action-types";
+
+import { ref, computed, watch, inject } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const {
   useState,
@@ -111,6 +100,9 @@ export default {
     }
   },
   setup(props) {
+    const sendCommand = inject("sendCommand");
+    const ignoreResponse = inject("ignoreResponse");
+
     const { buffers, devices, command, reports } = useState([
       "buffers",
       "devices",
@@ -119,18 +111,13 @@ export default {
     ]);
     const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
     const { [CLEAR_DATABASE]: clearDatabase } = useMutations([CLEAR_DATABASE]);
-    const {
-      [CANCEL_COMMAND]: cancelCommand,
-      [INSERT_COMMAND]: insertCommand,
-      [INSERT_BUFFERS]: insertBuffers
-    } = useActions([CANCEL_COMMAND, INSERT_COMMAND, INSERT_BUFFERS]);
+    const { [INSERT_BUFFERS]: insertBuffers } = useActions([INSERT_BUFFERS]);
 
     const common = createNamespacedHelpers("common");
     const { notification } = common.useState(["notification"]);
-    const {
-      [CLEAR_COMMON]: clearCommon,
-      [SET_NOTIFICATION]: setNotification
-    } = common.useMutations([CLEAR_COMMON, SET_NOTIFICATION]);
+    const { [SET_NOTIFICATION]: setNotification } = common.useMutations([
+      SET_NOTIFICATION
+    ]);
 
     const uploader = ref(null);
 
@@ -140,14 +127,7 @@ export default {
     });
 
     const clearStore = () =>
-      confirm(`Are you sure to remove all data?`).onOk(() => {
-        clearCommon();
-        clearDatabase();
-      });
-    const ignoreCommand = () => {
-      notify("Command ignored.", "warning");
-      cancelCommand();
-    };
+      confirm(`Are you sure to remove all data?`).onOk(() => clearDatabase());
     const calibrate = () => {
       if (!devDevice) return;
 
@@ -159,7 +139,7 @@ export default {
       let validTime = calibrateTime(report);
       if (!validTime) return;
 
-      insertCommand(`REPORT_RTC=${validTime}`);
+      sendCommand(`REPORT_RTC=${validTime}`);
       notify("Calibrating device time..", "info");
     };
     const importData = ([file]) => {
@@ -183,7 +163,7 @@ export default {
 
       calibrate,
       clearStore,
-      ignoreCommand,
+      ignoreResponse,
       importData,
       exportJSON,
       exportCSV

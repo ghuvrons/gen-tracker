@@ -1,35 +1,50 @@
 import { Header } from "src/js/opt/header";
 import { HexToUnsignedInt, HexToAscii } from "src/js/formatter";
 
+const RESCODES = {
+  ERROR: 0,
+  OK: 1,
+  INVALID: 2,
+  CANCELLED: 255,
+  TIMEOUT: 256,
+  UNKNOWN: 257
+};
+
 const RESPONSE_LIST = [
   {
     resCode: 0,
-    name: "error",
-    title: "ERROR",
+    name: "Error",
+    icon: "error",
     color: "red"
   },
   {
     resCode: 1,
-    name: "ok",
-    title: "OK",
+    name: "Ok",
+    icon: "check",
     color: "green"
   },
   {
     resCode: 2,
-    name: "invalid",
-    title: "INVALID",
+    name: "Invalid",
+    icon: "remove_circle",
     color: "blue"
   },
   {
+    resCode: 255,
+    name: "Cancelled",
+    icon: "cancel",
+    color: "yellow"
+  },
+  {
     resCode: 256,
-    name: "timeout",
-    title: "TIMEOUT",
+    name: "Timeout",
+    icon: "timer_off",
     color: "orange"
   },
   {
     resCode: 257,
-    name: "unknown",
-    title: "UNKNOWN",
+    name: "Unknown",
+    icon: "help",
     color: "purple"
   }
 ];
@@ -60,9 +75,9 @@ const Response = [
     format: v => HexToUnsignedInt(v),
     display: vf => {
       let res = RESPONSE_LIST.find(({ resCode }) => resCode === vf);
-
-      if (res) return res.title;
-      return RESPONSE_LIST.find(({ name }) => name === "unknown").title;
+      if (!res)
+        res = RESPONSE_LIST.find(({ resCode }) => resCode === RESCODES.UNKNOWN);
+      return res.name;
     }
   },
   {
@@ -75,4 +90,4 @@ const Response = [
   }
 ];
 
-export { RESPONSE_LIST, Response };
+export { RESCODES, RESPONSE_LIST, Response };

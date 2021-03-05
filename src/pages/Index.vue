@@ -51,13 +51,14 @@
 <style></style>
 
 <script>
-import MapManagement from "components/MapManagement";
 import ReportLog from "components/ReportLog";
+import MapManagement from "components/MapManagement";
 import DriverManagement from "components/DriverManagement";
 import GlobalConfiguration from "components/GlobalConfiguration";
 
 import { ref, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'PageIndex',
@@ -68,7 +69,6 @@ export default {
     GlobalConfiguration
   },
   setup(props) {
-    const { useGetters } = createNamespacedHelpers("db");
     const { devReports, devFingers } = useGetters(["devReports", "devFingers"]);
 
     const selectedTab = ref("tab-1");

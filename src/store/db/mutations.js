@@ -15,9 +15,6 @@ export default {
   [mutations.SET_REPORT](state, payload) {
     state.report = payload;
   },
-  [mutations.SET_COMMAND](state, command) {
-    state.command = command;
-  },
 
   [mutations.ADD_DEVICES](state, payloads) {
     payloads.forEach(payload => {
@@ -84,15 +81,6 @@ export default {
     );
 
     if (idx >= 0) state.commands.splice(idx, 1, payload);
-  },
-  [mutations.ADD_RESPONSES](state, payload) {
-    const freezed = { ...payload };
-    Object.freeze(freezed);
-
-    state.responses.unshift(freezed);
-
-    if (state.responses.length > config.maxStorage.responses)
-      state.responses.pop();
   },
 
   [mutations.ADD_FINGERS](state, payload) {

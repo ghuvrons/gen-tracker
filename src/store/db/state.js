@@ -1,20 +1,15 @@
 export default function() {
   return {
     buffering: null,
+    buffers: [],
 
     unitID: null,
+    devices: [],
+
     report: null,
-    command: {
-      payload: "",
-      exec: false
-    },
+    reports: [],
 
     commands: [],
-
-    devices: [],
-    buffers: [],
-    reports: [],
-    responses: [],
     fingers: []
   };
 }

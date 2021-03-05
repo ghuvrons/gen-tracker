@@ -22,15 +22,9 @@
           @click="setUnitID(dev.unitID)"
           :active="active(dev)"
           active-class="bg-primary text-white"
-          :clickable="!processing"
+          clickable
           dense
         >
-          <!-- <q-item-section side>
-            <q-icon
-              :name="dev.status ? 'play_circle' : 'pause_circle'"
-              :color="dev.status ? 'green' : 'red'"
-            ></q-icon>
-          </q-item-section> -->
           <q-item-section>
             <q-item-label class="text-subtitle2">
               {{ dev.unitID.toString() }}
@@ -52,12 +46,13 @@
 </template>
 
 <script>
-import { SET_UNITID } from "src/store/db/mutation-types";
 import { lastSendDatetime } from "src/js/report";
 
+import { SET_UNITID } from "src/store/db/mutation-types";
+
 import { get, orderBy } from "lodash";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
 import { computed } from "@vue/composition-api";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useMutations, useGetters } = createNamespacedHelpers("db");
 
 export default {

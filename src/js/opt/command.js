@@ -3,6 +3,28 @@ import { IntToHex, ChangeEndian } from "src/js/formatter";
 import { buildTimestamp } from "src/js/utils";
 import dayjs from "src/js/dayjs";
 
+const Command = [
+  ...Header,
+  {
+    field: "code",
+    title: "Code",
+    size: 1,
+    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
+  },
+  {
+    field: "subCode",
+    title: "Sub Code",
+    size: 1,
+    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
+  },
+  {
+    field: "value",
+    title: "Value",
+    size: 200,
+    formatCmd: (v, sz) => sz && ChangeEndian(IntToHex(parseInt(v || 0), sz * 2))
+  }
+];
+
 const COMMAND_LIST = [
   {
     command: "GEN_INFO",
@@ -130,29 +152,6 @@ const COMMAND_LIST = [
     code: 5,
     subCode: 1,
     timeout: 12 * 60
-  }
-];
-
-const Command = [
-  ...Header,
-  {
-    field: "code",
-    title: "Code",
-    size: 1,
-    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
-  },
-  {
-    field: "subCode",
-    title: "Sub Code",
-    size: 1,
-    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
-  },
-  {
-    field: "value",
-    title: "Value",
-    size: 200,
-    formatCmd: (v, sz) =>
-      ChangeEndian(IntToHex(parseInt(v || 0), (sz || 0) * 2))
   }
 ];
 

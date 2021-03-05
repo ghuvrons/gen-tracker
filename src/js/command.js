@@ -1,10 +1,14 @@
+import dayjs from "src/js/dayjs";
 import { COMMAND_LIST, Command } from "src/js/opt/command";
+import config from "./opt/config";
+
+const awaitCommand = cmd => cmd && !cmd.hasOwnProperty("resCode");
 
 const buildCommand = (cmd, unitID) => {
   if (!cmd) return;
-
-  return Command.reduce((acc, el, idx) => {
-    let { field, size, formatCmd } = Command[Command.length - idx - 1];
+  const sendDatetime = dayjs().unix();
+  const hexCmd = Command.reduce((acc, el, idx) => {
+    let { field, formatCmd } = Command[Command.length - idx - 1];
 
     switch (field) {
       case "value":
@@ -17,7 +21,7 @@ const buildCommand = (cmd, unitID) => {
         acc = formatCmd(cmd[field]) + acc;
         break;
       case "sendDatetime":
-        acc = formatCmd() + acc;
+        acc = formatCmd(sendDatetime) + acc;
         break;
       case "unitID":
         acc = formatCmd(unitID) + acc;
@@ -30,9 +34,15 @@ const buildCommand = (cmd, unitID) => {
       default:
         break;
     }
-
     return acc;
   }, "").toUpperCase();
+
+  return {
+    ...cmd,
+    unitID,
+    sendDatetime,
+    hexCmd
+  };
 };
 
 const extractCommand = payload => {
@@ -69,10 +79,24 @@ const parseCommand = payload => {
     }
   }
 
+  const { command, code, subCode, timeout, size } = cmd;
+
   return {
-    ...cmd,
-    value
+    code,
+    subCode,
+    size,
+    command,
+    payload,
+    value,
+    timeout: timeout || config.command.timeout
   };
 };
 
-export { COMMAND_LIST, Command, parseCommand, buildCommand, extractCommand };
+export {
+  COMMAND_LIST,
+  Command,
+  awaitCommand,
+  parseCommand,
+  buildCommand,
+  extractCommand
+};

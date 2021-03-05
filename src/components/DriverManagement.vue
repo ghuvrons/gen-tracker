@@ -19,7 +19,6 @@
           <q-item-section side>
             <q-btn
               @click="remove(driver)"
-              :loading="processing"
               size="sm"
               icon="delete"
               outline
@@ -41,11 +40,10 @@
         direction="left"
         label-position="top"
         padding="sm"
-        :disable="processing"
       >
         <q-fab-action
           @click="fetch"
-          :disable="processing || !devDevice"
+          :disable="!devDevice"
           label-position="top"
           color="primary"
           icon="download"
@@ -54,7 +52,7 @@
         />
         <q-fab-action
           @click="add"
-          :disable="processing || !devDevice"
+          :disable="!devDevice"
           label-position="top"
           color="green"
           icon="upload"
@@ -63,7 +61,7 @@
         />
         <q-fab-action
           @click="clear"
-          :disable="processing || !devDevice"
+          :disable="!devDevice"
           label-position="top"
           color="orange"
           icon="delete_forever"
@@ -76,14 +74,13 @@
 </template>
 
 <script>
-import { confirm } from "src/js/framework";
 import dayjs from "src/js/dayjs";
-import { INSERT_COMMAND } from "src/store/db/action-types";
+import { confirm } from "src/js/framework";
 
 import { get } from "lodash";
 import { ref } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-const { useGetters, useActions } = createNamespacedHelpers("db");
+const { useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
@@ -94,8 +91,9 @@ export default {
     }
   },
   setup(props) {
+    const sendCommand = inject("sendCommand");
+
     const { devFingers, devDevice } = useGetters(["devFingers", "devDevice"]);
-    const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 
     const name = ref(["One", "Two", "Three", "Four", "Five"]);
     const fab = ref(false);
@@ -106,15 +104,15 @@ export default {
         ? dayjs.unix(fingerTime).format("DD-MM-YY HH:mm:ss")
         : "Unknown";
     };
-    const fetch = () => insertCommand(`FINGER_FETCH`);
-    const add = () => insertCommand(`FINGER_ADD`);
+    const fetch = () => sendCommand(`FINGER_FETCH`);
+    const add = () => sendCommand(`FINGER_ADD`);
     const remove = ({ fingerID }) =>
       confirm(
         `Are you sure to remove this fingerprint ${fingerID} ?`
-      ).onOk(() => insertCommand(`FINGER_DEL=${fingerID}`));
+      ).onOk(() => sendCommand(`FINGER_DEL=${fingerID}`));
     const clear = () =>
       confirm(`Are you sure to clear all fingerprints  ?`).onOk(() =>
-        insertCommand(`FINGER_RST`)
+        sendCommand(`FINGER_RST`)
       );
 
     return {

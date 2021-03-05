@@ -50,11 +50,7 @@
           </q-banner>
           <q-virtual-scroll v-else :items="searchResults" separator>
             <template v-slot="{ item: cmd }">
-              <q-item
-                :key="cmd.command"
-                @click="selectCommand(cmd)"
-                :clickable="!processing"
-              >
+              <q-item :key="cmd.command" @click="selectCommand(cmd)" clickable>
                 <q-item-section>
                   <q-item-label lines="1">{{ cmd.command }}</q-item-label>
                   <q-item-label lines="2" caption>{{ cmd.desc }}</q-item-label>
@@ -88,35 +84,21 @@ import { ref, computed } from "@vue/composition-api";
 
 export default {
   emits: ["close", "select"],
-  // props: {
-  //   value: {
-  //     required: true,
-  //     type: Boolean
-  //   }
-  // },
   setup(props, { emit }) {
     const keyword = ref("");
 
-    // const modalOpen = computed({
-    //   get: () => props.value,
-    //   set: v => emit("input", v)
-    // });
     const searchResults = computed(() =>
       flowFilter(COMMAND_LIST, keyword.value || "")
     );
 
     const getRange = ([min, max]) =>
       max ? `[ ${min}, ${max} ]` : `[ ${min} ]`;
-    const selectCommand = ({ command }) => {
-      // modalOpen.value = false;
-      emit("select", command);
-    };
+    const selectCommand = ({ command }) => emit("select", command);
 
     return {
       COMMAND_LIST,
       keyword,
 
-      // modalOpen,
       searchResults,
 
       getRange,

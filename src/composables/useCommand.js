@@ -1,54 +1,47 @@
-import config from "src/js/opt/config";
 import { dilation } from "src/js/utils";
 import { notify } from "src/js/framework";
-import { buildCommand, parseCommand } from "src/js/command";
-// import { STOP_COMMAND } from "src/store/db/action-types";
+import { RESCODES } from "src/js/response";
+import { awaitCommand, buildCommand, parseCommand } from "src/js/command";
+import { INSERT_COMMAND } from "src/store/db/action-types";
 
-import dayjs from "src/js/dayjs";
-import { get, max } from "lodash";
-import { ref, watch } from "@vue/composition-api";
+import { get } from "lodash";
+import { watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-const { useState, useGetters } = createNamespacedHelpers("db");
+const { useState, useGetters, useActions } = createNamespacedHelpers("db");
 
-export default function({ executor, publisher, handleResponse }) {
-  const ticker = ref(null);
-  const interval = ref(null);
-  const notifier = ref(null);
-
+export default function({ publisher, ignoreResponse }) {
   const { commands } = useState(["commands"]);
   const { devDevice } = useGetters(["devDevice"]);
-  // const { [STOP_COMMAND]: stopCommand } = useActions([STOP_COMMAND]);
+  const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 
-  const starWaitting = exec => {
-    ticker.value = dayjs().unix();
-    interval.value = setTimeout(
-      handleResponse,
-      max([exec.timeout, config.command.timeout]) * 1000,
-      null
-    );
-    notifier.value = notify("Sending command....", "info", 0);
-    executor.value = exec;
-  };
-  const stopWaitting = () => {
-    // stopCommand();
-    if (executor.value) {
-      publisher(executor.value.unitID, null);
-      executor.value = null;
-    }
-    if (notifier.value) notifier.value();
-    if (interval.value) clearTimeout(interval.value);
+  const sendCommand = payload => {
+    if (!payload) return notify("No payload");
+    if (!devDevice.value) return notify("No device");
+
+    const { unitID, status, commandable } = devDevice.value;
+    if (!status) return notify("Device offline");
+    if (!commandable) return notify("Device busy");
+
+    payload = payload.toUpperCase();
+    const cmd = parseCommand(payload);
+    if (typeof cmd === "string") return notify(cmd);
+
+    insertCommand(buildCommand(cmd, unitID));
   };
   const handleLostCommand = report => {
-    if (!executor.value) return;
-    if (get(executor.value, "timeout") < 60) return;
+    const lastCommand = get(devDevice.value, "lastCommand");
+    if (!awaitCommand(lastCommand)) return;
 
-    let { sendDatetime, unitID } = report;
-    if (executor.value.unitID != unitID.val) return;
+    const { sendDatetime, unitID, timeout } = lastCommand;
+    if (unitID != report.unitID.val) return;
 
-    if (dilation(ticker.value, "seconds", sendDatetime.val) < 10) return;
+    const timeDiff = dilation(sendDatetime, "seconds");
 
-    notify("Command lost.", "warning");
-    stopWaitting();
+    if (timeout < 30) {
+      if (timeDiff > timeout) ignoreResponse(RESCODES.TIMEOUT);
+    } else {
+      if (timeDiff > 30) ignoreResponse(RESCODES.UNKNOWN);
+    }
   };
 
   watch(
@@ -65,42 +58,8 @@ export default function({ executor, publisher, handleResponse }) {
     { deep: true }
   );
 
-  // watch(
-  //   () => command.value.exec,
-  //   exec => {
-  //     if (!exec || !devDevice.value || !commandable.value || executor.value) {
-  //       stopWaitting();
-  //       if (!exec) return;
-  //       if (!devDevice.value) return notify("No device.");
-  //       if (!commandable.value) return notify("Someone commanding");
-  //       if (executor.value) return notify("Command busy.");
-  //     }
-  //     let { payload } = command.value;
-  //     let cmd = parseCommand(payload);
-  //     if (typeof cmd === "string") {
-  //       stopWaitting();
-  //       return notify(cmd);
-  //     }
-
-  //     let { unitID } = devDevice.value;
-  //     let hexCmd = buildCommand(cmd, unitID);
-  //     let binCmd = Buffer.from(hexCmd, "hex");
-
-  //     starWaitting({
-  //       ...cmd,
-  //       unitID,
-  //       payload,
-  //       hexCmd
-  //     });
-
-  //     console.log(`COMMAND ${hexCmd}`);
-  //     publisher(unitID, binCmd);
-  //   },
-  //   { lazy: false, immediate: true }
-  // );
-
   return {
-    cancelCommand,
+    sendCommand,
     handleLostCommand
   };
 }

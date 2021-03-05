@@ -20,21 +20,19 @@
     <div class="q-pa-sm">
       <q-input
         v-model.lazy="payload"
-        @keyup.enter="insertCommand(payload)"
+        @keyup.enter="sendCommand(payload)"
         class="text-uppercase"
         label="Input Command:"
         hint="Press ENTER to send."
         type="text"
         stack-label
-        :disable="processing || !devDevice"
-        :readonly="processing"
-        :loading="processing"
+        :disable="!devDevice"
       >
         <template v-slot:append>
           <q-icon
             name="send"
             class="cursor-pointer"
-            @click="insertCommand(payload)"
+            @click="sendCommand(payload)"
           ></q-icon>
         </template>
       </q-input>
@@ -52,24 +50,33 @@
 import CommandListModal from "components/etc/CommandListModal";
 
 import { COMMAND_LIST } from "src/js/command";
-import { INSERT_COMMAND } from "src/store/db/action-types";
 
-import { ref, computed } from "@vue/composition-api";
+import { ref, inject, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-const { useState, useGetters, useActions } = createNamespacedHelpers("db");
+const { useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
+  emits: ["input"],
+  props: {
+    value: {
+      required: true
+    }
+  },
   components: {
     CommandListModal
   },
-  setup() {
-    const { command } = useState(["command"]);
+  setup(props, { emit }) {
+    const sendCommand = inject("sendCommand");
+
     const { devDevice } = useGetters(["devDevice"]);
-    const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 
     const modalOpen = ref(false);
-    const payload = ref(null);
+
+    const payload = computed({
+      get: () => props.value,
+      set: v => emit("input", v)
+    });
 
     const writeCommand = v => {
       payload.value = v;
@@ -84,7 +91,7 @@ export default {
       devDevice,
 
       writeCommand,
-      insertCommand
+      sendCommand
     };
   }
 };

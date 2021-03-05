@@ -3,9 +3,9 @@
     <q-bar class="bg-blue text-white">
       <q-toolbar-title class="text-subtitle1">
         Response Log
-        <q-badge v-if="devCommands.length > 0" color="red" align="top">{{
-          devCommands.length
-        }}</q-badge>
+        <q-badge v-if="devCommands.length > 0" color="red" align="top">
+          {{ devCommands.length }}
+        </q-badge>
       </q-toolbar-title>
     </q-bar>
 
@@ -17,22 +17,37 @@
     </q-banner>
     <q-virtual-scroll v-else :items="devCommands" :style="height" separator>
       <template v-slot="{ item: cmd, index }">
-        <q-item
-          :key="index"
-          @click="writeCommand(cmd)"
-          :clickable="!processing"
-        >
+        <q-item :key="index" @click="writeCommand(cmd.payload)" clickable>
           <q-item-section>
             <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
             <!-- <q-item-label lines="2" caption> -->
-            {{ readMessage(cmd.message) }}
+            {{ awaitCommand(cmd) ? "Waitting..." : parseMessage(cmd.message) }}
             <!-- </q-item-label> -->
           </q-item-section>
 
-          <q-item-section @click="ignoreCommand(cmd)" side>
-            <q-chip :color="readColor(cmd.resCode)" dark dense square>
-              {{ readTitle(cmd.resCode) }}
-            </q-chip>
+          <q-item-section side>
+            <q-icon
+              v-if="awaitCommand(cmd)"
+              @click="ignoreResponse()"
+              color="yellow"
+              name="cached"
+            >
+              <q-tooltip anchor="center left" self="center right">
+                Cancel
+              </q-tooltip>
+            </q-icon>
+            <q-icon
+              v-else
+              :color="parseResCode(cmd.resCode).color"
+              :name="parseResCode(cmd.resCode).icon"
+            >
+              <q-tooltip anchor="center left" self="center right">
+                {{ parseResCode(cmd.resCode).name }}
+              </q-tooltip>
+            </q-icon>
+            <!-- <q-chip :color="readColor(cmd.resCode)" dark dense square>
+              {{ readIcon(cmd.resCode) }}
+            </q-chip> -->
           </q-item-section>
         </q-item>
       </template>
@@ -42,47 +57,32 @@
 
 <script>
 import { parseResCode, parseMessage } from "src/js/response";
-import { INSERT_COMMAND, CANCEL_COMMAND } from "src/store/db/action-types";
+import { awaitCommand } from "src/js/command";
 
-import { get } from "lodash";
+import { inject } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-const { useGetters, useActions } = createNamespacedHelpers("db");
+const { useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
+  emits: ["select"],
   props: {
     height: {
       required: true
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const ignoreResponse = inject("ignoreResponse");
+
     const { devCommands } = useGetters(["devCommands"]);
-    const {
-      [INSERT_COMMAND]: insertCommand,
-      [CANCEL_COMMAND]: cancelCommand
-    } = useActions([INSERT_COMMAND, CANCEL_COMMAND]);
 
-    const readMessage = message => parseMessage(message) || "Waitting";
-    const readTitle = resCode => get(parseResCode(resCode), "title") || "WAIT";
-    const readColor = resCode =>
-      get(parseResCode(resCode), "color") || "yellow";
-
-    const ignoreCommand = cmd =>
-      cmd.hasOwnProperty("resCode") && cancelCommand();
-
-    const writeCommand = ({ payload }) => {
-      return; // FIXME
-      insertCommand(payload);
-    };
+    const writeCommand = payload => emit("select", payload);
 
     return {
       devCommands,
 
-      readMessage,
-      readColor,
-      readTitle,
-
-      ignoreCommand,
+      awaitCommand,
+      ignoreResponse,
       writeCommand,
       parseResCode,
       parseMessage

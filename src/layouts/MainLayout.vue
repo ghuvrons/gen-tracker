@@ -61,8 +61,14 @@
     </q-drawer>
 
     <q-drawer side="right" v-model="drawer.right" show-if-above bordered>
-      <command-management :style="hCommandManagement"></command-management>
-      <response-log :height="hResponseLog"></response-log>
+      <command-management
+        v-model="payload"
+        :style="hCommandManagement"
+      ></command-management>
+      <response-log
+        @select="payload = $event"
+        :height="hResponseLog"
+      ></response-log>
     </q-drawer>
 
     <q-page-container>
@@ -72,15 +78,17 @@
 </template>
 
 <script>
-import { SET_DARKER } from "src/store/common/mutation-types";
 import ReportReader from "components/ReportReader";
 import DeviceManagement from "components/DeviceManagement";
 import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
+
 import config from "src/js/opt/config";
 import useOfflineDetector from "src/composables/useOfflineDetector";
-import { Platform, Dark } from "quasar";
 
+import { SET_DARKER } from "src/store/common/mutation-types";
+
+import { Platform, Dark } from "quasar";
 import {
   computed,
   reactive,
@@ -109,7 +117,8 @@ export default {
         right: false
       },
       app: config.app,
-      splitter: 150
+      splitter: 150,
+      payload: null
     });
 
     const { offline } = useOfflineDetector();

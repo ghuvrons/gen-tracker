@@ -1,8 +1,8 @@
 import { FREE_BUFFER, STOP_BUFFERING } from "src/store/db/mutation-types";
+import { INSERT_BUFFERS } from "src/store/db/action-types";
 
 import { onBeforeUnmount, onMounted, ref } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-import { INSERT_BUFFERS } from "src/store/db/action-types";
 const { useState, useMutations, useActions } = createNamespacedHelpers("db");
 
 export default function({ handleReports }) {

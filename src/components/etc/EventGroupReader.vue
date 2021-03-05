@@ -23,6 +23,7 @@
 
 <script>
 import { EVENT_LIST, parseEvent } from "src/js/event";
+
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useGetters } = createNamespacedHelpers("db");
 

@@ -1,9 +1,9 @@
 import { readEvent } from "src/js/event";
 import { pushNotification } from "src/js/framework";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useState } = createNamespacedHelpers("common");
 
 export default function() {
-  const { useState } = createNamespacedHelpers("common");
   const { notification } = useState(["notification"]);
 
   const handleEvents = (curReport, oldReport) => {

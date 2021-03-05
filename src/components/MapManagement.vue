@@ -46,11 +46,11 @@
 import config from "src/js/opt/config";
 import { nearestFullReport } from "src/js/report";
 import { getPosition, getHeading } from "src/js/map";
+import { frameId } from "src/js/utils";
 
 import { get } from "lodash";
 import { reactive, toRefs, watch, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
-import { frameId } from "src/js/utils";
 const { useState, useGetters } = createNamespacedHelpers("db");
 
 export default {

@@ -103,10 +103,11 @@
 </template>
 
 <script>
-import { getField } from "src/js/utils";
-import { Report } from "src/js/report";
 import LineChart from "components/etc/LineChart";
 import EventGroupReader from "components/etc/EventGroupReader";
+
+import { getField } from "src/js/utils";
+import { Report } from "src/js/report";
 import { Dark } from "quasar";
 import useChart from "src/composables/useChart";
 
@@ -242,20 +243,6 @@ export default {
       () => state.control.beginAtZero,
       _ => scaleChartOpen()
     );
-    // watch(
-    //   () => state.control.follow,
-    //   follow => {
-    //     const { min, max } = state.range.val;
-    //     if (follow) {
-    //       state.tmp.max = state.max;
-
-    //       state.range.val.max = state.range.bar.max;
-    //       if (state.control.lock) state.range.val.min = max - (max - min);
-    //     } else state.range.val.max = state.tmp.max;
-
-    //     applyRange();
-    //   }
-    // );
     watch(
       () => state.control.maximize,
       max => {
