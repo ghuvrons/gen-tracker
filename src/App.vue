@@ -21,8 +21,11 @@ import { onMounted, provide } from "@vue/composition-api";
 export default {
   // name: "App",
   setup(props, { root }) {
-    const publisher = (unitID, data) =>
+    const publisher = (unitID, data) => {
       root.$mqtt.publish(`VCU/${unitID}/CMD`, data, { qos: 2 });
+      if (data == null)
+        root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1 });
+    };
 
     const { addDevices } = useDevice();
     const { handleFinger } = useFinger({ addDevices });

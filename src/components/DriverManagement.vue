@@ -78,7 +78,7 @@ import dayjs from "src/js/dayjs";
 import { confirm } from "src/js/framework";
 
 import { get } from "lodash";
-import { ref } from "@vue/composition-api";
+import { ref, inject } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useGetters } = createNamespacedHelpers("db");
 

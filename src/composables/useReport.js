@@ -45,7 +45,7 @@ export default function({ handleEvents, handleLostCommand }) {
       let report = validate(parseReport(hex));
 
       if (!report) return acc;
-      handleLostCommand(report);
+      // handleLostCommand(report);
 
       return [...acc, report];
     }, []);

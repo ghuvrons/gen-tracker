@@ -19,11 +19,13 @@ export default function({ publisher, ignoreResponse }) {
     if (!devDevice.value) return notify("No device");
 
     const { unitID, status, commandable } = devDevice.value;
-    if (!status) return notify("Device offline");
+    // if (!status) return notify("Device offline");
     if (!commandable) return notify("Device busy");
 
     payload = payload.toUpperCase();
     const cmd = parseCommand(payload);
+    if (!cmd) return;
+
     if (typeof cmd === "string") return notify(cmd);
 
     insertCommand(buildCommand(cmd, unitID));

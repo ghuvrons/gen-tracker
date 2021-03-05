@@ -22,17 +22,14 @@ export default function({ publisher, handleFinger }) {
   const { [INSERT_RESPONSE]: insertResponse } = useActions([INSERT_RESPONSE]);
 
   const processResponse = (command, response) => {
-    const { unitID } = command;
-
     if (awaitCommand(command)) {
       const resp = makeResponse(response);
       notifyResponse(resp);
       insertResponse({ ...command, ...resp });
     }
-    publisher(unitID, null);
   };
   const handleResponse = hex => {
-    let response = parseResponse(hex);
+    const response = parseResponse(hex);
     const unitID = getValue(response, "unitID");
 
     const device = getDeviceByUnitID.value(unitID);
@@ -44,16 +41,20 @@ export default function({ publisher, handleFinger }) {
 
     if (!validResponse(lastCommand, response)) return;
     processResponse(lastCommand, response);
+    publisher(unitID, null);
   };
   const ignoreResponse = resCode => {
     const lastCommand = get(devDevice.value, "lastCommand");
+    const { unitID } = devDevice.value;
+
     processResponse(lastCommand, resCode || RESCODES.CANCELLED);
+    publisher(unitID, null);
   };
 
   watch(
     () => devDevice.value,
-    dev => {
-      const lastCommand = get(dev, "lastCommand");
+    device => {
+      const lastCommand = get(device, "lastCommand");
       if (!lastCommand) return;
 
       if (awaitCommand(lastCommand)) return;

@@ -5,7 +5,6 @@ import config from "./opt/config";
 const awaitCommand = cmd => cmd && !cmd.hasOwnProperty("resCode");
 
 const buildCommand = (cmd, unitID) => {
-  if (!cmd) return;
   const sendDatetime = dayjs().unix();
   const hexCmd = Command.reduce((acc, el, idx) => {
     let { field, formatCmd } = Command[Command.length - idx - 1];

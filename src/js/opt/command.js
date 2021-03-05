@@ -21,7 +21,8 @@ const Command = [
     field: "value",
     title: "Value",
     size: 200,
-    formatCmd: (v, sz) => sz && ChangeEndian(IntToHex(parseInt(v || 0), sz * 2))
+    formatCmd: (v, sz) =>
+      ChangeEndian(IntToHex(parseInt(v || 0), (sz || 0) * 2))
   }
 ];
 
