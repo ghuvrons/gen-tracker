@@ -25,7 +25,7 @@
         />
       </div>
       <div class="col-auto">
-        <q-btn icon="stop" label="Free command" @click="ignoreResponse()" />
+        <q-btn icon="stop" label="Commandable" @click="ignoreResponse()" />
       </div>
       <div class="col-auto">
         <q-btn-dropdown icon="cloud_download" label="Export">

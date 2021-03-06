@@ -22,8 +22,12 @@ export default {
   // name: "App",
   setup(props, { root }) {
     const publisher = (unitID, data) => {
+      if (data)
+        root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true });
+
       root.$mqtt.publish(`VCU/${unitID}/CMD`, data, { qos: 2, retain: true });
-      if (data == null)
+
+      if (!data)
         root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true });
     };
 

@@ -18,7 +18,8 @@ export default function({ publisher, ignoreResponse }) {
     if (!payload) return notify("No payload");
     if (!devDevice.value) return notify("No device");
 
-    const { unitID, status, commandable } = devDevice.value;
+    const { unitID, status, commandable, lastCommand } = devDevice.value;
+    if (lastCommand && awaitCommand(lastCommand)) return notify("Command busy");
     // if (!status) return notify("Device offline");
     if (!commandable) return notify("Device busy");
 
