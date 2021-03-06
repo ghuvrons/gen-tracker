@@ -6,6 +6,7 @@
 
 <script>
 import { validateFrame } from "src/js/frame";
+import { notify } from "src/js/framework";
 import config from "src/js/opt/config";
 
 import useFinger from "src/composables/useFinger";
@@ -23,12 +24,12 @@ export default {
   setup(props, { root }) {
     const publisher = (unitID, data) => {
       if (data)
-        root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true });
+        root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true }, (err) => err && notify(err) );
 
-      root.$mqtt.publish(`VCU/${unitID}/CMD`, data, { qos: 2, retain: true });
+      root.$mqtt.publish(`VCU/${unitID}/CMD`, data, { qos: 2, retain: true }, (err) => err && notify(err) );
 
       if (!data)
-        root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true });
+        root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true }, (err) => err && notify(err) );
     };
 
     const { addDevices } = useDevice();
