@@ -28,8 +28,8 @@ export default {
 
       root.$mqtt.publish(`VCU/${unitID}/CMD`, data, { qos: 2, retain: true }, (err) => err && notify(err) );
 
-      // if (!data)
-      //  root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true }, (err) => err && notify(err) );
+      if (!data)
+        root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true }, (err) => err && notify(err) );
     };
 
     const { addDevices } = useDevice();
