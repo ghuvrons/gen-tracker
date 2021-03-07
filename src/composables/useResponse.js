@@ -26,7 +26,17 @@ export default function({ publisher, handleFinger }) {
     if (awaitCommand(command)) {
       const resp = makeResponse(response);
       notifyResponse(resp);
-      insertResponse({ ...command, ...resp });
+
+      const { unitID, sendDatetime, code, subCode, payload } = command;
+
+      insertResponse({
+        unitID,
+        sendDatetime,
+        code,
+        subCode,
+        payload,
+        ...resp
+      });
     }
   };
   const handleResponse = hex => {

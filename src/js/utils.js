@@ -82,8 +82,8 @@ const parseDatetime = hex => {
   );
 };
 
-const buildTimestamp = ascii => {
-  let datetime = ascii.match(/.{1,2}/g);
+const buildTimestamp = YYMMDDHHmmss0d => {
+  let datetime = YYMMDDHHmmss0d.match(/.{1,2}/g);
 
   return datetime
     .reduce((acc, dt) => acc.concat(IntToHex(parseInt(dt), 2)), "")

@@ -78,16 +78,11 @@ const parseCommand = payload => {
     }
   }
 
-  const { command, code, subCode, timeout, size } = cmd;
-
   return {
-    code,
-    subCode,
-    size,
-    command,
+    ...cmd,
+    timeout: cmd.timeout || config.command.timeout,
     payload,
-    value,
-    timeout: timeout || config.command.timeout
+    value
   };
 };
 
