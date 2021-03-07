@@ -73,4 +73,30 @@ const Header = [
   }
 ];
 
-export { Header };
+const CommandHeader = [
+  ...Header,
+  {
+    group: "command",
+    field: "code",
+    title: "Code",
+    header: true,
+    required: true,
+    size: 1,
+    format: v => HexToUnsignedInt(v),
+    display: vf => vf,
+    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
+  },
+  {
+    group: "command",
+    field: "subCode",
+    title: "Sub Code",
+    header: true,
+    required: true,
+    size: 1,
+    format: v => HexToUnsignedInt(v),
+    display: vf => vf,
+    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
+  }
+];
+
+export { Header, CommandHeader };

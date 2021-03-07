@@ -19,9 +19,16 @@
       <template v-slot="{ item: cmd, index }">
         <q-item :key="index" @click="writeCommand(cmd.payload)" clickable>
           <q-item-section>
-            <q-item-label lines="1">{{ cmd.payload }}</q-item-label>
+            <q-item-label lines="1" caption class="text-italic">
+              {{ parseDatetime(cmd.sendDatetime) }}
+            </q-item-label>
+            <q-item-label lines="2">{{ cmd.payload }}</q-item-label>
             <!-- <q-item-label lines="2" caption> -->
-            {{ awaitCommand(cmd) ? "Waitting..." : parseMessage(cmd.message) }}
+            <div class="text-caption">
+              {{
+                awaitCommand(cmd) ? "Waitting..." : parseMessage(cmd.message)
+              }}
+            </div>
             <!-- </q-item-label> -->
           </q-item-section>
 
@@ -58,6 +65,7 @@
 <script>
 import { parseResCode, parseMessage } from "src/js/response";
 import { awaitCommand } from "src/js/command";
+import dayjs from "src/js/dayjs";
 
 import { inject } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
@@ -77,6 +85,7 @@ export default {
     const { devCommands } = useGetters(["devCommands"]);
 
     const writeCommand = payload => emit("select", payload);
+    const parseDatetime = unix => dayjs.unix(unix).format("DD-MM-YY HH:mm:ss");
 
     return {
       devCommands,
@@ -84,6 +93,7 @@ export default {
       awaitCommand,
       ignoreResponse,
       writeCommand,
+      parseDatetime,
       parseResCode,
       parseMessage
     };

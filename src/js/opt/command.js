@@ -1,22 +1,10 @@
-import { Header } from "src/js/opt/header";
+import { CommandHeader } from "src/js/opt/header";
 import { IntToHex, ChangeEndian } from "src/js/formatter";
 import { buildTimestamp } from "src/js/utils";
 import dayjs from "src/js/dayjs";
 
 const Command = [
-  ...Header,
-  {
-    field: "code",
-    title: "Code",
-    size: 1,
-    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
-  },
-  {
-    field: "subCode",
-    title: "Sub Code",
-    size: 1,
-    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
-  },
+  ...CommandHeader,
   {
     field: "value",
     title: "Value",

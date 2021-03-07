@@ -72,7 +72,7 @@
                   </div>
                   <div class="col-auto">
                     <q-input
-                      :value="range.bar.max + 1 - range.bar.min"
+                      :value="range.val.max + 1 - range.val.min"
                       type="number"
                       class="q-ma-xs"
                       style="width: 130px"
@@ -205,6 +205,7 @@ export default {
         sample = top + 1;
       }
 
+      max = max > top ? top : max;
       min = max - sample;
 
       state.range.val = {

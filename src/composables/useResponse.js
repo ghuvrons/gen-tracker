@@ -1,6 +1,7 @@
 import { INSERT_RESPONSE } from "src/store/db/action-types";
 import { getValue } from "src/js/utils";
 import { awaitCommand } from "src/js/command";
+import { notify } from "src/js/framework";
 import {
   notifyResponse,
   makeResponse,
@@ -49,6 +50,7 @@ export default function({ publisher, handleFinger }) {
 
     processResponse(lastCommand, resCode || RESCODES.CANCELLED);
     publisher(unitID, null);
+    notify("Device commandable", "info");
   };
 
   watch(

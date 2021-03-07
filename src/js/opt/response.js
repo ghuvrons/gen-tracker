@@ -1,5 +1,30 @@
-import { Header } from "src/js/opt/header";
+import { CommandHeader } from "src/js/opt/header";
 import { HexToUnsignedInt, HexToAscii } from "src/js/formatter";
+
+const Response = [
+  ...CommandHeader,
+  {
+    field: "resCode",
+    title: "Response Code",
+    required: true,
+    size: 1,
+    format: v => HexToUnsignedInt(v),
+    display: vf => {
+      let res = RESPONSE_LIST.find(({ resCode }) => resCode === vf);
+      if (!res)
+        res = RESPONSE_LIST.find(({ resCode }) => resCode === RESCODES.UNKNOWN);
+      return res.name;
+    }
+  },
+  {
+    field: "message",
+    title: "Message",
+    required: true,
+    size: 200,
+    format: v => HexToAscii(v),
+    display: vf => vf
+  }
+];
 
 const RESCODES = {
   ERROR: 0,
@@ -46,47 +71,6 @@ const RESPONSE_LIST = [
     name: "Unknown",
     icon: "help",
     color: "purple"
-  }
-];
-
-const Response = [
-  ...Header,
-  {
-    field: "code",
-    title: "Code",
-    required: true,
-    size: 1,
-    format: v => HexToUnsignedInt(v),
-    display: vf => vf
-  },
-  {
-    field: "subCode",
-    title: "Sub Code",
-    required: true,
-    size: 1,
-    format: v => HexToUnsignedInt(v),
-    display: vf => vf
-  },
-  {
-    field: "resCode",
-    title: "Response Code",
-    required: true,
-    size: 1,
-    format: v => HexToUnsignedInt(v),
-    display: vf => {
-      let res = RESPONSE_LIST.find(({ resCode }) => resCode === vf);
-      if (!res)
-        res = RESPONSE_LIST.find(({ resCode }) => resCode === RESCODES.UNKNOWN);
-      return res.name;
-    }
-  },
-  {
-    field: "message",
-    title: "Message",
-    required: true,
-    size: 200,
-    format: v => HexToAscii(v),
-    display: vf => vf
   }
 ];
 

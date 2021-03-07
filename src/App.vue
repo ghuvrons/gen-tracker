@@ -24,12 +24,23 @@ export default {
   setup(props, { root }) {
     const publisher = (unitID, data) => {
       // if (data)
-      //  root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true }, (err) => err && notify(err) );
+      //  root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true }, (e) => e && notify(e) );
 
-      root.$mqtt.publish(`VCU/${unitID}/CMD`, data, { qos: 2, retain: true }, (err) => err && notify(err) );
+      root.$mqtt.publish(
+        `VCU/${unitID}/CMD`,
+        data,
+        { qos: 2, retain: true },
+        e => e && notify(e)
+      );
 
-      if (!data)
-        root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true }, (err) => err && notify(err) );
+      if (!data) {
+        root.$mqtt.publish(
+          `VCU/${unitID}/RSP`,
+          null,
+          { qos: 1, retain: true },
+          e => e && notify(e)
+        );
+      }
     };
 
     const { addDevices } = useDevice();
