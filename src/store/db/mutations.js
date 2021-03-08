@@ -45,7 +45,11 @@ export default {
   },
   [mutations.STOP_BUFFERING](state) {
     if (state.buffering) {
-      state.buffering.hide();
+      try {
+        state.buffering.hide();
+      } catch (e) {
+        console.warn(e);
+      }
       state.buffering = null;
     }
   },

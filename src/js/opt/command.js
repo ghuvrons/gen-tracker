@@ -1,5 +1,5 @@
 import { CommandHeader } from "src/js/opt/header";
-import { IntToHex, ChangeEndian } from "src/js/formatter";
+import { IntToHex, ChangeEndian, AsciiToHex } from "src/js/formatter";
 import { buildTimestamp } from "src/js/utils";
 import dayjs from "src/js/dayjs";
 
@@ -22,17 +22,10 @@ const COMMAND_LIST = [
     subCode: 0
   },
   {
-    command: "GEN_QUOTA",
-    desc: "Check internet quota",
-    code: 0,
-    subCode: 1,
-    timeout: 30
-  },
-  {
     command: "GEN_LED",
     desc: "Control system led",
     code: 0,
-    subCode: 2,
+    subCode: 1,
     size: 1,
     type: "bool",
     range: [0, 1]
@@ -41,7 +34,7 @@ const COMMAND_LIST = [
     command: "GEN_OVERRIDE",
     desc: "Override vehicle state",
     code: 0,
-    subCode: 3,
+    subCode: 2,
     size: 1,
     type: "uint8_t",
     range: [1, 3]
@@ -52,7 +45,7 @@ const COMMAND_LIST = [
     code: 1,
     subCode: 0,
     size: 7,
-    type: "uint8_t[7]",
+    type: "uint8_t",
     range: ["YYMMDDHHmmss0d"],
     formatCmd: v => buildTimestamp(v),
     validator: v => dayjs(v, "YYMMDDHHmmss0d", true).isValid()
@@ -141,6 +134,22 @@ const COMMAND_LIST = [
     code: 5,
     subCode: 1,
     timeout: 12 * 60
+  },
+  {
+    command: "NET_SEND_USSD",
+    desc: "Send USSD (ex: *123*10*3#)",
+    code: 6,
+    subCode: 0,
+    size: 20,
+    type: "char",
+    formatCmd: v => AsciiToHex(v),
+    validator: v => v.length < 20 && v.startsWith("*") && v.endsWith("#")
+  },
+  {
+    command: "NET_READ_SMS",
+    desc: "Read last SMS",
+    code: 6,
+    subCode: 1
   }
 ];
 

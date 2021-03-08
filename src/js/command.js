@@ -65,7 +65,7 @@ const parseCommand = payload => {
   if (!cmd) return "Unknown command.";
 
   // check is value in range
-  if (!cmd.range) {
+  if (!cmd.size) {
     if (value) return "Command dont need value";
   } else {
     if (!value) return "Command need value";

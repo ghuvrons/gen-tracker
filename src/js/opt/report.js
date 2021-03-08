@@ -83,6 +83,17 @@ const VCU = ({ required }) => {
       display: vf => getVehicleState(vf)
     },
     {
+      group: "vcu",
+      field: "uptime",
+      title: "Uptime",
+      required: true,
+      chartable: true,
+      unit: "s",
+      size: 4,
+      format: v => HexToUnsignedInt(ChangeEndian(v)),
+      display: vf => Dot(vf)
+    },
+    {
       group: "vcu.gps",
       field: "gpsLongitude",
       title: "GPS Longitude",

@@ -58,7 +58,7 @@
                 <q-item-section v-if="cmd.type" side>
                   <q-item-label lines="1">
                     <q-chip dark dense square color="grey">
-                      {{ cmd.type }}
+                      {{ cmd.type }} [{{cmd.size}}]
                     </q-chip>
                   </q-item-label>
                   <q-item-label v-if="cmd.range" lines="2">
