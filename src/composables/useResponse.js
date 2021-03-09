@@ -1,6 +1,5 @@
 import { INSERT_RESPONSE } from "src/store/db/action-types";
 import { getValue } from "src/js/utils";
-import { awaitCommand } from "src/js/command";
 import { notify } from "src/js/framework";
 import {
   notifyResponse,
@@ -15,7 +14,7 @@ import { watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useGetters, useActions } = createNamespacedHelpers("db");
 
-export default function({ publisher, handleFinger }) {
+export default function({ publisher, awaitCommand, handleFinger }) {
   const { devDevice, getDeviceByUnitID } = useGetters([
     "devDevice",
     "getDeviceByUnitID"
@@ -23,21 +22,21 @@ export default function({ publisher, handleFinger }) {
   const { [INSERT_RESPONSE]: insertResponse } = useActions([INSERT_RESPONSE]);
 
   const processResponse = (command, response) => {
-    if (awaitCommand(command)) {
-      const resp = makeResponse(response);
-      notifyResponse(resp);
+    if (!awaitCommand.value) return;
 
-      const { unitID, sendDatetime, code, subCode, payload } = command;
+    const resp = makeResponse(response);
+    notifyResponse(resp);
 
-      insertResponse({
-        unitID,
-        sendDatetime,
-        code,
-        subCode,
-        payload,
-        ...resp
-      });
-    }
+    const { unitID, sendDatetime, code, subCode, payload, status } = command;
+
+    insertResponse({
+      unitID,
+      sendDatetime,
+      code,
+      subCode,
+      payload,
+      ...resp
+    });
   };
   const handleResponse = hex => {
     const response = parseResponse(hex);
@@ -46,10 +45,10 @@ export default function({ publisher, handleFinger }) {
     const device = getDeviceByUnitID.value(unitID);
     if (!device) return;
 
-    const { lastCommand } = device;
-    if (!awaitCommand(lastCommand)) return console.error(`RESPONSE ${hex}`);
+    if (!awaitCommand.value) return console.error(`RESPONSE ${hex}`);
     console.warn(`RESPONSE ${hex}`);
 
+    const { lastCommand } = device;
     if (!validResponse(lastCommand, response)) return;
     processResponse(lastCommand, response);
     publisher(unitID, null);
@@ -69,7 +68,7 @@ export default function({ publisher, handleFinger }) {
       const lastCommand = get(device, "lastCommand");
       if (!lastCommand) return;
 
-      if (awaitCommand(lastCommand)) return;
+      if (awaitCommand.value) return;
       if (lastCommand.resCode != RESCODES.OK) return;
 
       handleFinger(lastCommand);

@@ -25,16 +25,14 @@
             <q-item-label lines="2">{{ cmd.payload }}</q-item-label>
             <!-- <q-item-label lines="2" caption> -->
             <div class="text-caption">
-              {{
-                awaitCommand(cmd) ? "Waitting..." : parseMessage(cmd.message)
-              }}
+              {{ awaitCommand ? "Waitting..." : parseMessage(cmd.message) }}
             </div>
             <!-- </q-item-label> -->
           </q-item-section>
 
           <q-item-section side>
             <q-icon
-              v-if="awaitCommand(cmd)"
+              v-if="awaitCommand"
               @click="ignoreResponse()"
               color="yellow"
               name="cached"
@@ -64,7 +62,6 @@
 
 <script>
 import { parseResCode, parseMessage } from "src/js/response";
-import { awaitCommand } from "src/js/command";
 import dayjs from "src/js/dayjs";
 
 import { inject } from "@vue/composition-api";
@@ -80,6 +77,7 @@ export default {
     }
   },
   setup(props, { emit }) {
+    const awaitCommand = inject("awaitCommand");
     const ignoreResponse = inject("ignoreResponse");
 
     const { devCommands } = useGetters(["devCommands"]);

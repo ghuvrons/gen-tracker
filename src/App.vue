@@ -17,40 +17,39 @@ import useReport from "src/composables/useReport";
 import useEvents from "src/composables/useEvents";
 import useDevice from "src/composables/useDevice";
 
-import { onMounted, provide } from "@vue/composition-api";
+import { onMounted, provide, computed } from "@vue/composition-api";
 
 export default {
   // name: "App",
   setup(props, { root }) {
-    const publisher = (unitID, data) => {
-      // if (data)
-      //  root.$mqtt.publish(`VCU/${unitID}/RSP`, null, { qos: 1, retain: true }, (e) => e && notify(e) );
-
+    const publish = (unitID, data, subTopic, qos) => {
       root.$mqtt.publish(
-        `VCU/${unitID}/CMD`,
+        `VCU/${unitID}/${subTopic}`,
         data,
-        { qos: 2, retain: true },
+        { qos, retain: true },
         e => e && notify(e)
       );
-
-      if (!data) {
-        root.$mqtt.publish(
-          `VCU/${unitID}/RSP`,
-          null,
-          { qos: 1, retain: true },
-          e => e && notify(e)
-        );
-      }
+    };
+    const publisher = (unitID, data) => {
+      publish(unitID, data, "CMD", 2);
+      if (!data) publish(unitID, data, "RSP", 1);
     };
 
-    const { addDevices } = useDevice();
+    const { devDevice, addDevices } = useDevice();
+    const awaitCommand = computed(() => {
+      const { lastCommand: cmd } = devDevice.value;
+      return cmd && !cmd.hasOwnProperty("resCode");
+    });
+
     const { handleFinger } = useFinger({ addDevices });
     const { handleResponse, ignoreResponse } = useResponse({
       publisher,
+      awaitCommand,
       handleFinger
     });
     const { sendCommand, handleLostCommand } = useCommand({
       publisher,
+      awaitCommand,
       ignoreResponse
     });
 
@@ -65,10 +64,13 @@ export default {
       root.$mqtt.subscribe("VCU/+/STS", { qos: 1 });
     });
 
-    provide("ignoreResponse", ignoreResponse);
+    provide("awaitCommand", awaitCommand);
     provide("sendCommand", sendCommand);
+    provide("ignoreResponse", ignoreResponse);
 
     return {
+      devDevice,
+      awaitCommand,
       validateFrame,
       insertBuffers,
       handleResponse,
@@ -79,9 +81,15 @@ export default {
     "VCU/+/CMD": function(data, topic) {
       const unitID = parseInt(topic.split("/")[1]);
       const hex = data.toString("hex").toUpperCase();
+      const commandable = !hex;
 
-      console.warn(`COMMANDABLE ${unitID}, ${!hex}`);
-      this.addDevices([{ unitID, commandable: !hex }]);
+      console.warn(`COMMANDABLE ${unitID}, ${commandable}`);
+      this.addDevices([{ unitID, commandable }]);
+
+      if (this.awaitCommand && !commandable) {
+        const { timer } = this.devDevice.lastCommand;
+        clearTimeout(timer);
+      }
     },
     "VCU/+/RSP": function(data, topic) {
       const hex = data.toString("hex").toUpperCase();

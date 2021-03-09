@@ -2,8 +2,6 @@ import dayjs from "src/js/dayjs";
 import { COMMAND_LIST, Command } from "src/js/opt/command";
 import config from "./opt/config";
 
-const awaitCommand = cmd => cmd && !cmd.hasOwnProperty("resCode");
-
 const buildCommand = (cmd, unitID) => {
   const sendDatetime = dayjs().unix();
   const hexCmd = Command.reduce((acc, el, idx) => {
@@ -86,11 +84,4 @@ const parseCommand = payload => {
   };
 };
 
-export {
-  COMMAND_LIST,
-  Command,
-  awaitCommand,
-  parseCommand,
-  buildCommand,
-  extractCommand
-};
+export { COMMAND_LIST, Command, parseCommand, buildCommand, extractCommand };

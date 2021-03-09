@@ -62,7 +62,7 @@ const nearestFullReport = (report, reports) => {
   }
 };
 
-const lastSendDatetime = sendDatetime => {
+const fromNow = sendDatetime => {
   if (sendDatetime)
     return dayjs
       .unix(sendDatetime)
@@ -77,5 +77,5 @@ export {
   parseReportData,
   nearestFullReport,
   readReport,
-  lastSendDatetime
+  fromNow
 };

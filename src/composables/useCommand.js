@@ -1,25 +1,27 @@
 import { dilation } from "src/js/utils";
 import { notify } from "src/js/framework";
 import { RESCODES } from "src/js/response";
-import { awaitCommand, buildCommand, parseCommand } from "src/js/command";
+import { buildCommand, parseCommand } from "src/js/command";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
-import { get } from "lodash";
-import { watch } from "@vue/composition-api";
+import { computed, watch } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useState, useGetters, useActions } = createNamespacedHelpers("db");
 
-export default function({ publisher, ignoreResponse }) {
+export default function({ publisher, awaitCommand, ignoreResponse }) {
   const { commands } = useState(["commands"]);
   const { devDevice } = useGetters(["devDevice"]);
   const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
 
+  const timeoutCommand = () => {
+    ignoreResponse(RESCODES.TIMEOUT);
+  };
   const sendCommand = payload => {
     if (!payload) return notify("No payload");
     if (!devDevice.value) return notify("No device");
 
-    const { unitID, status, commandable, lastCommand } = devDevice.value;
-    if (lastCommand && awaitCommand(lastCommand)) return notify("Command busy");
+    const { unitID, status, commandable } = devDevice.value;
+    if (awaitCommand.value) return notify("Command busy");
     // if (!status) return notify("Device offline");
     if (!commandable) return notify("Device busy");
 
@@ -29,22 +31,21 @@ export default function({ publisher, ignoreResponse }) {
 
     if (typeof cmd === "string") return notify(cmd);
 
-    insertCommand(buildCommand(cmd, unitID));
+    const timer = setTimeout(timeoutCommand, 3000);
+    const command = buildCommand(cmd, unitID);
+    insertCommand({ ...command, timer });
   };
   const handleLostCommand = report => {
-    const lastCommand = get(devDevice.value, "lastCommand");
-    if (!awaitCommand(lastCommand)) return;
-
-    const { sendDatetime, unitID, timeout } = lastCommand;
-    if (unitID != report.unitID.val) return;
-
-    const timeDiff = dilation(sendDatetime, "seconds");
-
-    if (timeout < 30) {
-      if (timeDiff > timeout) ignoreResponse(RESCODES.TIMEOUT);
-    } else {
-      if (timeDiff > 30) ignoreResponse(RESCODES.UNKNOWN);
-    }
+    // if (!awaitCommand.value) return;
+    // const { lastCommand } = devDevice.value;
+    // const { sendDatetime, unitID, timeout } = lastCommand;
+    // if (unitID != report.unitID.val) return;
+    // const timeDiff = dilation(sendDatetime, "seconds");
+    // if (timeout < 30) {
+    //   if (timeDiff > timeout) ignoreResponse(RESCODES.TIMEOUT);
+    // } else {
+    //   if (timeDiff > 30) ignoreResponse(RESCODES.UNKNOWN);
+    // }
   };
 
   watch(

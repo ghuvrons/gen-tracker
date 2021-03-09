@@ -3,19 +3,19 @@
     <q-bar class="bg-blue text-white">
       <q-toolbar-title class="text-subtitle1">
         Device Management
-        <q-badge v-if="listDevice.length > 0" color="red" align="top">
-          {{ listDevice.length }}
+        <q-badge v-if="sortedDevices.length > 0" color="red" align="top">
+          {{ sortedDevices.length }}
         </q-badge>
       </q-toolbar-title>
     </q-bar>
 
-    <q-banner v-if="listDevice.length == 0">
+    <q-banner v-if="sortedDevices.length == 0">
       <template v-slot:avatar>
         <q-icon name="info"></q-icon>
       </template>
       No unit yet
     </q-banner>
-    <q-virtual-scroll v-else :items="listDevice" :style="height" separator>
+    <q-virtual-scroll v-else :items="sortedDevices" :style="height" separator>
       <template v-slot="{ item: dev }">
         <q-item
           :key="dev.unitID"
@@ -32,7 +32,7 @@
           </q-item-section>
           <q-item-section side>
             <q-item-label :class="{ 'text-white': active(dev) }" caption>
-              {{ lastSendDatetime(dev.sendDatetime) }}
+              {{ fromNow(dev.sendDatetime) }}
             </q-item-label>
             <q-item-label :class="{ 'text-white': active(dev) }" caption>
               <u v-if="dev.status"><b>ONLINE</b></u>
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { lastSendDatetime } from "src/js/report";
+import { fromNow } from "src/js/report";
 
 import { SET_UNITID } from "src/store/db/mutation-types";
 
@@ -67,16 +67,16 @@ export default {
     const { [SET_UNITID]: setUnitID } = useMutations([SET_UNITID]);
     const { devDevice } = useGetters(["devDevice"]);
 
-    const listDevice = computed(() =>
+    const sortedDevices = computed(() =>
       orderBy(devices.value, "sendDatetime", "desc")
     );
 
     const active = ({ unitID }) => unitID === get(devDevice.value, "unitID");
 
     return {
-      listDevice,
+      sortedDevices,
 
-      lastSendDatetime,
+      fromNow,
 
       setUnitID,
       active
