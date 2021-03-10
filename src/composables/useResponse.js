@@ -59,7 +59,6 @@ export default function({ publisher, awaitCommand, handleFinger }) {
 
     processResponse(lastCommand, resCode || RESCODES.CANCELLED);
     publisher(unitID, null);
-    notify("Device commandable", "info");
   };
 
   watch(

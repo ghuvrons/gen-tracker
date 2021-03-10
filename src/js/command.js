@@ -1,6 +1,12 @@
+import { get } from "lodash";
 import dayjs from "src/js/dayjs";
 import { COMMAND_LIST, Command } from "src/js/opt/command";
+import { parseFrame } from "./frame";
 import config from "./opt/config";
+
+const parseCommand = hex => {
+  return parseFrame(hex, Command);
+};
 
 const buildCommand = (cmd, unitID) => {
   const sendDatetime = dayjs().unix();
@@ -55,33 +61,46 @@ const extractCommand = payload => {
   return { prop, value };
 };
 
-const parseCommand = payload => {
-  let { prop, value } = extractCommand(payload);
-
-  // check is command exist
-  let cmd = COMMAND_LIST.find(({ command }) => command === prop);
-  if (!cmd) return "Unknown command.";
-
-  // check is value in range
-  if (!cmd.size) {
-    if (value) return "Command dont need value";
-  } else {
-    if (!value) return "Command need value";
-
-    if (cmd.validator) {
-      if (!cmd.validator(value)) return "Value is invalid";
-    } else {
-      const [min, max] = cmd.range;
-      if (value < min || value > max) return "Value not in range";
-    }
-  }
+const makeCommand = payload => {
+  const { prop, value } = extractCommand(payload);
+  const cmd = COMMAND_LIST.find(({ command }) => command === prop);
+  const timeout = get("timeout", cmd) || config.command.timeout;
 
   return {
     ...cmd,
-    timeout: cmd.timeout || config.command.timeout,
+    timeout,
     payload,
     value
   };
 };
 
-export { COMMAND_LIST, Command, parseCommand, buildCommand, extractCommand };
+const validateCommand = payload => {
+  const cmd = makeCommand(payload);
+
+  if (!cmd) return "Unknown command.";
+
+  // check is value in range
+  if (!cmd.size) {
+    if (cmd.value) return "Command dont need value";
+  } else {
+    if (!cmd.value) return "Command need value";
+
+    if (cmd.validator) {
+      if (!cmd.validator(cmd.value)) return "Value is invalid";
+    } else {
+      const [min, max] = cmd.range;
+      if (cmd.value < min || cmd.value > max) return "Value not in range";
+    }
+  }
+
+  return cmd;
+};
+
+export {
+  COMMAND_LIST,
+  Command,
+  parseCommand,
+  validateCommand,
+  buildCommand,
+  extractCommand
+};

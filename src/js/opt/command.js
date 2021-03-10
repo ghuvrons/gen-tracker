@@ -9,6 +9,8 @@ const Command = [
     field: "value",
     title: "Value",
     size: 200,
+    format: v => v,
+    display: vf => vf,
     formatCmd: (v, sz) =>
       ChangeEndian(IntToHex(parseInt(v || 0), (sz || 0) * 2))
   }

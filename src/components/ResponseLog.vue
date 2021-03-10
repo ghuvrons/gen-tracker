@@ -25,14 +25,16 @@
             <q-item-label lines="2">{{ cmd.payload }}</q-item-label>
             <!-- <q-item-label lines="2" caption> -->
             <div class="text-caption">
-              {{ awaitCommand ? "Waitting..." : parseMessage(cmd.message) }}
+              {{
+                waitedCommand(index) ? "Waitting..." : parseMessage(cmd.message)
+              }}
             </div>
             <!-- </q-item-label> -->
           </q-item-section>
 
           <q-item-section side>
             <q-icon
-              v-if="awaitCommand"
+              v-if="waitedCommand(index)"
               @click="ignoreResponse()"
               color="yellow"
               name="cached"
@@ -50,9 +52,6 @@
                 {{ parseResCode(cmd.resCode).name }}
               </q-tooltip>
             </q-icon>
-            <!-- <q-chip :color="readColor(cmd.resCode)" dark dense square>
-              {{ readIcon(cmd.resCode) }}
-            </q-chip> -->
           </q-item-section>
         </q-item>
       </template>
@@ -64,7 +63,7 @@
 import { parseResCode, parseMessage } from "src/js/response";
 import dayjs from "src/js/dayjs";
 
-import { inject } from "@vue/composition-api";
+import { inject, computed } from "@vue/composition-api";
 import { createNamespacedHelpers } from "vuex-composition-helpers";
 const { useGetters } = createNamespacedHelpers("db");
 
@@ -82,13 +81,14 @@ export default {
 
     const { devCommands } = useGetters(["devCommands"]);
 
+    const waitedCommand = index => index == 0 && awaitCommand.value;
     const writeCommand = payload => emit("select", payload);
     const parseDatetime = unix => dayjs.unix(unix).format("DD-MM-YY HH:mm:ss");
 
     return {
       devCommands,
 
-      awaitCommand,
+      waitedCommand,
       ignoreResponse,
       writeCommand,
       parseDatetime,

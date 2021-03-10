@@ -2,14 +2,13 @@ import { Platform } from "quasar";
 
 export default {
   app: {
-    version: "1.100",
+    version: "1.1.0",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia"
   },
   mqtt: {
-    address: "mqtt.eclipseprojects.io",
-    port: 443,
-    path: "/mqtt",
+    // host: `wss://mqtt.eclipseprojects.io:443/mqtt`,
+    host: `wss://test.mosquitto.org:8081/mqtt`,
     username: "",
     password: ""
   },

@@ -1,7 +1,7 @@
 import { dilation } from "src/js/utils";
 import { notify } from "src/js/framework";
 import { RESCODES } from "src/js/response";
-import { buildCommand, parseCommand } from "src/js/command";
+import { buildCommand, validateCommand } from "src/js/command";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
 import { computed, watch } from "@vue/composition-api";
@@ -26,7 +26,7 @@ export default function({ publisher, awaitCommand, ignoreResponse }) {
     if (!commandable) return notify("Device busy");
 
     payload = payload.toUpperCase();
-    const cmd = parseCommand(payload);
+    const cmd = validateCommand(payload);
     if (!cmd) return;
 
     if (typeof cmd === "string") return notify(cmd);

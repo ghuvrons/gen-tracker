@@ -18,6 +18,8 @@ import useEvents from "src/composables/useEvents";
 import useDevice from "src/composables/useDevice";
 
 import { onMounted, provide, computed } from "@vue/composition-api";
+import { parseCommand } from "./js/command";
+import { getValue } from "./js/utils";
 
 export default {
   // name: "App",
@@ -86,10 +88,14 @@ export default {
       console.warn(`COMMANDABLE ${unitID}, ${commandable}`);
       this.addDevices([{ unitID, commandable }]);
 
-      if (this.awaitCommand && !commandable) {
-        const { timer } = this.devDevice.lastCommand;
-        clearTimeout(timer);
-      }
+      if (commandable) return notify("Device commandable", "info");
+      if (!this.awaitCommand) return;
+
+      const { lastCommand } = this.devDevice;
+      const command = parseCommand(hex);
+      if (getValue(command, "sendDatetime") == lastCommand.sendDatetime) return;
+
+      clearTimeout(lastCommand.timer);
     },
     "VCU/+/RSP": function(data, topic) {
       const hex = data.toString("hex").toUpperCase();

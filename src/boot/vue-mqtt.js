@@ -15,7 +15,7 @@ export default ({ app, router, store, Vue }) => {
     LocalStorage.set("clientId", clientId);
   }
 
-  Vue.use(VueMqtt, `wss://${mqtt.address}:${mqtt.port}${mqtt.path}`, {
+  Vue.use(VueMqtt, mqtt.host, {
     username: mqtt.username,
     password: mqtt.password,
     clean: Platform.is.mobile,
