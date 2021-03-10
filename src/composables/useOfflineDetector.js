@@ -1,6 +1,6 @@
-import { ref, onMounted, onBeforeUnmount } from "@vue/composition-api";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
-export default function() {
+export default function () {
   const offline = ref(false);
 
   const onlineHandler = () => (offline.value = false);
@@ -19,6 +19,6 @@ export default function() {
   });
 
   return {
-    offline
+    offline,
   };
 }

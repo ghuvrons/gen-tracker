@@ -1,36 +1,37 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import { store } from 'quasar/wrappers'
+import { createStore } from "vuex";
 import VuexPersist from "vuex-persist";
 
 import common from "./common";
 import db from "./db";
 
-Vue.use(Vuex);
-
 /*
  * If not building with SSR mode, you can
- * directly export the Store instantiation
+ * directly export the Store instantiation;
+ *
+ * The function below can be async too; either use
+ * async/await or return a Promise which resolves
+ * with the Store instance.
  */
+
 const vuexLocal = ["common", "db"].map(
-  module =>
+  (module) =>
     new VuexPersist({
       key: `${module}_key`,
       storage: window.localStorage,
-      reducer: state => ({ [module]: { ...state[module] } })
+      reducer: (state) => ({ [module]: { ...state[module] } }),
     }).plugin
 );
 
-export default function(/* { ssrContext } */) {
-  const Store = new Vuex.Store({
-    modules: {
-      common,
-      db
-    },
+export default store(function (/* { ssrContext } */) {
+  const Store = createStore({
+    modules: { common, db },
     plugins: [...vuexLocal],
+
     // enable strict mode (adds overhead!)
     // for dev mode only
-    strict: process.env.DEBUGGING
+    strict: process.env.DEBUGGING,
   });
 
   return Store;
-}
+})

@@ -1,6 +1,6 @@
 <template>
   <q-dialog
-    :value="true"
+    :model-value="true"
     :maximized="$q.screen.lt.md"
     persistent
     full-height
@@ -72,7 +72,7 @@
                   </div>
                   <div class="col-auto">
                     <q-input
-                      :value="range.val.max + 1 - range.val.min"
+                      :model-value="range.val.max + 1 - range.val.min"
                       type="number"
                       class="q-ma-xs"
                       style="width: 130px"
@@ -111,14 +111,8 @@ import { Report } from "src/js/report";
 import { Dark } from "quasar";
 import useChart from "src/composables/useChart";
 
-import {
-  computed,
-  reactive,
-  watch,
-  onMounted,
-  toRefs
-} from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { computed, reactive, watch, onMounted, toRefs } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
 export default {
@@ -126,12 +120,12 @@ export default {
   emits: ["close"],
   props: {
     field: {
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
     LineChart,
-    EventGroupReader
+    EventGroupReader,
   },
   setup(props) {
     const {
@@ -141,7 +135,7 @@ export default {
       setLabel,
       setColor,
       scaleChart,
-      writeChart
+      writeChart,
     } = useChart();
 
     const state = reactive({
@@ -149,26 +143,26 @@ export default {
         max: null,
         min: null,
         follow: false,
-        lock: false
+        lock: false,
       },
       range: {
         disable: false,
         sample: 10,
         bar: {
           min: 0,
-          max: null
+          max: null,
         },
         val: {
           min: 0,
-          max: null
-        }
+          max: null,
+        },
       },
       control: {
         beginAtZero: false,
         maximize: true,
         follow: false,
-        lock: false
-      }
+        lock: false,
+      },
     });
 
     const { devReports, devEvents } = useGetters(["devReports", "devEvents"]);
@@ -210,7 +204,7 @@ export default {
 
       state.range.val = {
         min: min > 0 ? min : 0,
-        max: max
+        max: max,
       };
     };
     const writeChartRange = () => {
@@ -226,27 +220,27 @@ export default {
 
     watch(
       () => devReports.value.length,
-      len => {
+      (len) => {
         if (!len) return;
         writeChartRange();
       },
       {
         // lazy: false, immediate: true,
-        deep: true
+        deep: true,
       }
     );
     watch(
       () => state.range.val,
-      _ => scaleChartOpen(),
+      (_) => scaleChartOpen(),
       { deep: true }
     );
     watch(
       () => state.control.beginAtZero,
-      _ => scaleChartOpen()
+      (_) => scaleChartOpen()
     );
     watch(
       () => state.control.maximize,
-      max => {
+      (max) => {
         if (max) {
           state.tmp.max = state.range.val.max;
           state.tmp.min = state.range.val.min;
@@ -269,7 +263,7 @@ export default {
     );
     watch(
       () => Dark.isActive,
-      dark => setColor(dark ? "#FFF" : "#666"),
+      (dark) => setColor(dark ? "#FFF" : "#666"),
       { lazy: false, immediate: true }
     );
 
@@ -280,9 +274,9 @@ export default {
 
       theField,
       latestValue,
-      eventGroup
+      eventGroup,
     };
-  }
+  },
 };
 </script>
 

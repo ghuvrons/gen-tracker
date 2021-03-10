@@ -5,9 +5,12 @@
 
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
-/* eslint-env node */
 
-module.exports = function(/* ctx */) {
+/* eslint-env node */
+const ESLintPlugin = require("eslint-webpack-plugin");
+const { configure } = require("quasar/wrappers");
+
+module.exports = function (/* ctx */) {
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
     supportTS: false,
@@ -18,10 +21,10 @@ module.exports = function(/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: ["vue-composition-api", "vue-mqtt", "vue2-google-maps"],
+    boot: ["vue-mqtt", "vue2-google-maps"],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
-    css: ["app.styl"],
+    css: ["app.sass"],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -34,7 +37,7 @@ module.exports = function(/* ctx */) {
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
       "roboto-font", // optional, you are not bound to it
-      "material-icons" // optional, you are not bound to it
+      "material-icons", // optional, you are not bound to it
     ],
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
@@ -58,36 +61,29 @@ module.exports = function(/* ctx */) {
       // extractCSS: false,
 
       // https://quasar.dev/quasar-cli/handling-webpack
-      extendWebpack(cfg) {
-        cfg.module.rules.push({
-          enforce: "pre",
-          test: /\.(js|vue)$/,
-          loader: "eslint-loader",
-          exclude: /node_modules/
-        });
-      }
+      // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
+      chainWebpack(chain) {
+        chain
+          .plugin("eslint-webpack-plugin")
+          .use(ESLintPlugin, [{ extensions: ["js", "vue"] }]);
+      },
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       https: false,
       port: 8080,
-      open: true // opens browser window automatically
+      open: true, // opens browser window automatically
     },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
     framework: {
-      iconSet: "material-icons", // Quasar icon set
-      lang: "en-us", // Quasar language pack
       config: {
-        notify: {
-          type: "info"
-        }
+        notify: { type: "info" },
       },
-      // Possible values for "importStrategy":
-      // * 'auto' - (DEFAULT) Auto-import needed Quasar components & directives
-      // * 'all'  - Manually specify what to import
-      importStrategy: "auto",
+
+      iconSet: "material-icons", // Quasar icon set
+      lang: "en-US", // Quasar language pack
 
       // For special cases outside of where "auto" importStrategy can have an impact
       // (like functional components as one of the examples),
@@ -95,7 +91,7 @@ module.exports = function(/* ctx */) {
       //
       components: [],
       directives: [],
-      plugins: ["Dialog", "Notify", "AppFullscreen", "LocalStorage"]
+      plugins: ["Dialog", "Notify", "AppFullscreen", "LocalStorage"],
     },
 
     // animations: 'all', // --- includes all animations
@@ -104,13 +100,22 @@ module.exports = function(/* ctx */) {
 
     // https://quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
-      pwa: false
+      pwa: false,
     },
 
     // https://quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
       workboxPluginMode: "GenerateSW", // 'GenerateSW' or 'InjectManifest'
       workboxOptions: { skipWaiting: true, clientsClaim: true }, // only for GenerateSW
+
+      // for the custom service worker ONLY (/src-pwa/custom-service-worker.[js|ts])
+      // if using workbox in InjectManifest mode
+      chainWebpackCustomSW(chain) {
+        chain
+          .plugin("eslint-webpack-plugin")
+          .use(ESLintPlugin, [{ extensions: ["js"] }]);
+      },
+
       manifest: {
         name: "eBike Tracker",
         short_name: "GEN-Tracker",
@@ -123,30 +128,30 @@ module.exports = function(/* ctx */) {
           {
             src: "icons/icon-128x128.png",
             sizes: "128x128",
-            type: "image/png"
+            type: "image/png",
           },
           {
             src: "icons/icon-192x192.png",
             sizes: "192x192",
-            type: "image/png"
+            type: "image/png",
           },
           {
             src: "icons/icon-256x256.png",
             sizes: "256x256",
-            type: "image/png"
+            type: "image/png",
           },
           {
             src: "icons/icon-384x384.png",
             sizes: "384x384",
-            type: "image/png"
+            type: "image/png",
           },
           {
             src: "icons/icon-512x512.png",
             sizes: "512x512",
-            type: "image/png"
-          }
-        ]
-      }
+            type: "image/png",
+          },
+        ],
+      },
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/developing-cordova-apps/configuring-cordova
@@ -156,7 +161,7 @@ module.exports = function(/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/developing-capacitor-apps/configuring-capacitor
     capacitor: {
-      hideSplashscreen: true
+      hideSplashscreen: true,
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/developing-electron-apps/configuring-electron
@@ -177,16 +182,22 @@ module.exports = function(/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: "com.genmotorcycles.tracker"
+        appId: "com.genmotorcycles.tracker",
       },
 
-      // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
-      nodeIntegration: true,
+      // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
+      chainWebpackMain(chain) {
+        chain
+          .plugin("eslint-webpack-plugin")
+          .use(ESLintPlugin, [{ extensions: ["js"] }]);
+      },
 
-      extendWebpack(/* cfg */) {
-        // do something with Electron main process Webpack cfg
-        // chainWebpack also available besides this extendWebpack
-      }
-    }
+      // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
+      chainWebpackPreload(chain) {
+        chain
+          .plugin("eslint-webpack-plugin")
+          .use(ESLintPlugin, [{ extensions: ["js"] }]);
+      },
+    },
   };
 };

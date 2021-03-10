@@ -78,8 +78,8 @@ import dayjs from "src/js/dayjs";
 import { confirm } from "src/js/framework";
 
 import { get } from "lodash";
-import { ref, inject } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { ref, inject } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
 export default {
@@ -87,8 +87,8 @@ export default {
   props: {
     contentStyle: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const sendCommand = inject("sendCommand");
@@ -126,9 +126,9 @@ export default {
       fetch,
       add,
       remove,
-      clear
+      clear,
     };
-  }
+  },
 };
 </script>
 

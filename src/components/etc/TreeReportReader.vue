@@ -32,20 +32,20 @@
 
 <script>
 import { get, set, omit } from "lodash";
-import { ref, computed } from "@vue/composition-api";
+import { ref, computed } from "vue";
 
 export default {
   emits: ["update:selected"],
   props: {
     report: {
-      required: true
+      required: true,
     },
     selected: {
-      required: true
+      required: true,
     },
     height: {
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const filter = ref("");
@@ -56,7 +56,7 @@ export default {
         return acc.replace(regex, "");
       }, str);
 
-    const getFieldNodeTitle = field => {
+    const getFieldNodeTitle = (field) => {
       let theField = props.report[field];
       if (theField) {
         let group = theField.group.split(".");
@@ -76,8 +76,8 @@ export default {
         return set(o, group, content);
       }, {});
     };
-    const toTree = nodes =>
-      Object.keys(nodes).map(label => {
+    const toTree = (nodes) =>
+      Object.keys(nodes).map((label) => {
         return nodes[label].hasOwnProperty("out")
           ? { label, data: nodes[label] }
           : { label, children: toTree(nodes[label]) };
@@ -89,9 +89,9 @@ export default {
       filter,
       nodes,
 
-      getFieldNodeTitle
+      getFieldNodeTitle,
     };
-  }
+  },
 };
 </script>
 

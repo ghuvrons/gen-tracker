@@ -1,6 +1,6 @@
 <template>
   <q-dialog
-    :value="true"
+    :model-value="true"
     :maximized="$q.screen.lt.md"
     persistent
     full-width
@@ -58,7 +58,7 @@
                 <q-item-section v-if="cmd.type" side>
                   <q-item-label lines="1">
                     <q-chip dark dense square color="grey">
-                      {{ cmd.type }} [{{cmd.size}}]
+                      {{ cmd.type }} [{{ cmd.size }}]
                     </q-chip>
                   </q-item-label>
                   <q-item-label v-if="cmd.range" lines="2">
@@ -80,7 +80,7 @@
 import { COMMAND_LIST } from "src/js/command";
 import { flowFilter } from "src/js/utils";
 
-import { ref, computed } from "@vue/composition-api";
+import { ref, computed } from "vue";
 
 export default {
   emits: ["close", "select"],
@@ -102,9 +102,9 @@ export default {
       searchResults,
 
       getRange,
-      selectCommand
+      selectCommand,
     };
-  }
+  },
 };
 </script>
 

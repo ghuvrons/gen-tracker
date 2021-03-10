@@ -63,8 +63,8 @@
 import { parseResCode, parseMessage } from "src/js/response";
 import dayjs from "src/js/dayjs";
 
-import { inject, computed } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { inject, computed } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
 export default {

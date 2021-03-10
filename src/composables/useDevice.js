@@ -2,11 +2,11 @@ import { pushNotification } from "src/js/framework";
 import { ADD_DEVICES } from "src/store/db/mutation-types";
 
 import dayjs from "src/js/dayjs";
-import { watch } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { watch } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useGetters, useMutations } = createNamespacedHelpers("db");
 
-export default function() {
+export default function () {
   const { devDevice } = useGetters(["devDevice"]);
   const { [ADD_DEVICES]: addDevices } = useMutations([ADD_DEVICES]);
 
@@ -25,12 +25,12 @@ export default function() {
       );
     },
     {
-      deep: true
+      deep: true,
     }
   );
 
   return {
     devDevice,
-    addDevices
+    addDevices,
   };
 }

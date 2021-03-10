@@ -51,20 +51,20 @@ import CommandListModal from "components/etc/CommandListModal";
 
 import { COMMAND_LIST } from "src/js/command";
 
-import { ref, inject, computed } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { ref, inject, computed } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
-export default {
+export default  {
   // name: 'ComponentName',
-  emits: ["input"],
+  emits: ["update:modelValue"],
   props: {
     value: {
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
-    CommandListModal
+    CommandListModal,
   },
   setup(props, { emit }) {
     const sendCommand = inject("sendCommand");
@@ -75,10 +75,10 @@ export default {
 
     const payload = computed({
       get: () => props.value,
-      set: v => emit("input", v)
+      set: (v) => emit("input", v),
     });
 
-    const writeCommand = v => {
+    const writeCommand = (v) => {
       payload.value = v;
       modalOpen.value = false;
     };
@@ -91,9 +91,9 @@ export default {
       devDevice,
 
       writeCommand,
-      sendCommand
+      sendCommand,
     };
-  }
+  },
 };
 </script>
 

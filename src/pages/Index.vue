@@ -56,8 +56,8 @@ import MapManagement from "components/MapManagement";
 import DriverManagement from "components/DriverManagement";
 import GlobalConfiguration from "components/GlobalConfiguration";
 
-import { ref, computed } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { ref, computed } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
 export default {
@@ -66,7 +66,7 @@ export default {
     MapManagement,
     ReportLog,
     DriverManagement,
-    GlobalConfiguration
+    GlobalConfiguration,
   },
   setup(props) {
     const { devReports, devFingers } = useGetters(["devReports", "devFingers"]);
@@ -84,8 +84,8 @@ export default {
 
       devReports,
       devFingers,
-      contentStyle
+      contentStyle,
     };
-  }
+  },
 };
 </script>

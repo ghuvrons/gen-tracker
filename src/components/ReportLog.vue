@@ -65,8 +65,8 @@ import dayjs from "src/js/dayjs";
 import { SET_REPORT } from "src/store/db/mutation-types";
 import { SET_FOLLOW } from "src/store/common/mutation-types";
 
-import { computed } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { computed } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useState, useGetters, useMutations } = createNamespacedHelpers("db");
 
 export default {
@@ -74,8 +74,8 @@ export default {
   props: {
     contentStyle: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const { report } = useState(["report"]);
@@ -88,10 +88,10 @@ export default {
 
     const followState = computed({
       get: () => follow.value,
-      set: v => setFollow(v)
+      set: (v) => setFollow(v),
     });
 
-    const getDatetime = logDatetime =>
+    const getDatetime = (logDatetime) =>
       dayjs.unix(logDatetime.val).format("HH:mm:ss");
 
     return {
@@ -100,9 +100,9 @@ export default {
       followState,
 
       setReport,
-      getDatetime
+      getDatetime,
     };
-  }
+  },
 };
 </script>
 

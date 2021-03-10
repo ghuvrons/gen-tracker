@@ -2,17 +2,17 @@ import chart from "src/js/opt/chart";
 import { findRangeX, findRangeY, grabDatasets } from "src/js/chart";
 
 import { cloneDeep } from "lodash";
-import { toRefs, reactive, computed } from "@vue/composition-api";
+import { toRefs, reactive, computed } from "vue";
 
-export default function() {
+export default function () {
   const state = reactive({
     chart: cloneDeep(chart),
     history: {
       update: {
         data: false,
-        options: false
-      }
-    }
+        options: false,
+      },
+    },
   });
 
   const latestValue = computed(
@@ -41,7 +41,7 @@ export default function() {
 
     state.history.update.options = !state.history.update.options;
   };
-  const setColor = color => {
+  const setColor = (color) => {
     state.chart.options.legend.labels.fontColor = color;
     state.chart.options.scales.xAxes[0].ticks.fontColor = color;
     state.chart.options.scales.xAxes[0].scaleLabel.fontColor = color;
@@ -70,7 +70,7 @@ export default function() {
 
     return {
       min: 0,
-      max: labels.length - 1
+      max: labels.length - 1,
     };
   };
 
@@ -82,6 +82,6 @@ export default function() {
     setColor,
 
     scaleChart,
-    writeChart
+    writeChart,
   };
 }

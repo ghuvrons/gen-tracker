@@ -89,14 +89,8 @@ import useOfflineDetector from "src/composables/useOfflineDetector";
 import { SET_DARKER } from "src/store/common/mutation-types";
 
 import { Platform, Dark } from "quasar";
-import {
-  computed,
-  reactive,
-  toRefs,
-  watch,
-  onMounted
-} from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { computed, reactive, toRefs, watch, onMounted } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useState, useMutations } = createNamespacedHelpers("common");
 
 export default {
@@ -105,20 +99,20 @@ export default {
     ReportReader,
     DeviceManagement,
     ResponseLog,
-    CommandManagement
+    CommandManagement,
   },
-  setup(props) {
+  setup() {
     const { darker } = useState(["darker"]);
     const { [SET_DARKER]: setDarker } = useMutations([SET_DARKER]);
 
     const state = reactive({
       drawer: {
         left: Platform.is.desktop,
-        right: false
+        right: false,
       },
       app: config.app,
       splitter: 150,
-      payload: null
+      payload: null,
     });
 
     const { offline } = useOfflineDetector();
@@ -135,7 +129,7 @@ export default {
 
     watch(
       () => Dark.isActive,
-      v => setDarker(v)
+      (v) => setDarker(v)
     );
 
     onMounted(() => Dark.set(darker.value));
@@ -148,9 +142,9 @@ export default {
       hResponseLog,
       hDeviceManagement,
 
-      reload
+      reload,
     };
-  }
+  },
 };
 </script>
 

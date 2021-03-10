@@ -1,9 +1,9 @@
 import { readEvent } from "src/js/event";
 import { pushNotification } from "src/js/framework";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { createNamespacedHelpers } from "vuex";
 const { useState } = createNamespacedHelpers("common");
 
-export default function() {
+export default function () {
   const { notification } = useState(["notification"]);
 
   const handleEvents = (curReport, oldReport) => {
@@ -12,12 +12,14 @@ export default function() {
 
     let curEvents = readEvent(curReport.eventsGroup);
     let oldEvents = readEvent(oldReport.eventsGroup);
-    let newEvents = curEvents.filter(evt => !oldEvents.includes(evt));
+    let newEvents = curEvents.filter((evt) => !oldEvents.includes(evt));
 
-    newEvents.forEach(evt => pushNotification(evt, curReport.logDatetime.out));
+    newEvents.forEach((evt) =>
+      pushNotification(evt, curReport.logDatetime.out)
+    );
   };
 
   return {
-    handleEvents
+    handleEvents,
   };
 }

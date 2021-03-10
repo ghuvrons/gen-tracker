@@ -1,7 +1,5 @@
 <template>
-  <div id="q-app">
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
 <script>
@@ -17,7 +15,7 @@ import useReport from "src/composables/useReport";
 import useEvents from "src/composables/useEvents";
 import useDevice from "src/composables/useDevice";
 
-import { onMounted, provide, computed } from "@vue/composition-api";
+import { onMounted, provide, computed } from "vue";
 import { parseCommand } from "./js/command";
 import { getValue } from "./js/utils";
 

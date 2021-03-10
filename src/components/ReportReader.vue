@@ -57,21 +57,21 @@ import { getField, frameId } from "src/js/utils";
 
 import { SET_TREE } from "src/store/common/mutation-types";
 
-import { ref, computed, watch, reactive, toRefs } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { ref, computed, watch, reactive, toRefs } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useState, useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
   props: {
     height: {
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
     ReportHistoryModal,
     TreeReportReader,
-    ListReportReader
+    ListReportReader,
   },
   setup(props) {
     const { report } = useState(["report"]);
@@ -85,10 +85,10 @@ export default {
 
     const treeState = computed({
       get: () => tree.value,
-      set: v => setTree(v)
+      set: (v) => setTree(v),
     });
 
-    const open = target => {
+    const open = (target) => {
       if (!target) return;
 
       let theField = getField(Report, target);
@@ -111,7 +111,7 @@ export default {
         if (lastFullReport)
           data = {
             ...readReport(lastFullReport),
-            ...data
+            ...data,
           };
       }
 
@@ -120,11 +120,11 @@ export default {
 
     const state = reactive({
       hList: 0,
-      hTree: 0
+      hTree: 0,
     });
     watch(
       () => props.height,
-      h => {
+      (h) => {
         state.hList = `height: calc(100vh - ${h}px - 34px)`;
         state.hTree = ` height: calc(100vh - ${h}px - 73px)`;
       },
@@ -138,9 +138,9 @@ export default {
       treeState,
       theReport,
 
-      open
+      open,
     };
-  }
+  },
 };
 </script>
 

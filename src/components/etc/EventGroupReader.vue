@@ -24,17 +24,17 @@
 <script>
 import { EVENT_LIST, parseEvent } from "src/js/event";
 
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
 export default {
   props: {
-    value: Number
+    value: Number,
   },
   setup(props) {
     const { devEvents } = useGetters(["devEvents"]);
 
-    const activeEvent = theName => {
+    const activeEvent = (theName) => {
       let event = EVENT_LIST.find(({ name }) => name === theName);
       return parseEvent(props.value, event.bit);
     };
@@ -43,9 +43,9 @@ export default {
       EVENT_LIST,
       devEvents,
 
-      activeEvent
+      activeEvent,
     };
-  }
+  },
 };
 </script>
 

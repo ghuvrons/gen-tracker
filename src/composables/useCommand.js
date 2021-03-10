@@ -4,11 +4,11 @@ import { RESCODES } from "src/js/response";
 import { buildCommand, validateCommand } from "src/js/command";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
-import { computed, watch } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { computed, watch } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useState, useGetters, useActions } = createNamespacedHelpers("db");
 
-export default function({ publisher, awaitCommand, ignoreResponse }) {
+export default function ({ publisher, awaitCommand, ignoreResponse }) {
   const { commands } = useState(["commands"]);
   const { devDevice } = useGetters(["devDevice"]);
   const { [INSERT_COMMAND]: insertCommand } = useActions([INSERT_COMMAND]);
@@ -16,7 +16,7 @@ export default function({ publisher, awaitCommand, ignoreResponse }) {
   const timeoutCommand = () => {
     ignoreResponse(RESCODES.TIMEOUT);
   };
-  const sendCommand = payload => {
+  const sendCommand = (payload) => {
     if (!payload) return notify("No payload");
     if (!devDevice.value) return notify("No device");
 
@@ -35,7 +35,7 @@ export default function({ publisher, awaitCommand, ignoreResponse }) {
     const command = buildCommand(cmd, unitID);
     insertCommand({ ...command, timer });
   };
-  const handleLostCommand = report => {
+  const handleLostCommand = (report) => {
     // if (!awaitCommand.value) return;
     // const { lastCommand } = devDevice.value;
     // const { sendDatetime, unitID, timeout } = lastCommand;
@@ -64,6 +64,6 @@ export default function({ publisher, awaitCommand, ignoreResponse }) {
 
   return {
     sendCommand,
-    handleLostCommand
+    handleLostCommand,
   };
 }

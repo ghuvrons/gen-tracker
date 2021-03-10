@@ -6,18 +6,18 @@ import {
   makeResponse,
   parseResponse,
   validResponse,
-  RESCODES
+  RESCODES,
 } from "src/js/response";
 
 import { get } from "lodash";
-import { watch } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { watch } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useGetters, useActions } = createNamespacedHelpers("db");
 
-export default function({ publisher, awaitCommand, handleFinger }) {
+export default function ({ publisher, awaitCommand, handleFinger }) {
   const { devDevice, getDeviceByUnitID } = useGetters([
     "devDevice",
-    "getDeviceByUnitID"
+    "getDeviceByUnitID",
   ]);
   const { [INSERT_RESPONSE]: insertResponse } = useActions([INSERT_RESPONSE]);
 
@@ -35,10 +35,10 @@ export default function({ publisher, awaitCommand, handleFinger }) {
       code,
       subCode,
       payload,
-      ...resp
+      ...resp,
     });
   };
-  const handleResponse = hex => {
+  const handleResponse = (hex) => {
     const response = parseResponse(hex);
     const unitID = getValue(response, "unitID");
 
@@ -53,7 +53,7 @@ export default function({ publisher, awaitCommand, handleFinger }) {
     processResponse(lastCommand, response);
     publisher(unitID, null);
   };
-  const ignoreResponse = resCode => {
+  const ignoreResponse = (resCode) => {
     const lastCommand = get(devDevice.value, "lastCommand");
     const { unitID } = devDevice.value;
 
@@ -63,7 +63,7 @@ export default function({ publisher, awaitCommand, handleFinger }) {
 
   watch(
     () => devDevice.value,
-    device => {
+    (device) => {
       const lastCommand = get(device, "lastCommand");
       if (!lastCommand) return;
 
@@ -77,6 +77,6 @@ export default function({ publisher, awaitCommand, handleFinger }) {
 
   return {
     ignoreResponse,
-    handleResponse
+    handleResponse,
   };
 }

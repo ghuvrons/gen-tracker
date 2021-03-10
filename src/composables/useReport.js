@@ -5,16 +5,16 @@ import { INSERT_REPORTS } from "src/store/db/action-types";
 import { SET_REPORT } from "src/store/db/mutation-types";
 
 import { get } from "lodash";
-import { watch } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { watch } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const {
   useState,
   useGetters,
   useMutations,
-  useActions
+  useActions,
 } = createNamespacedHelpers("db");
 
-export default function({ handleEvents, handleLostCommand }) {
+export default function ({ handleEvents, handleLostCommand }) {
   const { reports } = useState(["reports"]);
   const { devDevice } = useGetters(["devDevice"]);
   const { [SET_REPORT]: setReport } = useMutations([SET_REPORT]);
@@ -23,7 +23,7 @@ export default function({ handleEvents, handleLostCommand }) {
   const common = createNamespacedHelpers("common");
   const { follow } = common.useState(["follow"]);
 
-  const validate = report => {
+  const validate = (report) => {
     const { val: sdt } = report.sendDatetime;
     const { val: ldt } = report.logDatetime;
 
@@ -39,7 +39,7 @@ export default function({ handleEvents, handleLostCommand }) {
 
     return report;
   };
-  const handleReports = hexs => {
+  const handleReports = (hexs) => {
     let reports = hexs.reduce((acc, hex) => {
       console.log(`REPORT ${hex}`);
       let report = validate(parseReport(hex));
@@ -74,6 +74,6 @@ export default function({ handleEvents, handleLostCommand }) {
   );
 
   return {
-    handleReports
+    handleReports,
   };
 }

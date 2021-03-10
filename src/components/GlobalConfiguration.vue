@@ -82,13 +82,13 @@ import { SET_NOTIFICATION } from "src/store/common/mutation-types";
 import { CLEAR_DATABASE } from "src/store/db/mutation-types";
 import { INSERT_BUFFERS } from "src/store/db/action-types";
 
-import { ref, computed, watch, inject } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { ref, computed, watch, inject } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const {
   useState,
   useGetters,
   useMutations,
-  useActions
+  useActions,
 } = createNamespacedHelpers("db");
 
 export default {
@@ -96,8 +96,8 @@ export default {
   props: {
     contentStyle: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const sendCommand = inject("sendCommand");
@@ -107,7 +107,7 @@ export default {
       "buffers",
       "devices",
       "command",
-      "reports"
+      "reports",
     ]);
     const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
     const { [CLEAR_DATABASE]: clearDatabase } = useMutations([CLEAR_DATABASE]);
@@ -116,14 +116,14 @@ export default {
     const common = createNamespacedHelpers("common");
     const { notification } = common.useState(["notification"]);
     const { [SET_NOTIFICATION]: setNotification } = common.useMutations([
-      SET_NOTIFICATION
+      SET_NOTIFICATION,
     ]);
 
     const uploader = ref(null);
 
     const notificationState = computed({
       get: () => notification.value,
-      set: v => setNotification(v)
+      set: (v) => setNotification(v),
     });
 
     const clearStore = () =>
@@ -143,12 +143,12 @@ export default {
       notify("Calibrating device time..", "info");
     };
     const importData = ([file]) => {
-      importJSON(file).then(hexs => insertBuffers(hexs));
+      importJSON(file).then((hexs) => insertBuffers(hexs));
     };
 
     watch(
       () => buffers.value.length,
-      len => len == 0 && uploader.value.reset()
+      (len) => len == 0 && uploader.value.reset()
     );
 
     return {
@@ -166,9 +166,9 @@ export default {
       ignoreResponse,
       importData,
       exportJSON,
-      exportCSV
+      exportCSV,
     };
-  }
+  },
 };
 </script>
 

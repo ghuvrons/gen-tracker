@@ -51,16 +51,16 @@ import { fromNow } from "src/js/report";
 import { SET_UNITID } from "src/store/db/mutation-types";
 
 import { get, orderBy } from "lodash";
-import { computed } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { computed } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useState, useMutations, useGetters } = createNamespacedHelpers("db");
 
 export default {
   // name: 'ComponentName',
   props: {
     height: {
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const { devices } = useState(["devices"]);
@@ -79,9 +79,9 @@ export default {
       fromNow,
 
       setUnitID,
-      active
+      active,
     };
-  }
+  },
 };
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <q-splitter :value="streetView ? 50 : 100">
+  <q-splitter :mode-value="streetView ? 50 : 100">
     <!--
         we listen for size changes on this next
         <div>, so we place the observer as direct child:
@@ -49,8 +49,8 @@ import { getPosition, getHeading } from "src/js/map";
 import { frameId } from "src/js/utils";
 
 import { get } from "lodash";
-import { reactive, toRefs, watch, computed } from "@vue/composition-api";
-import { createNamespacedHelpers } from "vuex-composition-helpers";
+import { reactive, toRefs, watch, computed } from "vue";
+import { createNamespacedHelpers } from "vuex";
 const { useState, useGetters } = createNamespacedHelpers("db");
 
 export default {
@@ -67,11 +67,11 @@ export default {
       path: [],
       zoom,
       center: {
-        ...centerIndonesia
+        ...centerIndonesia,
       },
       position: {
         ...centerIndonesia,
-        valid: false
+        valid: false,
       },
       options: {
         zoomControl: true,
@@ -80,12 +80,12 @@ export default {
         streetViewControl: false,
         rotateControl: false,
         fullscreenControl: true,
-        disableDefaultUi: true
-      }
+        disableDefaultUi: true,
+      },
     });
 
-    const updatePov = pov => (state.pov = { ...pov, zoom: 0 });
-    const updatePano = pano => (state.pano = pano);
+    const updatePov = (pov) => (state.pov = { ...pov, zoom: 0 });
+    const updatePano = (pano) => (state.pano = pano);
     const setPosition = ({ valid, ...location }) => {
       state.zoom = valid ? 17 : zoom;
       state.center = { ...(valid ? location : centerIndonesia) };
@@ -127,7 +127,7 @@ export default {
         if (state.pov)
           updatePov({
             ...state.pov,
-            heading: getHeading(curReport)
+            heading: getHeading(curReport),
           });
       },
       { lazy: false, immediate: true }
@@ -138,9 +138,9 @@ export default {
       streetView,
 
       updatePov,
-      updatePano
+      updatePano,
     };
-  }
+  },
 };
 </script>
 
