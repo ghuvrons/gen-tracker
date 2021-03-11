@@ -1,46 +1,45 @@
 import * as actions from "./action-types";
 import * as mutations from "./mutation-types";
-import { frameId } from "src/js/utils";
+import { frameId, mod } from "src/js/utils";
 
 export default {
-  [actions.INSERT_BUFFERS]({ state, commit }, payloads) {
-    if (payloads.length > 1) commit(mutations.START_BUFFERING);
-
-    commit(mutations.ADD_BUFFERS, payloads);
+  [mod(actions.INSERT_BUFFERS)]({ state, commit }, payloads) {
+    if (payloads.length > 1) commit(mod(mutations.START_BUFFERING));
+    commit(mod(mutations.ADD_BUFFERS), payloads);
   },
-  [actions.INSERT_REPORTS]({ state, commit }, payloads) {
-    if (payloads.length > 1) commit(mutations.START_BUFFERING);
+  [mod(actions.INSERT_REPORTS)]({ state, commit }, payloads) {
+    if (payloads.length > 1) commit(mod(mutations.START_BUFFERING));
 
-    commit(mutations.ADD_REPORTS, payloads.slice().reverse());
+    commit(mod(mutations.ADD_REPORTS), payloads.slice().reverse());
     commit(
-      mutations.ADD_DEVICES,
-      payloads.map(payload => ({
+      mod(mutations.ADD_DEVICES),
+      payloads.map((payload) => ({
         unitID: payload.unitID.val,
         sendDatetime: payload.sendDatetime.val,
         lastReport: payload,
         ...(frameId(payload.frameID.val) == "FULL" && {
-          lastFullReport: payload
-        })
+          lastFullReport: payload,
+        }),
       }))
     );
   },
 
-  [actions.INSERT_COMMAND]({ commit }, payload) {
-    commit(mutations.ADD_COMMANDS, payload);
-    commit(mutations.ADD_DEVICES, [
+  [mod(actions.INSERT_COMMAND)]({ commit }, payload) {
+    commit(mod(mutations.ADD_COMMANDS), payload);
+    commit(mod(mutations.ADD_DEVICES), [
       {
         unitID: payload.unitID,
-        lastCommand: payload
-      }
+        lastCommand: payload,
+      },
     ]);
   },
-  [actions.INSERT_RESPONSE]({ state, commit }, payload) {
-    commit(mutations.ADD_RESPONSE, payload);
-    commit(mutations.ADD_DEVICES, [
+  [mod(actions.INSERT_RESPONSE)]({ state, commit }, payload) {
+    commit(mod(mutations.ADD_RESPONSE), payload);
+    commit(mod(mutations.ADD_DEVICES), [
       {
         unitID: payload.unitID,
-        lastCommand: payload
-      }
+        lastCommand: payload,
+      },
     ]);
-  }
+  },
 };

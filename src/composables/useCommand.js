@@ -1,17 +1,24 @@
-import { dilation } from "src/js/utils";
+import { dilation, getValue } from "src/js/utils";
 import { notify } from "src/js/framework";
 import { RESCODES } from "src/js/response";
-import { buildCommand, validateCommand } from "src/js/command";
+import { buildCommand, parseCommand, validateCommand } from "src/js/command";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 
-import { watch, computed } from "vue";
+import { watch, computed, ref } from "vue";
 import { useStore } from "vuex";
 
-export default function ({ publisher, awaitCommand, ignoreResponse }) {
+export default function ({
+  publisher,
+  awaitCommand,
+  ignoreResponse,
+  addDevices,
+}) {
   const store = useStore();
   const commands = computed(() => store.state.db.commands);
   const devDevice = computed(() => store.getters[`db/devDevice`]);
-  const insertCommand = (v) => store.dispatch(`db/${INSERT_COMMAND}`, v);
+  const insertCommand = (v) => store.dispatch(INSERT_COMMAND, v);
+
+  const timer = ref(null);
 
   const sendCommand = (payload) => {
     if (!payload) return notify("No payload");
@@ -28,9 +35,25 @@ export default function ({ publisher, awaitCommand, ignoreResponse }) {
 
     if (typeof cmd === "string") return notify(cmd);
 
-    const timer = setTimeout(ignoreResponse, 3000, RESCODES.TIMEOUT);
     const command = buildCommand(cmd, unitID);
-    insertCommand({ ...command, timer });
+    insertCommand(command);
+    timer.value = setTimeout(ignoreResponse, 3000, RESCODES.TIMEOUT);
+  };
+  const handleCommand = (data, topic) => {
+    const unitID = parseInt(topic.split("/")[1]);
+    const hex = data.toString("hex").toUpperCase();
+    const commandable = !hex;
+
+    console.warn(`COMMANDABLE ${unitID}, ${commandable}`);
+    addDevices([{ unitID, commandable }]);
+    if (commandable) return notify("Device commandable", "info");
+    if (!awaitCommand.value) return;
+
+    const { lastCommand } = devDevice.value;
+    const command = parseCommand(hex);
+
+    if (getValue(command, "sendDatetime") != lastCommand.sendDatetime) return;
+    clearTimeout(timer.value);
   };
   const handleLostCommand = (report) => {
     // if (!awaitCommand.value) return;
@@ -46,7 +69,7 @@ export default function ({ publisher, awaitCommand, ignoreResponse }) {
   };
 
   watch(
-    () => commands.value.length,
+    () => commands.value,
     () => {
       if (!awaitCommand.value) return;
 
@@ -61,6 +84,7 @@ export default function ({ publisher, awaitCommand, ignoreResponse }) {
 
   return {
     sendCommand,
+    handleCommand,
     handleLostCommand,
   };
 }

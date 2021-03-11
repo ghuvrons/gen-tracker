@@ -4,7 +4,7 @@ import { notify } from "src/js/framework";
 import { VEHICLE_STATES } from "src/js/opt/report";
 import { RESCODES, RESPONSE_LIST, Response } from "src/js/opt/response";
 
-const parseResponse = hex => {
+const parseResponse = (hex) => {
   return parseFrame(hex, Response);
 };
 
@@ -15,15 +15,15 @@ const validResponse = (command, response) => {
   return true;
 };
 
-const parseResCode = code => {
+const parseResCode = (code) => {
   return RESPONSE_LIST.find(({ resCode }) => resCode === code);
 };
 
-const readResCode = code => {
+const readResCode = (code) => {
   return parseResCode(code) || parseResCode(RESCODES.UNKNOWN);
 };
 
-const makeResponse = response => {
+const makeResponse = (response) => {
   let res, message;
 
   if (typeof response === "object") {
@@ -35,18 +35,18 @@ const makeResponse = response => {
 
   return {
     resCode: res.resCode,
-    message
+    message,
   };
 };
 
-const parseMessage = msg => {
+const parseMessage = (msg) => {
   if (!msg) return;
 
   let labels = Object.keys(VEHICLE_STATES);
   let values = Object.values(VEHICLE_STATES);
 
-  return msg.replace(/\{(.+?)\}/g, function(string, val) {
-    let idx = values.findIndex(v => v === parseInt(val));
+  return msg.replace(/\{(.+?)\}/g, function (string, val) {
+    let idx = values.findIndex((v) => v === parseInt(val));
     return labels[idx];
   });
 };
@@ -70,5 +70,5 @@ export {
   makeResponse,
   parseResCode,
   parseMessage,
-  notifyResponse
+  notifyResponse,
 };

@@ -3,7 +3,7 @@ import { ChangeEndian } from "src/js/formatter";
 
 // stolen from https://gist.github.com/Miliox/b86b60b9755faf3bd7cf
 // CRC-32/MPEG-2
-let TABLE = [
+const TABLE = [
   0x00000000,
   0x04c11db7,
   0x09823b6e,
@@ -259,15 +259,15 @@ let TABLE = [
   0xbcb4666d,
   0xb8757bda,
   0xb5365d03,
-  0xb1f740b4
+  0xb1f740b4,
 ];
 
-const CRC32 = buf => {
+const CRC32 = (buf) => {
   let table = new Int32Array(TABLE);
   // split hex string into 32 bit chunk (8 chars)
   buf = buf
     .match(/.{1,8}/g)
-    .map(word => ChangeEndian(word.padEnd(8, "0")))
+    .map((word) => ChangeEndian(word.padEnd(8, "0")))
     .join("");
 
   // convert hex string to buffer
@@ -278,10 +278,7 @@ const CRC32 = buf => {
   for (let index = 0; index < buf.length; index++)
     crc = (crc << 8) ^ table[((crc >> 24) ^ buf[index]) & 0xff];
 
-  return (crc >>> 0)
-    .toString(16)
-    .toUpperCase()
-    .padStart(8, "0");
+  return (crc >>> 0).toString(16).toUpperCase().padStart(8, "0");
 };
 
 export { CRC32 };

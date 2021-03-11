@@ -103,7 +103,7 @@ export default {
   setup() {
     const store = useStore();
     const darker = computed(() => store.state.common.darker);
-    const setDarker = (v) => store.commit(`common/${SET_DARKER}`, v);
+    const setDarker = (v) => store.commit(SET_DARKER, v);
 
     const state = reactive({
       drawer: {

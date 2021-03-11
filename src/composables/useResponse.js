@@ -7,6 +7,8 @@ import {
   validResponse,
   RESCODES,
 } from "src/js/response";
+import { validateFrame } from "src/js/frame";
+import config from "src/js/opt/config";
 
 import { get } from "lodash";
 import { watch, computed } from "vue";
@@ -16,7 +18,7 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
   const store = useStore();
   const devices = computed(() => store.state.db.devices);
   const devDevice = computed(() => store.getters[`db/devDevice`]);
-  const insertResponse = (v) => store.dispatch(`db/${INSERT_RESPONSE}`, v);
+  const insertResponse = (v) => store.dispatch(INSERT_RESPONSE, v);
 
   const processResponse = (command, response) => {
     if (!awaitCommand.value) return;
@@ -35,7 +37,12 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
       ...resp,
     });
   };
-  const handleResponse = (hex) => {
+  const handleResponse = (data, topic) => {
+    const hex = data.toString("hex").toUpperCase();
+    if (!hex) return;
+    if (!validateFrame(hex, config.prefix.response))
+      return console.error(`CORRUPT ${hex}`);
+
     const response = parseResponse(hex);
     const unitID = getValue(response, "unitID");
 

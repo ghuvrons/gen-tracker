@@ -3,10 +3,6 @@
 </template>
 
 <script>
-import { validateFrame } from "src/js/frame";
-import { notify } from "src/js/framework";
-import config from "src/js/opt/config";
-
 import useMqtt from "src/composables/useMqtt";
 import useFinger from "src/composables/useFinger";
 import useResponse from "src/composables/useResponse";
@@ -16,14 +12,12 @@ import useReport from "src/composables/useReport";
 import useEvents from "src/composables/useEvents";
 import useDevice from "src/composables/useDevice";
 
-import { onMounted, provide, computed, defineComponent } from "vue";
-import { parseCommand } from "./js/command";
-import { getValue } from "./js/utils";
+import { onMounted, provide, defineComponent } from "vue";
 
 export default defineComponent({
   // name: "App",
-  setup(props, { root }) {
-    const { listeners, subscribe, publish } = useMqtt();
+  setup(props) {
+    const { subscribe, publish } = useMqtt();
 
     const publisher = (unitID, data) => {
       publish(`VCU/${unitID}/CMD`, data, { qos: 2, retain: true });
@@ -32,123 +26,35 @@ export default defineComponent({
       }
     };
 
-    const { devDevice, addDevices } = useDevice();
-    const awaitCommand = computed(() => {
-      const { lastCommand: cmd } = devDevice.value;
-      return cmd && !cmd.hasOwnProperty("resCode");
-    });
-
+    const { addDevices, handleStatus, awaitCommand } = useDevice();
     const { handleFinger } = useFinger({ addDevices });
     const { handleResponse, ignoreResponse } = useResponse({
       publisher,
       awaitCommand,
       handleFinger
     });
-    const { sendCommand, handleLostCommand } = useCommand({
+    const { sendCommand, handleCommand, handleLostCommand } = useCommand({
       publisher,
       awaitCommand,
-      ignoreResponse
+      ignoreResponse,
+      addDevices
     });
 
     const { handleEvents } = useEvents();
     const { handleReports } = useReport({ handleEvents, handleLostCommand });
-    const { insertBuffers } = useBuffer({ handleReports });
+    const { handleBuffer } = useBuffer({ handleReports });
 
     onMounted(() => {
-      subscribe("VCU/+/CMD", { qos: 1 });
-      subscribe("VCU/+/RPT", { qos: 1 });
-      subscribe("VCU/+/RSP", { qos: 1 });
-      subscribe("VCU/+/STS", { qos: 1 });
-
-      listeners.value = {
-        "VCU/+/CMD": (data, topic) => {
-          const unitID = parseInt(topic.split("/")[1]);
-          const hex = data.toString("hex").toUpperCase();
-          const commandable = !hex;
-
-          console.warn(`COMMANDABLE ${unitID}, ${commandable}`);
-          addDevices([{ unitID, commandable }]);
-          if (commandable) return notify("Device commandable", "info");
-          if (!awaitCommand.value) return;
-
-          const { lastCommand } = devDevice.value;
-          const command = parseCommand(hex);
-
-          if (getValue(command, "sendDatetime") != lastCommand.sendDatetime)
-            return;
-          clearTimeout(lastCommand.timer);
-        },
-        "VCU/+/RSP": (data, topic) => {
-          const hex = data.toString("hex").toUpperCase();
-          if (!hex) return;
-          if (!validateFrame(hex, config.prefix.response))
-            return console.error(`CORRUPT ${hex}`);
-          handleResponse(hex);
-        },
-        "VCU/+/RPT": (data, topic) => {
-          const hex = data.toString("hex").toUpperCase();
-          if (!hex) return;
-          if (!validateFrame(hex, config.prefix.report))
-            return console.error(`CORRUPT ${hex}`);
-          insertBuffers([hex]);
-        },
-        "VCU/+/STS": (data, topic) => {
-          const unitID = parseInt(topic.split("/")[1]);
-          const status = parseInt(data);
-          console.warn(`STATUS ${unitID},${status}`);
-          addDevices([{ unitID, status }]);
-        }
-      };
+      subscribe("VCU/+/CMD", { qos: 1 }, handleCommand);
+      subscribe("VCU/+/RPT", { qos: 1 }, handleBuffer);
+      subscribe("VCU/+/RSP", { qos: 1 }, handleResponse);
+      subscribe("VCU/+/STS", { qos: 1 }, handleStatus);
     });
 
     provide("awaitCommand", awaitCommand);
     provide("sendCommand", sendCommand);
     provide("ignoreResponse", ignoreResponse);
-
-    return {
-      devDevice,
-      awaitCommand,
-      validateFrame,
-      insertBuffers,
-      handleResponse,
-      addDevices
-    };
   },
-  mqtt: {
-    // "VCU/+/CMD": function (data, topic) {
-    //   const unitID = parseInt(topic.split("/")[1]);
-    //   const hex = data.toString("hex").toUpperCase();
-    //   const commandable = !hex;
-    //   console.warn(`COMMANDABLE ${unitID}, ${commandable}`);
-    //   this.addDevices([{ unitID, commandable }]);
-    //   if (commandable) return notify("Device commandable", "info");
-    //   if (!this.awaitCommand) return;
-    //   const { lastCommand } = this.devDevice;
-    //   const command = parseCommand(hex);
-    //   if (getValue(command, "sendDatetime") == lastCommand.sendDatetime) return;
-    //   clearTimeout(lastCommand.timer);
-    // },
-    // "VCU/+/RSP": function (data, topic) {
-    //   const hex = data.toString("hex").toUpperCase();
-    //   if (!hex) return;
-    //   if (!validateFrame(hex, config.prefix.response))
-    //     return console.error(`CORRUPT ${hex}`);
-    //   this.handleResponse(hex);
-    // },
-    // "VCU/+/RPT": function (data, topic) {
-    //   const hex = data.toString("hex").toUpperCase();
-    //   if (!hex) return;
-    //   if (!validateFrame(hex, config.prefix.report))
-    //     return console.error(`CORRUPT ${hex}`);
-    //   this.insertBuffers([hex]);
-    // },
-    // "VCU/+/STS": function (data, topic) {
-    //   const unitID = parseInt(topic.split("/")[1]);
-    //   const status = parseInt(data);
-    //   console.warn(`STATUS ${unitID},${status}`);
-    //   this.addDevices([{ unitID, status }]);
-    // }
-  }
 });
 </script>
 

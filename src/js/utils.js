@@ -10,7 +10,7 @@ import {
   toLower,
   partialRight,
   includes,
-  clone
+  clone,
 } from "lodash";
 const tzlookup = require("tz-lookup");
 import dayjs from "src/js/dayjs";
@@ -29,7 +29,7 @@ const getField = (arr, fields, target) => {
       result = arr.find(({ field }) => field === _field);
       return {
         ...acc,
-        [_field]: target ? result[target] : result
+        [_field]: target ? result[target] : result,
       };
     }, {});
   return target ? result[target] : result;
@@ -68,21 +68,16 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
   return serverTime.tz(timezone).format("YYMMDDHHmmss0d");
 };
 
-const parseDatetime = hex => {
+const parseDatetime = (hex) => {
   let timestamp = hex.match(/.{1,2}/g);
 
   return timestamp.reduce(
-    (acc, ts) =>
-      acc.concat(
-        HexToUnsignedInt(ts)
-          .toString()
-          .padStart(2, "0")
-      ),
+    (acc, ts) => acc.concat(HexToUnsignedInt(ts).toString().padStart(2, "0")),
     ""
   );
 };
 
-const buildTimestamp = YYMMDDHHmmss0d => {
+const buildTimestamp = (YYMMDDHHmmss0d) => {
   let datetime = YYMMDDHHmmss0d.match(/.{1,2}/g);
 
   return datetime
@@ -90,8 +85,12 @@ const buildTimestamp = YYMMDDHHmmss0d => {
     .toUpperCase();
 };
 
-const frameId = index => {
+const frameId = (index) => {
   return config.frames[index];
+};
+
+const mod = (str) => {
+  return str.split("/")[1];
 };
 
 export {
@@ -103,5 +102,6 @@ export {
   parseDatetime,
   buildTimestamp,
   dilation,
-  frameId
+  frameId,
+  mod,
 };

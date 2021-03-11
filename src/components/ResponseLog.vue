@@ -23,7 +23,6 @@
               {{ parseDatetime(cmd.sendDatetime) }}
             </q-item-label>
             <q-item-label lines="2">{{ cmd.payload }}</q-item-label>
-            <!-- <q-item-label lines="2" caption> -->
             <div class="text-caption">
               {{
                 waitedCommand(index) ? "Waitting..." : parseMessage(cmd.message)

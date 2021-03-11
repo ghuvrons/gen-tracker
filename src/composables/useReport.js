@@ -12,8 +12,8 @@ export default function ({ handleEvents, handleLostCommand }) {
   const store = useStore();
   const reports = computed(() => store.state.db.reports);
   const devDevice = computed(() => store.getters[`db/devDevice`]);
-  const setReport = (v) => store.commit(`db/${SET_REPORT}`, v);
-  const insertReports = (v) => store.dispatch(`db/${INSERT_REPORTS}`, v);
+  const setReport = (v) => store.commit(SET_REPORT, v);
+  const insertReports = (v) => store.dispatch(INSERT_REPORTS, v);
   const follow = computed(() => store.state.common.follow);
 
   const validate = (report) => {

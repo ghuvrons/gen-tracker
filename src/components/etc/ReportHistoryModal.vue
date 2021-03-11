@@ -29,10 +29,11 @@
               "
             >
               <div class="q-pa-sm">
-                <line-chart
+                <chart-line
                   style="height: 60vh"
                   :param="chart"
-                  :update="history.update"
+                  :updateData="update.data"
+                  :updateOptions="update.options"
                 />
                 <q-range
                   v-model="range.val"
@@ -103,7 +104,7 @@
 </template>
 
 <script>
-import LineChart from "components/etc/LineChart";
+import ChartLine from "components/etc/ChartLine";
 import EventGroupReader from "components/etc/EventGroupReader";
 
 import { getField } from "src/js/utils";
@@ -130,7 +131,7 @@ export default defineComponent({
     }
   },
   components: {
-    LineChart,
+    ChartLine,
     EventGroupReader
   },
   setup(props) {
@@ -140,7 +141,7 @@ export default defineComponent({
 
     const {
       chart,
-      history,
+      update,
       latestValue,
       setLabel,
       setColor,
@@ -229,7 +230,7 @@ export default defineComponent({
     watch(
       () => devReports.value.length,
       (len) => {
-        if (!len) return;
+        if (len == 0) return;
         writeChartRange();
       },
       {
@@ -277,7 +278,7 @@ export default defineComponent({
 
     return {
       chart,
-      history,
+      update,
       ...toRefs(state),
 
       theField,

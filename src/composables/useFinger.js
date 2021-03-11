@@ -10,9 +10,9 @@ import { useStore } from "vuex";
 
 export default function ({ addDevices }) {
   const store = useStore();
-  const addFingers = (v) => store.commit(`db/${ADD_FINGERS}`, v);
-  const removeFingers = (v) => store.commit(`db/${REMOVE_FINGERS}`, v);
-  const clearFingers = (v) => store.commit(`db/${CLEAR_FINGERS}`, v);
+  const addFingers = (v) => store.commit(ADD_FINGERS, v);
+  const removeFingers = (v) => store.commit(REMOVE_FINGERS, v);
+  const clearFingers = (v) => store.commit(CLEAR_FINGERS, v);
 
   const handleFinger = ({ payload, unitID, message }) => {
     let { prop, value } = extractCommand(payload);

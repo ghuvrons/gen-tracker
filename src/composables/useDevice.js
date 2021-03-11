@@ -1,5 +1,6 @@
 import { pushNotification } from "src/js/framework";
 import { ADD_DEVICES } from "src/store/db/mutation-types";
+import { get } from "lodash";
 
 import dayjs from "src/js/dayjs";
 import { watch, computed } from "vue";
@@ -8,7 +9,18 @@ import { useStore } from "vuex";
 export default function () {
   const store = useStore();
   const devDevice = computed(() => store.getters[`db/devDevice`]);
-  const addDevices = (v) => store.commit(`db/${ADD_DEVICES}`, v);
+  const addDevices = (v) => store.commit(ADD_DEVICES, v);
+
+  const awaitCommand = computed(() => {
+    const lastCommand = get(devDevice.value, "lastCommand");
+    return lastCommand && !lastCommand.hasOwnProperty("resCode");
+  });
+  const handleStatus = (data, topic) => {
+    const unitID = parseInt(topic.split("/")[1]);
+    const status = parseInt(data);
+    console.warn(`STATUS ${unitID},${status}`);
+    addDevices([{ unitID, status }]);
+  };
 
   watch(
     () => devDevice.value,
@@ -30,7 +42,8 @@ export default function () {
   );
 
   return {
-    devDevice,
+    awaitCommand,
+    handleStatus,
     addDevices,
   };
 }

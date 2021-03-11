@@ -1,9 +1,6 @@
-import { Platform } from "quasar";
-import { get } from "lodash";
-
 export default {
   app: {
-    version: "1.1.2",
+    version: "1.1.3",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -36,9 +33,4 @@ export default {
     },
   },
   timezone: "Asia/Jakarta",
-  maxStorage: {
-    reports: get("is.desktop", Platform) ? 500 : 100,
-    responses: get("is.desktop", Platform) ? 50 : 10,
-    commands: get("is.desktop", Platform) ? 50 : 10,
-  },
 };

@@ -89,16 +89,20 @@ export default defineComponent({
       state.center = { ...(valid ? location : centerIndonesia) };
       state.position = { ...location, valid };
     };
+    const addPath = (report) => {
+      const pos = getPosition(report);
+      if (pos.valid) state.path.push(pos);
+    }
 
     const streetView = computed(
-      () => state.position.valid && state.width > 500
+      () => false // state.position.valid && state.width > 500
     );
     const polyOptions = computed(() => ({
       path: state.path,
       geodesic: true,
-      strokeColor: "#FF0000",
+      strokeColor: "#F00",
       strokeOpacity: 1.0,
-      strokeWeight: 2
+      strokeWeight: 5
     }));
 
     watch(
@@ -106,10 +110,12 @@ export default defineComponent({
       (curDev, oldDev) => {
         if (get(curDev, "unitID") != get(oldDev, "unitID")) {
           state.path = [];
+          devReports.value
+            .filter(({frameID}) => frameId(frameID.val) == "FULL")
+            .forEach(report => addPath(report))
         } else {
-          const fullReport = get(curDev, "lastFullReport");
-          const pos = getPosition(fullReport);
-          if (pos.valid) state.path.push(pos);
+          const report = get(curDev, "lastFullReport");
+          addPath(report)
         }
       },
       { lazy: false, immediate: true, deep: true }

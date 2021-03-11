@@ -104,11 +104,11 @@ export default defineComponent({
     const command = computed(() => store.state.db.command);
     const devDevice = computed(() => store.getters[`db/devDevice`]);
     const devReports = computed(() => store.getters[`db/devReports`]);
-    const clearDatabase = (v) => store.commit(`db/${CLEAR_DATABASE}`, v);
-    const insertBuffers = (v) => store.dispatch(`db/${INSERT_BUFFERS}`, v);
+    const clearDatabase = (v) => store.commit(CLEAR_DATABASE, v);
+    const insertBuffers = (v) => store.dispatch(INSERT_BUFFERS, v);
     const notification = computed(() => store.state.common.notification);
     const setNotification = (v) =>
-      store.commit(`common/${SET_NOTIFICATION}`, v);
+      store.commit(SET_NOTIFICATION, v);
 
     const uploader = ref(null);
 

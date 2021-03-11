@@ -7,11 +7,9 @@ import { toRefs, reactive, computed } from "vue";
 export default function () {
   const state = reactive({
     chart: cloneDeep(chart),
-    history: {
-      update: {
-        data: false,
-        options: false,
-      },
+    update: {
+      data: false,
+      options: false,
     },
   });
 
@@ -26,20 +24,20 @@ export default function () {
     state.chart.options.scales.yAxes[0].ticks.max = yMax;
     state.chart.options.scales.yAxes[0].ticks.beginAtZero = beginAtZero;
 
-    state.history.update.options = !state.history.update.options;
+    state.update.options = !state.update.options;
   };
   const setData = ({ labels, datasets }) => {
     state.chart.data.labels = labels;
     state.chart.data.datasets[0].data = datasets;
 
-    state.history.update.data = !state.history.update.data;
+    state.update.data = !state.update.data;
   };
   const setLabel = ({ title, unit }) => {
     state.chart.data.datasets[0].label = title;
     state.chart.options.scales.yAxes[0].scaleLabel.labelString =
       unit || "Value";
 
-    state.history.update.options = !state.history.update.options;
+    state.update.options = !state.update.options;
   };
   const setColor = (color) => {
     state.chart.options.legend.labels.fontColor = color;
@@ -50,7 +48,7 @@ export default function () {
     state.chart.options.scales.yAxes[0].scaleLabel.fontColor = color;
     state.chart.options.scales.yAxes[0].gridLines.color = color;
 
-    state.history.update.options = !state.history.update.options;
+    state.update.options = !state.update.options;
   };
 
   const scaleChart = ({ beginAtZero }, { min, max }) => {

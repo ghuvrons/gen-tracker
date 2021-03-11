@@ -80,9 +80,9 @@ export default defineComponent({
     const store = useStore();
     const report = computed(() => store.state.db.report);
     const devReports = computed(() => store.getters[`db/devReports`]);
-    const setReport = (v) => store.commit(`db/${SET_REPORT}`, v);
+    const setReport = (v) => store.commit(SET_REPORT, v);
     const follow = computed(() => store.state.common.follow);
-    const setFollow = (v) => store.commit(`common/${SET_FOLLOW}`, v);
+    const setFollow = (v) => store.commit(SET_FOLLOW, v);
 
     const followState = computed({
       get: () => follow.value,

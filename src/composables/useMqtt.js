@@ -1,67 +1,67 @@
 import mqtt from "mqtt";
-import { ref, onMounted, onBeforeUnmount } from "vue";
-import { useQuasar } from "quasar";
+import { ref, onBeforeUnmount } from "vue";
+import { Platform } from "quasar";
 import { notify } from "src/js/framework";
 import config from "src/js/opt/config";
 
 export default function () {
-  const $q = useQuasar();
-
-  const client = ref(null);
   const listeners = ref(null);
 
-  onMounted(() => {
-    const { host, username, password } = config.mqtt;
-    client.value = mqtt.connect(host, {
-      clientId: getClientId(),
-      username: username,
-      password: password,
-      clean: $q.platform.is.mobile,
-      keepalive: 60,
-      // protocolId: "MQTT",
-      // protocolVersion: 4,
-      reconnectPeriod: 1000,
-      connectTimeout: 30 * 1000,
-      // will: {
-      //   topic: "WillMsg",
-      //   payload: "Connection Closed abnormally..!",
-      //   qos: 0,
-      //   retain: false,
-      // },
-    });
-
-    client.value.on("connect", () => notify(`Client connected`, "info"));
-    client.value.on("reconnect", () => notify(`Reconnecting...`, "info"));
-    client.value.on("error", (err) => {
-      notify(`Connection error: ${err}`, "error");
-      client.value.end();
-    });
-    client.value.on("message", (topic, data, packet) => {
-      Object.keys(listeners.value).forEach(
-        (listener) =>
-          eq(topic, listener) && listeners.value[listener](data, topic)
-      );
-    });
+  const { host, username, password } = config.mqtt;
+  const client = mqtt.connect(host, {
+    clientId: getClientId(),
+    username: username,
+    password: password,
+    clean: Platform.is.mobile,
+    keepalive: 60,
+    // protocolId: "MQTT",
+    // protocolVersion: 4,
+    reconnectPeriod: 1000,
+    connectTimeout: 30 * 1000,
+    // will: {
+    //   topic: "WillMsg",
+    //   payload: "Connection Closed abnormally..!",
+    //   qos: 0,
+    //   retain: false,
+    // },
   });
   onBeforeUnmount(() => {
-    Object.keys(listeners.value).forEach((listener) => {
-      delete listeners.value[listener];
-    });
-
-    client.value && client.value.end();
+    Object.keys(listeners.value).forEach(
+      (listener) => delete listeners.value[listener]
+    );
+    client && client.end();
   });
 
-  const subscribe = (topic, options) =>
-    client.value && client.value.subscribe(topic, options);
+  client.on("connect", () => notify(`Client connected`, "info"));
+  client.on("reconnect", () => notify(`Reconnecting...`, "info"));
+  client.on("error", (err) => {
+    notify(`Connection error: ${err}`, "error");
+    client.end();
+  });
+  client.on("message", (topic, data, packet) =>
+    Object.keys(listeners.value).forEach(
+      (listener) =>
+        eq(topic, listener) && listeners.value[listener](data, topic)
+    )
+  );
+
+  const subscribe = (topic, options, callback) => {
+    if (client) {
+      listeners.value = {
+        ...listeners.value,
+        [topic]: callback,
+      };
+      client.subscribe(topic, options);
+    }
+  };
   const unsubscribe = (topic) => {
-    client.value &&
-      client.value.unubscribe(topic, () => console.log("Unsubscribed"));
+    client &&
+      client.unubscribe(topic, () => console.log(`${topic} unsubscribed`));
   };
   const publish = (topic, data, options) =>
-    client.value && client.value.publish(topic, data, options);
+    client && client.publish(topic, data, options);
 
   return {
-    listeners,
     subscribe,
     unsubscribe,
     publish,

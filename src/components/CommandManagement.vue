@@ -51,7 +51,7 @@ import CommandListModal from "components/etc/CommandListModal";
 
 import { COMMAND_LIST } from "src/js/command";
 
-import { ref, inject, computed, defineComponent, watch } from "vue";
+import { ref, inject, computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 
 export default defineComponent({

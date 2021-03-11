@@ -78,7 +78,7 @@ export default defineComponent({
     const devDevice = computed(() => store.getters[`db/devDevice`]);
     const devReports = computed(() => store.getters[`db/devReports`]);
     const tree = computed(() => store.state.common.tree);
-    const setTree = (v) => store.commit(`common/${SET_TREE}`, v);
+    const setTree = (v) => store.commit(SET_TREE, v);
 
     const field = ref(null);
 

@@ -65,7 +65,7 @@ export default defineComponent({
     const store = useStore();
     const devices = computed(() => store.state.db.devices);
     const devDevice = computed(() => store.getters[`db/devDevice`]);
-    const setUnitID = (v) => store.commit(`db/${SET_UNITID}`, v);
+    const setUnitID = (v) => store.commit(SET_UNITID, v);
 
     const sortedDevices = computed(() =>
       orderBy(devices.value, "sendDatetime", "desc")
