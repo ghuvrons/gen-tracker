@@ -12,7 +12,10 @@
         :center="center"
         :zoom="zoom"
       >
-        <Marker v-if="position.valid" :options="{ position: center }" />
+        <Marker
+          v-if="position.valid"
+          :options="{ position: center, icon: icon }"
+        />
         <Polyline :options="polyOptions" />
       </GoogleMap>
     </template>
@@ -45,7 +48,14 @@ import { frameId } from "src/js/utils";
 
 import { GoogleMap, Marker, Polyline } from "vue3-google-map";
 import { get } from "lodash";
-import { reactive, toRefs, watch, computed, defineComponent } from "vue";
+import {
+  reactive,
+  toRefs,
+  watch,
+  computed,
+  defineComponent,
+  onMounted
+} from "vue";
 import { useStore } from "vuex";
 
 export default defineComponent({
@@ -59,11 +69,12 @@ export default defineComponent({
 
     const { centerIndonesia, zoom } = config.map;
     const state = reactive({
+      zoom,
+      icon: null,
       width: 0,
       pov: null,
       pano: null,
       path: [],
-      zoom,
       center: {
         ...centerIndonesia
       },
@@ -92,18 +103,26 @@ export default defineComponent({
     const addPath = (report) => {
       const pos = getPosition(report);
       if (pos.valid) state.path.push(pos);
-    }
+    };
 
     const streetView = computed(
       () => false // state.position.valid && state.width > 500
     );
-    const polyOptions = computed(() => ({
-      path: state.path,
-      geodesic: true,
-      strokeColor: "#F00",
-      strokeOpacity: 1.0,
-      strokeWeight: 5
-    }));
+    const polyOptions = computed(() => {
+      console.warn(state.path.length);
+      return {
+        path: state.path,
+        geodesic: false,
+        strokeColor: "#000",
+        strokeOpacity: 0.75,
+        strokeWeight: 5
+      };
+    });
+
+    onMounted(() => {
+      const { protocol, host } = window.location;
+      state.icon = `${protocol}//${host}/motorcycle.png`;
+    });
 
     watch(
       () => devDevice.value,
@@ -111,11 +130,11 @@ export default defineComponent({
         if (get(curDev, "unitID") != get(oldDev, "unitID")) {
           state.path = [];
           devReports.value
-            .filter(({frameID}) => frameId(frameID.val) == "FULL")
-            .forEach(report => addPath(report))
+            .filter(({ frameID }) => frameId(frameID.val) == "FULL")
+            .forEach((report) => addPath(report));
         } else {
           const report = get(curDev, "lastFullReport");
-          addPath(report)
+          addPath(report);
         }
       },
       { lazy: false, immediate: true, deep: true }
