@@ -109,7 +109,6 @@ export default defineComponent({
       () => false // state.position.valid && state.width > 500
     );
     const polyOptions = computed(() => {
-      console.warn(state.path.length);
       return {
         path: state.path,
         geodesic: false,
