@@ -49,11 +49,11 @@ import { getPosition, getHeading } from "src/js/map";
 import { frameId } from "src/js/utils";
 
 import { get } from "lodash";
-import { reactive, toRefs, watch, computed } from "vue";
+import { reactive, toRefs, watch, computed, defineComponent } from "vue";
 import { createNamespacedHelpers } from "vuex";
 const { useState, useGetters } = createNamespacedHelpers("db");
 
-export default {
+export default defineComponent({
   // name: 'ComponentName',
   setup(props) {
     const { report } = useState(["report"]);
@@ -67,11 +67,11 @@ export default {
       path: [],
       zoom,
       center: {
-        ...centerIndonesia,
+        ...centerIndonesia
       },
       position: {
         ...centerIndonesia,
-        valid: false,
+        valid: false
       },
       options: {
         zoomControl: true,
@@ -80,8 +80,8 @@ export default {
         streetViewControl: false,
         rotateControl: false,
         fullscreenControl: true,
-        disableDefaultUi: true,
-      },
+        disableDefaultUi: true
+      }
     });
 
     const updatePov = (pov) => (state.pov = { ...pov, zoom: 0 });
@@ -127,7 +127,7 @@ export default {
         if (state.pov)
           updatePov({
             ...state.pov,
-            heading: getHeading(curReport),
+            heading: getHeading(curReport)
           });
       },
       { lazy: false, immediate: true }
@@ -138,10 +138,10 @@ export default {
       streetView,
 
       updatePov,
-      updatePano,
+      updatePano
     };
-  },
-};
+  }
+});
 </script>
 
 <style>

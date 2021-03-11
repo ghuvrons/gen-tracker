@@ -31,20 +31,20 @@ import { Report } from "src/js/report";
 import { getField, frameId } from "src/js/utils";
 
 import { omit } from "lodash";
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   emits: ["update:selected"],
   props: {
     report: {
-      required: true,
+      required: true
     },
     selected: {
-      required: true,
+      required: true
     },
     height: {
-      required: true,
-    },
+      required: true
+    }
   },
   setup(props) {
     const fields = computed(() => Object.keys(omit(props.report, "hex")));
@@ -57,10 +57,10 @@ export default {
     return {
       fields,
 
-      realtime,
+      realtime
     };
-  },
-};
+  }
+});
 </script>
 
 <style>

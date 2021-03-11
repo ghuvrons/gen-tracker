@@ -57,21 +57,21 @@ import { getField, frameId } from "src/js/utils";
 
 import { SET_TREE } from "src/store/common/mutation-types";
 
-import { ref, computed, watch, reactive, toRefs } from "vue";
+import { ref, computed, watch, reactive, toRefs, defineComponent } from "vue";
 import { createNamespacedHelpers } from "vuex";
 const { useState, useGetters } = createNamespacedHelpers("db");
 
-export default {
+export default defineComponent({
   // name: 'ComponentName',
   props: {
     height: {
-      required: true,
-    },
+      required: true
+    }
   },
   components: {
     ReportHistoryModal,
     TreeReportReader,
-    ListReportReader,
+    ListReportReader
   },
   setup(props) {
     const { report } = useState(["report"]);
@@ -85,7 +85,7 @@ export default {
 
     const treeState = computed({
       get: () => tree.value,
-      set: (v) => setTree(v),
+      set: (v) => setTree(v)
     });
 
     const open = (target) => {
@@ -111,7 +111,7 @@ export default {
         if (lastFullReport)
           data = {
             ...readReport(lastFullReport),
-            ...data,
+            ...data
           };
       }
 
@@ -120,7 +120,7 @@ export default {
 
     const state = reactive({
       hList: 0,
-      hTree: 0,
+      hTree: 0
     });
     watch(
       () => props.height,
@@ -138,10 +138,10 @@ export default {
       treeState,
       theReport,
 
-      open,
+      open
     };
-  },
-};
+  }
+});
 </script>
 
 <style></style>

@@ -111,21 +111,28 @@ import { Report } from "src/js/report";
 import { Dark } from "quasar";
 import useChart from "src/composables/useChart";
 
-import { computed, reactive, watch, onMounted, toRefs } from "vue";
+import {
+  computed,
+  reactive,
+  watch,
+  onMounted,
+  toRefs,
+  defineComponent
+} from "vue";
 import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
-export default {
+export default defineComponent({
   // name: 'ComponentName',
   emits: ["close"],
   props: {
     field: {
-      required: true,
-    },
+      required: true
+    }
   },
   components: {
     LineChart,
-    EventGroupReader,
+    EventGroupReader
   },
   setup(props) {
     const {
@@ -135,7 +142,7 @@ export default {
       setLabel,
       setColor,
       scaleChart,
-      writeChart,
+      writeChart
     } = useChart();
 
     const state = reactive({
@@ -143,26 +150,26 @@ export default {
         max: null,
         min: null,
         follow: false,
-        lock: false,
+        lock: false
       },
       range: {
         disable: false,
         sample: 10,
         bar: {
           min: 0,
-          max: null,
+          max: null
         },
         val: {
           min: 0,
-          max: null,
-        },
+          max: null
+        }
       },
       control: {
         beginAtZero: false,
         maximize: true,
         follow: false,
-        lock: false,
-      },
+        lock: false
+      }
     });
 
     const { devReports, devEvents } = useGetters(["devReports", "devEvents"]);
@@ -204,7 +211,7 @@ export default {
 
       state.range.val = {
         min: min > 0 ? min : 0,
-        max: max,
+        max: max
       };
     };
     const writeChartRange = () => {
@@ -226,7 +233,7 @@ export default {
       },
       {
         // lazy: false, immediate: true,
-        deep: true,
+        deep: true
       }
     );
     watch(
@@ -274,10 +281,10 @@ export default {
 
       theField,
       latestValue,
-      eventGroup,
+      eventGroup
     };
-  },
-};
+  }
+});
 </script>
 
 <style></style>

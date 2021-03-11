@@ -63,11 +63,11 @@
 import { parseResCode, parseMessage } from "src/js/response";
 import dayjs from "src/js/dayjs";
 
-import { inject, computed } from "vue";
+import { inject, computed, defineComponent } from "vue";
 import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
-export default {
+export default defineComponent({
   // name: 'ComponentName',
   emits: ["select"],
   props: {
@@ -81,9 +81,10 @@ export default {
 
     const { devCommands } = useGetters(["devCommands"]);
 
-    const waitedCommand = index => index == 0 && awaitCommand.value;
-    const writeCommand = payload => emit("select", payload);
-    const parseDatetime = unix => dayjs.unix(unix).format("DD-MM-YY HH:mm:ss");
+    const waitedCommand = (index) => index == 0 && awaitCommand.value;
+    const writeCommand = (payload) => emit("select", payload);
+    const parseDatetime = (unix) =>
+      dayjs.unix(unix).format("DD-MM-YY HH:mm:ss");
 
     return {
       devCommands,
@@ -96,7 +97,7 @@ export default {
       parseMessage
     };
   }
-};
+});
 </script>
 
 <style>

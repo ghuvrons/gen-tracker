@@ -56,17 +56,17 @@ import MapManagement from "components/MapManagement";
 import DriverManagement from "components/DriverManagement";
 import GlobalConfiguration from "components/GlobalConfiguration";
 
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
-export default {
+export default defineComponent({
   // name: 'PageIndex',
   components: {
     MapManagement,
     ReportLog,
     DriverManagement,
-    GlobalConfiguration,
+    GlobalConfiguration
   },
   setup(props) {
     const { devReports, devFingers } = useGetters(["devReports", "devFingers"]);
@@ -84,8 +84,8 @@ export default {
 
       devReports,
       devFingers,
-      contentStyle,
+      contentStyle
     };
-  },
-};
+  }
+});
 </script>

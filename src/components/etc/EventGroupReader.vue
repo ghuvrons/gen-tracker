@@ -24,12 +24,13 @@
 <script>
 import { EVENT_LIST, parseEvent } from "src/js/event";
 
+import { defineComponent } from "vue";
 import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
-export default {
+export default defineComponent({
   props: {
-    value: Number,
+    value: Number
   },
   setup(props) {
     const { devEvents } = useGetters(["devEvents"]);
@@ -43,10 +44,10 @@ export default {
       EVENT_LIST,
       devEvents,
 
-      activeEvent,
+      activeEvent
     };
-  },
-};
+  }
+});
 </script>
 
 <style>

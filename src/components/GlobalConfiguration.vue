@@ -32,7 +32,7 @@
           <q-list>
             <q-item
               :clickable="reports.length > 0"
-              @click.native="exportCSV(reports)"
+              @click="exportCSV(reports)"
               v-close-popup
             >
               <q-item-section>
@@ -42,7 +42,7 @@
 
             <q-item
               :clickable="reports.length > 0"
-              @click.native="exportJSON(reports)"
+              @click="exportJSON(reports)"
               v-close-popup
             >
               <q-item-section>
@@ -82,22 +82,22 @@ import { SET_NOTIFICATION } from "src/store/common/mutation-types";
 import { CLEAR_DATABASE } from "src/store/db/mutation-types";
 import { INSERT_BUFFERS } from "src/store/db/action-types";
 
-import { ref, computed, watch, inject } from "vue";
+import { ref, computed, watch, inject, defineComponent } from "vue";
 import { createNamespacedHelpers } from "vuex";
 const {
   useState,
   useGetters,
   useMutations,
-  useActions,
+  useActions
 } = createNamespacedHelpers("db");
 
-export default {
+export default defineComponent({
   // name: 'ComponentName',
   props: {
     contentStyle: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   setup(props) {
     const sendCommand = inject("sendCommand");
@@ -107,7 +107,7 @@ export default {
       "buffers",
       "devices",
       "command",
-      "reports",
+      "reports"
     ]);
     const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
     const { [CLEAR_DATABASE]: clearDatabase } = useMutations([CLEAR_DATABASE]);
@@ -116,14 +116,14 @@ export default {
     const common = createNamespacedHelpers("common");
     const { notification } = common.useState(["notification"]);
     const { [SET_NOTIFICATION]: setNotification } = common.useMutations([
-      SET_NOTIFICATION,
+      SET_NOTIFICATION
     ]);
 
     const uploader = ref(null);
 
     const notificationState = computed({
       get: () => notification.value,
-      set: (v) => setNotification(v),
+      set: (v) => setNotification(v)
     });
 
     const clearStore = () =>
@@ -166,10 +166,10 @@ export default {
       ignoreResponse,
       importData,
       exportJSON,
-      exportCSV,
+      exportCSV
     };
-  },
-};
+  }
+});
 </script>
 
 <style></style>

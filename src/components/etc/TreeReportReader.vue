@@ -7,7 +7,7 @@
       filled
       dense
     ></q-input>
-    <div style="overflow-y:scroll" :style="height">
+    <div style="overflow-y: scroll" :style="height">
       <q-tree
         :selected="selected"
         @update:selected="$emit('update:selected', $event)"
@@ -32,20 +32,20 @@
 
 <script>
 import { get, set, omit } from "lodash";
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   emits: ["update:selected"],
   props: {
     report: {
-      required: true,
+      required: true
     },
     selected: {
-      required: true,
+      required: true
     },
     height: {
-      required: true,
-    },
+      required: true
+    }
   },
   setup(props) {
     const filter = ref("");
@@ -89,10 +89,10 @@ export default {
       filter,
       nodes,
 
-      getFieldNodeTitle,
+      getFieldNodeTitle
     };
-  },
-};
+  }
+});
 </script>
 
 <style>

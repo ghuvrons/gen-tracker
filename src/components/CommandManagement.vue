@@ -6,7 +6,7 @@
       </q-toolbar-title>
       <q-btn
         v-if="COMMAND_LIST.length > 0"
-        @click.native="modalOpen = true"
+        @click="modalOpen = true"
         color="primary"
         icon="info"
         dense
@@ -51,20 +51,20 @@ import CommandListModal from "components/etc/CommandListModal";
 
 import { COMMAND_LIST } from "src/js/command";
 
-import { ref, inject, computed } from "vue";
+import { ref, inject, computed, defineComponent } from "vue";
 import { createNamespacedHelpers } from "vuex";
 const { useGetters } = createNamespacedHelpers("db");
 
-export default  {
+export default defineComponent({
   // name: 'ComponentName',
   emits: ["update:modelValue"],
   props: {
     value: {
-      required: true,
-    },
+      required: true
+    }
   },
   components: {
-    CommandListModal,
+    CommandListModal
   },
   setup(props, { emit }) {
     const sendCommand = inject("sendCommand");
@@ -75,7 +75,7 @@ export default  {
 
     const payload = computed({
       get: () => props.value,
-      set: (v) => emit("input", v),
+      set: (v) => emit("input", v)
     });
 
     const writeCommand = (v) => {
@@ -91,10 +91,10 @@ export default  {
       devDevice,
 
       writeCommand,
-      sendCommand,
+      sendCommand
     };
-  },
-};
+  }
+});
 </script>
 
 <style></style>

@@ -80,9 +80,9 @@
 import { COMMAND_LIST } from "src/js/command";
 import { flowFilter } from "src/js/utils";
 
-import { ref, computed } from "vue";
+import { ref, computed, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   emits: ["close", "select"],
   setup(props, { emit }) {
     const keyword = ref("");
@@ -102,10 +102,10 @@ export default {
       searchResults,
 
       getRange,
-      selectCommand,
+      selectCommand
     };
-  },
-};
+  }
+});
 </script>
 
 <style>

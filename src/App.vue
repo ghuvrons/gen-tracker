@@ -15,11 +15,11 @@ import useReport from "src/composables/useReport";
 import useEvents from "src/composables/useEvents";
 import useDevice from "src/composables/useDevice";
 
-import { onMounted, provide, computed } from "vue";
+import { onMounted, provide, computed, defineComponent } from "vue";
 import { parseCommand } from "./js/command";
 import { getValue } from "./js/utils";
 
-export default {
+export default defineComponent({
   // name: "App",
   setup(props, { root }) {
     const publish = (unitID, data, subTopic, qos) => {
@@ -27,7 +27,7 @@ export default {
         `VCU/${unitID}/${subTopic}`,
         data,
         { qos, retain: true },
-        e => e && notify(e)
+        (e) => e && notify(e)
       );
     };
     const publisher = (unitID, data) => {
@@ -78,7 +78,7 @@ export default {
     };
   },
   mqtt: {
-    "VCU/+/CMD": function(data, topic) {
+    "VCU/+/CMD": function (data, topic) {
       const unitID = parseInt(topic.split("/")[1]);
       const hex = data.toString("hex").toUpperCase();
       const commandable = !hex;
@@ -95,21 +95,21 @@ export default {
 
       clearTimeout(lastCommand.timer);
     },
-    "VCU/+/RSP": function(data, topic) {
+    "VCU/+/RSP": function (data, topic) {
       const hex = data.toString("hex").toUpperCase();
       if (!hex) return;
       if (!validateFrame(hex, config.prefix.response))
         return console.error(`CORRUPT ${hex}`);
       this.handleResponse(hex);
     },
-    "VCU/+/RPT": function(data, topic) {
+    "VCU/+/RPT": function (data, topic) {
       const hex = data.toString("hex").toUpperCase();
       if (!hex) return;
       if (!validateFrame(hex, config.prefix.report))
         return console.error(`CORRUPT ${hex}`);
       this.insertBuffers([hex]);
     },
-    "VCU/+/STS": function(data, topic) {
+    "VCU/+/STS": function (data, topic) {
       const unitID = parseInt(topic.split("/")[1]);
       const status = parseInt(data);
 
@@ -117,7 +117,7 @@ export default {
       this.addDevices([{ unitID, status }]);
     }
   }
-};
+});
 </script>
 
 <style>
