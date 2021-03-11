@@ -1,6 +1,5 @@
 import { Platform } from "quasar";
-
-console.warn(Platform);
+import { get } from "lodash";
 
 export default {
   app: {
@@ -38,8 +37,8 @@ export default {
   },
   timezone: "Asia/Jakarta",
   maxStorage: {
-    reports: Platform.is.desktop ? 500 : 100,
-    responses: Platform.is.desktop ? 50 : 10,
-    commands: Platform.is.desktop ? 50 : 10,
+    reports: get("is.desktop", Platform) ? 500 : 100,
+    responses: get("is.desktop", Platform) ? 50 : 10,
+    commands: get("is.desktop", Platform) ? 50 : 10,
   },
 };

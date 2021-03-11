@@ -1,4 +1,4 @@
-import { store } from 'quasar/wrappers'
+import { store } from "quasar/wrappers";
 import { createStore } from "vuex";
 import VuexPersist from "vuex-persist";
 
@@ -29,9 +29,9 @@ export default store(function (/* { ssrContext } */) {
     plugins: [...vuexLocal],
 
     // enable strict mode (adds overhead!)
-    // for dev mode only
+    // for dev mode and --debug builds only
     strict: process.env.DEBUGGING,
   });
 
   return Store;
-})
+});

@@ -10,7 +10,7 @@
 const ESLintPlugin = require("eslint-webpack-plugin");
 const { configure } = require("quasar/wrappers");
 
-module.exports = function (/* ctx */) {
+module.exports = configure(function (/* ctx */) {
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
     supportTS: false,
@@ -85,12 +85,14 @@ module.exports = function (/* ctx */) {
       iconSet: "material-icons", // Quasar icon set
       lang: "en-US", // Quasar language pack
 
-      // For special cases outside of where "auto" importStrategy can have an impact
+      // For special cases outside of where the auto-import stategy can have an impact
       // (like functional components as one of the examples),
       // you can manually specify Quasar components/directives to be available everywhere:
       //
-      components: [],
-      directives: [],
+      // components: [],
+      // directives: [],
+
+      // Quasar plugins
       plugins: ["Dialog", "Notify", "AppFullscreen", "LocalStorage"],
     },
 
@@ -117,12 +119,12 @@ module.exports = function (/* ctx */) {
       },
 
       manifest: {
-        name: "eBike Tracker",
-        short_name: "GEN-Tracker",
-        description: "GEN motorcycle tracker",
+        name: `eBike Tracker`,
+        short_name: `eBike Tracker`,
+        description: `GEN Motorcycles Tracker`,
         display: "standalone",
-        orientation: "natural",
-        background_color: "#000",
+        orientation: "portrait",
+        background_color: "#000000",
         theme_color: "#027be3",
         icons: [
           {
@@ -200,4 +202,4 @@ module.exports = function (/* ctx */) {
       },
     },
   };
-};
+});
