@@ -2,42 +2,42 @@ import { Platform } from "quasar";
 
 export default {
   app: {
-    version: "1.1.0",
+    version: "1.1.1",
     title: "eBike Tracker",
-    subTitle: "GEN Indonesia"
+    subTitle: "GEN Indonesia",
   },
   mqtt: {
     // host: `wss://mqtt.eclipseprojects.io:443/mqtt`,
     host: `wss://test.mosquitto.org:8081/mqtt`,
     username: "",
-    password: ""
+    password: "",
   },
   command: {
-    timeout: 10
+    timeout: 10,
   },
   prefix: {
     report: "@R",
     command: "@C",
-    response: "@S"
+    response: "@S",
   },
   frames: ["SIMPLE", "FULL"],
   map: {
     zoom: 3,
     centerIndonesia: {
       lat: -2.6000285,
-      lng: 118.015776
+      lng: 118.015776,
     },
     borderIndonesia: {
       lngMin: 95.011198,
       lngMax: 141.020354,
       latMin: -11.107187,
-      latMax: 5.90713
-    }
+      latMax: 5.90713,
+    },
   },
   timezone: "Asia/Jakarta",
   maxStorage: {
     reports: Platform.is.desktop ? 500 : 100,
     responses: Platform.is.desktop ? 50 : 10,
-    commands: Platform.is.desktop ? 50 : 10
-  }
+    commands: Platform.is.desktop ? 50 : 10,
+  },
 };
