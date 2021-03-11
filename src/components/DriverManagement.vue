@@ -8,8 +8,8 @@
       No finger driver yet
     </q-banner>
     <q-virtual-scroll v-else :items="devFingers" separator>
-      <template v-slot="{ item: driver }">
-        <q-item :key="driver.fingerID" dense>
+      <template v-slot="{ item: driver, index }">
+        <q-item :key="index" dense>
           <q-item-section avatar>
             <q-chip color="primary" dark square>{{ driver.fingerID }}</q-chip>
           </q-item-section>
@@ -78,9 +78,8 @@ import dayjs from "src/js/dayjs";
 import { confirm } from "src/js/framework";
 
 import { get } from "lodash";
-import { ref, inject, defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useGetters } = createNamespacedHelpers("db");
+import { ref, inject, defineComponent, computed } from "vue";
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'ComponentName',
@@ -93,7 +92,9 @@ export default defineComponent({
   setup(props) {
     const sendCommand = inject("sendCommand");
 
-    const { devFingers, devDevice } = useGetters(["devFingers", "devDevice"]);
+    const store = useStore();
+    const devDevice = computed(() => store.getters[`db/devDevice`]);
+    const devFingers = computed(() => store.getters[`db/devFingers`]);
 
     const name = ref(["One", "Two", "Three", "Four", "Five"]);
     const fab = ref(false);

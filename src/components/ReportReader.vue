@@ -58,8 +58,7 @@ import { getField, frameId } from "src/js/utils";
 import { SET_TREE } from "src/store/common/mutation-types";
 
 import { ref, computed, watch, reactive, toRefs, defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useState, useGetters } = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'ComponentName',
@@ -74,12 +73,12 @@ export default defineComponent({
     ListReportReader
   },
   setup(props) {
-    const { report } = useState(["report"]);
-    const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
-
-    const common = createNamespacedHelpers("common");
-    const { tree } = common.useState(["tree"]);
-    const { [SET_TREE]: setTree } = common.useMutations([SET_TREE]);
+    const store = useStore();
+    const report = computed(() => store.state.db.report);
+    const devDevice = computed(() => store.getters[`db/devDevice`]);
+    const devReports = computed(() => store.getters[`db/devReports`]);
+    const tree = computed(() => store.state.common.tree);
+    const setTree = (v) => store.commit(`common/${SET_TREE}`, v);
 
     const field = ref(null);
 

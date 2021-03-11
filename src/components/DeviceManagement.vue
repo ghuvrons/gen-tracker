@@ -52,8 +52,7 @@ import { SET_UNITID } from "src/store/db/mutation-types";
 
 import { get, orderBy } from "lodash";
 import { computed, defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useState, useMutations, useGetters } = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'ComponentName',
@@ -63,9 +62,10 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { devices } = useState(["devices"]);
-    const { [SET_UNITID]: setUnitID } = useMutations([SET_UNITID]);
-    const { devDevice } = useGetters(["devDevice"]);
+    const store = useStore();
+    const devices = computed(() => store.state.db.devices);
+    const devDevice = computed(() => store.getters[`db/devDevice`]);
+    const setUnitID = (v) => store.commit(`db/${SET_UNITID}`, v);
 
     const sortedDevices = computed(() =>
       orderBy(devices.value, "sendDatetime", "desc")

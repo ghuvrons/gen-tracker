@@ -83,13 +83,7 @@ import { CLEAR_DATABASE } from "src/store/db/mutation-types";
 import { INSERT_BUFFERS } from "src/store/db/action-types";
 
 import { ref, computed, watch, inject, defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const {
-  useState,
-  useGetters,
-  useMutations,
-  useActions
-} = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'ComponentName',
@@ -103,21 +97,18 @@ export default defineComponent({
     const sendCommand = inject("sendCommand");
     const ignoreResponse = inject("ignoreResponse");
 
-    const { buffers, devices, command, reports } = useState([
-      "buffers",
-      "devices",
-      "command",
-      "reports"
-    ]);
-    const { devDevice, devReports } = useGetters(["devDevice", "devReports"]);
-    const { [CLEAR_DATABASE]: clearDatabase } = useMutations([CLEAR_DATABASE]);
-    const { [INSERT_BUFFERS]: insertBuffers } = useActions([INSERT_BUFFERS]);
-
-    const common = createNamespacedHelpers("common");
-    const { notification } = common.useState(["notification"]);
-    const { [SET_NOTIFICATION]: setNotification } = common.useMutations([
-      SET_NOTIFICATION
-    ]);
+    const store = useStore();
+    const reports = computed(() => store.state.db.reports);
+    const buffers = computed(() => store.state.db.buffers);
+    const devices = computed(() => store.state.db.devices);
+    const command = computed(() => store.state.db.command);
+    const devDevice = computed(() => store.getters[`db/devDevice`]);
+    const devReports = computed(() => store.getters[`db/devReports`]);
+    const clearDatabase = (v) => store.commit(`db/${CLEAR_DATABASE}`, v);
+    const insertBuffers = (v) => store.dispatch(`db/${INSERT_BUFFERS}`, v);
+    const notification = computed(() => store.state.common.notification);
+    const setNotification = (v) =>
+      store.commit(`common/${SET_NOTIFICATION}`, v);
 
     const uploader = ref(null);
 
@@ -129,7 +120,7 @@ export default defineComponent({
     const clearStore = () =>
       confirm(`Are you sure to remove all data?`).onOk(() => clearDatabase());
     const calibrate = () => {
-      if (!devDevice) return;
+      if (!devDevice.value) return;
 
       let report = devReports.value.find(
         ({ frameID }) => frameId(frameID.val) == "FULL"

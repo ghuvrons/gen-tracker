@@ -6,15 +6,13 @@ import {
 import { extractCommand } from "src/js/command";
 import dayjs from "src/js/dayjs";
 
-import { createNamespacedHelpers } from "vuex";
-const { useMutations } = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default function ({ addDevices }) {
-  const {
-    [ADD_FINGERS]: addFingers,
-    [REMOVE_FINGERS]: removeFingers,
-    [CLEAR_FINGERS]: clearFingers,
-  } = useMutations([ADD_FINGERS, REMOVE_FINGERS, CLEAR_FINGERS]);
+  const store = useStore();
+  const addFingers = (v) => store.commit(`db/${ADD_FINGERS}`, v);
+  const removeFingers = (v) => store.commit(`db/${REMOVE_FINGERS}`, v);
+  const clearFingers = (v) => store.commit(`db/${CLEAR_FINGERS}`, v);
 
   const handleFinger = ({ payload, unitID, message }) => {
     let { prop, value } = extractCommand(payload);

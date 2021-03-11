@@ -1,10 +1,11 @@
 import { readEvent } from "src/js/event";
 import { pushNotification } from "src/js/framework";
-import { createNamespacedHelpers } from "vuex";
-const { useState } = createNamespacedHelpers("common");
+import { useStore } from "vuex";
+import { computed } from "vue";
 
 export default function () {
-  const { notification } = useState(["notification"]);
+  const store = useStore();
+  const notification = computed(() => store.state.common.notification);
 
   const handleEvents = (curReport, oldReport) => {
     if (!notification.value) return;

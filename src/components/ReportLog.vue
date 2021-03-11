@@ -7,9 +7,9 @@
       No report yet
     </q-banner>
     <q-virtual-scroll v-else :items="devReports" separator>
-      <template v-slot="{ item: devReport }">
+      <template v-slot="{ item: devReport, index }">
         <q-item
-          :key="devReport.sendDatetime.val"
+          :key="index"
           :active="devReport.hex === report.hex"
           active-class="bg-primary text-white"
           @click="setReport(devReport)"
@@ -66,8 +66,7 @@ import { SET_REPORT } from "src/store/db/mutation-types";
 import { SET_FOLLOW } from "src/store/common/mutation-types";
 
 import { computed, defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useState, useGetters, useMutations } = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'ComponentName',
@@ -78,13 +77,12 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { report } = useState(["report"]);
-    const { devReports } = useGetters(["devReports"]);
-    const { [SET_REPORT]: setReport } = useMutations([SET_REPORT]);
-
-    const common = createNamespacedHelpers("common");
-    const { follow } = common.useState(["follow"]);
-    const { [SET_FOLLOW]: setFollow } = common.useMutations([SET_FOLLOW]);
+    const store = useStore();
+    const report = computed(() => store.state.db.report);
+    const devReports = computed(() => store.getters[`db/devReports`]);
+    const setReport = (v) => store.commit(`db/${SET_REPORT}`, v);
+    const follow = computed(() => store.state.common.follow);
+    const setFollow = (v) => store.commit(`common/${SET_FOLLOW}`, v);
 
     const followState = computed({
       get: () => follow.value,

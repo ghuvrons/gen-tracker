@@ -90,8 +90,7 @@ import { SET_DARKER } from "src/store/common/mutation-types";
 
 import { Platform, Dark } from "quasar";
 import { computed, reactive, toRefs, watch, onMounted } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useState, useMutations } = createNamespacedHelpers("common");
+import { useStore } from "vuex";
 
 export default {
   // name: "MyLayout",
@@ -99,20 +98,21 @@ export default {
     ReportReader,
     DeviceManagement,
     ResponseLog,
-    CommandManagement,
+    CommandManagement
   },
   setup() {
-    const { darker } = useState(["darker"]);
-    const { [SET_DARKER]: setDarker } = useMutations([SET_DARKER]);
+    const store = useStore();
+    const darker = computed(() => store.state.common.darker);
+    const setDarker = (v) => store.commit(`common/${SET_DARKER}`, v);
 
     const state = reactive({
       drawer: {
         left: Platform.is.desktop,
-        right: false,
+        right: false
       },
       app: config.app,
       splitter: 150,
-      payload: null,
+      payload: null
     });
 
     const { offline } = useOfflineDetector();
@@ -142,9 +142,9 @@ export default {
       hResponseLog,
       hDeviceManagement,
 
-      reload,
+      reload
     };
-  },
+  }
 };
 </script>
 

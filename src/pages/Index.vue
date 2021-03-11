@@ -57,8 +57,7 @@ import DriverManagement from "components/DriverManagement";
 import GlobalConfiguration from "components/GlobalConfiguration";
 
 import { ref, computed, defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useGetters } = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'PageIndex',
@@ -69,7 +68,9 @@ export default defineComponent({
     GlobalConfiguration
   },
   setup(props) {
-    const { devReports, devFingers } = useGetters(["devReports", "devFingers"]);
+    const store = useStore();
+    const devReports = computed(() => store.getters[`db/devReports`]);
+    const devFingers = computed(() => store.getters[`db/devFingers`]);
 
     const selectedTab = ref("tab-1");
     const splitter = ref(50);

@@ -1,6 +1,5 @@
 import { INSERT_RESPONSE } from "src/store/db/action-types";
 import { getValue } from "src/js/utils";
-import { notify } from "src/js/framework";
 import {
   notifyResponse,
   makeResponse,
@@ -10,16 +9,14 @@ import {
 } from "src/js/response";
 
 import { get } from "lodash";
-import { watch } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useGetters, useActions } = createNamespacedHelpers("db");
+import { watch, computed } from "vue";
+import { useStore } from "vuex";
 
 export default function ({ publisher, awaitCommand, handleFinger }) {
-  const { devDevice, getDeviceByUnitID } = useGetters([
-    "devDevice",
-    "getDeviceByUnitID",
-  ]);
-  const { [INSERT_RESPONSE]: insertResponse } = useActions([INSERT_RESPONSE]);
+  const store = useStore();
+  const devices = computed(() => store.state.db.devices);
+  const devDevice = computed(() => store.getters[`db/devDevice`]);
+  const insertResponse = (v) => store.dispatch(`db/${INSERT_RESPONSE}`, v);
 
   const processResponse = (command, response) => {
     if (!awaitCommand.value) return;
@@ -42,7 +39,7 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     const response = parseResponse(hex);
     const unitID = getValue(response, "unitID");
 
-    const device = getDeviceByUnitID.value(unitID);
+    const device = devices.value.find((dev) => dev.unitID === unitID);
     if (!device) return;
 
     if (!awaitCommand.value) return console.error(`RESPONSE ${hex}`);

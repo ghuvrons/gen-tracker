@@ -2,13 +2,13 @@ import { pushNotification } from "src/js/framework";
 import { ADD_DEVICES } from "src/store/db/mutation-types";
 
 import dayjs from "src/js/dayjs";
-import { watch } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useGetters, useMutations } = createNamespacedHelpers("db");
+import { watch, computed } from "vue";
+import { useStore } from "vuex";
 
 export default function () {
-  const { devDevice } = useGetters(["devDevice"]);
-  const { [ADD_DEVICES]: addDevices } = useMutations([ADD_DEVICES]);
+  const store = useStore();
+  const devDevice = computed(() => store.getters[`db/devDevice`]);
+  const addDevices = (v) => store.commit(`db/${ADD_DEVICES}`, v);
 
   watch(
     () => devDevice.value,

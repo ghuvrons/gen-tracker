@@ -25,19 +25,19 @@
 import { EVENT_LIST, parseEvent } from "src/js/event";
 
 import { defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useGetters } = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default defineComponent({
   props: {
-    value: Number
+    modelValue: Number
   },
   setup(props) {
-    const { devEvents } = useGetters(["devEvents"]);
+    const store = useStore();
+    const devEvents = computed(() => store.getters[`db/devEvents`]);
 
     const activeEvent = (theName) => {
       let event = EVENT_LIST.find(({ name }) => name === theName);
-      return parseEvent(props.value, event.bit);
+      return parseEvent(props.modelValue, event.bit);
     };
 
     return {

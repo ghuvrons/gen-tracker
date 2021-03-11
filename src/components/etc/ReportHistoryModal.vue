@@ -119,8 +119,7 @@ import {
   toRefs,
   defineComponent
 } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useGetters } = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'ComponentName',
@@ -135,6 +134,10 @@ export default defineComponent({
     EventGroupReader
   },
   setup(props) {
+    const store = useStore();
+    const devReports = computed(() => store.getters[`db/devReports`]);
+    const devEvents = computed(() => store.getters[`db/devEvents`]);
+
     const {
       chart,
       history,
@@ -171,8 +174,6 @@ export default defineComponent({
         lock: false
       }
     });
-
-    const { devReports, devEvents } = useGetters(["devReports", "devEvents"]);
 
     const theField = computed(() => getField(Report, props.field));
     const eventGroup = computed(

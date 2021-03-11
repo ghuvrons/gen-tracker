@@ -3,7 +3,7 @@ import { get } from "lodash";
 
 export default {
   app: {
-    version: "1.1.0",
+    version: "1.1.2",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },

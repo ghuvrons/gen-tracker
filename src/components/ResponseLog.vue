@@ -64,8 +64,7 @@ import { parseResCode, parseMessage } from "src/js/response";
 import dayjs from "src/js/dayjs";
 
 import { inject, computed, defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useGetters } = createNamespacedHelpers("db");
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'ComponentName',
@@ -79,7 +78,8 @@ export default defineComponent({
     const awaitCommand = inject("awaitCommand");
     const ignoreResponse = inject("ignoreResponse");
 
-    const { devCommands } = useGetters(["devCommands"]);
+    const store = useStore();
+    const devCommands = computed(() => store.getters[`db/devCommands`]);
 
     const waitedCommand = (index) => index == 0 && awaitCommand.value;
     const writeCommand = (payload) => emit("select", payload);

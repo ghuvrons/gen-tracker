@@ -19,14 +19,14 @@
 
     <div class="q-pa-sm">
       <q-input
-        v-model.lazy="payload"
+        v-model="payload"
         @keyup.enter="sendCommand(payload)"
+        :disable="!devDevice"
         class="text-uppercase"
         label="Input Command:"
         hint="Press ENTER to send."
         type="text"
         stack-label
-        :disable="!devDevice"
       >
         <template v-slot:append>
           <q-icon
@@ -51,15 +51,14 @@ import CommandListModal from "components/etc/CommandListModal";
 
 import { COMMAND_LIST } from "src/js/command";
 
-import { ref, inject, computed, defineComponent } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const { useGetters } = createNamespacedHelpers("db");
+import { ref, inject, computed, defineComponent, watch } from "vue";
+import { useStore } from "vuex";
 
 export default defineComponent({
   // name: 'ComponentName',
   emits: ["update:modelValue"],
   props: {
-    value: {
+    modelValue: {
       required: true
     }
   },
@@ -69,13 +68,14 @@ export default defineComponent({
   setup(props, { emit }) {
     const sendCommand = inject("sendCommand");
 
-    const { devDevice } = useGetters(["devDevice"]);
+    const store = useStore();
+    const devDevice = computed(() => store.getters[`db/devDevice`]);
 
     const modalOpen = ref(false);
 
     const payload = computed({
-      get: () => props.value,
-      set: (v) => emit("input", v)
+      get: () => props.modelValue,
+      set: (v) => emit("update:modelValue", v)
     });
 
     const writeCommand = (v) => {

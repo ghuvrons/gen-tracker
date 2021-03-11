@@ -5,23 +5,16 @@ import { INSERT_REPORTS } from "src/store/db/action-types";
 import { SET_REPORT } from "src/store/db/mutation-types";
 
 import { get } from "lodash";
-import { watch } from "vue";
-import { createNamespacedHelpers } from "vuex";
-const {
-  useState,
-  useGetters,
-  useMutations,
-  useActions,
-} = createNamespacedHelpers("db");
+import { watch, computed } from "vue";
+import { useStore } from "vuex";
 
 export default function ({ handleEvents, handleLostCommand }) {
-  const { reports } = useState(["reports"]);
-  const { devDevice } = useGetters(["devDevice"]);
-  const { [SET_REPORT]: setReport } = useMutations([SET_REPORT]);
-  const { [INSERT_REPORTS]: insertReports } = useActions([INSERT_REPORTS]);
-
-  const common = createNamespacedHelpers("common");
-  const { follow } = common.useState(["follow"]);
+  const store = useStore();
+  const reports = computed(() => store.state.db.reports);
+  const devDevice = computed(() => store.getters[`db/devDevice`]);
+  const setReport = (v) => store.commit(`db/${SET_REPORT}`, v);
+  const insertReports = (v) => store.dispatch(`db/${INSERT_REPORTS}`, v);
+  const follow = computed(() => store.state.common.follow);
 
   const validate = (report) => {
     const { val: sdt } = report.sendDatetime;
