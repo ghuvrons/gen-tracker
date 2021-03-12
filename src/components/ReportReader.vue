@@ -10,9 +10,9 @@
         push
         dense
       >
-        <q-tooltip anchor="center left" self="center right">{{
-          treeState ? "List" : "Tree"
-        }}</q-tooltip>
+        <q-tooltip>
+          {{ treeState ? "List" : "Tree" }}
+        </q-tooltip>
       </q-btn>
     </q-bar>
 

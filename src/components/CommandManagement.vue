@@ -13,7 +13,7 @@
         push
         unelevated
       >
-        <q-tooltip anchor="center left" self="center right">List</q-tooltip>
+        <q-tooltip>List</q-tooltip>
       </q-btn>
     </q-bar>
 
