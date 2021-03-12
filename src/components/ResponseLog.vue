@@ -38,7 +38,7 @@
               color="yellow"
               name="cached"
             >
-              <q-tooltip anchor="center left" self="center right">
+              <q-tooltip v-if="$q.platform.is.desktop" anchor="center left" self="center right">
                 Cancel
               </q-tooltip>
             </q-icon>
@@ -47,7 +47,7 @@
               :color="parseResCode(cmd.resCode).color"
               :name="parseResCode(cmd.resCode).icon"
             >
-              <q-tooltip anchor="center left" self="center right">
+              <q-tooltip v-if="$q.platform.is.desktop" anchor="center left" self="center right">
                 {{ parseResCode(cmd.resCode).name }}
               </q-tooltip>
             </q-icon>

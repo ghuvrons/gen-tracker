@@ -13,7 +13,7 @@
         push
         unelevated
       >
-        <q-tooltip>List</q-tooltip>
+        <q-tooltip v-if="$q.platform.is.desktop" anchor="center left" self="center right">List</q-tooltip>
       </q-btn>
     </q-bar>
 

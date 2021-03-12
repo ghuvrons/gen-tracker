@@ -51,9 +51,9 @@
         :disable="devReports.length == 0"
         fab-mini
       >
-        <q-tooltip anchor="top middle" self="bottom middle">{{
-          followState ? "Unfollow" : "Follow"
-        }}</q-tooltip>
+        <q-tooltip v-if="$q.platform.is.desktop" anchor="top middle" self="bottom middle">
+          {{ followState ? "Unfollow" : "Follow" }}
+        </q-tooltip>
       </q-btn>
     </q-page-sticky>
   </div>

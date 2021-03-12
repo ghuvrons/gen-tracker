@@ -10,7 +10,7 @@
         push
         dense
       >
-        <q-tooltip>
+        <q-tooltip v-if="$q.platform.is.desktop" anchor="center left" self="center right">
           {{ treeState ? "List" : "Tree" }}
         </q-tooltip>
       </q-btn>
