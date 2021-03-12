@@ -4,7 +4,7 @@ import { COMMAND_LIST, Command } from "src/js/opt/command";
 import { parseFrame } from "./frame";
 import config from "./opt/config";
 
-const parseCommand = hex => {
+const parseCommand = (hex) => {
   return parseFrame(hex, Command);
 };
 
@@ -44,11 +44,11 @@ const buildCommand = (cmd, unitID) => {
     ...cmd,
     unitID,
     sendDatetime,
-    hexCmd
+    hexCmd,
   };
 };
 
-const extractCommand = payload => {
+const extractCommand = (payload) => {
   let prop = payload;
   let value = null;
 
@@ -61,20 +61,20 @@ const extractCommand = payload => {
   return { prop, value };
 };
 
-const makeCommand = payload => {
+const makeCommand = (payload) => {
   const { prop, value } = extractCommand(payload);
   const cmd = COMMAND_LIST.find(({ command }) => command === prop);
-  const timeout = get("timeout", cmd) || config.command.timeout;
+  const timeout = get("timeout", cmd) || 10;
 
   return {
     ...cmd,
     timeout,
     payload,
-    value
+    value,
   };
 };
 
-const validateCommand = payload => {
+const validateCommand = (payload) => {
   const cmd = makeCommand(payload);
 
   if (!cmd) return "Unknown command.";
@@ -102,5 +102,5 @@ export {
   parseCommand,
   validateCommand,
   buildCommand,
-  extractCommand
+  extractCommand,
 };

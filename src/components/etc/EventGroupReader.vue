@@ -24,7 +24,7 @@
 <script>
 import { EVENT_LIST, parseEvent } from "src/js/event";
 
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 
 export default defineComponent({

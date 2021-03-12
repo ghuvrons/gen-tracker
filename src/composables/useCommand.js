@@ -53,7 +53,6 @@ export default function ({
     const command = parseCommand(hex);
 
     if (getValue(command, "sendDatetime") != lastCommand.sendDatetime) return;
-    console.warn(timer.value);
     clearTimeout(timer.value);
   };
   const handleLostCommand = (report) => {

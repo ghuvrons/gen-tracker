@@ -16,7 +16,7 @@
           v-if="position.valid"
           :options="{ position: center, icon: icon }"
         />
-        <Polyline :options="polyOptions" />
+        <Polyline :options="{ path, ...polyOptions }" />
       </GoogleMap>
     </template>
     <template v-if="streetView" v-slot:separator>
@@ -70,10 +70,10 @@ export default defineComponent({
     const { centerIndonesia, zoom } = config.map;
     const state = reactive({
       zoom,
-      icon: null,
       width: 0,
-      pov: null,
-      pano: null,
+      icon: null,
+      // pov: null,
+      // pano: null,
       path: [],
       center: {
         ...centerIndonesia
@@ -82,19 +82,25 @@ export default defineComponent({
         ...centerIndonesia,
         valid: false
       },
-      options: {
-        zoomControl: true,
-        mapTypeControl: false,
-        scaleControl: true,
-        streetViewControl: false,
-        rotateControl: false,
-        fullscreenControl: true,
-        disableDefaultUi: true
-      }
+      polyOptions: {
+        geodesic: true,
+        strokeColor: '#000',
+        strokeOpacity: 0.75,
+        strokeWeight: 5
+      },
+      // options: {
+      //   zoomControl: true,
+      //   mapTypeControl: false,
+      //   scaleControl: true,
+      //   streetViewControl: false,
+      //   rotateControl: false,
+      //   fullscreenControl: true,
+      //   disableDefaultUi: true
+      // }
     });
 
-    const updatePov = (pov) => (state.pov = { ...pov, zoom: 0 });
-    const updatePano = (pano) => (state.pano = pano);
+    // const updatePov = (pov) => (state.pov = { ...pov, zoom: 0 });
+    // const updatePano = (pano) => (state.pano = pano);
     const setPosition = ({ valid, ...location }) => {
       state.zoom = valid ? 17 : zoom;
       state.center = { ...(valid ? location : centerIndonesia) };
@@ -108,15 +114,6 @@ export default defineComponent({
     const streetView = computed(
       () => false // state.position.valid && state.width > 500
     );
-    const polyOptions = computed(() => {
-      return {
-        path: state.path,
-        geodesic: false,
-        strokeColor: "#000",
-        strokeOpacity: 0.75,
-        strokeWeight: 5
-      };
-    });
 
     onMounted(() => {
       const { protocol, host } = window.location;
@@ -154,11 +151,11 @@ export default defineComponent({
           setPosition(pos);
         else if (pos.valid) setPosition(pos);
 
-        if (state.pov)
-          updatePov({
-            ...state.pov,
-            heading: getHeading(curReport)
-          });
+        // if (state.pov)
+        //   updatePov({
+        //     ...state.pov,
+        //     heading: getHeading(curReport)
+        //   });
       },
       { lazy: false, immediate: true }
     );
@@ -166,10 +163,9 @@ export default defineComponent({
     return {
       ...toRefs(state),
       streetView,
-      polyOptions,
 
-      updatePov,
-      updatePano
+      // updatePov,
+      // updatePano
     };
   }
 });
