@@ -139,7 +139,8 @@ export default defineComponent({
 
     watch(
       () => buffers.value.length,
-      (len) => len == 0 && uploader.value.reset()
+      (len) => len == 0 && uploader.value.reset(),
+      { deep : true }
     );
 
     return {

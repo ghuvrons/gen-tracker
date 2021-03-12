@@ -240,12 +240,12 @@ export default defineComponent({
     );
     watch(
       () => state.range.val,
-      (_) => scaleChartOpen(),
+      () => scaleChartOpen(),
       { deep: true }
     );
     watch(
       () => state.control.beginAtZero,
-      (_) => scaleChartOpen()
+      () => scaleChartOpen()
     );
     watch(
       () => state.control.maximize,

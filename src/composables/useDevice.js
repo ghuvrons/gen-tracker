@@ -36,9 +36,7 @@ export default function () {
         dayjs().format("ddd, DD-MM-YY HH:mm:ss")
       );
     },
-    {
-      deep: true,
-    }
+    { deep: true }
   );
 
   return {

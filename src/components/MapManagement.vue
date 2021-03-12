@@ -86,7 +86,7 @@ export default defineComponent({
         geodesic: true,
         strokeColor: '#000',
         strokeOpacity: 0.75,
-        strokeWeight: 5
+        strokeWeight: 2
       },
       // options: {
       //   zoomControl: true,
@@ -147,9 +147,9 @@ export default defineComponent({
         const pos = getPosition(fullReport);
         setPosition(pos);
 
-        if (get(curReport, "unitID.val") != get(oldReport, "unitID.val"))
-          setPosition(pos);
-        else if (pos.valid) setPosition(pos);
+        // if (get(curReport, "unitID.val") != get(oldReport, "unitID.val"))
+        //   setPosition(pos);
+        // else if (pos.valid) setPosition(pos);
 
         // if (state.pov)
         //   updatePov({

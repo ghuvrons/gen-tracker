@@ -121,6 +121,7 @@ export default defineComponent({
       hList: 0,
       hTree: 0
     });
+
     watch(
       () => props.height,
       (h) => {

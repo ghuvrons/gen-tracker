@@ -48,9 +48,7 @@ register(process.env.SERVICE_WORKER_FILE, {
         {
           label: "Dismiss",
           color: "white",
-          handler: () => {
-            window.localStorage.removeItem("db_key");
-          },
+          handler: () => window.localStorage.removeItem("db_key"),
         },
       ],
     });
@@ -63,6 +61,6 @@ register(process.env.SERVICE_WORKER_FILE, {
   },
 
   error(/* err */) {
-    console.error("Error during service worker registration:", err);
+    console.error("Error during service worker registration:");
   },
 });

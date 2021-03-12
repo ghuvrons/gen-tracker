@@ -67,8 +67,8 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
 
   watch(
     () => devDevice.value,
-    (device) => {
-      const lastCommand = get(device, "lastCommand");
+    (dev) => {
+      const lastCommand = get(dev, "lastCommand");
       if (!lastCommand) return;
 
       if (awaitCommand.value) return;
