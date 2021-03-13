@@ -3,6 +3,7 @@ import { findRangeX, findRangeY, grabDatasets } from "src/js/chart";
 
 import { cloneDeep } from "lodash";
 import { toRefs, reactive, computed } from "vue";
+import { Report } from "src/js/report";
 
 export default function () {
   const state = reactive({
@@ -32,7 +33,8 @@ export default function () {
 
     state.update.data = !state.update.data;
   };
-  const setLabel = ({ title, unit }) => {
+  const setLabel = (field) => {
+    const { title, unit } = Report.find((el) => el.field == field);
     state.chart.data.datasets[0].label = title;
     state.chart.options.scales.yAxes[0].scaleLabel.labelString =
       unit ?? "Value";

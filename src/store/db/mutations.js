@@ -20,7 +20,7 @@ export default {
 
   [mod(mutations.ADD_DEVICES)](state, payloads) {
     payloads.forEach((payload) => {
-      let idx = state.devices.findIndex(
+      const idx = state.devices.findIndex(
         ({ unitID }) => unitID === payload.unitID
       );
 
@@ -74,26 +74,30 @@ export default {
     if (state.commands.length > max) state.commands.pop();
   },
   [mod(mutations.ADD_RESPONSE)](state, payload) {
-    let idx = state.commands.findIndex(
+    const idx = state.commands.findIndex(
       ({ unitID }) => unitID === payload.unitID
     );
 
-    if (idx >= 0) state.commands.splice(idx, 1, payload);
+    if (idx >= 0) {
+      const freezed = { ...payload };
+      Object.freeze(freezed);
+      state.commands.splice(idx, 1, freezed);
+    }
   },
 
   [mod(mutations.ADD_FINGERS)](state, payload) {
-    let exist = state.fingers.find(
+    const exist = state.fingers.find(
       ({ unitID, fingerID }) =>
         unitID === payload.unitID && fingerID === payload.fingerID
     );
     if (!exist) state.fingers.unshift(payload);
   },
   [mod(mutations.REMOVE_FINGERS)](state, payload) {
-    let index = state.fingers.findIndex(
+    const idx = state.fingers.findIndex(
       ({ unitID, fingerID }) =>
         unitID === payload.unitID && fingerID === payload.fingerID
     );
-    state.fingers.splice(index, 1);
+    state.fingers.splice(idx, 1);
   },
   [mod(mutations.CLEAR_FINGERS)](state, payload) {
     state.fingers = state.fingers.filter(
