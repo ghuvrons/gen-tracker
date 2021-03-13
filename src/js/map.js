@@ -1,4 +1,3 @@
-import { get } from "lodash";
 import config from "src/js/opt/config";
 import { frameId } from "src/js/utils";
 

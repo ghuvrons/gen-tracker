@@ -1,6 +1,5 @@
 import { pushNotification } from "src/js/framework";
 import { ADD_DEVICES } from "src/store/db/mutation-types";
-import { get } from "lodash";
 
 import dayjs from "src/js/dayjs";
 import { watch, computed } from "vue";

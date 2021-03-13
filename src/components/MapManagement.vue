@@ -47,7 +47,6 @@ import { getPosition, getHeading } from "src/js/map";
 import { frameId } from "src/js/utils";
 
 import { GoogleMap, Marker, Polyline } from "vue3-google-map";
-import { get } from "lodash";
 import {
   reactive,
   toRefs,

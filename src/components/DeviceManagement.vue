@@ -50,7 +50,7 @@ import { fromNow } from "src/js/report";
 
 import { SET_UNITID } from "src/store/db/mutation-types";
 
-import { get, orderBy } from "lodash";
+import { orderBy } from "lodash";
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 

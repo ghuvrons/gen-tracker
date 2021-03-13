@@ -14,11 +14,8 @@ export default function ({
   addDevices,
 }) {
   const store = useStore();
-  const commands = computed(() => store.state.db.commands);
   const devDevice = computed(() => store.getters[`db/devDevice`]);
   const insertCommand = (v) => store.dispatch(INSERT_COMMAND, v);
-
-  const timer = ref(null);
 
   const sendCommand = (payload) => {
     if (!payload) return notify("No payload");
@@ -35,56 +32,51 @@ export default function ({
 
     if (typeof cmd === "string") return notify(cmd);
 
-    const command = buildCommand(cmd, unitID);
-    insertCommand(command);
-    timer.value = setTimeout(ignoreResponse, 3000, RESCODES.TIMEOUT);
+    const { hexCmd, ...command } = buildCommand(cmd, unitID);
+    addDevices([{ unitID, cmdStatus: "Sending..." }]);
+
+    const binCmd = Buffer.from(hexCmd, "hex");
+    console.log(`COMMAND ${hexCmd}`);
+    publisher(unitID, binCmd);
+
+    insertCommand({
+      ...command,
+      timer: setInterval(() => {
+        console.warn(`Republish command to ${unitID}`);
+        addDevices([{ unitID, cmdStatus: "Retrying..." }]);
+        publisher(unitID, binCmd);
+      }, 10000),
+    });
   };
   const handleCommand = (data, topic) => {
     const unitID = parseInt(topic.split("/")[1]);
     const hex = data.toString("hex").toUpperCase();
+
     const commandable = !hex;
+    if (commandable) notify(`Device commandbale`, "info");
 
     console.warn(`COMMANDABLE ${unitID}, ${commandable}`);
     addDevices([{ unitID, commandable }]);
-    if (commandable) return notify("Device commandable", "info");
     if (!awaitCommand.value) return;
 
     const { lastCommand } = devDevice.value;
     const command = parseCommand(hex);
 
     if (getValue(command, "sendDatetime") != lastCommand.sendDatetime) return;
-    clearTimeout(timer.value);
+    if (!commandable) addDevices([{ unitID, cmdStatus: "Waitting..." }]);
+    else clearInterval(lastCommand.timer);
   };
-  const handleLostCommand = (report) => {
-    // if (!awaitCommand.value) return;
-    // const { lastCommand } = devDevice.value;
-    // const { sendDatetime, unitID, timeout } = lastCommand;
-    // if (unitID != report.unitID.val) return;
-    // const timeDiff = dilation(sendDatetime, "seconds");
-    // if (timeout < 30) {
-    //   if (timeDiff > timeout) ignoreResponse(RESCODES.TIMEOUT);
-    // } else {
-    //   if (timeDiff > 30) ignoreResponse(RESCODES.UNKNOWN);
-    // }
+  const handleCommandAck = () => {
+    if (!awaitCommand.value) return;
+    const { unitID, lastCommand } = devDevice.value;
+    addDevices([{ unitID, cmdStatus: "Processing..." }]);
+    console.warn("Receive command ack");
+    clearInterval(lastCommand.timer);
   };
-
-  watch(
-    () => commands.value,
-    () => {
-      if (!awaitCommand.value) return;
-
-      const { unitID, hexCmd } = commands.value[0];
-      const binCmd = Buffer.from(hexCmd, "hex");
-
-      console.log(`COMMAND ${hexCmd}`);
-      publisher(unitID, binCmd);
-    },
-    { deep: true }
-  );
 
   return {
     sendCommand,
     handleCommand,
-    handleLostCommand,
+    handleCommandAck,
   };
 }

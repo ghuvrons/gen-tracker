@@ -33,7 +33,7 @@ export default defineComponent({
       awaitCommand,
       handleFinger
     });
-    const { sendCommand, handleCommand, handleLostCommand } = useCommand({
+    const { sendCommand, handleCommand, handleCommandAck } = useCommand({
       publisher,
       awaitCommand,
       ignoreResponse,
@@ -41,13 +41,21 @@ export default defineComponent({
     });
 
     const { handleEvents } = useEvents();
-    const { handleReports } = useReport({ handleEvents, handleLostCommand });
+    const { handleReports } = useReport({ handleEvents });
     const { handleBuffer } = useBuffer({ handleReports });
 
     onMounted(() => {
       subscribe("VCU/+/CMD", { qos: 1 }, handleCommand);
       subscribe("VCU/+/RPT", { qos: 1 }, handleBuffer);
-      subscribe("VCU/+/RSP", { qos: 1 }, handleResponse);
+      subscribe("VCU/+/RSP", { qos: 1 }, (data, topic) => {
+        const hex = data.toString("hex").toUpperCase();
+        if (!hex) return;
+
+        if (parseInt(hex) == 1)
+          handleCommandAck();
+        else
+          handleResponse(hex)
+      });
       subscribe("VCU/+/STS", { qos: 1 }, handleStatus);
     });
 

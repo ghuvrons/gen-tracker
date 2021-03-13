@@ -25,7 +25,7 @@
             <q-item-label lines="2">{{ cmd.payload }}</q-item-label>
             <div class="text-caption">
               {{
-                waitedCommand(index) ? "Waitting..." : parseMessage(cmd.message)
+                waitedCommand(index) ? devDevice.cmdStatus : parseMessage(cmd.message)
               }}
             </div>
             <!-- </q-item-label> -->
@@ -79,6 +79,7 @@ export default defineComponent({
 
     const store = useStore();
     const devCommands = computed(() => store.getters[`db/devCommands`]);
+    const devDevice = computed(() => store.getters[`db/devDevice`]);
 
     const waitedCommand = (index) => index == 0 && awaitCommand.value;
     const writeCommand = (payload) => emit("select", payload);
@@ -87,6 +88,7 @@ export default defineComponent({
 
     return {
       devCommands,
+      devDevice,
 
       waitedCommand,
       ignoreResponse,

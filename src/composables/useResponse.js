@@ -10,7 +10,6 @@ import {
 import { validateFrame } from "src/js/frame";
 import config from "src/js/opt/config";
 
-import { get } from "lodash";
 import { watch, computed } from "vue";
 import { useStore } from "vuex";
 
@@ -37,9 +36,7 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
       ...resp,
     });
   };
-  const handleResponse = (data, topic) => {
-    const hex = data.toString("hex").toUpperCase();
-    if (!hex) return;
+  const handleResponse = (hex) => {
     if (!validateFrame(hex, config.prefix.response))
       return console.error(`CORRUPT ${hex}`);
 
@@ -60,8 +57,10 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
   const ignoreResponse = (resCode) => {
     const { unitID, lastCommand } = devDevice.value ?? {};
 
-    if (lastCommand)
+    if (lastCommand) {
+      clearInterval(lastCommand.timer);
       processResponse(lastCommand, resCode ?? RESCODES.CANCELLED);
+    }
     publisher(unitID, null);
   };
 

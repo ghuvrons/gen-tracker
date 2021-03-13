@@ -4,11 +4,10 @@ import { notify } from "src/js/framework";
 import { INSERT_REPORTS } from "src/store/db/action-types";
 import { SET_REPORT } from "src/store/db/mutation-types";
 
-import { get } from "lodash";
 import { watch, computed } from "vue";
 import { useStore } from "vuex";
 
-export default function ({ handleEvents, handleLostCommand }) {
+export default function ({ handleEvents }) {
   const store = useStore();
   const reports = computed(() => store.state.db.reports);
   const devDevice = computed(() => store.getters[`db/devDevice`]);
@@ -38,7 +37,6 @@ export default function ({ handleEvents, handleLostCommand }) {
       let report = validate(parseReport(hex));
 
       if (!report) return acc;
-      // handleLostCommand(report);
 
       return [...acc, report];
     }, []);

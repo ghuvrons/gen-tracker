@@ -30,7 +30,6 @@ export default function () {
       (listener) => delete listeners.value[listener]
     );
     client?.end();
-    client = null;
   });
 
   client.on("connect", () => notify(`Client connected`, "info"));

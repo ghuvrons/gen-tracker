@@ -77,7 +77,6 @@
 import dayjs from "src/js/dayjs";
 import { confirm } from "src/js/framework";
 
-import { get } from "lodash";
 import { ref, inject, defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 

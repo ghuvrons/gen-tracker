@@ -1,8 +1,6 @@
-import { get } from "lodash";
 import dayjs from "src/js/dayjs";
 import { COMMAND_LIST, Command } from "src/js/opt/command";
 import { parseFrame } from "./frame";
-import config from "./opt/config";
 
 const parseCommand = (hex) => {
   return parseFrame(hex, Command);
