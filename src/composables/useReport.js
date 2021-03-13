@@ -49,15 +49,12 @@ export default function ({ handleEvents, handleLostCommand }) {
   watch(
     () => devDevice.value,
     (curDev, oldDev) => {
-      const curReport = get(curDev, "lastReport");
-      const oldReport = get(oldDev, "lastReport");
+      const curReport = curDev?.lastReport;
+      const oldReport = oldDev?.lastReport;
 
       if (!curReport) return setReport(null);
 
-      if (
-        curReport.unitID.val != get(oldReport, "unitID.val") ||
-        follow.value
-      ) {
+      if (curReport.unitID.val != oldReport?.unitID?.val || follow.value) {
         setReport(curReport);
       }
 

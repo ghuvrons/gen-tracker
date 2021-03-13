@@ -3,13 +3,13 @@ import { eventHistories } from "src/js/event";
 export default {
   reportIdxByUnitID: ({ reports }) => {
     return reports.reduce((map, { unitID }, index) => {
-      map[unitID.val] = map[unitID.val] || [];
+      map[unitID.val] = map[unitID.val] ?? [];
       map[unitID.val].push(index);
       return map;
     }, {});
   },
   reportByUnitID: (state, getters) => (unitID) => {
-    return (getters.reportIdxByUnitID[unitID] || []).map(
+    return (getters.reportIdxByUnitID[unitID] ?? []).map(
       (index) => state.reports[index]
     );
   },

@@ -64,11 +64,10 @@ const extractCommand = (payload) => {
 const makeCommand = (payload) => {
   const { prop, value } = extractCommand(payload);
   const cmd = COMMAND_LIST.find(({ command }) => command === prop);
-  const timeout = get("timeout", cmd) || 10;
 
   return {
     ...cmd,
-    timeout,
+    timeout: cmd?.timeout ?? 10,
     payload,
     value,
   };

@@ -35,7 +35,7 @@ export default function () {
   const setLabel = ({ title, unit }) => {
     state.chart.data.datasets[0].label = title;
     state.chart.options.scales.yAxes[0].scaleLabel.labelString =
-      unit || "Value";
+      unit ?? "Value";
 
     state.update.options = !state.update.options;
   };

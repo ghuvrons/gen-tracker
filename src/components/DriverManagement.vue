@@ -100,7 +100,7 @@ export default defineComponent({
     const fab = ref(false);
 
     const getFingerTime = () => {
-      let fingerTime = get(devDevice.value, "fingerTime");
+      const { fingerTime } = devDevice.value ?? {};
       return fingerTime
         ? dayjs.unix(fingerTime).format("DD-MM-YY HH:mm:ss")
         : "Unknown";

@@ -71,7 +71,7 @@ export default defineComponent({
       orderBy(devices.value, "sendDatetime", "desc")
     );
 
-    const active = ({ unitID }) => unitID === get(devDevice.value, "unitID");
+    const active = ({ unitID }) => unitID === devDevice.value?.unitID;
 
     return {
       sortedDevices,

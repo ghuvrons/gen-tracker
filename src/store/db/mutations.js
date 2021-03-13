@@ -46,10 +46,8 @@ export default {
       state.buffering = loader("Syncing...", "Please wait a moment");
   },
   [mod(mutations.STOP_BUFFERING)](state) {
-    if (state.buffering && state.buffering.hide) {
-      state.buffering.hide();
-      state.buffering = null;
-    }
+    if (state.buffering?.hide) state.buffering.hide();
+    state.buffering = null;
   },
   [mod(mutations.ADD_BUFFERS)](state, payloads) {
     state.buffers.push(...payloads);

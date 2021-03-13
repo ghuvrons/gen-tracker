@@ -58,17 +58,17 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     publisher(unitID, null);
   };
   const ignoreResponse = (resCode) => {
-    const lastCommand = get(devDevice.value, "lastCommand");
-    const { unitID } = devDevice.value;
+    const { unitID, lastCommand } = devDevice.value ?? {};
 
-    processResponse(lastCommand, resCode || RESCODES.CANCELLED);
+    if (lastCommand)
+      processResponse(lastCommand, resCode ?? RESCODES.CANCELLED);
     publisher(unitID, null);
   };
 
   watch(
     () => devDevice.value,
-    (dev) => {
-      const lastCommand = get(dev, "lastCommand");
+    (device) => {
+      const { lastCommand } = device ?? {};
       if (!lastCommand) return;
 
       if (awaitCommand.value) return;

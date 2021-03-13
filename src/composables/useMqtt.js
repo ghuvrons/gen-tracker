@@ -29,7 +29,7 @@ export default function () {
     Object.keys(listeners.value).forEach(
       (listener) => delete listeners.value[listener]
     );
-    client && client.end();
+    client?.end();
     client = null;
   });
 
@@ -47,20 +47,17 @@ export default function () {
   );
 
   const subscribe = (topic, options, callback) => {
-    if (client) {
-      listeners.value = {
-        ...listeners.value,
-        [topic]: callback,
-      };
-      client.subscribe(topic, options);
-    }
+    listeners.value = {
+      ...listeners.value,
+      [topic]: callback,
+    };
+    client?.subscribe(topic, options);
   };
   const unsubscribe = (topic) => {
-    client &&
-      client.unubscribe(topic, () => console.log(`${topic} unsubscribed`));
+    client?.unubscribe(topic, () => console.log(`${topic} unsubscribed`));
   };
   const publish = (topic, data, options) =>
-    client && client.publish(topic, data, options);
+    client?.publish(topic, data, options);
 
   return {
     subscribe,
@@ -101,7 +98,7 @@ const eq = (str1, str2) => {
 
 const getClientId = () => {
   let clientId =
-    window.localStorage.getItem("clientId") ||
+    window.localStorage.getItem("clientId") ??
     "mqttjs_" + Math.random().toString(16).substr(2, 8);
   window.localStorage.setItem("clientId", clientId);
   return clientId;

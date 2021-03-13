@@ -12,7 +12,7 @@ export default function () {
   const addDevices = (v) => store.commit(ADD_DEVICES, v);
 
   const awaitCommand = computed(() => {
-    const lastCommand = get(devDevice.value, "lastCommand");
+    const { lastCommand } = devDevice.value ?? {};
     return lastCommand && !lastCommand.hasOwnProperty("resCode");
   });
   const handleStatus = (data, topic) => {

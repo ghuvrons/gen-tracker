@@ -9,8 +9,8 @@ export default {
   },
   [mod(actions.INSERT_REPORTS)]({ state, commit }, payloads) {
     if (payloads.length > 1) commit(mod(mutations.START_BUFFERING));
-
     commit(mod(mutations.ADD_REPORTS), payloads.slice().reverse());
+
     commit(
       mod(mutations.ADD_DEVICES),
       payloads.map((payload) => ({

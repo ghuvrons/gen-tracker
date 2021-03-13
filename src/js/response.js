@@ -20,7 +20,7 @@ const parseResCode = (code) => {
 };
 
 const readResCode = (code) => {
-  return parseResCode(code) || parseResCode(RESCODES.UNKNOWN);
+  return parseResCode(code) ?? parseResCode(RESCODES.UNKNOWN);
 };
 
 const makeResponse = (response) => {

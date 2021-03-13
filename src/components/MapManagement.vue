@@ -123,14 +123,13 @@ export default defineComponent({
     watch(
       () => devDevice.value,
       (curDev, oldDev) => {
-        if (get(curDev, "unitID") != get(oldDev, "unitID")) {
+        if (curDev?.unitID != oldDev?.unitID) {
           state.path = [];
           devReports.value
             .filter(({ frameID }) => frameId(frameID.val) == "FULL")
             .forEach((report) => addPath(report));
         } else {
-          const report = get(curDev, "lastFullReport");
-          addPath(report);
+          addPath(curDev?.lastFullReport);
         }
       },
       { lazy: false, immediate: true, deep: true }
@@ -139,17 +138,12 @@ export default defineComponent({
     watch(
       () => report.value,
       (curReport, oldReport) => {
-        const fullFrame = frameId(get(curReport, "frameID.val")) == "FULL";
+        const fullFrame = frameId(curReport?.frameID?.val) == "FULL";
         const fullReport = fullFrame
           ? curReport
           : nearestFullReport(curReport, devReports.value);
 
-        const pos = getPosition(fullReport);
-        setPosition(pos);
-
-        // if (get(curReport, "unitID.val") != get(oldReport, "unitID.val"))
-        //   setPosition(pos);
-        // else if (pos.valid) setPosition(pos);
+        setPosition(getPosition(fullReport));
 
         // if (state.pov)
         //   updatePov({

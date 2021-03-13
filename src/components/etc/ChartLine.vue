@@ -39,11 +39,11 @@ export default defineComponent({
     }, 500);
 
     onMounted(() => renderChart())
-    onBeforeUnmount(() => charter.value && charter.value.destroy())
+    onBeforeUnmount(() => charter.value?.destroy())
 
     watch(
       () => props.updateData,
-      () => charter.value && charter.value.update()
+      () => charter.value?.update()
     )
 
     watch(
