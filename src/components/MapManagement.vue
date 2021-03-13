@@ -84,7 +84,7 @@ export default defineComponent({
       },
       polyOptions: {
         geodesic: true,
-        strokeColor: '#000',
+        strokeColor: '#F88',
         strokeOpacity: 0.75,
         strokeWeight: 2
       },

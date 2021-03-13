@@ -91,6 +91,7 @@ export default defineComponent({
       if (!target) return;
 
       let theField = getField(Report, target);
+      if (!theField) return;
       if (!theField.hasOwnProperty("chartable")) return;
 
       let related = devReports.value.filter(({ [target]: _field }) => _field);
