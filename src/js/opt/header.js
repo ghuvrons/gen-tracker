@@ -7,7 +7,7 @@ import {
   HexToAscii,
   AsciiToHex,
   HexToUnsignedInt,
-  IntToHex
+  IntToHex,
 } from "src/js/formatter";
 import { buildTimestamp, parseDatetime } from "src/js/utils";
 
@@ -19,9 +19,9 @@ const Header = [
     header: true,
     required: true,
     size: 2,
-    format: v => HexToAscii(ChangeEndian(v)),
-    display: vf => vf,
-    formatCmd: _ => ChangeEndian(AsciiToHex(config.prefix.command))
+    format: (v) => HexToAscii(ChangeEndian(v)),
+    display: (vf) => vf,
+    formatCmd: (_) => ChangeEndian(AsciiToHex(config.prefix.command)),
   },
   // {
   //   group: "packet",
@@ -44,20 +44,20 @@ const Header = [
     chartable: true,
     unit: "Bytes",
     size: 1,
-    format: v => HexToUnsignedInt(ChangeEndian(v)),
-    display: vf => Dot(vf),
-    formatCmd: hex => ChangeEndian(IntToHex(hex.length / 2, 1 * 2))
+    format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+    display: (vf) => Dot(vf),
+    formatCmd: (hex) => ChangeEndian(IntToHex(hex.length / 2, 1 * 2)),
   },
   {
     group: "packet",
-    field: "unitID",
-    title: "Unit ID",
+    field: "vin",
+    title: "VIN",
     header: true,
     required: true,
     size: 4,
-    format: v => HexToUnsignedInt(ChangeEndian(v)),
-    display: vf => vf,
-    formatCmd: v => ChangeEndian(IntToHex(v, 4 * 2))
+    format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+    display: (vf) => vf,
+    formatCmd: (v) => ChangeEndian(IntToHex(v, 4 * 2)),
   },
   {
     group: "packet.datetime",
@@ -67,10 +67,11 @@ const Header = [
     required: true,
     chartable: true,
     size: 7,
-    format: v => Number(dayjs(parseDatetime(v), "YYMMDDHHmmss0d").unix()),
-    display: vf => dayjs.unix(vf).format("ddd, DD-MM-YY HH:mm:ss"),
-    formatCmd: unix => buildTimestamp(dayjs.unix(unix).format("YYMMDDHHmmss0d"))
-  }
+    format: (v) => Number(dayjs(parseDatetime(v), "YYMMDDHHmmss0d").unix()),
+    display: (vf) => dayjs.unix(vf).format("ddd, DD-MM-YY HH:mm:ss"),
+    formatCmd: (unix) =>
+      buildTimestamp(dayjs.unix(unix).format("YYMMDDHHmmss0d")),
+  },
 ];
 
 const CommandHeader = [
@@ -82,9 +83,9 @@ const CommandHeader = [
     header: true,
     required: true,
     size: 1,
-    format: v => HexToUnsignedInt(v),
-    display: vf => vf,
-    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
+    format: (v) => HexToUnsignedInt(v),
+    display: (vf) => vf,
+    formatCmd: (v) => ChangeEndian(IntToHex(v, 1 * 2)),
   },
   {
     group: "command",
@@ -93,10 +94,10 @@ const CommandHeader = [
     header: true,
     required: true,
     size: 1,
-    format: v => HexToUnsignedInt(v),
-    display: vf => vf,
-    formatCmd: v => ChangeEndian(IntToHex(v, 1 * 2))
-  }
+    format: (v) => HexToUnsignedInt(v),
+    display: (vf) => vf,
+    formatCmd: (v) => ChangeEndian(IntToHex(v, 1 * 2)),
+  },
 ];
 
 export { Header, CommandHeader };

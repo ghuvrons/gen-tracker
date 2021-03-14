@@ -6,7 +6,7 @@ const parseCommand = (hex) => {
   return parseFrame(hex, Command);
 };
 
-const buildCommand = (cmd, unitID) => {
+const buildCommand = (cmd, vin) => {
   const sendDatetime = dayjs().unix();
   const hexCmd = Command.reduce((acc, el, idx) => {
     let { field, formatCmd } = Command[Command.length - idx - 1];
@@ -24,8 +24,8 @@ const buildCommand = (cmd, unitID) => {
       case "sendDatetime":
         acc = formatCmd(sendDatetime) + acc;
         break;
-      case "unitID":
-        acc = formatCmd(unitID) + acc;
+      case "vin":
+        acc = formatCmd(vin) + acc;
         break;
       case "size":
       // case "crc":
@@ -40,7 +40,7 @@ const buildCommand = (cmd, unitID) => {
 
   return {
     ...cmd,
-    unitID,
+    vin,
     sendDatetime,
     hexCmd,
   };

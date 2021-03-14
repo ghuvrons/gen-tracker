@@ -122,7 +122,7 @@ export default defineComponent({
     watch(
       () => devDevice.value,
       (curDev, oldDev) => {
-        if (curDev?.unitID != oldDev?.unitID) {
+        if (curDev?.vin != oldDev?.vin) {
           state.path = [];
           devReports.value
             .filter(({ frameID }) => frameId(frameID.val) == "FULL")

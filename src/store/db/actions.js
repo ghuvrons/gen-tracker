@@ -14,7 +14,7 @@ export default {
     commit(
       mod(mutations.ADD_DEVICES),
       payloads.map((payload) => ({
-        unitID: payload.unitID.val,
+        vin: payload.vin.val,
         sendDatetime: payload.sendDatetime.val,
         lastReport: payload,
         ...(frameId(payload.frameID.val) == "FULL" && {
@@ -28,7 +28,7 @@ export default {
     commit(mod(mutations.ADD_COMMANDS), payload);
     commit(mod(mutations.ADD_DEVICES), [
       {
-        unitID: payload.unitID,
+        vin: payload.vin,
         lastCommand: payload,
       },
     ]);
@@ -37,7 +37,7 @@ export default {
     commit(mod(mutations.ADD_RESPONSE), payload);
     commit(mod(mutations.ADD_DEVICES), [
       {
-        unitID: payload.unitID,
+        vin: payload.vin,
         lastCommand: payload,
       },
     ]);

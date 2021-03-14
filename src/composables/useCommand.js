@@ -21,7 +21,7 @@ export default function ({
     if (!payload) return notify("No payload");
     if (!devDevice.value) return notify("No device");
 
-    const { unitID, status, commandable } = devDevice.value;
+    const { vin, status, commandable } = devDevice.value;
     if (awaitCommand.value) return notify("Command busy");
     // if (!status) return notify("Device offline");
     if (!commandable) return notify("Device busy");
@@ -32,44 +32,44 @@ export default function ({
 
     if (typeof cmd === "string") return notify(cmd);
 
-    const { hexCmd, ...command } = buildCommand(cmd, unitID);
-    addDevices([{ unitID, cmdStatus: "Sending..." }]);
+    const { hexCmd, ...command } = buildCommand(cmd, vin);
+    addDevices([{ vin, cmdStatus: "Sending..." }]);
 
     const binCmd = Buffer.from(hexCmd, "hex");
     console.log(`COMMAND ${hexCmd}`);
-    publisher(unitID, binCmd);
+    publisher(vin, binCmd);
 
     insertCommand({
       ...command,
       timer: setInterval(() => {
-        console.warn(`Republish command to ${unitID}`);
-        addDevices([{ unitID, cmdStatus: "Retrying..." }]);
-        publisher(unitID, binCmd);
+        console.warn(`Republish command to ${vin}`);
+        addDevices([{ vin, cmdStatus: "Retrying..." }]);
+        publisher(vin, binCmd);
       }, 10000),
     });
   };
   const handleCommand = (data, topic) => {
-    const unitID = parseInt(topic.split("/")[1]);
+    const vin = parseInt(topic.split("/")[1]);
     const hex = data.toString("hex").toUpperCase();
 
     const commandable = !hex;
     if (commandable) notify(`Device commandbale`, "info");
 
-    console.warn(`COMMANDABLE ${unitID}, ${commandable}`);
-    addDevices([{ unitID, commandable }]);
+    console.warn(`COMMANDABLE ${vin}, ${commandable}`);
+    addDevices([{ vin, commandable }]);
     if (!awaitCommand.value) return;
 
     const { lastCommand } = devDevice.value;
     const command = parseCommand(hex);
 
     if (getValue(command, "sendDatetime") != lastCommand.sendDatetime) return;
-    if (!commandable) addDevices([{ unitID, cmdStatus: "Waitting..." }]);
+    if (!commandable) addDevices([{ vin, cmdStatus: "Waitting..." }]);
     else clearInterval(lastCommand.timer);
   };
   const handleCommandAck = () => {
     if (!awaitCommand.value) return;
-    const { unitID, lastCommand } = devDevice.value;
-    addDevices([{ unitID, cmdStatus: "Processing..." }]);
+    const { vin, lastCommand } = devDevice.value;
+    addDevices([{ vin, cmdStatus: "Processing..." }]);
     console.warn("Receive command ack");
     clearInterval(lastCommand.timer);
   };

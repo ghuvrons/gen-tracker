@@ -25,10 +25,10 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     const resp = makeResponse(response);
     notifyResponse(resp);
 
-    const { unitID, sendDatetime, code, subCode, payload, status } = command;
+    const { vin, sendDatetime, code, subCode, payload, status } = command;
 
     insertResponse({
-      unitID,
+      vin,
       sendDatetime,
       code,
       subCode,
@@ -41,9 +41,9 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
       return console.error(`CORRUPT ${hex}`);
 
     const response = parseResponse(hex);
-    const unitID = getValue(response, "unitID");
+    const vin = getValue(response, "vin");
 
-    const device = devices.value.find((dev) => dev.unitID === unitID);
+    const device = devices.value.find((dev) => dev.vin === vin);
     if (!device) return;
 
     if (!awaitCommand.value) return console.error(`RESPONSE ${hex}`);
@@ -52,16 +52,16 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     const { lastCommand } = device;
     if (!validResponse(lastCommand, response)) return;
     processResponse(lastCommand, response);
-    publisher(unitID, null);
+    publisher(vin, null);
   };
   const ignoreResponse = (resCode) => {
-    const { unitID, lastCommand } = devDevice.value ?? {};
+    const { vin, lastCommand } = devDevice.value ?? {};
 
     if (lastCommand) {
       clearInterval(lastCommand.timer);
       processResponse(lastCommand, resCode ?? RESCODES.CANCELLED);
     }
-    publisher(unitID, null);
+    publisher(vin, null);
   };
 
   watch(

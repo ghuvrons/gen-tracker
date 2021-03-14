@@ -14,18 +14,16 @@ export default function ({ addDevices }) {
   const removeFingers = (v) => store.commit(REMOVE_FINGERS, v);
   const clearFingers = (v) => store.commit(CLEAR_FINGERS, v);
 
-  const handleFinger = ({ payload, unitID, message }) => {
+  const handleFinger = ({ payload, vin, message }) => {
     let { prop, value } = extractCommand(payload);
 
     if (prop == "FINGER_FETCH") {
       if (message.length > 0)
-        message
-          .split(",")
-          .forEach((fingerID) => addFingers({ unitID, fingerID }));
-      addDevices([{ unitID, fingerTime: dayjs().unix() }]);
-    } else if (prop == "FINGER_ADD") addFingers({ unitID, fingerID: message });
-    else if (prop == "FINGER_DEL") removeFingers({ unitID, fingerID: value });
-    else if (prop == "FINGER_RST") clearFingers({ unitID });
+        message.split(",").forEach((fingerID) => addFingers({ vin, fingerID }));
+      addDevices([{ vin, fingerTime: dayjs().unix() }]);
+    } else if (prop == "FINGER_ADD") addFingers({ vin, fingerID: message });
+    else if (prop == "FINGER_DEL") removeFingers({ vin, fingerID: value });
+    else if (prop == "FINGER_RST") clearFingers({ vin });
   };
 
   return {

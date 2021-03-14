@@ -15,10 +15,10 @@ export default function () {
     return lastCommand && !lastCommand.hasOwnProperty("resCode");
   });
   const handleStatus = (data, topic) => {
-    const unitID = parseInt(topic.split("/")[1]);
+    const vin = parseInt(topic.split("/")[1]);
     const status = parseInt(data);
-    console.warn(`STATUS ${unitID},${status}`);
-    addDevices([{ unitID, status }]);
+    console.warn(`STATUS ${vin},${status}`);
+    addDevices([{ vin, status }]);
   };
 
   watch(

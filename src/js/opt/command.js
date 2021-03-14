@@ -115,15 +115,6 @@ const COMMAND_LIST = [
     timeout: 15,
   },
   {
-    command: "REMOTE_UNITID",
-    desc: "Set device unique id",
-    code: 4,
-    subCode: 1,
-    size: 4,
-    type: "uint32_t",
-    range: [0, 4294967295],
-  },
-  {
     command: "FOTA_VCU",
     desc: "Upgrade VCU firmware",
     code: 5,

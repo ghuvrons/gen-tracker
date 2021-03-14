@@ -19,10 +19,10 @@ export default defineComponent({
   setup(props) {
     const { subscribe, publish } = useMqtt();
 
-    const publisher = (unitID, data) => {
-      publish(`VCU/${unitID}/CMD`, data, { qos: 2, retain: true });
+    const publisher = (vin, data) => {
+      publish(`VCU/${vin}/CMD`, data, { qos: 2, retain: true });
       if (!data) {
-        publish(`VCU/${unitID}/RSP`, data, { qos: 1, retain: true });
+        publish(`VCU/${vin}/RSP`, data, { qos: 1, retain: true });
       }
     };
 

@@ -1,6 +1,6 @@
 export const CLEAR_DATABASE = "db/CLEAR_DATABASE";
 
-export const SET_UNITID = "db/SET_UNITID";
+export const SET_VIN = "db/SET_VIN";
 
 export const SET_REPORT = "db/SET_REPORT";
 

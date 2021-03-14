@@ -1,15 +1,15 @@
-export default function() {
+export default function () {
   return {
     buffering: null,
     buffers: [],
 
-    unitID: null,
+    vin: null,
     devices: [],
 
     report: null,
     reports: [],
 
     commands: [],
-    fingers: []
+    fingers: [],
   };
 }

@@ -24,7 +24,9 @@ export default function ({ handleEvents }) {
       return console.error(`^REPORT (DUPLICATE)`);
     }
 
-    if (Math.abs(dilation(sdt, "years")) > 1) {
+    const sendDiff = Math.abs(dilation(sdt, "years"));
+    const logDiff = Math.abs(dilation(ldt, "years"));
+    if (sendDiff > 1 || (sendDiff <= 1 && logDiff > 1)) {
       notify("Report expired", "info");
       console.error(`^REPORT (EXPIRED)`);
     }
@@ -52,7 +54,7 @@ export default function ({ handleEvents }) {
 
       if (!curReport) return setReport(null);
 
-      if (curReport.unitID.val != oldReport?.unitID?.val || follow.value) {
+      if (curReport.vin.val != oldReport?.vin?.val || follow.value) {
         setReport(curReport);
       }
 

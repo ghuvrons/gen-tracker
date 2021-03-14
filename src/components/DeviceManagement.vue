@@ -18,8 +18,8 @@
     <q-virtual-scroll v-else :items="sortedDevices" :style="height" separator>
       <template v-slot="{ item: dev }">
         <q-item
-          :key="dev.unitID"
-          @click="setUnitID(dev.unitID)"
+          :key="dev.vin"
+          @click="setVin(dev.vin)"
           :active="active(dev)"
           active-class="bg-primary text-white"
           clickable
@@ -27,7 +27,7 @@
         >
           <q-item-section>
             <q-item-label class="text-subtitle2">
-              {{ dev.unitID.toString() }}
+              {{ dev.vin.toString() }}
             </q-item-label>
           </q-item-section>
           <q-item-section side>
@@ -48,7 +48,7 @@
 <script>
 import { fromNow } from "src/js/report";
 
-import { SET_UNITID } from "src/store/db/mutation-types";
+import { SET_VIN } from "src/store/db/mutation-types";
 
 import { orderBy } from "lodash";
 import { computed, defineComponent } from "vue";
@@ -65,20 +65,20 @@ export default defineComponent({
     const store = useStore();
     const devices = computed(() => store.state.db.devices);
     const devDevice = computed(() => store.getters[`db/devDevice`]);
-    const setUnitID = (v) => store.commit(SET_UNITID, v);
+    const setVin = (v) => store.commit(SET_VIN, v);
 
     const sortedDevices = computed(() =>
       orderBy(devices.value, "sendDatetime", "desc")
     );
 
-    const active = ({ unitID }) => unitID === devDevice.value?.unitID;
+    const active = ({ vin }) => vin === devDevice.value?.vin;
 
     return {
       sortedDevices,
 
       fromNow,
 
-      setUnitID,
+      setVin,
       active
     };
   }

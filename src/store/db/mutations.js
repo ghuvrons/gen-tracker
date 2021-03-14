@@ -1,7 +1,6 @@
 import * as mutations from "./mutation-types";
 import initialState from "./state";
 import { Platform } from "quasar";
-import config from "src/js/opt/config";
 import { orderBy } from "lodash";
 import { loader } from "src/js/framework";
 import { mod } from "src/js/utils";
@@ -11,8 +10,8 @@ export default {
     Object.assign(state, initialState());
   },
 
-  [mod(mutations.SET_UNITID)](state, unitID) {
-    state.unitID = unitID;
+  [mod(mutations.SET_VIN)](state, vin) {
+    state.vin = vin;
   },
   [mod(mutations.SET_REPORT)](state, payload) {
     state.report = payload;
@@ -20,9 +19,7 @@ export default {
 
   [mod(mutations.ADD_DEVICES)](state, payloads) {
     payloads.forEach((payload) => {
-      const idx = state.devices.findIndex(
-        ({ unitID }) => unitID === payload.unitID
-      );
+      const idx = state.devices.findIndex(({ vin }) => vin === payload.vin);
 
       if (idx < 0)
         state.devices.unshift({
@@ -38,7 +35,7 @@ export default {
         });
     });
 
-    if (!state.unitID) state.unitID = payloads[payloads.length - 1].unitID;
+    if (!state.vin) state.vin = payloads[payloads.length - 1].vin;
   },
 
   [mod(mutations.START_BUFFERING)](state) {
@@ -74,9 +71,7 @@ export default {
     if (state.commands.length > max) state.commands.pop();
   },
   [mod(mutations.ADD_RESPONSE)](state, payload) {
-    const idx = state.commands.findIndex(
-      ({ unitID }) => unitID === payload.unitID
-    );
+    const idx = state.commands.findIndex(({ vin }) => vin === payload.vin);
 
     if (idx >= 0) {
       const freezed = { ...payload };
@@ -87,21 +82,19 @@ export default {
 
   [mod(mutations.ADD_FINGERS)](state, payload) {
     const exist = state.fingers.find(
-      ({ unitID, fingerID }) =>
-        unitID === payload.unitID && fingerID === payload.fingerID
+      ({ vin, fingerID }) =>
+        vin === payload.vin && fingerID === payload.fingerID
     );
     if (!exist) state.fingers.unshift(payload);
   },
   [mod(mutations.REMOVE_FINGERS)](state, payload) {
     const idx = state.fingers.findIndex(
-      ({ unitID, fingerID }) =>
-        unitID === payload.unitID && fingerID === payload.fingerID
+      ({ vin, fingerID }) =>
+        vin === payload.vin && fingerID === payload.fingerID
     );
     state.fingers.splice(idx, 1);
   },
   [mod(mutations.CLEAR_FINGERS)](state, payload) {
-    state.fingers = state.fingers.filter(
-      ({ unitID }) => unitID !== payload.unitID
-    );
+    state.fingers = state.fingers.filter(({ vin }) => vin !== payload.vin);
   },
 };

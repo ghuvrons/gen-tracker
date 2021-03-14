@@ -33,7 +33,7 @@
 - [x] ~~change bus event to using store and watch~~
 - [x] show full frame on simple frame (if has)
 - [x] fix bugs in error min value, when not in rangeMax (on null value), then enable again to rangeMax
-- [x] ~~add faker push with unique unitID on global settings~~
+- [x] ~~add faker push with unique vin on global settings~~
 - [x] change y-axes based on rangeValue max
 - [x] change chart height based on screen size
 - [x] call software developer
