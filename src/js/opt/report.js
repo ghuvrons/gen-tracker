@@ -293,7 +293,7 @@ const BMS = ({ required }) => {
             chartable: true,
             unit: "Ampere",
             size: 2,
-            format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01 - 50,
+            format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.1,
             display: (vf) => vf.toFixed(2),
           },
           {
@@ -304,7 +304,7 @@ const BMS = ({ required }) => {
             chartable: true,
             unit: "%",
             size: 2,
-            format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.01,
+            format: (v) => HexToUnsignedInt(ChangeEndian(v)),
             display: (vf) => Dot(vf),
           },
           {
@@ -315,7 +315,7 @@ const BMS = ({ required }) => {
             chartable: true,
             unit: "Celcius",
             size: 2,
-            format: (v) => HexToUnsignedInt(ChangeEndian(v)) * 0.1 - 40,
+            format: (v) => HexToUnsignedInt(ChangeEndian(v)),
             display: (vf) => vf.toFixed(2),
           },
         ]),
