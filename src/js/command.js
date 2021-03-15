@@ -9,7 +9,7 @@ const parseCommand = (hex) => {
 const buildCommand = (cmd, vin) => {
   const sendDatetime = dayjs().unix();
   const hexCmd = Command.reduce((acc, el, idx) => {
-    let { field, formatCmd } = Command[Command.length - idx - 1];
+    const { field, formatCmd } = Command[Command.length - idx - 1];
 
     switch (field) {
       case "value":

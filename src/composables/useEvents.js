@@ -11,9 +11,9 @@ export default function () {
     if (!notification.value) return;
     if (!oldReport) return;
 
-    let curEvents = readEvent(curReport.eventsGroup);
-    let oldEvents = readEvent(oldReport.eventsGroup);
-    let newEvents = curEvents.filter((evt) => !oldEvents.includes(evt));
+    const curEvents = readEvent(curReport.eventsGroup);
+    const oldEvents = readEvent(oldReport.eventsGroup);
+    const newEvents = curEvents.filter((evt) => !oldEvents.includes(evt));
 
     newEvents.forEach((evt) =>
       pushNotification(evt, curReport.logDatetime.out)

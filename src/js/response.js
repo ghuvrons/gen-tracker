@@ -42,21 +42,21 @@ const makeResponse = (response) => {
 const parseMessage = (msg) => {
   if (!msg) return;
 
-  let labels = Object.keys(VEHICLE_STATES);
-  let values = Object.values(VEHICLE_STATES);
+  const labels = Object.keys(VEHICLE_STATES);
+  const values = Object.values(VEHICLE_STATES);
 
   return msg.replace(/\{(.+?)\}/g, function (string, val) {
-    let idx = values.findIndex((v) => v === parseInt(val));
+    const idx = values.findIndex((v) => v === parseInt(val));
     return labels[idx];
   });
 };
 
 const notifyResponse = ({ resCode }) => {
-  let ok = resCode == RESCODES.OK;
-  let res = parseResCode(resCode);
+  const ok = resCode == RESCODES.OK;
+  const res = parseResCode(resCode);
 
-  let type = ok ? "positive" : "negative";
-  let msg = ok ? "Command sent." : `Command ${res.name}`;
+  const type = ok ? "positive" : "negative";
+  const msg = ok ? "Command sent." : `Command ${res.name}`;
 
   notify(msg, type);
 };

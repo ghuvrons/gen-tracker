@@ -54,8 +54,8 @@ export default function () {
   };
 
   const scaleChart = ({ beginAtZero }, { min, max }) => {
-    let { xMin, xMax } = findRangeX(state.chart.data, { min, max });
-    let { yMin, yMax } = findRangeY(
+    const { xMin, xMax } = findRangeX(state.chart.data, { min, max });
+    const { yMin, yMax } = findRangeY(
       state.chart.data.datasets[0],
       { beginAtZero },
       { min, max }

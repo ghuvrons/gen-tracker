@@ -34,9 +34,9 @@ export default function ({ handleEvents }) {
     return report;
   };
   const handleReports = (hexs) => {
-    let reports = hexs.reduce((acc, hex) => {
+    const reports = hexs.reduce((acc, hex) => {
       console.log(`REPORT ${hex}`);
-      let report = validate(parseReport(hex));
+      const report = validate(parseReport(hex));
 
       if (!report) return acc;
 

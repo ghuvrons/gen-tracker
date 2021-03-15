@@ -4,7 +4,7 @@ import { CommandHeader, Header } from "src/js/opt/header";
 import config from "src/js/opt/config";
 
 // const calculateCRC32 = (hex) => {
-//   let crcSize = Header.filter(({ field }) => ["prefix", "crc"].includes(field))
+//   const crcSize = Header.filter(({ field }) => ["prefix", "crc"].includes(field))
 //     .map(({ size }) => size)
 //     .reduce((sum, val) => sum + val);
 //   return CRC32(hex.substring(crcSize * 2));
@@ -14,15 +14,15 @@ const parseFrame = (hex, frame) => {
   let cursor = 0;
 
   return frame.reduce((acc, el) => {
-    let formatted = el.format(hex.substr(cursor, el.size * 2));
+    const formatted = el.format(hex.substr(cursor, el.size * 2));
     cursor += el.size * 2;
 
     return acc.concat([
       {
         ...el,
         value: formatted,
-        output: el.display(formatted)
-      }
+        output: el.display(formatted),
+      },
     ]);
   }, []);
 };
@@ -34,7 +34,7 @@ const validateFrame = (hex, prefix) => {
   if (getValue(header, "prefix") != prefix)
     return console.warn(`CORRUPT: Prefix not same`);
 
-  // let crc = getOutput(header, "crc");
+  // const crc = getOutput(header, "crc");
   // if (crc != calculateCRC32(hex)) return console.warn(`CORRUPT: CRC not valid`);
 
   const headerSize = theHeader
@@ -42,7 +42,7 @@ const validateFrame = (hex, prefix) => {
       [
         "prefix",
         // "crc",
-        "size"
+        "size",
       ].includes(field)
     )
     .map(({ size }) => size)

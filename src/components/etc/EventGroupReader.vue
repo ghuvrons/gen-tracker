@@ -36,8 +36,8 @@ export default defineComponent({
     const devEvents = computed(() => store.getters[`db/devEvents`]);
 
     const activeEvent = (theName) => {
-      let event = EVENT_LIST.find(({ name }) => name === theName);
-      return parseEvent(props.modelValue, event.bit);
+      const { bit } = EVENT_LIST.find(({ name }) => name === theName);
+      return parseEvent(props.modelValue, bit);
     };
 
     return {

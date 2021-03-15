@@ -15,7 +15,7 @@ export default function ({ addDevices }) {
   const clearFingers = (v) => store.commit(CLEAR_FINGERS, v);
 
   const handleFinger = ({ payload, vin, message }) => {
-    let { prop, value } = extractCommand(payload);
+    const { prop, value } = extractCommand(payload);
 
     if (prop == "FINGER_FETCH") {
       if (message.length > 0)

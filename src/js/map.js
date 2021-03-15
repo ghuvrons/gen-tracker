@@ -2,12 +2,12 @@ import config from "src/js/opt/config";
 import { frameId } from "src/js/utils";
 
 const isIndonesia = ({ lng, lat }) => {
-  let { lngMin, lngMax, latMin, latMax } = config.map.borderIndonesia;
+  const { lngMin, lngMax, latMin, latMax } = config.map.borderIndonesia;
   return lng > lngMin && lng < lngMax && lat > latMin && lat < latMax;
 };
 
 const getPosition = (report) => {
-  let pos = {
+  const pos = {
     ...config.map.centerIndonesia,
     valid: false,
   };

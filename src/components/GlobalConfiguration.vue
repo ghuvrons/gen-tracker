@@ -122,12 +122,12 @@ export default defineComponent({
     const calibrate = () => {
       if (!devDevice.value) return;
 
-      let report = devReports.value.find(
+      const report = devReports.value.find(
         ({ frameID }) => frameId(frameID.val) == "FULL"
       );
       if (!report) return;
 
-      let validTime = calibrateTime(report);
+      const validTime = calibrateTime(report);
       if (!validTime) return;
 
       sendCommand(`REPORT_RTC=${validTime}`);

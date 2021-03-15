@@ -96,7 +96,7 @@ const eq = (str1, str2) => {
 };
 
 const getClientId = () => {
-  let clientId =
+  const clientId =
     window.localStorage.getItem("clientId") ??
     "mqttjs_" + Math.random().toString(16).substr(2, 8);
   window.localStorage.setItem("clientId", clientId);

@@ -263,7 +263,7 @@ const TABLE = [
 ];
 
 const CRC32 = (buf) => {
-  let table = new Int32Array(TABLE);
+  const table = new Int32Array(TABLE);
   // split hex string into 32 bit chunk (8 chars)
   buf = buf
     .match(/.{1,8}/g)
@@ -275,8 +275,8 @@ const CRC32 = (buf) => {
 
   // initial value
   let crc = 0xffffffff;
-  for (let index = 0; index < buf.length; index++)
-    crc = (crc << 8) ^ table[((crc >> 24) ^ buf[index]) & 0xff];
+  for (let i = 0; i < buf.length; i++)
+    crc = (crc << 8) ^ table[((crc >> 24) ^ buf[i]) & 0xff];
 
   return (crc >>> 0).toString(16).toUpperCase().padStart(8, "0");
 };

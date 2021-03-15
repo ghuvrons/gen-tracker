@@ -3,10 +3,10 @@ import { getValue, getField, frameId } from "src/js/utils";
 import { parseFrame } from "src/js/frame";
 import dayjs from "src/js/dayjs";
 
-const parseReportData = hex => {
-  let frameID = getValue(parseFrame(hex, Report), "frameID");
+const parseReportData = (hex) => {
+  const frameID = getValue(parseFrame(hex, Report), "frameID");
 
-  let report = Report.filter(
+  const report = Report.filter(
     ({ required }) =>
       frameId(frameID) == "FULL" || (frameId(frameID) == "SIMPLE" && required)
   );
@@ -14,38 +14,38 @@ const parseReportData = hex => {
   return parseFrame(hex, report);
 };
 
-const parseReport = hex => {
-  let data = parseReportData(hex);
+const parseReport = (hex) => {
+  const data = parseReportData(hex);
 
   return data.reduce(
     (acc, { field, value, output, unit }) => ({
       ...acc,
       [field]: {
         val: value,
-        out: output
-      }
+        out: output,
+      },
     }),
     { hex }
   );
 };
 
-const readReport = report => {
+const readReport = (report) => {
   return Object.keys(report).reduce((acc, field) => {
     let value = report[field];
 
     if (field != "hex") {
-      let { group, title, unit } = getField(Report, field);
+      const { group, title, unit } = getField(Report, field);
       value = {
         ...value,
         group,
         title,
-        unit
+        unit,
       };
     }
 
     return {
       ...acc,
-      [field]: value
+      [field]: value,
     };
   }, {});
 };
@@ -53,21 +53,17 @@ const readReport = report => {
 const nearestFullReport = (report, reports) => {
   if (!report) return;
 
-  let index = reports.findIndex(({ hex }) => hex === report.hex);
-  if (index < 0) return;
+  let idx = reports.findIndex(({ hex }) => hex === report.hex);
+  if (idx < 0) return;
 
-  while (index < reports.length) {
-    let prev = reports[index++];
+  while (idx < reports.length) {
+    const prev = reports[idx++];
     if (frameId(prev.frameID.val) == "FULL") return prev;
   }
 };
 
-const fromNow = sendDatetime => {
-  if (sendDatetime)
-    return dayjs
-      .unix(sendDatetime)
-      .endOf("second")
-      .fromNow();
+const fromNow = (sendDatetime) => {
+  if (sendDatetime) return dayjs.unix(sendDatetime).endOf("second").fromNow();
   return "Unknown ago";
 };
 
@@ -77,5 +73,5 @@ export {
   parseReportData,
   nearestFullReport,
   readReport,
-  fromNow
+  fromNow,
 };

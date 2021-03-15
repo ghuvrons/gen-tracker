@@ -55,7 +55,6 @@ export default defineComponent({
 
     watch(
       () => props.updateOptions,
-      // () => renderChart()
       () => {
         if (!charter.value) return;
         charter.value.options = {

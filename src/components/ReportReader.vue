@@ -90,11 +90,11 @@ export default defineComponent({
     const open = (target) => {
       if (!target) return;
 
-      let theField = getField(Report, target);
+      const theField = getField(Report, target);
       if (!theField) return;
       if (!theField.hasOwnProperty("chartable")) return;
 
-      let related = devReports.value.filter(({ [target]: _field }) => _field);
+      const related = devReports.value.filter(({ [target]: _field }) => _field);
       if (related.length < 2) return;
 
       field.value = target;

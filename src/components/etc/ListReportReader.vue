@@ -50,7 +50,7 @@ export default defineComponent({
     const fields = computed(() => Object.keys(omit(props.report, "hex")));
 
     const realtime = (field) => {
-      let { required } = getField(Report, field);
+      const { required } = getField(Report, field);
       return frameId(props.report.frameID.val) == "FULL" || required;
     };
 

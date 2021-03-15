@@ -47,20 +47,20 @@ const dilation = (unix, as, startUnix) => {
   let start = dayjs();
   if (startUnix) start = dayjs.unix(startUnix);
 
-  let diff = start.diff(dayjs.unix(unix));
+  const diff = start.diff(dayjs.unix(unix));
   return dayjs.duration(diff).as(as);
 };
 
 const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
-  let timezone = clone(config.timezone);
+  const { timezone } = config;
 
   // correct timestamp if not sync with server
   if (gpsLatitude.val && gpsLongitude.val)
     timezone = tzlookup(gpsLatitude.val, gpsLongitude.val);
 
-  let serverTime = dayjs();
-  // let deviceTime = dayjs.unix(sendDatetime.val);
-  // let diff = dilation(deviceTime, "seconds", serverTime.unix());
+  const serverTime = dayjs();
+  // const deviceTime = dayjs.unix(sendDatetime.val);
+  // const diff = dilation(deviceTime, "seconds", serverTime.unix());
 
   //  (at least more n minutes different)
   // if (!deviceTime.isValid() || Math.abs(diff) > 120)
@@ -69,7 +69,7 @@ const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
 };
 
 const parseDatetime = (hex) => {
-  let timestamp = hex.match(/.{1,2}/g);
+  const timestamp = hex.match(/.{1,2}/g);
 
   return timestamp.reduce(
     (acc, ts) => acc.concat(HexToUnsignedInt(ts).toString().padStart(2, "0")),
@@ -78,7 +78,7 @@ const parseDatetime = (hex) => {
 };
 
 const buildTimestamp = (YYMMDDHHmmss0d) => {
-  let datetime = YYMMDDHHmmss0d.match(/.{1,2}/g);
+  const datetime = YYMMDDHHmmss0d.match(/.{1,2}/g);
 
   return datetime
     .reduce((acc, dt) => acc.concat(IntToHex(parseInt(dt), 2)), "")

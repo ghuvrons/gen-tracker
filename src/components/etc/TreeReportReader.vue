@@ -57,20 +57,20 @@ export default defineComponent({
       }, str);
 
     const getFieldNodeTitle = (field) => {
-      let theField = props.report[field];
+      const theField = props.report[field];
       if (theField) {
-        let group = theField.group.split(".");
+        const group = theField.group.split(".");
         return removeWords(theField.title, group);
       }
       return field.toUpperCase();
     };
     const groupNodes = () => {
-      let report = omit(props.report, "hex");
+      const report = omit(props.report, "hex");
 
       return Object.keys(report).reduce((o, field) => {
-        let { group } = report[field];
+        const { group } = report[field];
+        const grp = get(o, group);
         let content = { [field]: report[field] };
-        let grp = get(o, group);
 
         if (grp) content = { ...grp, ...content };
         return set(o, group, content);

@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.20",
+    version: "2.21",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -17,6 +17,7 @@ export default {
     response: "@S",
   },
   frames: ["SIMPLE", "FULL"],
+  timezone: "Asia/Jakarta",
   map: {
     zoom: 3,
     centerIndonesia: {
@@ -30,5 +31,4 @@ export default {
       latMax: 5.90713,
     },
   },
-  timezone: "Asia/Jakarta",
 };
