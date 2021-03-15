@@ -10,10 +10,6 @@ export default function () {
   const devDevice = computed(() => store.getters[`db/devDevice`]);
   const addDevices = (v) => store.commit(ADD_DEVICES, v);
 
-  const awaitCommand = computed(() => {
-    const { lastCommand } = devDevice.value ?? {};
-    return lastCommand && !lastCommand.hasOwnProperty("resCode");
-  });
   const handleStatus = (data, topic) => {
     const vin = parseInt(topic.split("/")[1]);
     const status = parseInt(data);
@@ -39,7 +35,6 @@ export default function () {
   );
 
   return {
-    awaitCommand,
     handleStatus,
     addDevices,
   };

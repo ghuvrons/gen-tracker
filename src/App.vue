@@ -26,36 +26,34 @@ export default defineComponent({
       }
     };
 
-    const { addDevices, handleStatus, awaitCommand } = useDevice();
+    const { addDevices, handleStatus } = useDevice();
     const { handleFinger } = useFinger({ addDevices });
+    const { sendCommand, awaitCommand,  handleCommand, handleCommandAck } = useCommand({
+      publisher,
+      addDevices
+    });
     const { handleResponse, ignoreResponse } = useResponse({
       publisher,
       awaitCommand,
       handleFinger
-    });
-    const { sendCommand, handleCommand, handleCommandAck } = useCommand({
-      publisher,
-      awaitCommand,
-      ignoreResponse,
-      addDevices
     });
 
     const { handleEvents } = useEvents();
     const { handleReports } = useReport({ handleEvents });
     const { handleBuffer } = useBuffer({ handleReports });
 
+    const handleResp = (data, topic) => {
+      const hex = data.toString("hex").toUpperCase();
+      if (!hex) return;
+
+      if (parseInt(hex) == 1) handleCommandAck();
+      else handleResponse(hex)
+    }
+
     onMounted(() => {
       subscribe("VCU/+/CMD", { qos: 1 }, handleCommand);
       subscribe("VCU/+/RPT", { qos: 1 }, handleBuffer);
-      subscribe("VCU/+/RSP", { qos: 1 }, (data, topic) => {
-        const hex = data.toString("hex").toUpperCase();
-        if (!hex) return;
-
-        if (parseInt(hex) == 1)
-          handleCommandAck();
-        else
-          handleResponse(hex)
-      });
+      subscribe("VCU/+/RSP", { qos: 1 }, handleResp);
       subscribe("VCU/+/STS", { qos: 1 }, handleStatus);
     });
 
