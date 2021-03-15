@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.19",
+    version: "2.20",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -9,7 +9,7 @@ export default {
     host: `wss://test.mosquitto.org:8081/mqtt`,
     username: "",
     password: "",
-    retryIntervalMS: 7000,
+    retryIntervalMS: 10000,
   },
   prefix: {
     report: "@R",
