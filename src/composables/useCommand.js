@@ -65,11 +65,12 @@ export default function ({ publisher, addDevices }) {
     if (!commandable) addDevices([{ vin, cmdStatus: "Waitting..." }]);
     else clearInterval(lastCommand.timer);
   };
-  const handleCommandAck = () => {
+  const handleAck = (hex) => {
+    console.warn(`ACK ${hex}`);
+
     if (!awaitCommand.value) return;
     const { vin, lastCommand } = devDevice.value;
     addDevices([{ vin, cmdStatus: "Processing..." }]);
-    console.warn("COMMAND ACK");
     clearInterval(lastCommand.timer);
   };
 
@@ -77,6 +78,6 @@ export default function ({ publisher, addDevices }) {
     sendCommand,
     awaitCommand,
     handleCommand,
-    handleCommandAck,
+    handleAck,
   };
 }

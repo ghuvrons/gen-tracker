@@ -31,7 +31,7 @@ export default defineComponent({
 
     const { addDevices, handleStatus } = useDevice();
     const { handleFinger } = useFinger({ addDevices });
-    const { sendCommand, awaitCommand,  handleCommand, handleCommandAck } = useCommand({
+    const { sendCommand, awaitCommand,  handleCommand, handleAck } = useCommand({
       publisher,
       addDevices
     });
@@ -52,7 +52,7 @@ export default defineComponent({
       const prefixHeader = Header.find(({field}) => field == 'prefix');
       const prefix = prefixHeader.format(hex)
 
-      if (prefix == config.prefix.ack) handleCommandAck();
+      if (prefix == config.prefix.ack) handleAck(hex);
       else handleResponse(hex)
     }
 
