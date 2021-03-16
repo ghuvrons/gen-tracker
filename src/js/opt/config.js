@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.22",
+    version: "2.23",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -15,6 +15,7 @@ export default {
     report: "@R",
     command: "@C",
     response: "@S",
+    ack: "@A",
   },
   frames: ["SIMPLE", "FULL"],
   timezone: "Asia/Jakarta",

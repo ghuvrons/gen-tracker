@@ -3,6 +3,9 @@
 </template>
 
 <script>
+import { Header } from "src/js/opt/header";
+import config from "src/js/opt/config"
+
 import useMqtt from "src/composables/useMqtt";
 import useFinger from "src/composables/useFinger";
 import useResponse from "src/composables/useResponse";
@@ -46,7 +49,10 @@ export default defineComponent({
       const hex = data.toString("hex").toUpperCase();
       if (!hex) return;
 
-      if (parseInt(hex) == 1) handleCommandAck();
+      const prefixHeader = Header.find(({field}) => field == 'prefix');
+      const prefix = prefixHeader.format(hex)
+
+      if (prefix == config.prefix.ack) handleCommandAck();
       else handleResponse(hex)
     }
 
