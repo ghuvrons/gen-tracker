@@ -12,7 +12,7 @@
       <div class="col-auto" v-if="$q.fullscreen.isCapable">
         <q-btn
           @click="$q.fullscreen.toggle()"
-          :label="$q.fullscreen.isActive ? 'Full OFF' : 'Full ON'"
+          :label="$q.fullscreen.isActive ? 'Normal' : 'Full'"
           :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
         />
       </div>
@@ -25,7 +25,7 @@
         />
       </div>
       <div class="col-auto">
-        <q-btn icon="stop" label="Commandable" @click="ignoreResponse()" />
+        <q-btn icon="gavel" label="FORCE READY" @click="ignoreResponse()" />
       </div>
       <div class="col-auto">
         <q-btn-dropdown icon="cloud_download" label="Export">
@@ -66,7 +66,7 @@
     </div>
     <div class="row q-gutter-xs q-mt-xs">
       <div class="col-auto">
-        <q-toggle v-model="notificationState" label="Notification" />
+        <q-toggle v-model="notificationState" label="Push Notification" />
       </div>
     </div>
   </div>

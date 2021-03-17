@@ -1,4 +1,5 @@
 import { Dark, Dialog, Notify, QSpinnerGears } from "quasar";
+import { log } from "./utils";
 
 const pushNotification = (title, body) => {
   const { protocol, host } = window.location;
@@ -6,21 +7,21 @@ const pushNotification = (title, body) => {
 
   const swNotify = () => {
     if (!("serviceWorker" in navigator))
-      return console.error("No service worker");
+      return log("error", "No service worker");
 
-    navigator.serviceWorker.getRegistration().then(registration => {
+    navigator.serviceWorker.getRegistration().then((registration) => {
       if (registration) registration.showNotification(title, { body, icon });
       else new Notification(title, { body, icon });
     });
   };
 
   if (!("Notification" in window))
-    return console.error("No notification support");
+    return log("error", "No notification support");
 
   if (Notification.permission === "granted") swNotify();
   else if (Notification.permission !== "denied")
     Notification.requestPermission().then(
-      permission => permission === "granted" && swNotify()
+      (permission) => permission === "granted" && swNotify()
     );
 };
 
@@ -28,17 +29,17 @@ const notify = (message, type = "negative", timeout = 5000) => {
   return Notify.create({
     type,
     message,
-    timeout
+    timeout,
   });
 };
 
-const confirm = message => {
+const confirm = (message) => {
   return Dialog.create({
     message,
     title: "Confirmation",
     dark: Dark.isActive,
     preventClose: true,
-    cancel: true
+    cancel: true,
   });
 };
 
@@ -51,8 +52,8 @@ const loader = (title, message) => {
     ok: false,
     progress: {
       spinner: QSpinnerGears,
-      color: "primary"
-    }
+      color: "primary",
+    },
   });
 };
 

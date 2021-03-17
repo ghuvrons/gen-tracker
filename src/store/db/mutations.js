@@ -23,9 +23,9 @@ export default {
 
       if (idx < 0)
         state.devices.unshift({
-          status: 0,
+          online: 0,
+          ready: true,
           sendDatetime: 0,
-          commandable: true,
           ...payload,
         });
       else

@@ -1,5 +1,5 @@
 import { parseReport } from "src/js/report";
-import { dilation } from "src/js/utils";
+import { dilation, log } from "src/js/utils";
 import { notify } from "src/js/framework";
 import { INSERT_REPORTS } from "src/store/db/action-types";
 import { SET_REPORT } from "src/store/db/mutation-types";
@@ -21,21 +21,21 @@ export default function ({ handleEvents }) {
 
     if (reports.value.some(({ logDatetime }) => logDatetime.val == ldt)) {
       notify("Report duplicate", "info");
-      return console.error(`^REPORT (DUPLICATE)`);
+      return log("error", `^REPORT (DUPLICATE)`);
     }
 
     const sendDiff = Math.abs(dilation(sdt, "years"));
     const logDiff = Math.abs(dilation(ldt, "years"));
     if (sendDiff > 1 || (sendDiff <= 1 && logDiff > 1)) {
       notify("Report expired", "info");
-      console.error(`^REPORT (EXPIRED)`);
+      log("error", `^REPORT (EXPIRED)`);
     }
 
     return report;
   };
   const handleReports = (hexs) => {
     const reports = hexs.reduce((acc, hex) => {
-      console.log(`REPORT ${hex}`);
+      log("log", `REPORT ${hex}`);
       const report = validate(parseReport(hex));
 
       if (!report) return acc;

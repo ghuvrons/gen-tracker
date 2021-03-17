@@ -1,12 +1,13 @@
 import mqtt from "mqtt";
-import { ref, onBeforeUnmount } from "vue";
 import { Platform } from "quasar";
+import { ref, onBeforeUnmount } from "vue";
 import { notify } from "src/js/framework";
 import config from "src/js/opt/config";
+import { log } from "src/js/utils";
 
 export default function () {
-  const listeners = ref(null);
   const brokerOff = ref(true);
+  const listeners = ref([]);
 
   const { host, username, password } = config.mqtt;
   const client = mqtt.connect(host, {
@@ -28,40 +29,31 @@ export default function () {
   });
   onBeforeUnmount(() => {
     client?.end();
-    Object.keys(listeners.value).forEach(
-      (listener) => delete listeners.value[listener]
-    );
+    listeners.value.forEach((listener, i) => delete listeners.value[i]);
   });
 
-  client.on("connect", () => {
-    brokerOff.value = false;
-    notify(`Broker connected`, "info");
-  });
-  client.on("offline", () => {
-    brokerOff.value = true;
-    notify(`Broker disconnected`, "info");
-  });
+  client.on("connect", () => (brokerOff.value = false));
+  client.on("offline", () => (brokerOff.value = true));
   client.on("reconnect", () => notify(`Broker reconnecting...`, "info"));
   client.on("error", (err) => {
-    notify(`Broker error: ${err}`, "error");
     client.end();
+    notify(`Broker error: ${err}`, "error");
   });
   client.on("message", (topic, data, packet) =>
-    Object.keys(listeners.value).forEach(
-      (listener) =>
-        eq(topic, listener) && listeners.value[listener](data, topic)
+    listeners.value.forEach(
+      ({ name, callback }) => eq(topic, name) && callback(data, topic)
     )
   );
 
   const subscribe = (topic, options, callback) => {
-    listeners.value = {
-      ...listeners.value,
-      [topic]: callback,
-    };
+    listeners.value.push({
+      name: topic,
+      callback,
+    });
     client?.subscribe(topic, options);
   };
   const unsubscribe = (topic) =>
-    client?.unubscribe(topic, () => console.log(`${topic} unsubscribed`));
+    client?.unubscribe(topic, () => log("log", `${topic} unsubscribed`));
   const publish = (topic, data, options) =>
     client?.publish(topic, data, options);
 

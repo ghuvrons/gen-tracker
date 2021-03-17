@@ -35,7 +35,7 @@
               {{ fromNow(dev.sendDatetime) }}
             </q-item-label>
             <q-item-label :class="{ 'text-white': active(dev) }" caption>
-              <u v-if="dev.status"><b>ONLINE</b></u>
+              <u v-if="dev.online"><b>ONLINE</b></u>
               <i v-else>OFFLINE</i>
             </q-item-label>
           </q-item-section>

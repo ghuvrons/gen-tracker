@@ -4,6 +4,7 @@ import { ADD_DEVICES } from "src/store/db/mutation-types";
 import dayjs from "src/js/dayjs";
 import { watch, computed } from "vue";
 import { useStore } from "vuex";
+import { log } from "src/js/utils";
 
 export default function () {
   const store = useStore();
@@ -12,22 +13,19 @@ export default function () {
 
   const handleStatus = (data, topic) => {
     const vin = parseInt(topic.split("/")[1]);
-    const status = parseInt(data);
-    console.warn(`STATUS ${vin},${status}`);
-    addDevices([{ vin, status }]);
+    const online = parseInt(data);
+    log("warn", `${online ? "ONLINE" : "OFFLINE"} ${vin}`);
+    addDevices([{ vin, online }]);
   };
 
   watch(
     () => devDevice.value,
     (curDev, oldDev) => {
       if (!curDev || !oldDev) return;
-      const { status: oldStatus } = oldDev;
-      const { status: curStatus } = curDev;
-
-      if (oldStatus == curStatus) return;
+      if (curDev?.online == oldDev?.online) return;
 
       pushNotification(
-        `DEVICE ${curStatus ? "ONLINE" : "OFFLINE"}`,
+        `DEVICE ${curDev?.online ? "ONLINE" : "OFFLINE"}`,
         dayjs().format("ddd, DD-MM-YY HH:mm:ss")
       );
     },

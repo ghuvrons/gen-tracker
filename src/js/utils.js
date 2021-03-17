@@ -93,6 +93,10 @@ const mod = (str) => {
   return str.split("/")[1];
 };
 
+const log = (type, msg) => {
+  return console[type](msg);
+};
+
 export {
   flowFilter,
   getField,
@@ -104,4 +108,5 @@ export {
   dilation,
   frameId,
   mod,
+  log,
 };

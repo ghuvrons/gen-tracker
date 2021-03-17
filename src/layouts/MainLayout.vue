@@ -1,11 +1,7 @@
 <template>
   <q-layout view="lHr LpR lFr">
     <q-header elevated>
-      <q-bar v-if="offline || brokerOff" :class="offline ? 'bg-red' : 'bg-orange'" dense>
-        <q-toolbar-title class="text-caption">
-          {{offline ? 'Internet offline' : 'Broker disconnected'}}
-        </q-toolbar-title>
-      </q-bar>
+      <offline-banner></offline-banner>
       <q-toolbar class="bg-primary text-white">
         <q-btn
           flat
@@ -86,25 +82,24 @@ import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
 
 import config from "src/js/opt/config";
-import useOfflineDetector from "src/composables/useOfflineDetector";
 
 import { SET_DARKER } from "src/store/common/mutation-types";
 
 import { Platform, Dark } from "quasar";
-import { computed, reactive, toRefs, watch, onMounted, inject } from "vue";
+import { computed, reactive, toRefs, watch, onMounted} from "vue";
 import { useStore } from "vuex";
+import OfflineBanner from 'src/components/etc/OfflineBanner.vue';
 
 export default {
   // name: "MyLayout",
   components: {
+    OfflineBanner,
     ReportReader,
     DeviceManagement,
     ResponseLog,
     CommandManagement
   },
   setup() {
-    const brokerOff = inject("brokerOff");
-
     const store = useStore();
     const darker = computed(() => store.state.common.darker);
     const setDarker = (v) => store.commit(SET_DARKER, v);
@@ -118,8 +113,6 @@ export default {
       splitter: 150,
       payload: null
     });
-
-    const { offline } = useOfflineDetector();
 
     const hCommandManagement = computed(() => `height: 120px`);
     const hResponseLog = computed(
@@ -140,8 +133,6 @@ export default {
 
     return {
       ...toRefs(state),
-      offline,
-      brokerOff,
 
       hCommandManagement,
       hResponseLog,

@@ -1,5 +1,5 @@
 import { INSERT_RESPONSE } from "src/store/db/action-types";
-import { getValue } from "src/js/utils";
+import { getValue, log } from "src/js/utils";
 import {
   notifyResponse,
   makeResponse,
@@ -25,7 +25,7 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     const resp = makeResponse(response);
     notifyResponse(resp);
 
-    const { vin, sendDatetime, code, subCode, payload, status } = command;
+    const { vin, sendDatetime, code, subCode, payload } = command;
 
     insertResponse({
       vin,
@@ -38,7 +38,7 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
   };
   const handleResponse = (hex) => {
     if (!validateFrame(hex, config.prefix.response))
-      return console.error(`CORRUPT ${hex}`);
+      return log("error", `CORRUPT ${hex}`);
 
     const response = parseResponse(hex);
     const vin = getValue(response, "vin");
@@ -46,8 +46,8 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     const device = devices.value.find((dev) => dev.vin === vin);
     if (!device) return;
 
-    if (!awaitCommand.value) return console.error(`RESPONSE ${hex}`);
-    console.warn(`RESPONSE ${hex}`);
+    if (!awaitCommand.value) return log("error", `RESPONSE ${hex}`);
+    log("warn", `RESPONSE ${hex}`);
 
     const { lastCommand } = device;
     if (!validResponse(lastCommand, response)) return;

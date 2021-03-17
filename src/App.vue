@@ -6,6 +6,7 @@
 import { Header } from "src/js/opt/header";
 import config from "src/js/opt/config"
 
+import useOfflineDetector from "src/composables/useOfflineDetector";
 import useMqtt from "src/composables/useMqtt";
 import useFinger from "src/composables/useFinger";
 import useResponse from "src/composables/useResponse";
@@ -20,10 +21,11 @@ import { onMounted, provide, defineComponent } from "vue";
 export default defineComponent({
   // name: "App",
   setup(props) {
+    const { offline } = useOfflineDetector();
     const { brokerOff, subscribe, publish } = useMqtt();
 
     const publisher = (vin, data) => {
-      publish(`VCU/${vin}/CMD`, data, { qos: 2, retain: true });
+      publish(`VCU/${vin}/CMD`, data, { qos: 1, retain: true });
       if (!data) {
         publish(`VCU/${vin}/RSP`, data, { qos: 1, retain: true });
       }
@@ -63,6 +65,7 @@ export default defineComponent({
       subscribe("VCU/+/STS", { qos: 1 }, handleStatus);
     });
 
+    provide("offline", offline);
     provide("brokerOff", brokerOff);
     provide("sendCommand", sendCommand);
     provide("awaitCommand", awaitCommand);

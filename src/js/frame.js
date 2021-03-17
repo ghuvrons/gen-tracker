@@ -1,5 +1,5 @@
 // import { CRC32 } from "src/js/crc32-mpeg2";
-import { getValue, getOutput } from "src/js/utils";
+import { getValue, getOutput, log } from "src/js/utils";
 import { CommandHeader, Header } from "src/js/opt/header";
 import config from "src/js/opt/config";
 
@@ -32,10 +32,10 @@ const validateFrame = (hex, prefix) => {
   const header = parseFrame(hex, theHeader);
 
   if (getValue(header, "prefix") != prefix)
-    return console.warn(`CORRUPT: Prefix not same`);
+    return log("warn", `CORRUPT: Prefix not same`);
 
   // const crc = getOutput(header, "crc");
-  // if (crc != calculateCRC32(hex)) return console.warn(`CORRUPT: CRC not valid`);
+  // if (crc != calculateCRC32(hex)) return log('warn', `CORRUPT: CRC not valid`);
 
   const headerSize = theHeader
     .filter(({ field }) =>
@@ -49,7 +49,7 @@ const validateFrame = (hex, prefix) => {
     .reduce((sum, val) => sum + val);
 
   if (getValue(header, "size") != hex.length / 2 - headerSize)
-    return console.warn(`CORRUPT: Size not same`);
+    return log("warn", `CORRUPT: Size not same`);
 
   return header;
 };

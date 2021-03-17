@@ -5,6 +5,7 @@ import config from "src/js/opt/config";
 
 import { onBeforeUnmount, onMounted, ref, computed } from "vue";
 import { useStore } from "vuex";
+import { log } from "src/js/utils";
 
 export default function ({ handleReports }) {
   const store = useStore();
@@ -26,7 +27,7 @@ export default function ({ handleReports }) {
     const hex = data.toString("hex").toUpperCase();
     if (!hex) return;
     if (!validateFrame(hex, config.prefix.report))
-      return console.error(`CORRUPT ${hex}`);
+      return log("error", `CORRUPT ${hex}`);
     insertBuffers([hex]);
   };
 
