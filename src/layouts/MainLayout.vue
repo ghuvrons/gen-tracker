@@ -1,8 +1,10 @@
 <template>
   <q-layout view="lHr LpR lFr">
     <q-header elevated>
-      <q-bar v-if="offline" class="bg-red" dense>
-        <q-toolbar-title class="text-caption">Offline mode</q-toolbar-title>
+      <q-bar v-if="offline || brokerOff" :class="offline ? 'bg-red' : 'bg-orange'" dense>
+        <q-toolbar-title class="text-caption">
+          {{offline ? 'Internet offline' : 'Broker disconnected'}}
+        </q-toolbar-title>
       </q-bar>
       <q-toolbar class="bg-primary text-white">
         <q-btn
@@ -89,7 +91,7 @@ import useOfflineDetector from "src/composables/useOfflineDetector";
 import { SET_DARKER } from "src/store/common/mutation-types";
 
 import { Platform, Dark } from "quasar";
-import { computed, reactive, toRefs, watch, onMounted } from "vue";
+import { computed, reactive, toRefs, watch, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 
 export default {
@@ -101,6 +103,8 @@ export default {
     CommandManagement
   },
   setup() {
+    const brokerOff = inject("brokerOff");
+
     const store = useStore();
     const darker = computed(() => store.state.common.darker);
     const setDarker = (v) => store.commit(SET_DARKER, v);
@@ -137,6 +141,7 @@ export default {
     return {
       ...toRefs(state),
       offline,
+      brokerOff,
 
       hCommandManagement,
       hResponseLog,

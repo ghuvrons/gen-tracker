@@ -6,6 +6,7 @@ import config from "src/js/opt/config";
 
 export default function () {
   const listeners = ref(null);
+  const brokerOff = ref(true);
 
   const { host, username, password } = config.mqtt;
   const client = mqtt.connect(host, {
@@ -26,16 +27,23 @@ export default function () {
     // },
   });
   onBeforeUnmount(() => {
+    client?.end();
     Object.keys(listeners.value).forEach(
       (listener) => delete listeners.value[listener]
     );
-    client?.end();
   });
 
-  client.on("connect", () => notify(`Client connected`, "info"));
-  client.on("reconnect", () => notify(`Reconnecting...`, "info"));
+  client.on("connect", () => {
+    brokerOff.value = false;
+    notify(`Broker connected`, "info");
+  });
+  client.on("offline", () => {
+    brokerOff.value = true;
+    notify(`Broker disconnected`, "info");
+  });
+  client.on("reconnect", () => notify(`Broker reconnecting...`, "info"));
   client.on("error", (err) => {
-    notify(`Connection error: ${err}`, "error");
+    notify(`Broker error: ${err}`, "error");
     client.end();
   });
   client.on("message", (topic, data, packet) =>
@@ -52,13 +60,14 @@ export default function () {
     };
     client?.subscribe(topic, options);
   };
-  const unsubscribe = (topic) => {
+  const unsubscribe = (topic) =>
     client?.unubscribe(topic, () => console.log(`${topic} unsubscribed`));
-  };
   const publish = (topic, data, options) =>
     client?.publish(topic, data, options);
 
   return {
+    brokerOff,
+
     subscribe,
     unsubscribe,
     publish,

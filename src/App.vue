@@ -20,7 +20,7 @@ import { onMounted, provide, defineComponent } from "vue";
 export default defineComponent({
   // name: "App",
   setup(props) {
-    const { subscribe, publish } = useMqtt();
+    const { brokerOff, subscribe, publish } = useMqtt();
 
     const publisher = (vin, data) => {
       publish(`VCU/${vin}/CMD`, data, { qos: 2, retain: true });
@@ -63,8 +63,9 @@ export default defineComponent({
       subscribe("VCU/+/STS", { qos: 1 }, handleStatus);
     });
 
-    provide("awaitCommand", awaitCommand);
+    provide("brokerOff", brokerOff);
     provide("sendCommand", sendCommand);
+    provide("awaitCommand", awaitCommand);
     provide("ignoreResponse", ignoreResponse);
   },
 });
