@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.33",
+    version: "2.34",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -12,7 +12,7 @@ export default {
     retryIntervalMS: 10000,
   },
   prefix: {
-    report: "@R",
+    report: "@N",
     command: "@C",
     response: "@S",
     ack: "@A",
