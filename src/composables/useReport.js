@@ -45,7 +45,6 @@ export default function ({ handleEvents }) {
       const report = parseReport(hex);
 
       if (!validate(report)) return acc;
-      if (report.version.val != config.reportVersion) return;
 
       return [...acc, report];
     }, []);
