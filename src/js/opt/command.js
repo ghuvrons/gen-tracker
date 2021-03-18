@@ -38,7 +38,7 @@ const COMMAND_LIST = [
     subCode: 2,
     size: 1,
     type: "uint8_t",
-    range: [1, 3],
+    range: [0, 3],
   },
   {
     command: "REPORT_RTC",
