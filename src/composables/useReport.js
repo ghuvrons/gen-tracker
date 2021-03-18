@@ -20,11 +20,6 @@ export default function ({ handleEvents }) {
     const { val: sdt } = report.sendDatetime ?? {};
     const { val: ldt } = report.logDatetime ?? {};
 
-    if (!sdt || !ldt) {
-      notify("Report invalidd", "info");
-      return log("error", `^REPORT INVALID`);
-    }
-
     if (reports.value.some(({ logDatetime }) => logDatetime.val == ldt)) {
       notify("Report duplicate", "info");
       return log("error", `^REPORT (DUPLICATE)`);

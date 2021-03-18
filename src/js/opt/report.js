@@ -31,16 +31,6 @@ const VCU = ({ required }) => {
   return [
     {
       group: "packet",
-      field: "version",
-      title: "Report Version",
-      required: true,
-      chartable: true,
-      size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => Dot(vf),
-    },
-    {
-      group: "packet",
       field: "frameID",
       title: "Frame ID",
       required: true,
