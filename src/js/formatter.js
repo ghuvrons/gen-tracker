@@ -42,7 +42,8 @@ const Dot = (val, digit = 0) => {
   });
 };
 
-const ChangeEndian = (string) => {
+const cend = (string) => {
+  // Change Endian
   const result = [];
   let len = string.length - 2;
   while (len >= 0) {
@@ -59,6 +60,6 @@ export {
   HexToSignedInt32,
   HexToAscii,
   AsciiToHex,
-  ChangeEndian,
+  cend,
   Dot,
 };

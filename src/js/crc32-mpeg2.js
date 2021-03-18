@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { ChangeEndian } from "src/js/formatter";
+import { cend } from "src/js/formatter";
 
 // stolen from https://gist.github.com/Miliox/b86b60b9755faf3bd7cf
 // CRC-32/MPEG-2
@@ -267,7 +267,7 @@ const CRC32 = (buf) => {
   // split hex string into 32 bit chunk (8 chars)
   buf = buf
     .match(/.{1,8}/g)
-    .map((word) => ChangeEndian(word.padEnd(8, "0")))
+    .map((word) => cend(word.padEnd(8, "0")))
     .join("");
 
   // convert hex string to buffer

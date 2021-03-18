@@ -2,7 +2,7 @@ import config from "src/js/opt/config";
 import dayjs from "src/js/dayjs";
 // import { CRC32 } from "src/js/crc32-mpeg2";
 import {
-  ChangeEndian,
+  cend,
   Dot,
   HexToAscii,
   AsciiToHex,
@@ -19,9 +19,9 @@ const Header = [
     header: true,
     required: true,
     size: 2,
-    format: (v) => HexToAscii(ChangeEndian(v)),
+    format: (v) => HexToAscii(cend(v)),
     display: (vf) => vf,
-    formatCmd: (_) => ChangeEndian(AsciiToHex(config.prefix.command)),
+    formatCmd: (_) => cend(AsciiToHex(config.prefix.command)),
   },
   // {
   //   group: "packet",
@@ -31,9 +31,9 @@ const Header = [
   //   required: true,
   //   chartable: true,
   //   size: 4,
-  //   format: v => HexToUnsignedInt(ChangeEndian(v)),
+  //   format: v => HexToUnsignedInt(cend(v)),
   //   display: vf => IntToHex(vf, 8).toUpperCase(),
-  //   formatCmd: v => ChangeEndian(CRC32(v).padStart(4 * 2, "0"))
+  //   formatCmd: v => cend(CRC32(v).padStart(4 * 2, "0"))
   // },
   {
     group: "packet",
@@ -44,9 +44,9 @@ const Header = [
     chartable: true,
     unit: "Bytes",
     size: 1,
-    format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+    format: (v) => HexToUnsignedInt(cend(v)),
     display: (vf) => Dot(vf),
-    formatCmd: (hex) => ChangeEndian(IntToHex(hex.length / 2, 1 * 2)),
+    formatCmd: (hex) => cend(IntToHex(hex.length / 2, 1 * 2)),
   },
   {
     group: "packet",
@@ -55,9 +55,9 @@ const Header = [
     header: true,
     required: true,
     size: 4,
-    format: (v) => HexToUnsignedInt(ChangeEndian(v)),
+    format: (v) => HexToUnsignedInt(cend(v)),
     display: (vf) => vf,
-    formatCmd: (v) => ChangeEndian(IntToHex(v, 4 * 2)),
+    formatCmd: (v) => cend(IntToHex(v, 4 * 2)),
   },
   {
     group: "packet.datetime",
@@ -85,7 +85,7 @@ const CommandHeader = [
     size: 1,
     format: (v) => HexToUnsignedInt(v),
     display: (vf) => vf,
-    formatCmd: (v) => ChangeEndian(IntToHex(v, 1 * 2)),
+    formatCmd: (v) => cend(IntToHex(v, 1 * 2)),
   },
   {
     group: "command",
@@ -96,7 +96,7 @@ const CommandHeader = [
     size: 1,
     format: (v) => HexToUnsignedInt(v),
     display: (vf) => vf,
-    formatCmd: (v) => ChangeEndian(IntToHex(v, 1 * 2)),
+    formatCmd: (v) => cend(IntToHex(v, 1 * 2)),
   },
 ];
 

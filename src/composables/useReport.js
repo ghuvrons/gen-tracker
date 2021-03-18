@@ -6,6 +6,7 @@ import { SET_REPORT } from "src/store/db/mutation-types";
 
 import { watch, computed } from "vue";
 import { useStore } from "vuex";
+import config from "src/js/opt/config";
 
 export default function ({ handleEvents }) {
   const store = useStore();
@@ -16,8 +17,13 @@ export default function ({ handleEvents }) {
   const follow = computed(() => store.state.common.follow);
 
   const validate = (report) => {
-    const { val: sdt } = report.sendDatetime;
-    const { val: ldt } = report.logDatetime;
+    const { val: sdt } = report.sendDatetime ?? {};
+    const { val: ldt } = report.logDatetime ?? {};
+
+    if (!sdt || !ldt) {
+      notify("Report un-supported", "info");
+      return log("error", `^REPORT (UN-SUPPORTED)`);
+    }
 
     if (reports.value.some(({ logDatetime }) => logDatetime.val == ldt)) {
       notify("Report duplicate", "info");
@@ -36,9 +42,10 @@ export default function ({ handleEvents }) {
   const handleReports = (hexs) => {
     const reports = hexs.reduce((acc, hex) => {
       log("log", `REPORT ${hex}`);
-      const report = validate(parseReport(hex));
+      const report = parseReport(hex);
 
-      if (!report) return acc;
+      if (!validate(report)) return acc;
+      if (report.version.val != config.reportVersion) return;
 
       return [...acc, report];
     }, []);

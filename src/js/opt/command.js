@@ -1,5 +1,5 @@
 import { CommandHeader } from "src/js/opt/header";
-import { IntToHex, ChangeEndian, AsciiToHex } from "src/js/formatter";
+import { IntToHex, cend, AsciiToHex } from "src/js/formatter";
 import { buildTimestamp } from "src/js/utils";
 import dayjs from "src/js/dayjs";
 
@@ -11,8 +11,7 @@ const Command = [
     size: 200,
     format: (v) => v,
     display: (vf) => vf,
-    formatCmd: (v, sz) =>
-      ChangeEndian(IntToHex(parseInt(v ?? 0), (sz ?? 0) * 2)),
+    formatCmd: (v, sz) => cend(IntToHex(parseInt(v ?? 0), (sz ?? 0) * 2)),
   },
 ];
 
