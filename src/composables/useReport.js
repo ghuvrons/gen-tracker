@@ -21,8 +21,8 @@ export default function ({ handleEvents }) {
     const { val: ldt } = report.logDatetime ?? {};
 
     if (!sdt || !ldt) {
-      notify("Report un-supported", "info");
-      return log("error", `^REPORT (UN-SUPPORTED)`);
+      notify("Report invalidd", "info");
+      return log("error", `^REPORT INVALID`);
     }
 
     if (reports.value.some(({ logDatetime }) => logDatetime.val == ldt)) {
