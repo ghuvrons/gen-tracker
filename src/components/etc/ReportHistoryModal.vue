@@ -25,7 +25,7 @@
           <div class="row">
             <div
               :class="
-                eventGroup ? 'col-xs-12 col-sm-12 col-md-8 col-lg-9' : 'col-12'
+                eventField ? 'col-xs-12 col-sm-12 col-md-8 col-lg-9' : 'col-12'
               "
             >
               <div class="q-pa-sm">
@@ -89,11 +89,11 @@
             </div>
 
             <div
-              v-if="eventGroup"
+              v-if="eventField"
               class="col-xs-12 col-sm-12 col-md-4 col-lg-3"
             >
               <div class="q-pa-sm scroll">
-                <event-group-reader :value="latestValue"></event-group-reader>
+                <event-reader :field="field" :value="latestValue"></event-reader>
               </div>
             </div>
           </div>
@@ -105,13 +105,15 @@
 
 <script>
 import ChartLine from "components/etc/ChartLine";
-import EventGroupReader from "components/etc/EventGroupReader";
+import EventReader from "components/etc/EventReader";
 
+import useChart from "src/composables/useChart";
+
+import { FIELD_EVENTS } from "src/js/opt/event";
 import { getField } from "src/js/utils";
 import { Report } from "src/js/report";
 
 import { useQuasar } from "quasar";
-import useChart from "src/composables/useChart";
 
 import {
   computed,
@@ -133,13 +135,12 @@ export default defineComponent({
   },
   components: {
     ChartLine,
-    EventGroupReader
+    EventReader
   },
   setup(props) {
     const $q = useQuasar();
     const store = useStore();
     const devReports = computed(() => store.getters[`db/devReports`]);
-    const devEvents = computed(() => store.getters[`db/devEvents`]);
 
     const {
       chart,
@@ -179,9 +180,8 @@ export default defineComponent({
     });
 
     const theField = computed(() => getField(Report, props.field));
-    const eventGroup = computed(
-      () =>
-        props.field == "eventsGroup" && Object.keys(devEvents.value).length > 0
+    const eventField = computed(
+      () => Object.keys(FIELD_EVENTS).includes(props.field)
     );
 
     const applyRange = () => {
@@ -285,7 +285,7 @@ export default defineComponent({
 
       theField,
       latestValue,
-      eventGroup
+      eventField
     };
   }
 });

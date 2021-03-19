@@ -1,5 +1,3 @@
-import { eventHistories } from "src/js/event";
-
 export default {
   reportIdxByVin: ({ reports }) => {
     return reports.reduce((map, { vin }, index) => {
@@ -16,9 +14,6 @@ export default {
 
   devReports({ vin }, getters) {
     return getters.reportByVin(vin);
-  },
-  devEvents(state, getters) {
-    return eventHistories(getters.devReports);
   },
   devDevice({ devices, vin }) {
     return devices.find((device) => device.vin === vin);

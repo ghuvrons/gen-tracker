@@ -1,5 +1,5 @@
-import { EVENT_LIST } from "src/js/opt/event";
 import { groupBy } from "lodash";
+import { FIELD_EVENTS } from "src/js/opt/event";
 import dayjs from "src/js/dayjs";
 const Long = require("long");
 
@@ -7,28 +7,27 @@ const parseEvent = (value, bit) => {
   return Long.fromNumber(value, 1).shiftRight(bit) & 1;
 };
 
-const readEvent = eventsGroup => {
-  return EVENT_LIST.filter(({ bit }) => parseEvent(eventsGroup.val, bit)).map(
-    ({ name }) => name
-  );
+const readEvent = (LIST, eventsGroup) => {
+  return LIST.filter((evt, bit) => parseEvent(eventsGroup.val, bit));
 };
 
-const eventHistories = report => {
-  return groupBy(
-    report.reduce(
-      (acc, { eventsGroup, logDatetime }) =>
+const groupEvent = (field, report) => {
+  const events = report
+    .filter((r) => r[field])
+    .reduce(
+      (acc, { [field]: event, logDatetime }) =>
         acc.concat(
-          ...EVENT_LIST.filter(({ bit }) =>
-            parseEvent(eventsGroup.val, bit)
-          ).map(({ name }) => ({
-            time: dayjs.unix(logDatetime.val).format("HH:mm:ss"),
-            name
-          }))
+          ...FIELD_EVENTS[field]
+            .filter((evt, bit) => parseEvent(event.val, bit))
+            .map((evt) => ({
+              time: dayjs.unix(logDatetime.val).format("HH:mm:ss"),
+              name: evt,
+            }))
         ),
       []
-    ),
-    "name"
-  );
+    );
+
+  return events.length == 0 ? events : groupBy(events, "name");
 };
 
-export { EVENT_LIST, parseEvent, readEvent, eventHistories };
+export { parseEvent, readEvent, groupEvent };

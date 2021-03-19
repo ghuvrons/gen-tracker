@@ -2,7 +2,7 @@
   <div>
     <q-input
       v-model="filter"
-      placeholder="Filter..."
+      placeholder="Search..."
       clearable
       filled
       dense

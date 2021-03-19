@@ -27,7 +27,7 @@ const getVehicleState = (state) =>
     Object.values(VEHICLE_STATES).findIndex((v) => v === parseInt(state))
   ];
 
-const VCU = ({ required }) => {
+const VCU = () => {
   return [
     {
       group: "packet",
@@ -68,9 +68,9 @@ const VCU = ({ required }) => {
       title: "Events Group",
       required: true,
       chartable: true,
-      size: 8,
+      size: 2,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => IntToHex(vf, 16).toUpperCase(),
+      display: (vf) => IntToHex(vf, 4).toUpperCase(),
     },
     {
       group: "vcu",
@@ -254,19 +254,40 @@ const VCU = ({ required }) => {
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
     },
-  ].filter(({ required: req }) => req === required);
+  ];
 };
 
-const BMS = ({ required }) => {
-  return ["One", "Two"]
-    .reduce(
+const BMS = () => {
+  return [
+    {
+      group: `bms`,
+      field: `bmsSoc`,
+      title: `BMS SOC`,
+      required: false,
+      chartable: true,
+      unit: "%",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: `bms`,
+      field: `bmsFault`,
+      title: `BMS Fault`,
+      required: false,
+      chartable: true,
+      size: 2,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => IntToHex(vf, 4).toUpperCase(),
+    },
+    ...["One", "Two"].reduce(
       (acc, i) =>
         acc.concat([
           {
             group: `bms.${i}`,
             field: `bms${i}Id`,
             title: `BMS ${i} ID`,
-            required: true,
+            required: false,
             size: 4,
             format: (v) => HexToUnsignedInt(cend(v)),
             display: (vf) => {
@@ -278,7 +299,7 @@ const BMS = ({ required }) => {
             group: `bms.${i}`,
             field: `bms${i}Voltage`,
             title: `BMS ${i} Voltage`,
-            required: true,
+            required: false,
             chartable: true,
             unit: "Volt",
             size: 2,
@@ -289,7 +310,7 @@ const BMS = ({ required }) => {
             group: `bms.${i}`,
             field: `bms${i}Current`,
             title: `BMS ${i} Current`,
-            required: true,
+            required: false,
             chartable: true,
             unit: "Ampere",
             size: 2,
@@ -303,7 +324,7 @@ const BMS = ({ required }) => {
             required: false,
             chartable: true,
             unit: "%",
-            size: 2,
+            size: 1,
             format: (v) => HexToUnsignedInt(cend(v)),
             display: (vf) => Dot(vf),
           },
@@ -320,70 +341,12 @@ const BMS = ({ required }) => {
           },
         ]),
       []
-    )
-    .filter(({ required: req }) => req === required);
+    ),
+  ];
 };
 
-const DEBUG = () => {
-  const TASK_LIST = [
-    "managerTask",
-    "iotTask",
-    "reporterTask",
-    "commandTask",
-    "gpsTask",
-    "gyroTask",
-    "remoteTask",
-    "fingerTask",
-    "audioTask",
-    "gateTask",
-    "canRxTask",
-    "canTxTask",
-    // "hmi2PowerTask"
-  ];
-  const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
-
+const MCU = () => {
   return [
-    ...TASK_LIST.reduce((acc, task) => {
-      return acc.concat([
-        {
-          group: `vcu.task.wakeup`,
-          field: `${task}Wakeup`,
-          title: `${startCase(task)} wakeup`,
-          required: false,
-          chartable: true,
-          unit: "s",
-          size: 1,
-          format: (v) => HexToUnsignedInt(cend(v)),
-          display: (vf) => Dot(vf),
-        },
-        {
-          group: `vcu.task.stack`,
-          field: `${task}Stack`,
-          title: `${startCase(task)} stack`,
-          required: false,
-          chartable: true,
-          unit: "Bytes",
-          size: 2,
-          format: (v) => HexToUnsignedInt(cend(v)),
-          display: (vf) => Dot(vf),
-        },
-      ]);
-    }, []),
-    ...GYRO_LIST.reduce((acc, gyro) => {
-      return acc.concat([
-        {
-          group: `vcu.gyro`,
-          field: `gyro${gyro}`,
-          title: `Gyro ${gyro}`,
-          required: false,
-          chartable: true,
-          unit: "Degree",
-          size: 1,
-          format: (v) => HexToSignedInt8(cend(v)),
-          display: (vf) => Dot(vf),
-        },
-      ]);
-    }, []),
     {
       group: `mcu`,
       field: `mcuRpm`,
@@ -471,7 +434,7 @@ const DEBUG = () => {
     },
     {
       group: `mcu.fault`,
-      field: `mcuFaulRun`,
+      field: `mcuFaultRun`,
       title: `MCU Fault Run`,
       required: false,
       chartable: true,
@@ -553,13 +516,78 @@ const DEBUG = () => {
   ];
 };
 
+const GYRO = () => {
+  const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
+
+  return GYRO_LIST.reduce((acc, gyro) => {
+    return acc.concat([
+      {
+        group: `vcu.gyro`,
+        field: `gyro${gyro}`,
+        title: `Gyro ${gyro}`,
+        required: false,
+        chartable: true,
+        unit: "Degree",
+        size: 1,
+        format: (v) => HexToSignedInt8(cend(v)),
+        display: (vf) => Dot(vf),
+      },
+    ]);
+  }, []);
+};
+
+const TASKS = () => {
+  const TASK_LIST = [
+    "managerTask",
+    "iotTask",
+    "reporterTask",
+    "commandTask",
+    "gpsTask",
+    "gyroTask",
+    "remoteTask",
+    "fingerTask",
+    "audioTask",
+    "gateTask",
+    "canRxTask",
+    "canTxTask",
+    // "hmi2PowerTask"
+  ];
+
+  return TASK_LIST.reduce((acc, task) => {
+    return acc.concat([
+      {
+        group: `task.wakeup`,
+        field: `${task}Wakeup`,
+        title: `${startCase(task)} wakeup`,
+        required: false,
+        chartable: true,
+        unit: "s",
+        size: 1,
+        format: (v) => HexToUnsignedInt(cend(v)),
+        display: (vf) => Dot(vf),
+      },
+      {
+        group: `task.stack`,
+        field: `${task}Stack`,
+        title: `${startCase(task)} stack`,
+        required: false,
+        chartable: true,
+        unit: "Bytes",
+        size: 2,
+        format: (v) => HexToUnsignedInt(cend(v)),
+        display: (vf) => Dot(vf),
+      },
+    ]);
+  }, []);
+};
+
 const Report = [
   ...Header,
-  ...VCU({ required: true }),
-  ...BMS({ required: true }),
-  ...VCU({ required: false }),
-  ...BMS({ required: false }),
-  ...DEBUG(),
+  ...VCU(),
+  ...GYRO(),
+  ...BMS(),
+  ...MCU(),
+  ...TASKS(),
 ].map((el, idx) => ({
   ...el,
   no: idx,

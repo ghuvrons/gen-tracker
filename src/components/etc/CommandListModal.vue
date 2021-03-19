@@ -20,7 +20,7 @@
           </template>
           <q-input
             v-model="keyword"
-            placeholder="Filter..."
+            placeholder="Search..."
             :class="{ 'full-width': $q.screen.lt.sm }"
             dark
             clearable
