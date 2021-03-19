@@ -38,7 +38,7 @@ const COMMAND_LIST = [
     subCode: 2,
     size: 1,
     type: "uint8_t",
-    range: [0, 3],
+    range: [1, 3],
   },
   {
     command: "GEN_MODE_DRIVE",
