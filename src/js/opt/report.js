@@ -435,7 +435,7 @@ const DEBUG = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => config.driveMode[vf],
+      display: (vf) => config.mode.drive[vf],
     },
     {
       group: `mcu.torque`,
