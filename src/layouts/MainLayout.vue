@@ -85,7 +85,7 @@ import config from "src/js/opt/config";
 
 import { SET_DARKER } from "src/store/common/mutation-types";
 
-import { Platform, Dark } from "quasar";
+import { useQuasar } from "quasar";
 import { computed, reactive, toRefs, watch, onMounted} from "vue";
 import { useStore } from "vuex";
 import OfflineBanner from 'src/components/etc/OfflineBanner.vue';
@@ -100,13 +100,15 @@ export default {
     CommandManagement
   },
   setup() {
+    const $q = useQuasar();
     const store = useStore();
+
     const darker = computed(() => store.state.common.darker);
     const setDarker = (v) => store.commit(SET_DARKER, v);
 
     const state = reactive({
       drawer: {
-        left: Platform.is.desktop,
+        left: $q.platform.is.desktop,
         right: false
       },
       app: config.app,
@@ -125,11 +127,11 @@ export default {
     const reload = () => window.location.reload();
 
     watch(
-      () => Dark.isActive,
+      () => $q.dark.isActive,
       (v) => setDarker(v)
     );
 
-    onMounted(() => Dark.set(darker.value));
+    onMounted(() => $q.dark.set(darker.value));
 
     return {
       ...toRefs(state),

@@ -4,10 +4,13 @@ import { INSERT_COMMAND } from "src/store/db/action-types";
 import { buildCommand, parseCommand, validateCommand } from "src/js/command";
 import config from "src/js/opt/config";
 
+import { useQuasar } from "quasar";
 import { computed } from "vue";
 import { useStore } from "vuex";
+const md5 = require("md5");
 
 export default function ({ publisher, addDevices }) {
+  const $q = useQuasar();
   const store = useStore();
   const devDevice = computed(() => store.getters[`db/devDevice`]);
   const insertCommand = (v) => store.dispatch(INSERT_COMMAND, v);
@@ -16,7 +19,8 @@ export default function ({ publisher, addDevices }) {
     const { lastCommand } = devDevice.value ?? {};
     return lastCommand && !lastCommand.hasOwnProperty("resCode");
   });
-  const sendCommand = (payload) => {
+
+  const checkCommand = (payload) => {
     if (!payload) return notify("No payload");
     if (!devDevice.value) return notify("No device");
 
@@ -25,12 +29,13 @@ export default function ({ publisher, addDevices }) {
     // if (!online) return notify("Device offline");
     if (!ready) return notify("Device busy");
 
-    payload = payload.toUpperCase();
-    const cmd = validateCommand(payload);
+    const cmd = validateCommand(payload.toUpperCase());
     if (!cmd) return;
-
     if (typeof cmd === "string") return notify(cmd);
 
+    return { vin, cmd };
+  };
+  const publishCommand = (cmd, vin) => {
     const { hexCmd, ...command } = buildCommand(cmd, vin);
     addDevices([{ vin, cmdStatus: "Sending..." }]);
 
@@ -44,7 +49,35 @@ export default function ({ publisher, addDevices }) {
         addDevices([{ vin, cmdStatus: "Retrying..." }]);
         log("warn", `RE-COMMAND ${hexCmd}`);
         publisher(vin, binCmd);
-      }, config.mqtt.retryIntervalMS),
+      }, config.command.retryInterval),
+    });
+  };
+  const sendCommand = (payload) => {
+    const { vin, cmd } = checkCommand(payload) ?? {};
+
+    if (!cmd) return;
+
+    const keypass = $q.sessionStorage.getItem("keypass");
+    if (keypass == config.command.keypass) {
+      return publishCommand(cmd, vin);
+    }
+
+    $q.dialog({
+      dark: $q.dark.isActive,
+      title: "Security",
+      message: "What is the password?",
+      prompt: {
+        model: "",
+        type: "text", // optional
+      },
+      cancel: true,
+      persistent: true,
+    }).onOk((keypass) => {
+      if (md5(keypass) == config.command.keypass) {
+        $q.sessionStorage.set("keypass", config.command.keypass);
+        publishCommand(cmd, vin);
+        notify("Password accepted.", "positive");
+      } else notify("Wrong password!", "negative");
     });
   };
   const handleCommand = (data, topic) => {

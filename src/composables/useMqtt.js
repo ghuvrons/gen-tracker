@@ -1,11 +1,13 @@
 import mqtt from "mqtt";
-import { Platform } from "quasar";
 import { ref, onBeforeUnmount } from "vue";
 import { notify } from "src/js/framework";
-import config from "src/js/opt/config";
 import { log } from "src/js/utils";
+import { useQuasar } from "quasar";
+import config from "src/js/opt/config";
 
 export default function () {
+  const $q = useQuasar();
+
   const brokerOff = ref(true);
   const listeners = ref([]);
 
@@ -14,7 +16,7 @@ export default function () {
     clientId: getClientId(),
     username: username,
     password: password,
-    clean: Platform.is.mobile,
+    clean: $q.platform.is.mobile,
     keepalive: 60,
     // protocolId: "MQTT",
     // protocolVersion: 4,

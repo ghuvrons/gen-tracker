@@ -63,6 +63,8 @@ const makeCommand = (payload) => {
   const { prop, value } = extractCommand(payload);
   const cmd = COMMAND_LIST.find(({ command }) => command === prop);
 
+  if (!cmd) return;
+
   return {
     ...cmd,
     timeout: cmd?.timeout ?? 10,

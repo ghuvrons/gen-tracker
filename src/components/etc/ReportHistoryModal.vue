@@ -109,7 +109,8 @@ import EventGroupReader from "components/etc/EventGroupReader";
 
 import { getField } from "src/js/utils";
 import { Report } from "src/js/report";
-import { Dark } from "quasar";
+
+import { useQuasar } from "quasar";
 import useChart from "src/composables/useChart";
 
 import {
@@ -135,6 +136,7 @@ export default defineComponent({
     EventGroupReader
   },
   setup(props) {
+    const $q = useQuasar();
     const store = useStore();
     const devReports = computed(() => store.getters[`db/devReports`]);
     const devEvents = computed(() => store.getters[`db/devEvents`]);
@@ -271,7 +273,7 @@ export default defineComponent({
       { lazy: false, immediate: true }
     );
     watch(
-      () => Dark.isActive,
+      () => $q.dark.isActive,
       (dark) => setColor(dark ? "#FFF" : "#666"),
       { lazy: false, immediate: true }
     );

@@ -77,5 +77,5 @@
 - [x] Fix RepsonseLog not sync with command sent
 - [x] Upgrade to quasar v.1.x.x (stable)
 - [x] Remove gen-server, use MQTT broker instead
-- [ ] Use dynamic height
-- [ ] Change axes range unit (K, M, G)
+- [x] Use dynamic height
+- [x] Change axes range unit (K, M, G)
