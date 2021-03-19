@@ -9,12 +9,13 @@
       <GoogleMap
         api-key="AIzaSyBE8UhrrFkz9m37oowPkHX9to8NXcHw4Ak"
         class="fit"
+        ref="gmap"
         :center="center"
         :zoom="zoom"
       >
         <Marker
           v-if="position.valid"
-          :options="{ position: center, icon: icon }"
+          :options="{ position: center, icon }"
         />
         <Polyline :options="{ path, ...polyOptions }" />
       </GoogleMap>
@@ -66,11 +67,21 @@ export default defineComponent({
     const devDevice = computed(() => store.getters[`db/devDevice`]);
     const devReports = computed(() => store.getters[`db/devReports`]);
 
+    const { protocol, host } = window.location;
     const { centerIndonesia, zoom } = config.map;
     const state = reactive({
       zoom,
+      gmap: null,
       width: 0,
-      icon: null,
+      icon: {
+        // url: `${protocol}//${host}/motorcycle.png`,
+        path: "M16.001 5c-4.216 0-7.714 3.418-7.634 7.634.029 1.578.719 2.824 1.351 4.024.242.461 6.264 10.332 6.264 10.332V27l.001-.007.002.007v-.01l6.531-10.377c.407-.703.793-1.771.793-1.771A7.631 7.631 0 0 0 16.001 5zM16 16.019a3.895 3.895 0 0 1-3.896-3.897A3.898 3.898 0 1 1 16 16.019z",
+        rotation: 0-180,
+        fillColor: "red",
+        fillOpacity: 1,
+        strokeWeight: 0.3,
+        anchor:{x:16, y:28},
+      },
       // pov: null,
       // pano: null,
       path: [],
@@ -98,6 +109,10 @@ export default defineComponent({
       // }
     });
 
+    const streetView = computed(
+      () => false // state.position.valid && state.width > 500
+    );
+
     // const updatePov = (pov) => (state.pov = { ...pov, zoom: 0 });
     // const updatePano = (pano) => (state.pano = pano);
     const setPosition = ({ valid, ...location }) => {
@@ -109,15 +124,6 @@ export default defineComponent({
       const pos = getPosition(report);
       if (pos.valid) state.path.push(pos);
     };
-
-    const streetView = computed(
-      () => false // state.position.valid && state.width > 500
-    );
-
-    onMounted(() => {
-      const { protocol, host } = window.location;
-      state.icon = `${protocol}//${host}/motorcycle.png`;
-    });
 
     watch(
       () => devDevice.value,
@@ -143,6 +149,7 @@ export default defineComponent({
           : nearestFullReport(curReport, devReports.value);
 
         setPosition(getPosition(fullReport));
+        state.icon.rotation = getHeading(curReport) - 180;
 
         // if (state.pov)
         //   updatePov({

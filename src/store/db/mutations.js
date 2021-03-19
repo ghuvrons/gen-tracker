@@ -8,6 +8,7 @@ import { mod } from "src/js/utils";
 export default {
   [mod(mutations.CLEAR_DATABASE)](state) {
     Object.assign(state, initialState());
+    window.location.reload();
   },
 
   [mod(mutations.SET_VIN)](state, vin) {
