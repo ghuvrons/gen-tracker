@@ -65,7 +65,7 @@ export default function ({ publisher, addDevices }) {
     $q.dialog({
       dark: $q.dark.isActive,
       title: "Security",
-      message: "What is the password?",
+      message: "What is the magic word?",
       prompt: {
         model: "",
         type: "text", // optional
