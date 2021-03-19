@@ -52,7 +52,7 @@ const dilation = (unix, as, startUnix) => {
 };
 
 const calibrateTime = ({ gpsLatitude, gpsLongitude, sendDatetime }) => {
-  const { timezone } = config;
+  let { timezone } = config;
 
   // correct timestamp if not sync with server
   if (gpsLatitude.val && gpsLongitude.val)

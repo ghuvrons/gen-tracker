@@ -131,7 +131,6 @@ export default defineComponent({
       if (!validTime) return;
 
       sendCommand(`REPORT_RTC=${validTime}`);
-      notify("Calibrating device time..", "info");
     };
     const importData = ([file]) => {
       importJSON(file).then((hexs) => insertBuffers(hexs));
