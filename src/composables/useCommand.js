@@ -82,13 +82,14 @@ export default function ({ publisher, addDevices }) {
     const vin = parseInt(topic.split("/")[1]);
     const hex = data.toString("hex").toUpperCase();
 
+    if (hex) log(awaitCommand.value ? "warn" : "error", `COMMAND ${hex}`);
+
     const ready = !hex;
     if (ready) notify(`Device ready`, "info");
 
     log("warn", `${ready ? "READY" : "BUSY"} ${vin}`);
     addDevices([{ vin, ready }]);
 
-    if (!ready) log(awaitCommand.value ? "warn" : "error", `COMMAND ${hexCmd}`);
     if (!awaitCommand.value) return;
 
     const { lastCommand } = devDevice.value;
