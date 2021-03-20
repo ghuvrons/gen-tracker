@@ -40,14 +40,12 @@ export default function ({ publisher, addDevices }) {
     addDevices([{ vin, cmdStatus: "Sending..." }]);
 
     const binCmd = Buffer.from(hexCmd, "hex");
-    log("warn", `COMMAND ${hexCmd}`);
     publisher(vin, binCmd);
 
     insertCommand({
       ...command,
       timer: setInterval(() => {
         addDevices([{ vin, cmdStatus: "Retrying..." }]);
-        log("warn", `RE-COMMAND ${hexCmd}`);
         publisher(vin, binCmd);
       }, config.command.retryInterval),
     });
@@ -89,6 +87,8 @@ export default function ({ publisher, addDevices }) {
 
     log("warn", `${ready ? "READY" : "BUSY"} ${vin}`);
     addDevices([{ vin, ready }]);
+
+    if (!ready) log(awaitCommand.value ? "warn" : "error", `COMMAND ${hexCmd}`);
     if (!awaitCommand.value) return;
 
     const { lastCommand } = devDevice.value;
