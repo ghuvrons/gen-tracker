@@ -6,13 +6,15 @@
       </template>
       No report yet
     </q-banner>
-    <q-virtual-scroll v-else :items="devReports" separator>
-      <template v-slot="{ item: devReport, index }">
+    <q-virtual-scroll v-else
+          @keyup="changeReport($event)"
+          :items="devReports" separator>
+      <template v-slot="{ item: devReport }">
         <q-item
-          :key="index"
+          :key="devReport.sendDatetime.val"
+          @click="setReport(devReport)"
           :active="devReport.hex === report.hex"
           active-class="bg-primary text-white"
-          @click="setReport(devReport)"
           clickable
           dense
         >
@@ -91,6 +93,25 @@ export default defineComponent({
 
     const getDatetime = (logDatetime) =>
       dayjs.unix(logDatetime.val).format("HH:mm:ss");
+    const changeReport = ({code}) => {
+      if (!['ArrowUp', 'ArrowDown'].includes(code)) return;
+
+      const sdt = report.value?.sendDatetime?.val;
+      if (!sdt) return;
+
+      let tgtReport;
+      if (code == 'ArrowUp')
+        tgtReport = devReports.value
+                    .slice()
+                    .reverse()
+                    .find(({sendDatetime}) => sendDatetime.val > sdt);
+      else
+        tgtReport = devReports.value
+                    .find(({sendDatetime}) => sendDatetime.val < sdt);
+
+      if (!tgtReport) return;
+      setReport(tgtReport);
+    }
 
     return {
       report,
@@ -98,7 +119,8 @@ export default defineComponent({
       followState,
 
       setReport,
-      getDatetime
+      changeReport,
+      getDatetime,
     };
   }
 });

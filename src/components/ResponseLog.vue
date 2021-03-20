@@ -17,7 +17,7 @@
     </q-banner>
     <q-virtual-scroll v-else :items="devCommands" :style="height" separator>
       <template v-slot="{ item: cmd, index }">
-        <q-item :key="index" @click="writeCommand(cmd.payload)" clickable>
+        <q-item :key="cmd.sendDatetime" @click="writeCommand(cmd.payload)" clickable>
           <q-item-section>
             <q-item-label lines="1" caption class="text-italic">
               {{ parseDatetime(cmd.sendDatetime) }}
