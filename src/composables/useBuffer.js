@@ -27,7 +27,7 @@ export default function ({ handleReports }) {
     const hex = data.toString("hex").toUpperCase();
     if (!hex) return;
     if (!validateFrame(hex, config.prefix.report))
-      return log("error", `CORRUPT ${hex}`);
+      return log("error", `REPORT (CORRUPT) ${hex}`);
     insertBuffers([hex]);
   };
 

@@ -38,7 +38,7 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
   };
   const handleResponse = (hex) => {
     if (!validateFrame(hex, config.prefix.response))
-      return log("error", `CORRUPT ${hex}`);
+      return log("error", `RESPONSE (CORRUPT) ${hex}`);
 
     const response = parseResponse(hex);
     const vin = getValue(response, "vin");
