@@ -21,16 +21,20 @@ export default function ({ handleEvents }) {
     const { val: ldt } = report.logDatetime ?? {};
 
     const dup = reports.value.some(({ logDatetime }) => logDatetime.val == ldt);
-    log(dup ? "error" : "log", `REPORT ${hex}`);
-    if (dup) return notify("Report duplicate", "info");
+
+    if (dup) {
+      log("error", `REPORT (DUPLICATE) ${hex}`);
+      return notify("Report duplicate", "info");
+    }
 
     const sendDiff = Math.abs(dilation(sdt, "years"));
     const logDiff = Math.abs(dilation(ldt, "years"));
     if (sendDiff > 1 || (sendDiff <= 1 && logDiff > 1)) {
-      notify("Report expired", "info");
-      log("error", `^REPORT (EXPIRED)`);
+      log("error", `REPORT (EXPIRED) ${hex}`);
+      return notify("Report expired", "info");
     }
 
+    log("log", `REPORT ${hex}`);
     return report;
   };
   const handleReports = (hexs) => {
