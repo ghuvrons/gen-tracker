@@ -99,7 +99,7 @@ export default function ({ publisher, addDevices }) {
     else clearInterval(lastCommand.timer);
   };
   const handleAck = (hex) => {
-    log("warn", `ACK ${hex}`);
+    log(awaitCommand.value ? "warn" : "error", `ACK ${hex}`);
 
     if (!awaitCommand.value) return;
     const { vin, lastCommand } = devDevice.value;

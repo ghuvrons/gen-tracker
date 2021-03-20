@@ -20,10 +20,9 @@ export default function ({ handleEvents }) {
     const { val: sdt } = report.sendDatetime ?? {};
     const { val: ldt } = report.logDatetime ?? {};
 
-    if (reports.value.some(({ logDatetime }) => logDatetime.val == ldt)) {
-      notify("Report duplicate", "info");
-      return log("error", `^REPORT (DUPLICATE)`);
-    }
+    const dup = reports.value.some(({ logDatetime }) => logDatetime.val == ldt);
+    log(dup ? "error" : "log", `REPORT ${hex}`);
+    if (dup) return notify("Report duplicate", "info");
 
     const sendDiff = Math.abs(dilation(sdt, "years"));
     const logDiff = Math.abs(dilation(ldt, "years"));
@@ -36,7 +35,6 @@ export default function ({ handleEvents }) {
   };
   const handleReports = (hexs) => {
     const reports = hexs.reduce((acc, hex) => {
-      log("log", `REPORT ${hex}`);
       const report = parseReport(hex);
 
       if (!validate(report)) return acc;
