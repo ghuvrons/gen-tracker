@@ -16,7 +16,7 @@ export default function ({ handleEvents }) {
   const insertReports = (v) => store.dispatch(INSERT_REPORTS, v);
   const follow = computed(() => store.state.common.follow);
 
-  const validate = (report) => {
+  const validate = (report, hex) => {
     const { val: sdt } = report.sendDatetime ?? {};
     const { val: ldt } = report.logDatetime ?? {};
 
@@ -37,7 +37,7 @@ export default function ({ handleEvents }) {
     const reports = hexs.reduce((acc, hex) => {
       const report = parseReport(hex);
 
-      if (!validate(report)) return acc;
+      if (!validate(report, hex)) return acc;
 
       return [...acc, report];
     }, []);
