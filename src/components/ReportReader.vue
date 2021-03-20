@@ -129,7 +129,7 @@ export default defineComponent({
         state.hList = `height: calc(100vh - ${h}px - 34px)`;
         state.hTree = ` height: calc(100vh - ${h}px - 73px)`;
       },
-      { lazy: false, immediate: true }
+      { immediate: true }
     );
 
     return {

@@ -61,7 +61,7 @@ export default function ({ handleEvents }) {
 
       handleEvents(curReport, oldReport);
     },
-    { lazy: false, immediate: true, deep: true }
+    { immediate: true, deep: true }
   );
 
   return {

@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.42",
+    version: "2.44",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -17,7 +17,7 @@ export default {
     response: "@S",
   },
   command: {
-    keypass: "ac1a1139857263a346ca84458ed8dd99",
+    keypass: "dd31690d7be69fd3237c64122083c132",
     retryInterval: 10000,
   },
   mode: {
@@ -26,6 +26,7 @@ export default {
   frames: ["SIMPLE", "FULL"],
   timezone: "Asia/Jakarta",
   map: {
+    apiKey: "AIzaSyBE8UhrrFkz9m37oowPkHX9to8NXcHw4Ak",
     zoom: 3,
     centerIndonesia: {
       lat: -2.6000285,

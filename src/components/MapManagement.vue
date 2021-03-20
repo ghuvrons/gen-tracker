@@ -1,44 +1,16 @@
 <template>
-  <q-splitter :model-value="streetView ? 50 : 100">
-    <!--
-        we listen for size changes on this next
-        <div>, so we place the observer as direct child:
-      -->
-    <q-resize-observer @resize="width = $event.width" />
-    <template v-slot:before>
-      <GoogleMap
-        api-key="AIzaSyBE8UhrrFkz9m37oowPkHX9to8NXcHw4Ak"
-        class="fit"
-        ref="gmap"
-        :center="center"
-        :zoom="zoom"
-      >
-        <Marker
-          v-if="position.valid"
-          :options="{ position: center, icon }"
-        />
-        <Polyline :options="{ path, ...polyOptions }" />
-      </GoogleMap>
-    </template>
-    <template v-if="streetView" v-slot:separator>
-      <q-avatar
-        color="grey"
-        text-color="white"
-        size="20px"
-        icon="drag_indicator"
-      />
-    </template>
-    <template v-if="streetView" v-slot:after>
-      <!-- <gmap-street-view-panorama
-        class="fit"
-        :position="position"
-        :pov="pov"
-        :zoom="1"
-        @pano_changed="updatePano"
-        @pov_changed="updatePov"
-      ></gmap-street-view-panorama> -->
-    </template>
-  </q-splitter>
+  <GoogleMap
+    class="fit"
+    :api-key="apiKey"
+    :center="center"
+    :zoom="zoom"
+  >
+    <Marker
+      v-if="position.valid"
+      :options="{ position: center, icon }"
+    />
+    <Polyline :options="{ path, ...polyOptions }" />
+  </GoogleMap>
 </template>
 
 <script>
@@ -54,7 +26,6 @@ import {
   watch,
   computed,
   defineComponent,
-  onMounted
 } from "vue";
 import { useStore } from "vuex";
 
@@ -67,14 +38,10 @@ export default defineComponent({
     const devDevice = computed(() => store.getters[`db/devDevice`]);
     const devReports = computed(() => store.getters[`db/devReports`]);
 
-    const { protocol, host } = window.location;
     const { centerIndonesia, zoom } = config.map;
     const state = reactive({
       zoom,
-      gmap: null,
-      width: 0,
       icon: {
-        // url: `${protocol}//${host}/motorcycle.png`,
         path: "M16.001 5c-4.216 0-7.714 3.418-7.634 7.634.029 1.578.719 2.824 1.351 4.024.242.461 6.264 10.332 6.264 10.332V27l.001-.007.002.007v-.01l6.531-10.377c.407-.703.793-1.771.793-1.771A7.631 7.631 0 0 0 16.001 5zM16 16.019a3.895 3.895 0 0 1-3.896-3.897A3.898 3.898 0 1 1 16 16.019z",
         rotation: 0-180,
         fillColor: "red",
@@ -82,12 +49,8 @@ export default defineComponent({
         strokeWeight: 0.3,
         anchor:{x:16, y:28},
       },
-      // pov: null,
-      // pano: null,
       path: [],
-      center: {
-        ...centerIndonesia
-      },
+      center: {...centerIndonesia},
       position: {
         ...centerIndonesia,
         valid: false
@@ -109,12 +72,6 @@ export default defineComponent({
       // }
     });
 
-    const streetView = computed(
-      () => false // state.position.valid && state.width > 500
-    );
-
-    // const updatePov = (pov) => (state.pov = { ...pov, zoom: 0 });
-    // const updatePano = (pano) => (state.pano = pano);
     const setPosition = ({ valid, ...location }) => {
       state.zoom = valid ? 17 : zoom;
       state.center = { ...(valid ? location : centerIndonesia) };
@@ -137,7 +94,7 @@ export default defineComponent({
           addPath(curDev?.lastFullReport);
         }
       },
-      { lazy: false, immediate: true, deep: true }
+      { immediate: true, deep: true }
     );
 
     watch(
@@ -149,23 +106,14 @@ export default defineComponent({
           : nearestFullReport(curReport, devReports.value);
 
         setPosition(getPosition(fullReport));
-        state.icon.rotation = getHeading(curReport) - 180;
-
-        // if (state.pov)
-        //   updatePov({
-        //     ...state.pov,
-        //     heading: getHeading(curReport)
-        //   });
+        state.icon.rotation = getHeading(fullReport) - 180;
       },
-      { lazy: false, immediate: true }
+      { immediate: true }
     );
 
     return {
       ...toRefs(state),
-      streetView,
-
-      // updatePov,
-      // updatePano
+      apiKey: config.map.apiKey
     };
   }
 });

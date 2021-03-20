@@ -235,10 +235,7 @@ export default defineComponent({
         if (len == 0) return;
         writeChartRange();
       },
-      {
-        // lazy: false, immediate: true,
-        deep: true
-      }
+      { deep: true }
     );
     watch(
       () => state.range.val,
@@ -270,12 +267,12 @@ export default defineComponent({
         }
         applyRange();
       },
-      { lazy: false, immediate: true }
+      { immediate: true }
     );
     watch(
       () => $q.dark.isActive,
       (dark) => setColor(dark ? "#FFF" : "#666"),
-      { lazy: false, immediate: true }
+      { immediate: true }
     );
 
     return {
