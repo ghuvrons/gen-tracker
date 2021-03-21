@@ -257,8 +257,43 @@ const VCU = () => {
   ];
 };
 
+const HMI1 = () => {
+  return [
+    {
+      group: `hmi1`,
+      field: `hmi1Run`,
+      title: `HMI1 Run`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+  ];
+};
+
 const BMS = () => {
   return [
+    {
+      group: `bms`,
+      field: `bmsActive`,
+      title: `BMS Active`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    {
+      group: `bms`,
+      field: `bmsRun`,
+      title: `BMS Run`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
     {
       group: `bms`,
       field: `bmsSoc`,
@@ -347,6 +382,26 @@ const BMS = () => {
 
 const MCU = () => {
   return [
+    {
+      group: `mcu`,
+      field: `mcuActive`,
+      title: `MCU Active`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    {
+      group: `mcu`,
+      field: `mcuRun`,
+      title: `MCU Run`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
     {
       group: `mcu`,
       field: `mcuRpm`,
@@ -585,6 +640,7 @@ const Report = [
   ...Header,
   ...VCU(),
   ...GYRO(),
+  ...HMI1(),
   ...BMS(),
   ...MCU(),
   ...TASKS(),
