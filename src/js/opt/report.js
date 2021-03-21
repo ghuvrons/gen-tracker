@@ -635,7 +635,12 @@ const TASKS = () => {
           unit: "s",
           size: 1,
           format: (v) => HexToUnsignedInt(cend(v)),
-          display: (vf) => Dot(vf),
+          display: (vf) => {
+            let prefix = "";
+            if (vf == 0) prefix = "< ";
+            else if (vf == 255) prefix = "> ";
+            return `${prefix}${Dot(vf)}`;
+          },
         },
       ]);
     }, []),
