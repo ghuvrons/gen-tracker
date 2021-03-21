@@ -608,32 +608,38 @@ const TASKS = () => {
     // "hmi2PowerTask"
   ];
 
-  return TASK_LIST.reduce((acc, task) => {
-    return acc.concat([
-      {
-        group: `task.wakeup`,
-        field: `${task}Wakeup`,
-        title: `${startCase(task)} wakeup`,
-        required: false,
-        chartable: true,
-        unit: "s",
-        size: 1,
-        format: (v) => HexToUnsignedInt(cend(v)),
-        display: (vf) => Dot(vf),
-      },
-      {
-        group: `task.stack`,
-        field: `${task}Stack`,
-        title: `${startCase(task)} stack`,
-        required: false,
-        chartable: true,
-        unit: "Bytes",
-        size: 2,
-        format: (v) => HexToUnsignedInt(cend(v)),
-        display: (vf) => Dot(vf),
-      },
-    ]);
-  }, []);
+  return [
+    ...TASK_LIST.reduce((acc, task) => {
+      return acc.concat([
+        {
+          group: `task.stack`,
+          field: `${task}Stack`,
+          title: `${startCase(task)} stack`,
+          required: false,
+          chartable: true,
+          unit: "Bytes",
+          size: 2,
+          format: (v) => HexToUnsignedInt(cend(v)),
+          display: (vf) => Dot(vf),
+        },
+      ]);
+    }, []),
+    ...TASK_LIST.reduce((acc, task) => {
+      return acc.concat([
+        {
+          group: `task.wakeup`,
+          field: `${task}Wakeup`,
+          title: `${startCase(task)} wakeup`,
+          required: false,
+          chartable: true,
+          unit: "s",
+          size: 1,
+          format: (v) => HexToUnsignedInt(cend(v)),
+          display: (vf) => Dot(vf),
+        },
+      ]);
+    }, []),
+  ];
 };
 
 const Report = [
