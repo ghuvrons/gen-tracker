@@ -130,7 +130,7 @@ export default defineComponent({
       const validTime = calibrateTime(report);
       if (!validTime) return;
 
-      sendCommand(`REPORT_RTC=${validTime}`);
+      sendCommand(`GEN_RTC=${validTime}`);
     };
     const importData = ([file]) => {
       importJSON(file).then((hexs) => insertBuffers(hexs));
