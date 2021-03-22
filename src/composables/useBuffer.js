@@ -26,8 +26,10 @@ export default function ({ handleReports }) {
   const handleBuffer = (data, topic) => {
     const hex = data.toString("hex").toUpperCase();
     if (!hex) return;
-    if (!validateFrame(hex, config.prefix.report))
-      return log("error", `REPORT (CORRUPT) ${hex}`);
+    if (!validateFrame(hex, config.prefix.report)) {
+      log("error", `REPORT (CORRUPT) ${hex}`);
+      return;
+    }
     insertBuffers([hex]);
   };
 

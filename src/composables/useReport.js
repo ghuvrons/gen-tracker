@@ -24,14 +24,16 @@ export default function ({ handleEvents }) {
 
     if (dup) {
       log("error", `REPORT (DUPLICATE) ${hex}`);
-      return notify("Report duplicate", "info");
+      notify("Report duplicate", "info");
+      return;
     }
 
     const sendDiff = Math.abs(dilation(sdt, "years"));
     const logDiff = Math.abs(dilation(ldt, "years"));
     if (sendDiff > 1 || (sendDiff <= 1 && logDiff > 1)) {
       log("error", `REPORT (EXPIRED) ${hex}`);
-      return notify("Report expired", "info");
+      notify("Report expired", "info");
+      return;
     }
 
     log("log", `REPORT ${hex}`);

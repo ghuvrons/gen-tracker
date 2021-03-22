@@ -6,8 +6,10 @@ const pushNotification = (title, body) => {
   const icon = `${protocol}//${host}/icons/favicon-32x32.png`;
 
   const swNotify = () => {
-    if (!("serviceWorker" in navigator))
-      return log("error", "No service worker");
+    if (!("serviceWorker" in navigator)) {
+      log("error", "No service worker");
+      return;
+    }
 
     navigator.serviceWorker.getRegistration().then((registration) => {
       if (registration) registration.showNotification(title, { body, icon });
@@ -15,8 +17,10 @@ const pushNotification = (title, body) => {
     });
   };
 
-  if (!("Notification" in window))
-    return log("error", "No notification support");
+  if (!("Notification" in window)) {
+    log("error", "No notification support");
+    return;
+  }
 
   if (Notification.permission === "granted") swNotify();
   else if (Notification.permission !== "denied")

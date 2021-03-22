@@ -602,7 +602,7 @@ const MCU = () => {
     ...config.mode.drive.reduce((acc, m) => {
       return acc.concat([
         {
-          group: `mcu.template`,
+          group: `mcu.template.${m}`,
           field: `mcuTemplate${m}Discur`,
           title: `MCU Template ${m} Discur`,
           required: false,
@@ -613,7 +613,7 @@ const MCU = () => {
           display: (vf) => Dot(vf),
         },
         {
-          group: `mcu.template`,
+          group: `mcu.template.${m}`,
           field: `mcuTemplate${m}Torque`,
           title: `MCU Template ${m} Torque`,
           required: false,

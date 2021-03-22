@@ -31,11 +31,16 @@ const validateFrame = (hex, prefix) => {
   const theHeader = prefix == config.prefix.report ? Header : CommandHeader;
   const header = parseFrame(hex, theHeader);
 
-  if (getValue(header, "prefix") != prefix)
-    return log("warn", `CORRUPT: Prefix not same`);
+  if (getValue(header, "prefix") != prefix) {
+    log("warn", `CORRUPT: Prefix not same`);
+    return;
+  }
 
   // const crc = getOutput(header, "crc");
-  // if (crc != calculateCRC32(hex)) return log('warn', `CORRUPT: CRC not valid`);
+  // if (crc != calculateCRC32(hex)) {
+  //   log('warn', `CORRUPT: CRC not valid`);
+  //   return;
+  // }
 
   const headerSize = theHeader
     .filter(({ field }) =>
@@ -48,8 +53,10 @@ const validateFrame = (hex, prefix) => {
     .map(({ size }) => size)
     .reduce((sum, val) => sum + val);
 
-  if (getValue(header, "size") != hex.length / 2 - headerSize)
-    return log("warn", `CORRUPT: Size not same`);
+  if (getValue(header, "size") != hex.length / 2 - headerSize) {
+    log("warn", `CORRUPT: Size not same`);
+    return;
+  }
 
   return header;
 };

@@ -58,7 +58,7 @@ const COMMAND_LIST = [
     subCode: 0,
     size: 1,
     type: "uint8_t",
-    range: [1, 3],
+    range: [0, 3],
   },
   {
     command: "AUDIO_BEEP",

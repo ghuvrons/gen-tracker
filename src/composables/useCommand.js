@@ -21,18 +21,35 @@ export default function ({ publisher, addDevices }) {
   });
 
   const checkCommand = (payload) => {
-    if (!payload) return notify("No payload");
-    if (!devDevice.value) return notify("No device");
+    if (!payload) {
+      notify("No payload");
+      return;
+    }
+    if (!devDevice.value) {
+      notify("No device");
+      return;
+    }
 
     const { vin, online, ready } = devDevice.value;
-    if (awaitCommand.value) return notify("Command busy");
-    // if (!online) return notify("Device offline");
-    if (!ready) return notify("Device busy");
+    if (awaitCommand.value) {
+      notify("Command busy");
+      return;
+    }
+    // if (!online) {
+    //   notify("Device offline");
+    //   return;
+    // }
+    if (!ready) {
+      notify("Device busy");
+      return;
+    }
 
     const cmd = validateCommand(payload.toUpperCase());
     if (!cmd) return;
-    if (typeof cmd === "string") return notify(cmd);
-
+    if (typeof cmd === "string") {
+      notify(cmd);
+      return;
+    }
     return { vin, cmd };
   };
   const publishCommand = (cmd, vin) => {

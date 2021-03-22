@@ -37,8 +37,10 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     });
   };
   const handleResponse = (hex) => {
-    if (!validateFrame(hex, config.prefix.response))
-      return log("error", `RESPONSE (CORRUPT) ${hex}`);
+    if (!validateFrame(hex, config.prefix.response)) {
+      log("error", `RESPONSE (CORRUPT) ${hex}`);
+      return;
+    }
 
     const response = parseResponse(hex);
     const vin = getValue(response, "vin");
@@ -46,7 +48,10 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     const device = devices.value.find((dev) => dev.vin === vin);
     if (!device) return;
 
-    if (!awaitCommand.value) return log("error", `RESPONSE ${hex}`);
+    if (!awaitCommand.value) {
+      log("error", `RESPONSE ${hex}`);
+      return;
+    }
     log("warn", `RESPONSE ${hex}`);
 
     const { lastCommand } = device;
