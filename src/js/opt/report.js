@@ -272,6 +272,26 @@ const HMI1 = () => {
   ];
 };
 
+const GYRO = () => {
+  const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
+
+  return GYRO_LIST.reduce((acc, gyro) => {
+    return acc.concat([
+      {
+        group: `vcu.gyro`,
+        field: `gyro${gyro}`,
+        title: `Gyro ${gyro}`,
+        required: false,
+        chartable: true,
+        unit: "Degree",
+        size: 1,
+        format: (v) => HexToSignedInt8(cend(v)),
+        display: (vf) => Dot(vf),
+      },
+    ]);
+  }, []);
+};
+
 const BMS = () => {
   return [
     {
@@ -409,7 +429,7 @@ const MCU = () => {
       required: false,
       chartable: true,
       unit: "rpm",
-      size: 4,
+      size: 2,
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
     },
@@ -456,6 +476,26 @@ const MCU = () => {
       display: (vf) => config.mode.drive[vf],
     },
     {
+      group: `mcu.fault`,
+      field: `mcuFaultPost`,
+      title: `MCU Fault Post`,
+      required: false,
+      chartable: true,
+      size: 4,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => IntToHex(vf, 8).toUpperCase(),
+    },
+    {
+      group: `mcu.fault`,
+      field: `mcuFaultRun`,
+      title: `MCU Fault Run`,
+      required: false,
+      chartable: true,
+      size: 4,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => IntToHex(vf, 8).toUpperCase(),
+    },
+    {
       group: `mcu.torque`,
       field: `mcuTorqueCommand`,
       title: `MCU Torque Command`,
@@ -476,26 +516,6 @@ const MCU = () => {
       size: 2,
       format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
-    },
-    {
-      group: `mcu.fault`,
-      field: `mcuFaultPost`,
-      title: `MCU Fault Post`,
-      required: false,
-      chartable: true,
-      size: 4,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => IntToHex(vf, 8).toUpperCase(),
-    },
-    {
-      group: `mcu.fault`,
-      field: `mcuFaultRun`,
-      title: `MCU Fault Run`,
-      required: false,
-      chartable: true,
-      size: 4,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => IntToHex(vf, 8).toUpperCase(),
     },
     {
       group: `mcu.dcbus`,
@@ -568,27 +588,44 @@ const MCU = () => {
         return states[vf] ?? "Unknown";
       },
     },
+    {
+      group: "mcu.template",
+      field: "mcuTemplateMaxSpeed",
+      title: "MCU Template Max Speed",
+      required: false,
+      chartable: true,
+      unit: "Km/hr",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    ...config.mode.drive.reduce((acc, m) => {
+      return acc.concat([
+        {
+          group: `mcu.template`,
+          field: `mcuTemplate${m}Discur`,
+          title: `MCU Template ${m} Discur`,
+          required: false,
+          chartable: true,
+          unit: "A",
+          size: 2,
+          format: (v) => HexToUnsignedInt(cend(v)),
+          display: (vf) => Dot(vf),
+        },
+        {
+          group: `mcu.template`,
+          field: `mcuTemplate${m}Torque`,
+          title: `MCU Template ${m} Torque`,
+          required: false,
+          chartable: true,
+          unit: "Nm",
+          size: 2,
+          format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+          display: (vf) => parseFloat(vf.toFixed(2)),
+        },
+      ]);
+    }, []),
   ];
-};
-
-const GYRO = () => {
-  const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
-
-  return GYRO_LIST.reduce((acc, gyro) => {
-    return acc.concat([
-      {
-        group: `vcu.gyro`,
-        field: `gyro${gyro}`,
-        title: `Gyro ${gyro}`,
-        required: false,
-        chartable: true,
-        unit: "Degree",
-        size: 1,
-        format: (v) => HexToSignedInt8(cend(v)),
-        display: (vf) => Dot(vf),
-      },
-    ]);
-  }, []);
 };
 
 const TASKS = () => {
