@@ -513,7 +513,7 @@ const MCU = () => {
       chartable: true,
       unit: "Celcius",
       size: 2,
-      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -554,7 +554,7 @@ const MCU = () => {
       chartable: true,
       unit: "Nm",
       size: 2,
-      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -565,7 +565,7 @@ const MCU = () => {
       chartable: true,
       unit: "Nm",
       size: 2,
-      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -576,7 +576,7 @@ const MCU = () => {
       chartable: true,
       unit: "A",
       size: 2,
-      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -587,7 +587,7 @@ const MCU = () => {
       chartable: true,
       unit: "V",
       size: 2,
-      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
