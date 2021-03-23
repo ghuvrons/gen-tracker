@@ -1,4 +1,4 @@
-const EVENT_GROUP_BIT = [
+const EVENTS_BIT = [
   "NET_SOFT_RESET",
   "NET_HARD_RESET",
   "REMOTE_MISSING",
@@ -94,7 +94,7 @@ const MCU_RUN_FAULT_BIT = [
 ];
 
 const FIELD_EVENTS = {
-  eventsGroup: EVENT_GROUP_BIT,
+  events: EVENTS_BIT,
   bmsFault: BMS_FAULT_BIT,
   mcuFaultPost: MCU_POST_FAULT_BIT,
   mcuFaultRun: MCU_RUN_FAULT_BIT,
@@ -102,7 +102,7 @@ const FIELD_EVENTS = {
 
 export {
   FIELD_EVENTS,
-  EVENT_GROUP_BIT,
+  EVENTS_BIT,
   BMS_FAULT_BIT,
   MCU_POST_FAULT_BIT,
   MCU_RUN_FAULT_BIT,

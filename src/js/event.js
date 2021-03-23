@@ -7,8 +7,8 @@ const parseEvent = (value, bit) => {
   return Long.fromNumber(value, 1).shiftRight(bit) & 1;
 };
 
-const readEvent = (LIST, eventsGroup) => {
-  return LIST.filter((evt, bit) => parseEvent(eventsGroup.val, bit));
+const readEvent = (LIST, events) => {
+  return LIST.filter((evt, bit) => parseEvent(events.val, bit));
 };
 
 const groupEvent = (field, report) => {

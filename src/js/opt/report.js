@@ -481,7 +481,7 @@ const MCU = () => {
       chartable: true,
       unit: "rpm",
       size: 2,
-      format: (v) => HexToSignedInt16(cend(v)),
+      format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
     },
     {
