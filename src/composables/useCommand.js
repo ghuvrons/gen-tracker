@@ -9,7 +9,7 @@ import { computed } from "vue";
 import { useStore } from "vuex";
 const md5 = require("md5");
 
-export default function ({ publisher, addDevices }) {
+export default function ({ publish, addDevices }) {
   const $q = useQuasar();
   const store = useStore();
   const devDevice = computed(() => store.getters[`db/devDevice`]);
@@ -20,6 +20,33 @@ export default function ({ publisher, addDevices }) {
     return lastCommand && !lastCommand.hasOwnProperty("resCode");
   });
 
+  const publisher = (vin, data) => {
+    const repeat = data ? 2 : 1;
+    for (let i = 0; i < repeat; i++) {
+      publish(`VCU/${vin}/CMD`, data, { qos: 1, retain: true });
+    }
+    if (!data) {
+      publish(`VCU/${vin}/RSP`, data, { qos: 1, retain: true });
+    }
+  };
+  const flushCommand = (vin) => {
+    publisher(vin, null);
+  };
+  const execCommand = (cmd, vin) => {
+    const { hexCmd, ...command } = buildCommand(cmd, vin);
+    addDevices([{ vin, cmdStatus: "Sending..." }]);
+
+    const binCmd = Buffer.from(hexCmd, "hex");
+    publisher(vin, binCmd);
+
+    insertCommand({
+      ...command,
+      timer: setInterval(() => {
+        addDevices([{ vin, cmdStatus: "Retrying..." }]);
+        publisher(vin, binCmd);
+      }, config.command.retryInterval),
+    });
+  };
   const checkCommand = (payload) => {
     if (!payload) {
       notify("No payload");
@@ -52,21 +79,6 @@ export default function ({ publisher, addDevices }) {
     }
     return { vin, cmd };
   };
-  const publishCommand = (cmd, vin) => {
-    const { hexCmd, ...command } = buildCommand(cmd, vin);
-    addDevices([{ vin, cmdStatus: "Sending..." }]);
-
-    const binCmd = Buffer.from(hexCmd, "hex");
-    publisher(vin, binCmd);
-
-    insertCommand({
-      ...command,
-      timer: setInterval(() => {
-        addDevices([{ vin, cmdStatus: "Retrying..." }]);
-        publisher(vin, binCmd);
-      }, config.command.retryInterval),
-    });
-  };
   const sendCommand = (payload) => {
     const { vin, cmd } = checkCommand(payload) ?? {};
 
@@ -74,7 +86,7 @@ export default function ({ publisher, addDevices }) {
 
     const keypass = $q.sessionStorage.getItem("keypass");
     if (keypass == config.command.keypass) {
-      return publishCommand(cmd, vin);
+      return execCommand(cmd, vin);
     }
 
     $q.dialog({
@@ -90,7 +102,7 @@ export default function ({ publisher, addDevices }) {
     }).onOk((keypass) => {
       if (md5(keypass) == config.command.keypass) {
         $q.sessionStorage.set("keypass", config.command.keypass);
-        publishCommand(cmd, vin);
+        execCommand(cmd, vin);
         notify("Password accepted.", "positive");
       } else notify("Wrong password!", "negative");
     });
@@ -126,8 +138,9 @@ export default function ({ publisher, addDevices }) {
   };
 
   return {
-    sendCommand,
     awaitCommand,
+    sendCommand,
+    flushCommand,
     handleCommand,
     handleAck,
   };

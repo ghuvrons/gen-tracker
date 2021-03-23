@@ -13,7 +13,7 @@ import config from "src/js/opt/config";
 import { watch, computed } from "vue";
 import { useStore } from "vuex";
 
-export default function ({ publisher, awaitCommand, handleFinger }) {
+export default function ({ awaitCommand, flushCommand, handleFinger }) {
   const store = useStore();
   const devices = computed(() => store.state.db.devices);
   const devDevice = computed(() => store.getters[`db/devDevice`]);
@@ -57,7 +57,7 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
     const { lastCommand } = device;
     if (!validResponse(lastCommand, response)) return;
     processResponse(lastCommand, response);
-    publisher(vin, null);
+    flushCommand(vin);
   };
   const ignoreResponse = (resCode) => {
     const { vin, lastCommand } = devDevice.value ?? {};
@@ -66,7 +66,7 @@ export default function ({ publisher, awaitCommand, handleFinger }) {
       clearInterval(lastCommand.timer);
       processResponse(lastCommand, resCode ?? RESCODES.CANCELLED);
     }
-    publisher(vin, null);
+    flushCommand(vin);
   };
 
   watch(

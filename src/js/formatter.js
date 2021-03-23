@@ -14,6 +14,12 @@ const HexToSignedInt32 = (hex) => {
   return num;
 };
 
+const HexToSignedInt16 = (hex) => {
+  let num = parseInt(hex, 16);
+  if (num > 32767) num -= 65536;
+  return num;
+};
+
 const HexToSignedInt8 = (hex) => {
   let num = parseInt(hex, 16);
   if (num > 127) num -= 256;
@@ -57,6 +63,7 @@ export {
   IntToHex,
   HexToUnsignedInt,
   HexToSignedInt8,
+  HexToSignedInt16,
   HexToSignedInt32,
   HexToAscii,
   AsciiToHex,

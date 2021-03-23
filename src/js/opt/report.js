@@ -10,6 +10,7 @@ import {
   HexToSignedInt32,
   IntToHex,
   Dot,
+  HexToSignedInt16,
 } from "src/js/formatter";
 
 const VEHICLE_STATES = {
@@ -96,7 +97,7 @@ const VCU = () => {
     {
       group: "vcu",
       field: "batVoltage",
-      title: "Battery Voltage",
+      title: "Bat. Voltage",
       required: false,
       chartable: true,
       unit: "mVolt",
@@ -107,7 +108,7 @@ const VCU = () => {
     {
       group: "vcu",
       field: "signal",
-      title: "Signal Quality",
+      title: "Signal",
       required: false,
       chartable: true,
       unit: "%",
@@ -115,19 +116,13 @@ const VCU = () => {
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
     },
+  ];
+};
+
+const GPS = () => {
+  return [
     {
-      group: "vcu.trip",
-      field: "odometer",
-      title: "Odometer",
-      required: false,
-      chartable: true,
-      unit: "Km",
-      size: 4,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => Dot(vf),
-    },
-    {
-      group: "vcu.gps",
+      group: "gps",
       field: "gpsLongitude",
       title: "GPS Longitude",
       required: false,
@@ -137,7 +132,7 @@ const VCU = () => {
       display: (vf) => parseFloat(vf.toFixed(7)),
     },
     {
-      group: "vcu.gps",
+      group: "gps",
       field: "gpsLatitude",
       title: "GPS Latitude",
       required: false,
@@ -147,7 +142,7 @@ const VCU = () => {
       display: (vf) => parseFloat(vf.toFixed(7)),
     },
     {
-      group: "vcu.gps",
+      group: "gps",
       field: "gpsAltitude",
       title: "GPS Altitude",
       required: false,
@@ -158,7 +153,7 @@ const VCU = () => {
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
-      group: "vcu.gps",
+      group: "gps",
       field: "gpsHDOP",
       title: "GPS HDOP",
       required: false,
@@ -168,7 +163,7 @@ const VCU = () => {
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
-      group: "vcu.gps",
+      group: "gps",
       field: "gpsVDOP",
       title: "GPS VDOP",
       required: false,
@@ -178,7 +173,7 @@ const VCU = () => {
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
-      group: "vcu.gps",
+      group: "gps",
       field: "gpsSpeed",
       title: "GPS Speed",
       required: false,
@@ -189,7 +184,7 @@ const VCU = () => {
       display: (vf) => Dot(vf),
     },
     {
-      group: "vcu.gps",
+      group: "gps",
       field: "gpsHeading",
       title: "GPS Heading",
       required: false,
@@ -200,7 +195,7 @@ const VCU = () => {
       display: (vf) => Dot(vf),
     },
     {
-      group: "vcu.gps",
+      group: "gps",
       field: "gpsSatInUse",
       title: "GPS Sat. in use",
       required: false,
@@ -210,30 +205,53 @@ const VCU = () => {
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
     },
+  ];
+};
+
+const HBAR = () => {
+  return [
     {
-      group: "vcu.estimation",
-      field: "rangeEstimation",
-      title: "Range Estimation",
+      group: `hbar`,
+      field: `hbarReverse`,
+      title: `HBAR Reverse`,
       required: false,
       chartable: true,
-      unit: "Km",
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => Dot(vf),
+      display: (vf) => (vf ? "YES" : "NO"),
     },
     {
-      group: "vcu.estimation",
-      field: "batteryEstimation",
-      title: "Battery Estimation",
+      group: "hbar.mode",
+      field: "modeDrive",
+      title: "Mode Drive",
       required: false,
       chartable: true,
-      unit: "Km/kWh",
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => Dot(vf),
+      display: (vf) => config.mode.drive[vf],
     },
     {
-      group: "vcu.trip",
+      group: "hbar.mode",
+      field: "modeTrip",
+      title: "Mode Trip",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => config.mode.trip[vf],
+    },
+    {
+      group: "hbar.mode",
+      field: "modeReport",
+      title: "Mode Report",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => config.mode.report[vf],
+    },
+    {
+      group: "hbar.trip",
       field: "tripA",
       title: "Trip A",
       required: false,
@@ -244,13 +262,46 @@ const VCU = () => {
       display: (vf) => Dot(vf),
     },
     {
-      group: "vcu.trip",
+      group: "hbar.trip",
       field: "tripB",
       title: "Trip B",
       required: false,
       chartable: true,
       unit: "m",
       size: 4,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: "hbar.trip",
+      field: "odometer",
+      title: "Odometer",
+      required: false,
+      chartable: true,
+      unit: "Km",
+      size: 4,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: "hbar.report",
+      field: "rangeReport",
+      title: "Range Report",
+      required: false,
+      chartable: true,
+      unit: "Km",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: "hbar.report",
+      field: "averageReport",
+      title: "Average Report",
+      required: false,
+      chartable: true,
+      unit: "Km/kWh",
+      size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
     },
@@ -278,7 +329,7 @@ const GYRO = () => {
   return GYRO_LIST.reduce((acc, gyro) => {
     return acc.concat([
       {
-        group: `vcu.gyro`,
+        group: `gyro`,
         field: `gyro${gyro}`,
         title: `Gyro ${gyro}`,
         required: false,
@@ -430,7 +481,7 @@ const MCU = () => {
       chartable: true,
       unit: "rpm",
       size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)),
+      format: (v) => HexToSignedInt16(cend(v)),
       display: (vf) => Dot(vf),
     },
     {
@@ -462,7 +513,7 @@ const MCU = () => {
       chartable: true,
       unit: "Celcius",
       size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -503,7 +554,7 @@ const MCU = () => {
       chartable: true,
       unit: "Nm",
       size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -514,7 +565,7 @@ const MCU = () => {
       chartable: true,
       unit: "Nm",
       size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -525,7 +576,7 @@ const MCU = () => {
       chartable: true,
       unit: "A",
       size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -536,7 +587,7 @@ const MCU = () => {
       chartable: true,
       unit: "V",
       size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      format: (v) => HexToSignedInt16(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
@@ -685,6 +736,8 @@ const TASKS = () => {
 const Report = [
   ...Header,
   ...VCU(),
+  ...HBAR(),
+  ...GPS(),
   ...GYRO(),
   ...HMI1(),
   ...BMS(),

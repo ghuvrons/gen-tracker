@@ -24,22 +24,15 @@ export default defineComponent({
     const { offline } = useOfflineDetector();
     const { brokerOff, subscribe, publish } = useMqtt();
 
-    const publisher = (vin, data) => {
-      publish(`VCU/${vin}/CMD`, data, { qos: 1, retain: true });
-      if (!data) {
-        publish(`VCU/${vin}/RSP`, data, { qos: 1, retain: true });
-      }
-    };
-
     const { addDevices, handleStatus } = useDevice();
     const { handleFinger } = useFinger({ addDevices });
-    const { sendCommand, awaitCommand,  handleCommand, handleAck } = useCommand({
-      publisher,
+    const { awaitCommand, sendCommand, flushCommand, handleCommand, handleAck } = useCommand({
+      publish,
       addDevices
     });
     const { handleResponse, ignoreResponse } = useResponse({
-      publisher,
       awaitCommand,
+      flushCommand,
       handleFinger
     });
 

@@ -27,7 +27,7 @@ export default defineComponent({
 
     watchEffect(() => {
       banner.show = offline.value || brokerOff.value || !devDevice.value?.online
-      banner.color = offline.value ? 'red' : brokerOff.value ? 'orange' : devDevice.value ? 'amber' : 'black'
+      banner.color = offline.value ? 'red' : brokerOff.value ? 'orange' : 'amber'
       banner.message = offline.value ? 'Internet offline' : brokerOff.value ? 'Broker disconnected' : devDevice.value ? 'Device offline' : 'No Device'
     })
 
