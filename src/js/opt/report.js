@@ -592,16 +592,6 @@ const MCU = () => {
     },
     {
       group: `mcu.inverter`,
-      field: `mcuInverterCanMode`,
-      title: `MCU Inverter CAN Mode`,
-      required: false,
-      chartable: true,
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => (vf ? "YES" : "NO"),
-    },
-    {
-      group: `mcu.inverter`,
       field: `mcuInverterEnabled`,
       title: `MCU Inverter Enabled`,
       required: false,
