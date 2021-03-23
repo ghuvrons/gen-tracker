@@ -65,8 +65,8 @@ const VCU = () => {
     },
     {
       group: "vcu",
-      field: "eventsGroup",
-      title: "Events Group",
+      field: "events",
+      title: "Events",
       required: true,
       chartable: true,
       size: 2,
@@ -75,8 +75,8 @@ const VCU = () => {
     },
     {
       group: "vcu",
-      field: "vehicleState",
-      title: "Vehicle State",
+      field: "state",
+      title: "State",
       required: true,
       chartable: true,
       size: 1,
