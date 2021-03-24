@@ -58,7 +58,7 @@ export default defineComponent({
 
     const getFieldNodeTitle = (field) => {
       const theField = props.report[field];
-      if (theField) {
+      if (theField?.group) {
         const group = theField.group.split(".");
         return removeWords(theField.title, group);
       }

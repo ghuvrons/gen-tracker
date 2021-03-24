@@ -29,12 +29,16 @@
                 dark
                 dense
                 square
-                >{{ devReport.frameID.out }}</q-chip
-              >
+                >
+                {{ devReport.frameID.out }}
+              </q-chip>
 
-              <q-chip color="primary" dark dense square>{{
-                getDatetime(devReport.logDatetime)
-              }}</q-chip>
+              <q-chip color="primary" dark dense square>
+                {{ getDatetime(devReport.sendDatetime) }}
+                -
+                {{ getDatetime(devReport.logDatetime) }}
+                ({{ getDilation(devReport) }}s)
+              </q-chip>
             </div>
           </q-item-section>
 
@@ -69,6 +73,7 @@ import { SET_FOLLOW } from "src/store/common/mutation-types";
 
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
+import { dilation } from "src/js/utils";
 
 export default defineComponent({
   // name: 'ComponentName',
@@ -93,6 +98,8 @@ export default defineComponent({
 
     const getDatetime = (logDatetime) =>
       dayjs.unix(logDatetime.val).format("HH:mm:ss");
+    const getDilation = ({sendDatetime, logDatetime}) =>
+      dilation(logDatetime.val, 'seconds', sendDatetime.val)
     const changeReport = ({code}) => {
       if (!['ArrowUp', 'ArrowDown'].includes(code)) return;
 
@@ -121,6 +128,7 @@ export default defineComponent({
       setReport,
       changeReport,
       getDatetime,
+      getDilation
     };
   }
 });

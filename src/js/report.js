@@ -34,13 +34,17 @@ const readReport = (report) => {
     let value = report[field];
 
     if (field != "hex") {
-      const { group, title, unit } = getField(Report, field);
-      value = {
-        ...value,
-        group,
-        title,
-        unit,
-      };
+      const theField = getField(Report, field);
+
+      if (theField) {
+        const { group, title, unit } = theField;
+        value = {
+          ...value,
+          group,
+          title,
+          unit,
+        };
+      }
     }
 
     return {
