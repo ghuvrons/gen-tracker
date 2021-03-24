@@ -59,7 +59,7 @@ const VCU = () => {
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => {
-        if (vf === 0xff) return "NONE";
+        if (vf === 0) return "NONE";
         return IntToHex(vf, 2).toUpperCase();
       },
     },
@@ -672,7 +672,7 @@ const MCU = () => {
 const TASKS = () => {
   const TASK_LIST = [
     "managerTask",
-    "iotTask",
+    "networkTask",
     "reporterTask",
     "commandTask",
     "gpsTask",

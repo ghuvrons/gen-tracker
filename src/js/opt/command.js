@@ -25,7 +25,7 @@ const COMMAND_LIST = [
   },
   {
     command: "GEN_LED",
-    desc: "Control system led",
+    desc: "Set system led",
     code: 0,
     subCode: 1,
     size: 1,
@@ -34,7 +34,7 @@ const COMMAND_LIST = [
   },
   {
     command: "GEN_RTC",
-    desc: "Set datetime ( d [0=Sunday] )",
+    desc: "Set datetime (d[0-7])",
     code: 0,
     subCode: 2,
     size: 7,
@@ -173,7 +173,7 @@ const COMMAND_LIST = [
   },
   {
     command: "HBAR_REVERSE",
-    desc: "Override hbar reverse",
+    desc: "Set handlebar reverse state",
     code: 7,
     subCode: 3,
     size: 1,
@@ -181,7 +181,7 @@ const COMMAND_LIST = [
     range: [0, 1],
   },
   {
-    command: "MCU_SET_SPEED_MAX",
+    command: "MCU_SPEED_MAX",
     desc: "Set MCU max speed",
     code: 8,
     subCode: 0,
@@ -190,26 +190,17 @@ const COMMAND_LIST = [
     range: [0, 255],
   },
   {
-    command: "MCU_SET_TEMPLATES",
+    command: "MCU_TEMPLATES",
     desc: "Set MCU templates",
     code: 8,
     subCode: 1,
+    size: 1,
+    type: "uint8_t",
+    range: [0, 2],
     // size: 4 * config.mode.drive.length,
     // type: "[int16_t discur, int16_t torque][3]",
     // formatCmd: (v) => null,
     // validator: (v) => false,
-  },
-  {
-    command: "MCU_FETCH_SPEED_MAX",
-    desc: "Fetch MCU speed max",
-    code: 8,
-    subCode: 2,
-  },
-  {
-    command: "MCU_FETCH_TEMPLATES",
-    desc: "Fetch MCU templates",
-    code: 8,
-    subCode: 3,
   },
 ];
 
