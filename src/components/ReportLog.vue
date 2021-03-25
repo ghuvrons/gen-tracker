@@ -9,9 +9,9 @@
     <q-virtual-scroll v-else
           @keyup="changeReport($event)"
           :items="devReports" separator>
-      <template v-slot="{ item: devReport }">
+      <template v-slot="{ item: devReport, index }">
         <q-item
-          :key="devReport.sendDatetime.val"
+          :key="`${devReport.sendDatetime.val}.${index}`"
           @click="setReport(devReport)"
           :active="devReport.hex === report.hex"
           active-class="bg-primary text-white"

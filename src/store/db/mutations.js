@@ -61,14 +61,14 @@ export default {
       ...orderBy([...state.reports, ...freezed], "logDatetime.val", "desc"),
     ];
 
-    const max = Platform.is.desktop ? 500 : 100;
+    const max = Platform.is.desktop ? 250 : 100;
     if (state.reports.length > max - 1)
       state.reports.splice(max, state.reports.length - max);
   },
   [mod(mutations.ADD_COMMANDS)](state, payload) {
     state.commands.unshift(payload);
 
-    const max = Platform.is.desktop ? 50 : 10;
+    const max = Platform.is.desktop ? 25 : 10;
     if (state.commands.length > max) state.commands.pop();
   },
   [mod(mutations.ADD_RESPONSE)](state, payload) {

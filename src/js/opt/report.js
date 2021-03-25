@@ -475,17 +475,6 @@ const MCU = () => {
     },
     {
       group: `mcu`,
-      field: `mcuSpeed`,
-      title: `MCU Speed`,
-      required: false,
-      chartable: true,
-      unit: "km/hr",
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => Dot(vf),
-    },
-    {
-      group: `mcu`,
       field: `mcuReverse`,
       title: `MCU Reverse`,
       required: false,
@@ -512,6 +501,17 @@ const MCU = () => {
       chartable: true,
       unit: "rpm",
       size: 2,
+      format: (v) => HexToSignedInt16(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: `mcu`,
+      field: `mcuSpeed`,
+      title: `MCU Speed`,
+      required: false,
+      chartable: true,
+      unit: "km/hr",
+      size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
     },
@@ -628,6 +628,17 @@ const MCU = () => {
         ];
         return states[vf] ?? "Unknown";
       },
+    },
+    {
+      group: `mcu.template`,
+      field: `mcuTemplateMaxRpm`,
+      title: `MCU Template Max RPM`,
+      required: false,
+      chartable: true,
+      unit: "rpm",
+      size: 2,
+      format: (v) => HexToSignedInt16(cend(v)),
+      display: (vf) => Dot(vf),
     },
     {
       group: "mcu.template",
