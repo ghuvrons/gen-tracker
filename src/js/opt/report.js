@@ -694,7 +694,7 @@ const TASKS = () => {
     "gateTask",
     "canRxTask",
     "canTxTask",
-    // "hmi2PowerTask"
+    "hmi2PowerTask",
   ];
 
   return [
