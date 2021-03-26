@@ -81,7 +81,7 @@ const VCU = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToSignedInt8(cend(v)),
-      display: (vf) => getVehicleState(vf),
+      display: (vf) => `${getVehicleState(vf)} (${vf})`,
     },
     {
       group: "vcu",
