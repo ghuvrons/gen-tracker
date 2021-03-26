@@ -119,95 +119,6 @@ const VCU = () => {
   ];
 };
 
-const GPS = () => {
-  return [
-    {
-      group: "gps",
-      field: "gpsLongitude",
-      title: "GPS Longitude",
-      required: false,
-      chartable: true,
-      size: 4,
-      format: (v) => HexToSignedInt32(cend(v)) * 0.0000001,
-      display: (vf) => parseFloat(vf.toFixed(7)),
-    },
-    {
-      group: "gps",
-      field: "gpsLatitude",
-      title: "GPS Latitude",
-      required: false,
-      chartable: true,
-      size: 4,
-      format: (v) => HexToSignedInt32(cend(v)) * 0.0000001,
-      display: (vf) => parseFloat(vf.toFixed(7)),
-    },
-    {
-      group: "gps",
-      field: "gpsAltitude",
-      title: "GPS Altitude",
-      required: false,
-      chartable: true,
-      unit: "m",
-      size: 4,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
-      display: (vf) => parseFloat(vf.toFixed(2)),
-    },
-    {
-      group: "gps",
-      field: "gpsHDOP",
-      title: "GPS HDOP",
-      required: false,
-      chartable: true,
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
-      display: (vf) => parseFloat(vf.toFixed(2)),
-    },
-    {
-      group: "gps",
-      field: "gpsVDOP",
-      title: "GPS VDOP",
-      required: false,
-      chartable: true,
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
-      display: (vf) => parseFloat(vf.toFixed(2)),
-    },
-    {
-      group: "gps",
-      field: "gpsSpeed",
-      title: "GPS Speed",
-      required: false,
-      chartable: true,
-      unit: "Km/hr",
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => Dot(vf),
-    },
-    {
-      group: "gps",
-      field: "gpsHeading",
-      title: "GPS Heading",
-      required: false,
-      chartable: true,
-      unit: "Degree",
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)) * 2,
-      display: (vf) => Dot(vf),
-    },
-    {
-      group: "gps",
-      field: "gpsSatInUse",
-      title: "GPS Sat. in use",
-      required: false,
-      chartable: true,
-      unit: "Sat.",
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => Dot(vf),
-    },
-  ];
-};
-
 const HBAR = () => {
   return [
     {
@@ -308,6 +219,152 @@ const HBAR = () => {
   ];
 };
 
+const GPS = () => {
+  return [
+    {
+      group: `gps`,
+      field: `gpsActive`,
+      title: `GPS Active`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    {
+      group: "gps",
+      field: "gpsLongitude",
+      title: "GPS Longitude",
+      required: false,
+      chartable: true,
+      size: 4,
+      format: (v) => HexToSignedInt32(cend(v)) * 0.0000001,
+      display: (vf) => parseFloat(vf.toFixed(7)),
+    },
+    {
+      group: "gps",
+      field: "gpsLatitude",
+      title: "GPS Latitude",
+      required: false,
+      chartable: true,
+      size: 4,
+      format: (v) => HexToSignedInt32(cend(v)) * 0.0000001,
+      display: (vf) => parseFloat(vf.toFixed(7)),
+    },
+    {
+      group: "gps",
+      field: "gpsAltitude",
+      title: "GPS Altitude",
+      required: false,
+      chartable: true,
+      unit: "m",
+      size: 4,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      display: (vf) => parseFloat(vf.toFixed(2)),
+    },
+    {
+      group: "gps",
+      field: "gpsHDOP",
+      title: "GPS HDOP",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      display: (vf) => parseFloat(vf.toFixed(2)),
+    },
+    {
+      group: "gps",
+      field: "gpsVDOP",
+      title: "GPS VDOP",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      display: (vf) => parseFloat(vf.toFixed(2)),
+    },
+    {
+      group: "gps",
+      field: "gpsSpeed",
+      title: "GPS Speed",
+      required: false,
+      chartable: true,
+      unit: "Km/hr",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: "gps",
+      field: "gpsHeading",
+      title: "GPS Heading",
+      required: false,
+      chartable: true,
+      unit: "Degree",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)) * 2,
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: "gps",
+      field: "gpsSatInUse",
+      title: "GPS Sat. in use",
+      required: false,
+      chartable: true,
+      unit: "Sat.",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+  ];
+};
+
+const GYRO = () => {
+  const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
+
+  return [
+    // {
+    //   group: `gyro`,
+    //   field: `gyroActive`,
+    //   title: `Gyro Active`,
+    //   required: false,
+    //   chartable: true,
+    //   size: 1,
+    //   format: (v) => HexToUnsignedInt(cend(v)),
+    //   display: (vf) => (vf ? "YES" : "NO"),
+    // },
+    ...GYRO_LIST.reduce((acc, gyro) => {
+      return acc.concat([
+        {
+          group: `gyro`,
+          field: `gyro${gyro}`,
+          title: `Gyro ${gyro}`,
+          required: false,
+          chartable: true,
+          unit: "Degree",
+          size: 1,
+          format: (v) => HexToSignedInt8(cend(v)),
+          display: (vf) => Dot(vf),
+        },
+      ]);
+    }, []),
+  ];
+};
+
+const REMOTE = () => {
+  return [
+    {
+      group: `remote`,
+      field: `remoteActive`,
+      title: `Remote Active`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "In-Range" : "Out-Range"),
+    },
+  ];
+};
+
 const HMI1 = () => {
   return [
     {
@@ -321,26 +378,6 @@ const HMI1 = () => {
       display: (vf) => (vf ? "YES" : "NO"),
     },
   ];
-};
-
-const GYRO = () => {
-  const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
-
-  return GYRO_LIST.reduce((acc, gyro) => {
-    return acc.concat([
-      {
-        group: `gyro`,
-        field: `gyro${gyro}`,
-        title: `Gyro ${gyro}`,
-        required: false,
-        chartable: true,
-        unit: "Degree",
-        size: 1,
-        format: (v) => HexToSignedInt8(cend(v)),
-        display: (vf) => Dot(vf),
-      },
-    ]);
-  }, []);
 };
 
 const BMS = () => {
@@ -740,6 +777,7 @@ const Report = [
   ...HBAR(),
   ...GPS(),
   ...GYRO(),
+  ...REMOTE(),
   ...HMI1(),
   ...BMS(),
   ...MCU(),
