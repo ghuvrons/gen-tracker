@@ -19,22 +19,28 @@ export default function ({ awaitCommand, flushCommand, handleFinger }) {
   const devDevice = computed(() => store.getters[`db/devDevice`]);
   const insertResponse = (v) => store.dispatch(INSERT_RESPONSE, v);
 
-  const processResponse = (command, response) => {
+  const hookResponse = (command) => {
+    if (command.resCode != RESCODES.OK) return;
+    handleFinger(command);
+  };
+  const processResponse = async (command, response) => {
     if (!awaitCommand.value) return;
 
     const resp = makeResponse(response);
     notifyResponse(resp);
 
     const { vin, sendDatetime, code, subCode, payload } = command;
-
-    insertResponse({
+    const cmd = {
       vin,
       sendDatetime,
       code,
       subCode,
       payload,
       ...resp,
-    });
+    };
+
+    await insertResponse(cmd);
+    hookResponse(cmd);
   };
   const handleResponse = (hex) => {
     if (!validateFrame(hex, config.prefix.response)) {
@@ -68,20 +74,6 @@ export default function ({ awaitCommand, flushCommand, handleFinger }) {
     }
     flushCommand(vin);
   };
-
-  watch(
-    () => devDevice.value,
-    (device) => {
-      const { lastCommand } = device ?? {};
-      if (!lastCommand) return;
-
-      if (awaitCommand.value) return;
-      if (lastCommand.resCode != RESCODES.OK) return;
-
-      handleFinger(lastCommand);
-    },
-    { deep: true }
-  );
 
   return {
     ignoreResponse,
