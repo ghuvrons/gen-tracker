@@ -318,26 +318,26 @@ const GPS = () => {
   ];
 };
 
-const GYRO = () => {
-  const GYRO_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
+const MEMS = () => {
+  const MEMS_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
 
   return [
-    // {
-    //   group: `gyro`,
-    //   field: `gyroActive`,
-    //   title: `Gyro Active`,
-    //   required: false,
-    //   chartable: true,
-    //   size: 1,
-    //   format: (v) => HexToUnsignedInt(cend(v)),
-    //   display: (vf) => (vf ? "YES" : "NO"),
-    // },
-    ...GYRO_LIST.reduce((acc, gyro) => {
+    {
+      group: `mems`,
+      field: `memsActive`,
+      title: `MEMS Active`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    ...MEMS_LIST.reduce((acc, coor) => {
       return acc.concat([
         {
-          group: `gyro`,
-          field: `gyro${gyro}`,
-          title: `Gyro ${gyro}`,
+          group: `mems`,
+          field: `mems${coor}`,
+          title: `MEMS ${coor}`,
           required: false,
           chartable: true,
           unit: "Degree",
@@ -369,8 +369,8 @@ const HMI1 = () => {
   return [
     {
       group: `hmi1`,
-      field: `hmi1Run`,
-      title: `HMI1 Run`,
+      field: `hmi1Active`,
+      title: `HMI1 Active`,
       required: false,
       chartable: true,
       size: 1,
@@ -724,7 +724,7 @@ const TASKS = () => {
     "reporterTask",
     "commandTask",
     "gpsTask",
-    "gyroTask",
+    "memsTask",
     "remoteTask",
     "fingerTask",
     "audioTask",
@@ -776,7 +776,7 @@ const Report = [
   ...VCU(),
   ...HBAR(),
   ...GPS(),
-  ...GYRO(),
+  ...MEMS(),
   ...REMOTE(),
   ...HMI1(),
   ...BMS(),
