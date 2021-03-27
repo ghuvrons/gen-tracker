@@ -360,7 +360,6 @@ const GPS = () => {
 
 const MEMS = () => {
   const GYRO_AXIS = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
-  const RESULTANTS = ["Accelerometer", "Gyroscope"];
 
   return [
     {
@@ -388,21 +387,39 @@ const MEMS = () => {
         },
       ]);
     }, []),
-    ...RESULTANTS.reduce((acc, res) => {
-      return acc.concat([
-        {
-          group: `mems.resultant`,
-          field: `memsResultant${res}`,
-          title: `MEMS Resultant ${res}`,
-          required: false,
-          chartable: true,
-          unit: res == "Accelerometer" ? "" : "Degree",
-          size: 4,
-          format: (v) => HexToUnsignedInt(cend(v)),
-          display: (vf) => Dot(vf),
-        },
-      ]);
-    }, []),
+    {
+      group: `mems.total`,
+      field: `memsTotalAccelerometer`,
+      title: `MEMS Total Accelerometer`,
+      required: false,
+      chartable: true,
+      unit: "",
+      size: 4,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: `mems.total`,
+      field: `memsTotalGyroscope`,
+      title: `MEMS Total Gyroscope`,
+      required: false,
+      chartable: true,
+      unit: "Degree",
+      size: 4,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: `mems.total`,
+      field: `memsTotalTemperature`,
+      title: `MEMS Total Temperature`,
+      required: false,
+      chartable: true,
+      unit: "Celcius",
+      size: 2,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
+      display: (vf) => parseFloat(vf.toFixed(2)),
+    },
   ];
 };
 
