@@ -36,7 +36,7 @@ export default function ({ handleEvents }) {
         notify("Report expired", "info");
         return;
       } else {
-        log("warning", `REPORT (EXPIRED) ${hex}`);
+        log("warn", `REPORT (EXPIRED) ${hex}`);
         report.logDatetime = { ...report.sendDatetime };
       }
     } else log("log", `REPORT ${hex}`);
