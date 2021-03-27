@@ -359,8 +359,6 @@ const GPS = () => {
 };
 
 const MEMS = () => {
-  const GYRO_AXIS = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
-
   return [
     {
       group: `mems`,
@@ -372,7 +370,21 @@ const MEMS = () => {
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => (vf ? "YES" : "NO"),
     },
-    ...GYRO_AXIS.reduce((acc, axis) => {
+    ...["X", "Y", "Z"].reduce((acc, axis) => {
+      return acc.concat([
+        {
+          group: `mems.accel`,
+          field: `memsAccel${axis}`,
+          title: `MEMS Accel ${axis}`,
+          required: false,
+          chartable: true,
+          size: 4,
+          format: (v) => HexToSignedInt32(cend(v)),
+          display: (vf) => Dot(vf),
+        },
+      ]);
+    }, []),
+    ...["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"].reduce((acc, axis) => {
       return acc.concat([
         {
           group: `mems.gyro`,
