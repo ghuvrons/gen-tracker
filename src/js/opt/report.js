@@ -52,19 +52,6 @@ const VCU = () => {
     },
     {
       group: "vcu",
-      field: "driverID",
-      title: "Driver ID",
-      required: true,
-      chartable: true,
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => {
-        if (vf === 0) return "NONE";
-        return IntToHex(vf, 2).toUpperCase();
-      },
-    },
-    {
-      group: "vcu",
       field: "events",
       title: "Events",
       required: true,
@@ -98,22 +85,11 @@ const VCU = () => {
       group: "vcu",
       field: "batVoltage",
       title: "Bat. Voltage",
-      required: false,
+      required: true,
       chartable: true,
       unit: "mVolt",
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)) * 18,
-      display: (vf) => Dot(vf),
-    },
-    {
-      group: "vcu",
-      field: "signal",
-      title: "Signal",
-      required: false,
-      chartable: true,
-      unit: "%",
-      size: 1,
-      format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
     },
   ];
@@ -219,6 +195,70 @@ const HBAR = () => {
   ];
 };
 
+const NET = () => {
+  return [
+    {
+      group: "net",
+      field: "netSignal",
+      title: "Net Signal",
+      required: false,
+      chartable: true,
+      unit: "%",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: "net",
+      field: "netState",
+      title: "Net State",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToSignedInt8(cend(v)),
+      display: (vf) => {
+        const states = [
+          "DOWN",
+          "READY",
+          "CONFIGURED",
+          "NETWORK_ON",
+          "GPRS_ON",
+          "PDP_ON",
+          "INTERNET_ON",
+          "SERVER_ON",
+          "MQTT_ON",
+        ];
+        return states[vf + 1];
+      },
+    },
+    {
+      group: "net",
+      field: "netIpStatus",
+      title: "Net IpStatus",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToSignedInt8(cend(v)),
+      display: (vf) => {
+        const ipStatus = [
+          "UNKNOWN",
+          "IP_INITIAL",
+          "IP_START",
+          "IP_CONFIG",
+          "IP_GPRSACT",
+          "IP_STATUS",
+          "CONNECTING",
+          "CONNECT_OK",
+          "CLOSING",
+          "CLOSED",
+          "PDP_DEACT",
+        ];
+        return ipStatus[vf + 1];
+      },
+    },
+  ];
+};
+
 const GPS = () => {
   return [
     {
@@ -319,7 +359,8 @@ const GPS = () => {
 };
 
 const MEMS = () => {
-  const MEMS_LIST = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
+  const GYRO_AXIS = ["Yaw (U/D)", "Pitch (F/B)", "Roll (L/R)"];
+  const RESULTANTS = ["Accelerometer", "Gyroscope"];
 
   return [
     {
@@ -332,17 +373,32 @@ const MEMS = () => {
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => (vf ? "YES" : "NO"),
     },
-    ...MEMS_LIST.reduce((acc, coor) => {
+    ...GYRO_AXIS.reduce((acc, axis) => {
       return acc.concat([
         {
-          group: `mems`,
-          field: `mems${coor}`,
-          title: `MEMS ${coor}`,
+          group: `mems.gyro`,
+          field: `memsGyro${axis}`,
+          title: `MEMS Gyro ${axis}`,
           required: false,
           chartable: true,
           unit: "Degree",
           size: 1,
           format: (v) => HexToSignedInt8(cend(v)),
+          display: (vf) => Dot(vf),
+        },
+      ]);
+    }, []),
+    ...RESULTANTS.reduce((acc, res) => {
+      return acc.concat([
+        {
+          group: `mems.resultant`,
+          field: `memsResultant${res}`,
+          title: `MEMS Resultant ${res}`,
+          required: false,
+          chartable: true,
+          unit: res == "Accelerometer" ? "" : "Degree",
+          size: 4,
+          format: (v) => HexToUnsignedInt(cend(v)),
           display: (vf) => Dot(vf),
         },
       ]);
@@ -360,7 +416,81 @@ const REMOTE = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => (vf ? "In-Range" : "Out-Range"),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    {
+      group: `remote`,
+      field: `remoteNearby`,
+      title: `Remote Nearby`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+  ];
+};
+
+const FINGER = () => {
+  return [
+    {
+      group: `finger`,
+      field: `fingerVerified`,
+      title: `Finger Verified`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    {
+      group: "finger",
+      field: "fingerDriverID",
+      title: "Finger Driver ID",
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => {
+        if (vf === 0) return "NONE";
+        return IntToHex(vf, 2).toUpperCase();
+      },
+    },
+  ];
+};
+
+const AUDIO = () => {
+  return [
+    {
+      group: `audio`,
+      field: `audioActive`,
+      title: `Audio Active`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    {
+      group: `audio`,
+      field: `audioMute`,
+      title: `Audio Mute`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    {
+      group: `audio`,
+      field: `audioVolume`,
+      title: `Audio Volume`,
+      required: false,
+      chartable: true,
+      unit: "%",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
     },
   ];
 };
@@ -437,6 +567,16 @@ const BMS = () => {
               if (vf === 0xffffffff) return "NONE";
               return IntToHex(vf, 8).toUpperCase();
             },
+          },
+          {
+            group: `bms.${i}`,
+            field: `bms${i}Fault`,
+            title: `BMS ${i} Fault`,
+            required: false,
+            chartable: true,
+            size: 2,
+            format: (v) => HexToUnsignedInt(cend(v)),
+            display: (vf) => IntToHex(vf, 4).toUpperCase(),
           },
           {
             group: `bms.${i}`,
@@ -775,9 +915,14 @@ const Report = [
   ...Header,
   ...VCU(),
   ...HBAR(),
+
+  ...NET(),
   ...GPS(),
   ...MEMS(),
   ...REMOTE(),
+  ...FINGER(),
+  ...AUDIO(),
+
   ...HMI1(),
   ...BMS(),
   ...MCU(),

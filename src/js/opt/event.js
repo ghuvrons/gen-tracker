@@ -96,6 +96,8 @@ const MCU_RUN_FAULT_BIT = [
 const FIELD_EVENTS = {
   events: EVENTS_BIT,
   bmsFault: BMS_FAULT_BIT,
+  bmsOneFault: BMS_FAULT_BIT,
+  bmsTwoFault: BMS_FAULT_BIT,
   mcuFaultPost: MCU_POST_FAULT_BIT,
   mcuFaultRun: MCU_RUN_FAULT_BIT,
 };
