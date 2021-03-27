@@ -25,12 +25,11 @@
                   devReport.frameID.out == 'FULL' ? 'green' : 'light-green'
                 "
                 class="q-ml-sm text-center"
-                style="width: 60px"
                 dark
                 dense
                 square
                 >
-                {{ devReport.frameID.out }}
+                {{ devReport.frameID.out == 'FULL' ? 'F' : 'S' }}
               </q-chip>
 
               <q-chip color="primary" dark dense square>
