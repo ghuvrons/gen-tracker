@@ -379,7 +379,7 @@ const MEMS = () => {
           required: false,
           chartable: true,
           size: 4,
-          format: (v) => HexToSignedInt32(cend(v)),
+          format: (v) => HexToSignedInt32(cend(v)) * 0.1,
           display: (vf) => Dot(vf),
         },
       ]);
