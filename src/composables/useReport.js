@@ -30,13 +30,17 @@ export default function ({ handleEvents }) {
 
     const sendDiff = Math.abs(dilation(sdt, "years"));
     const logDiff = Math.abs(dilation(ldt, "years"));
-    if (sendDiff > 1 || (sendDiff <= 1 && logDiff > 1)) {
-      log("error", `REPORT (EXPIRED) ${hex}`);
-      notify("Report expired", "info");
-      return;
-    }
+    if (logDiff > 1) {
+      if (sendDiff > 1) {
+        log("error", `REPORT (EXPIRED) ${hex}`);
+        notify("Report expired", "info");
+        return;
+      } else {
+        log("warning", `REPORT (EXPIRED) ${hex}`);
+        report.logDatetime = { ...report.sendDatetime };
+      }
+    } else log("log", `REPORT ${hex}`);
 
-    log("log", `REPORT ${hex}`);
     return report;
   };
   const handleReports = (hexs) => {
