@@ -1,8 +1,8 @@
-export default function() {
+export default function () {
   return {
     darker: false,
-    tree: false,
+    tree: true,
     follow: true,
-    notification: true
+    notification: true,
   };
 }

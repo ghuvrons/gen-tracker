@@ -19,13 +19,12 @@ export default function () {
   };
 
   watch(
-    () => devDevice.value,
-    (curDev, oldDev) => {
-      if (!curDev || !oldDev) return;
-      if (curDev?.online == oldDev?.online) return;
+    () => devDevice.value?.online,
+    (curOnline, oldOnline) => {
+      if (curOnline == oldOnline) return;
 
       pushNotification(
-        `DEVICE ${curDev?.online ? "ONLINE" : "OFFLINE"}`,
+        `DEVICE ${curOnline ? "ONLINE" : "OFFLINE"}`,
         dayjs().format("ddd, DD-MM-YY HH:mm:ss")
       );
     },

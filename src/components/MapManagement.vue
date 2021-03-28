@@ -99,7 +99,7 @@ export default defineComponent({
 
     watch(
       () => report.value,
-      (curReport, oldReport) => {
+      (curReport) => {
         const fullFrame = frameId(curReport?.frameID?.val) == "FULL";
         const fullReport = fullFrame
           ? curReport

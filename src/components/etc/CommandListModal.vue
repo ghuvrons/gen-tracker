@@ -22,6 +22,7 @@
             v-model="keyword"
             placeholder="Search..."
             :class="{ 'full-width': $q.screen.lt.sm }"
+            autofocus
             dark
             clearable
             square

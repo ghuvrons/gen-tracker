@@ -25,9 +25,6 @@
         />
       </div>
       <div class="col-auto">
-        <q-btn icon="gavel" label="FORCE READY" @click="ignoreResponse()" />
-      </div>
-      <div class="col-auto">
         <q-btn-dropdown icon="cloud_download" label="Export">
           <q-list>
             <q-item
@@ -95,7 +92,6 @@ export default defineComponent({
   },
   setup(props) {
     const sendCommand = inject("sendCommand");
-    const ignoreResponse = inject("ignoreResponse");
 
     const store = useStore();
     const reports = computed(() => store.state.db.reports);
@@ -154,7 +150,6 @@ export default defineComponent({
 
       calibrate,
       clearStore,
-      ignoreResponse,
       importData,
       exportJSON,
       exportCSV

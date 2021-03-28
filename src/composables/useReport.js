@@ -56,11 +56,8 @@ export default function ({ handleEvents }) {
   };
 
   watch(
-    () => devDevice.value,
-    (curDev, oldDev) => {
-      const curReport = curDev?.lastReport;
-      const oldReport = oldDev?.lastReport;
-
+    () => devDevice.value?.lastReport,
+    (curReport, oldReport) => {
       if (!curReport) return setReport(null);
 
       if (curReport.vin.val != oldReport?.vin?.val || follow.value) {

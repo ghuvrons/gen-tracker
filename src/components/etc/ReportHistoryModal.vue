@@ -231,10 +231,7 @@ export default defineComponent({
 
     watch(
       () => devReports.value.length,
-      (len) => {
-        if (len == 0) return;
-        writeChartRange();
-      },
+      (len) => (len &&  writeChartRange()),
       { deep: true }
     );
     watch(

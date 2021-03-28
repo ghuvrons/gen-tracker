@@ -28,12 +28,23 @@
         type="text"
         stack-label
       >
+        <template v-slot:prepend>
+          <q-icon
+            name="gavel"
+            class="cursor-pointer"
+            @click="ignoreResponse()"
+          >
+            <q-tooltip v-if="$q.platform.is.desktop" anchor="center left" self="center right">Force Ready</q-tooltip>
+          </q-icon>
+        </template>
         <template v-slot:append>
           <q-icon
             name="send"
             class="cursor-pointer"
             @click="sendCommand(payload)"
-          ></q-icon>
+          >
+            <q-tooltip v-if="$q.platform.is.desktop" anchor="center left" self="center right">Send</q-tooltip>
+          </q-icon>
         </template>
       </q-input>
     </div>
@@ -67,6 +78,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const sendCommand = inject("sendCommand");
+    const ignoreResponse = inject("ignoreResponse");
 
     const store = useStore();
     const devDevice = computed(() => store.getters[`db/devDevice`]);
@@ -91,7 +103,8 @@ export default defineComponent({
       devDevice,
 
       writeCommand,
-      sendCommand
+      sendCommand,
+      ignoreResponse
     };
   }
 });
