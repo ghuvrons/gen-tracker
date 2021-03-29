@@ -381,7 +381,7 @@ const MEMS = () => {
           title: `MEMS Accel ${axis}`,
           required: false,
           chartable: true,
-          unit: "g",
+          unit: "G",
           size: 2,
           format: (v) => HexToSignedInt16(cend(v)) * 0.01,
           display: (vf) => parseFloat(vf.toFixed(2)),
