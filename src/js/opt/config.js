@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.63",
+    version: "2.64",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -25,7 +25,7 @@ export default {
     trip: ["A", "B", "ODO"],
     report: ["RANGE", "AVERAGE"],
   },
-  frames: ["SIMPLE", "FULL"],
+  frames: ["UNKNOWN", "SIMPLE", "FULL"],
   timezone: "Asia/Jakarta",
   map: {
     apiKey: "AIzaSyBE8UhrrFkz9m37oowPkHX9to8NXcHw4Ak",

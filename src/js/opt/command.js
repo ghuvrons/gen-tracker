@@ -34,7 +34,7 @@ const COMMAND_LIST = [
   },
   {
     command: "GEN_RTC",
-    desc: "Set datetime (d[0-7])",
+    desc: "Set datetime (d[1-7])",
     code: 0,
     subCode: 2,
     size: 7,
@@ -72,12 +72,12 @@ const COMMAND_LIST = [
   },
   {
     command: "OVERRIDE_RPT_FRAME",
-    desc: "Override report frame as full",
+    desc: "Override report frame",
     code: 1,
     subCode: 2,
     size: 1,
-    type: "bool",
-    range: [0, 1],
+    type: "uint8_t",
+    range: [0, 2],
   },
   {
     command: "OVERRIDE_RMT_SEAT",

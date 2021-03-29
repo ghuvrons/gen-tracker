@@ -38,7 +38,7 @@ const VCU = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => config.frames[vf],
+      display: (vf) => `${config.frames[vf]} (${vf})`,
     },
     {
       group: "packet.datetime",
@@ -115,7 +115,7 @@ const HBAR = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => config.mode.drive[vf],
+      display: (vf) => `${config.mode.drive[vf]} (${vf})`,
     },
     {
       group: "hbar.mode",
@@ -125,7 +125,7 @@ const HBAR = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => config.mode.trip[vf],
+      display: (vf) => `${config.mode.trip[vf]} (${vf})`,
     },
     {
       group: "hbar.mode",
@@ -135,7 +135,7 @@ const HBAR = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => config.mode.report[vf],
+      display: (vf) => `${config.mode.report[vf]} (${vf})`,
     },
     {
       group: "hbar.trip",
@@ -228,7 +228,8 @@ const NET = () => {
           "SERVER_ON",
           "MQTT_ON",
         ];
-        return states[vf + 1];
+
+        return `${states[vf + 1]} (${vf})`;
       },
     },
     {
@@ -253,7 +254,7 @@ const NET = () => {
           "CLOSED",
           "PDP_DEACT",
         ];
-        return ipStatus[vf + 1];
+        return `${ipStatus[vf + 1]} (${vf})`;
       },
     },
   ];
@@ -359,6 +360,8 @@ const GPS = () => {
 };
 
 const MEMS = () => {
+  const AXIS = ["X", "Y", "Z"];
+
   return [
     {
       group: `mems`,
@@ -370,7 +373,7 @@ const MEMS = () => {
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => (vf ? "YES" : "NO"),
     },
-    ...["X", "Y", "Z"].reduce((acc, axis) => {
+    ...AXIS.reduce((acc, axis) => {
       return acc.concat([
         {
           group: `mems.accel`,
@@ -378,9 +381,24 @@ const MEMS = () => {
           title: `MEMS Accel ${axis}`,
           required: false,
           chartable: true,
-          unit: "G",
+          unit: "g",
           size: 2,
           format: (v) => HexToSignedInt16(cend(v)) * 0.01,
+          display: (vf) => parseFloat(vf.toFixed(2)),
+        },
+      ]);
+    }, []),
+    ...AXIS.reduce((acc, axis) => {
+      return acc.concat([
+        {
+          group: `mems.gyro`,
+          field: `memsGyro${axis}`,
+          title: `MEMS Gyro ${axis}`,
+          required: false,
+          chartable: true,
+          unit: "rad/s",
+          size: 2,
+          format: (v) => HexToSignedInt16(cend(v)) * 0.1,
           display: (vf) => parseFloat(vf.toFixed(2)),
         },
       ]);
@@ -388,9 +406,9 @@ const MEMS = () => {
     ...["Yaw", "Pitch", "Roll"].reduce((acc, axis) => {
       return acc.concat([
         {
-          group: `mems.gyro`,
-          field: `memsGyro${axis}`,
-          title: `MEMS Gyro ${axis}`,
+          group: `mems.ypr`,
+          field: `memsYpr${axis}`,
+          title: `MEMS Ypr ${axis}`,
           required: false,
           chartable: true,
           unit: "Deg",
@@ -564,6 +582,16 @@ const BMS = () => {
     },
     {
       group: `bms`,
+      field: `bmsFault`,
+      title: `BMS Fault`,
+      required: false,
+      chartable: true,
+      size: 2,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => IntToHex(vf, 4).toUpperCase(),
+    },
+    {
+      group: `bms`,
       field: `bmsSoc`,
       title: `BMS SOC`,
       required: false,
@@ -572,16 +600,6 @@ const BMS = () => {
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
-    },
-    {
-      group: `bms`,
-      field: `bmsFault`,
-      title: `BMS Fault`,
-      required: false,
-      chartable: true,
-      size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => IntToHex(vf, 4).toUpperCase(),
     },
     ...["One", "Two"].reduce(
       (acc, i) =>
@@ -698,7 +716,7 @@ const MCU = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => config.mode.drive[vf],
+      display: (vf) => `${config.mode.drive[vf]} (${vf})`,
     },
     {
       group: `mcu`,
@@ -833,7 +851,7 @@ const MCU = () => {
           "OCCURING",
           "COMPLETED",
         ];
-        return states[vf] ?? "Unknown";
+        return `${states[vf]} (${vf})` ?? "Unknown";
       },
     },
     {

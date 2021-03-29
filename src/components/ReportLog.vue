@@ -22,14 +22,14 @@
             <div>
               <q-chip
                 :color="
-                  devReport.frameID.out == 'FULL' ? 'green' : 'light-green'
+                  fullFrame(devReport) ? 'green' : 'light-green'
                 "
                 class="q-ml-sm text-center"
                 dark
                 dense
                 square
                 >
-                {{ devReport.frameID.out == 'FULL' ? 'F' : 'S' }}
+                {{ fullFrame(devReport) ? 'F' : 'S' }}
               </q-chip>
 
               <q-chip color="primary" dark dense square>
@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import config from "src/js/opt/config"
 import dayjs from "src/js/dayjs";
 
 import { SET_REPORT } from "src/store/db/mutation-types";
@@ -95,6 +96,10 @@ export default defineComponent({
       set: (v) => setFollow(v)
     });
 
+    const fullFrame = ({frameID}) => {
+      const fullID = config.frames.findIndex(v => v == 'FULL');
+      return frameID.val === fullID;
+    }
     const getDatetime = (logDatetime) =>
       dayjs.unix(logDatetime.val).format("HH:mm:ss");
     const getDilation = ({sendDatetime, logDatetime}) =>
@@ -125,6 +130,7 @@ export default defineComponent({
       followState,
 
       setReport,
+      fullFrame,
       changeReport,
       getDatetime,
       getDilation
