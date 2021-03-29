@@ -431,6 +431,17 @@ const MEMS = () => {
     },
     {
       group: `mems.total`,
+      field: `memsTotalGyroscope`,
+      title: `MEMS Total Gyroscope`,
+      required: false,
+      chartable: true,
+      unit: "rad/s",
+      size: 2,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.01,
+      display: (vf) => parseFloat(vf.toFixed(2)),
+    },
+    {
+      group: `mems.total`,
       field: `memsTotalYpr`,
       title: `MEMS Total Ypr`,
       required: false,
