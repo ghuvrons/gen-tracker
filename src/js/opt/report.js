@@ -431,8 +431,8 @@ const MEMS = () => {
     },
     {
       group: `mems.total`,
-      field: `memsTotalGyroscope`,
-      title: `MEMS Total Gyroscope`,
+      field: `memsTotalYpr`,
+      title: `MEMS Total Ypr`,
       required: false,
       chartable: true,
       unit: "Deg",
