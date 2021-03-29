@@ -403,12 +403,12 @@ const MEMS = () => {
         },
       ]);
     }, []),
-    ...["Yaw", "Pitch", "Roll"].reduce((acc, axis) => {
+    ...["Pitch", "Roll"].reduce((acc, axis) => {
       return acc.concat([
         {
-          group: `mems.ypr`,
-          field: `memsYpr${axis}`,
-          title: `MEMS Ypr ${axis}`,
+          group: `mems.tilt`,
+          field: `memsTilt${axis}`,
+          title: `MEMS Tilt ${axis}`,
           required: false,
           chartable: true,
           unit: "Deg",
@@ -437,13 +437,13 @@ const MEMS = () => {
       chartable: true,
       unit: "rad/s",
       size: 2,
-      format: (v) => HexToUnsignedInt(cend(v)) * 0.01,
+      format: (v) => HexToUnsignedInt(cend(v)) * 0.1,
       display: (vf) => parseFloat(vf.toFixed(2)),
     },
     {
       group: `mems.total`,
-      field: `memsTotalYpr`,
-      title: `MEMS Total Ypr`,
+      field: `memsTotalTilt`,
+      title: `MEMS Total Tilt`,
       required: false,
       chartable: true,
       unit: "Deg",
@@ -862,7 +862,7 @@ const MCU = () => {
           "OCCURING",
           "COMPLETED",
         ];
-        return `${states[vf]} (${vf})` ?? "Unknown";
+        return `${states[vf]} (${vf})`;
       },
     },
     {
