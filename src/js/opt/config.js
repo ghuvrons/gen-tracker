@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.64",
+    version: "2.65",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -17,7 +17,7 @@ export default {
     response: "@S",
   },
   command: {
-    keypass: "dd31690d7be69fd3237c64122083c132",
+    keypass: "4eb75b030e507117368b9b5275690684",
     retryInterval: 10000,
   },
   mode: {

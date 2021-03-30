@@ -224,13 +224,41 @@ const COMMAND_LIST = [
     desc: "Set MCU templates",
     code: 8,
     subCode: 1,
-    size: 1,
-    type: "uint8_t",
-    range: [0, 2],
-    // size: 4 * config.mode.drive.length,
-    // type: "[int16_t discur, int16_t torque][3]",
-    // formatCmd: (v) => null,
-    // validator: (v) => false,
+    range: [
+      [1, 32767],
+      [1, 3276],
+    ],
+    size: 4 * config.mode.drive.length,
+    type: "[uint16_t discur, uint16_t torque][3]",
+    formatCmd: (v) => {
+      let hex = "";
+      const templates = v.split(/[\[\]]+/).filter((e) => e);
+      for (let i = 0; i < templates.length; i++) {
+        const params = templates[i].split(",");
+        for (let j = 0; j < params.length; j++) {
+          hex += IntToHex(parseInt(params[j]), 4);
+        }
+      }
+      return hex;
+    },
+    validator: (v) => {
+      const maxVal = [32767, 3276];
+      const templates = v.split(/[\[\]]+/).filter((e) => e);
+
+      if (templates.length != config.mode.drive.length) return;
+      for (let i = 0; i < templates.length; i++) {
+        const params = templates[i].split(",");
+
+        if (params.length != 2) return;
+        for (let j = 0; j < params.length; j++) {
+          const val = parseInt(params[j]);
+
+          if (isNaN(val)) return;
+          if (val < 1 || val > maxVal[j]) return;
+        }
+      }
+      return true;
+    },
   },
 ];
 
