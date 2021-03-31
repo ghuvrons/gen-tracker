@@ -236,7 +236,7 @@ const COMMAND_LIST = [
       for (let i = 0; i < templates.length; i++) {
         const params = templates[i].split(",");
         for (let j = 0; j < params.length; j++) {
-          hex += IntToHex(parseInt(params[j]), 4);
+          hex += cend(IntToHex(parseInt(params[j]), 4));
         }
       }
       return hex;
