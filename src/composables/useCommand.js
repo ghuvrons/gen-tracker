@@ -21,10 +21,7 @@ export default function ({ publish, addDevices }) {
   });
 
   const publisher = (vin, data) => {
-    const repeat = data ? 2 : 1;
-    for (let i = 0; i < repeat; i++) {
-      publish(`VCU/${vin}/CMD`, data, { qos: 1, retain: true });
-    }
+    publish(`VCU/${vin}/CMD`, data, { qos: 1, retain: true });
     if (!data) {
       publish(`VCU/${vin}/RSP`, data, { qos: 1, retain: true });
     }
