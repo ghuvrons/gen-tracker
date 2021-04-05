@@ -48,9 +48,9 @@ const COMMAND_LIST = [
     desc: "Set odometer (km)",
     code: 0,
     subCode: 3,
-    size: 4,
-    type: "uint32_t",
-    range: [0, 99999],
+    size: 2,
+    type: "uint16_t",
+    range: [0, 65535],
   },
   {
     command: "OVERRIDE_STATE",

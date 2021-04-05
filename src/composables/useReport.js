@@ -34,7 +34,6 @@ export default function ({ handleEvents }) {
       notify("Report expired", "info");
       // if (sendDiff > 1) {
       log("error", `REPORT (EXPIRED) ${hex}`);
-      return;
       // } else {
       //   log("warn", `REPORT (EXPIRED) ${hex}`);
       //   report.logDatetime = { ...report.sendDatetime };

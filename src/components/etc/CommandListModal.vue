@@ -89,7 +89,7 @@ export default defineComponent({
     const keyword = ref("");
 
     const searchResults = computed(() =>
-      flowFilter(COMMAND_LIST, keyword.value.toLowerCase() ?? "")
+      flowFilter(COMMAND_LIST, keyword.value?.toLowerCase() ?? "")
     );
 
     const getRange = ([min, max]) =>

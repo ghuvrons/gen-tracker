@@ -83,6 +83,16 @@ const VCU = () => {
     },
     {
       group: "vcu",
+      field: "logBuffered",
+      title: "Log Buffered",
+      required: true,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+    {
+      group: "vcu",
       field: "batVoltage",
       title: "Bat. Voltage",
       required: true,
