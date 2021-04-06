@@ -36,6 +36,7 @@ register(process.env.SERVICE_WORKER_FILE, {
       message: "New content is available; please refresh.",
       color: "red",
       icon: "refresh",
+      position: "bottom-right",
       timeout: 0,
       actions: [
         {
