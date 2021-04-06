@@ -19,8 +19,8 @@ export default function ({ addDevices }) {
 
     if (prop == "FINGER_FETCH") {
       if (message.length > 0) {
-        const fingers = message.split(",");
-        fingers.forEach((fingerID) => addFingers({ vin, fingerID }));
+        clearFingers({ vin });
+        message.split(",").forEach((fingerID) => addFingers({ vin, fingerID }));
       }
       addDevices([{ vin, fingerTime: dayjs().unix() }]);
     } else if (prop == "FINGER_ADD") addFingers({ vin, fingerID: message });

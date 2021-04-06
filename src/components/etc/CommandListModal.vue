@@ -29,7 +29,6 @@
             outlined
             dense
           ></q-input>
-          <!-- <q-space></q-space> -->
           <q-btn
             class="q-ml-sm"
             push
@@ -55,9 +54,21 @@
                 <q-item-section>
                   <q-item-label lines="1">{{ cmd.command }}</q-item-label>
                   <q-item-label lines="2" caption>{{ cmd.desc }}</q-item-label>
+                  <template v-if="!$q.platform.is.desktop">
+                    <q-item-label v-if="cmd.type" lines="3">
+                      <q-chip dark dense square color="secondary">
+                        {{ cmd.type }} [{{ cmd.size }}]
+                      </q-chip>
+                    </q-item-label>
+                    <q-item-label v-if="cmd.range" lines="4">
+                      <q-chip dark dense square color="primary">
+                        {{ cmd.range }}
+                      </q-chip>
+                    </q-item-label>
+                  </template>
                 </q-item-section>
-                <q-item-section v-if="cmd.type" side>
-                  <q-item-label lines="1">
+                <q-item-section v-if="$q.platform.is.desktop" side>
+                  <q-item-label v-if="cmd.type" lines="1">
                     <q-chip dark dense square color="secondary">
                       {{ cmd.type }} [{{ cmd.size }}]
                     </q-chip>
