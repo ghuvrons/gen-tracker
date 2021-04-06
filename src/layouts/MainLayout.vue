@@ -109,7 +109,7 @@ export default {
     const state = reactive({
       drawer: {
         left: $q.platform.is.desktop,
-        right: false
+        right: $q.screen.lg
       },
       app: config.app,
       splitter: 150,

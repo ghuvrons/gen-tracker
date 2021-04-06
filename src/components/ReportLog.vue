@@ -31,12 +31,21 @@
                 >
                 {{ fullFrame(devReport) ? 'F' : 'S' }}
               </q-chip>
+              <q-chip
+                color="red"
+                class="q-ml-sm text-center"
+                dark
+                dense
+                square
+                >
+                {{ devReport.logBuffered.val }}
+              </q-chip>
 
               <q-chip color="primary" dark dense square>
                 {{ getDatetime(devReport.sendDatetime) }}
                 -
                 {{ getDatetime(devReport.logDatetime) }}
-                ({{ getDilation(devReport) }}s)
+                [{{ getDilation(devReport) }}s]
               </q-chip>
             </div>
           </q-item-section>
