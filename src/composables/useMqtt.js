@@ -16,7 +16,7 @@ export default function () {
     clientId: getClientId(),
     username: username,
     password: password,
-    clean: false, //$q.platform.is.mobile,
+    clean: true, //$q.platform.is.mobile,
     keepalive: 60,
     reconnectPeriod: 1000,
     connectTimeout: 30 * 1000,
