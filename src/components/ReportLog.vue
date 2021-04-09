@@ -21,6 +21,7 @@
           <q-item-section avatar>
             <div>
               <q-chip
+                :outline="devReport.hex !== report.hex"
                 :color="
                   fullFrame(devReport) ? 'green' : 'light-green'
                 "
@@ -32,6 +33,7 @@
                 {{ fullFrame(devReport) ? 'F' : 'S' }}
               </q-chip>
               <q-chip
+                :outline="devReport.hex !== report.hex"
                 color="red"
                 class="q-ml-sm text-center"
                 dark
@@ -40,12 +42,26 @@
                 >
                 {{ devReport.logBuffered.val }}
               </q-chip>
-
-              <q-chip color="primary" dark dense square>
+              <q-chip
+                :outline="devReport.hex !== report.hex"
+                color="orange"
+                class="q-ml-sm text-center"
+                dark
+                dense
+                square
+                >
+                {{ getDilation(devReport) }}s
+              </q-chip>
+              <q-chip
+                :outline="devReport.hex !== report.hex"
+                color="indigo"
+                dark
+                dense
+                square
+                >
                 {{ getDatetime(devReport.sendDatetime) }}
                 -
                 {{ getDatetime(devReport.logDatetime) }}
-                [{{ getDilation(devReport) }}s]
               </q-chip>
             </div>
           </q-item-section>

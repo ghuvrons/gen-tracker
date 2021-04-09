@@ -232,9 +232,12 @@ const COMMAND_LIST = [
     type: "[uint16_t discur, uint16_t torque][3]",
     formatCmd: (v) => {
       let hex = "";
-      const templates = v.split(/[\[\]]+/).filter((e) => e);
+      // const templates = v.split(/[\[\]]+/).filter((e) => e);
+      const templates = v.split(";");
+
       for (let i = 0; i < templates.length; i++) {
         const params = templates[i].split(",");
+
         for (let j = 0; j < params.length; j++) {
           hex += cend(IntToHex(parseInt(params[j]), 4));
         }
@@ -243,7 +246,8 @@ const COMMAND_LIST = [
     },
     validator: (v) => {
       const maxVal = [32767, 3276];
-      const templates = v.split(/[\[\]]+/).filter((e) => e);
+      // const templates = v.split(/[\[\]]+/).filter((e) => e);
+      const templates = v.split(";");
 
       if (templates.length != config.mode.drive.length) return;
       for (let i = 0; i < templates.length; i++) {
