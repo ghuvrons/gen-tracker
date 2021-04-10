@@ -1,4 +1,4 @@
-import { Dark, Dialog, Notify, QSpinnerGears } from "quasar";
+import { Dark, Dialog, Notify, QSpinnerGears, Screen } from "quasar";
 import { log } from "./utils";
 
 const pushNotification = (title, body) => {
@@ -34,7 +34,7 @@ const notify = (message, type = "negative", timeout = 5000) => {
     type,
     message,
     timeout,
-    position: "bottom-right",
+    position: Screen.lt.md ? "bottom-left" : "bottom-right",
   });
 };
 
