@@ -53,6 +53,12 @@ const COMMAND_LIST = [
     range: [0, 65535],
   },
   {
+    command: "GEN_RST_LOG",
+    desc: "Reset log buffer",
+    code: 0,
+    subCode: 4,
+  },
+  {
     command: "OVERRIDE_STATE",
     desc: "Override vehicle state",
     code: 1,
@@ -96,15 +102,6 @@ const COMMAND_LIST = [
     desc: "Beep the audio module",
     code: 2,
     subCode: 0,
-  },
-  {
-    command: "AUDIO_MUTE",
-    desc: "Mute the audio module",
-    code: 2,
-    subCode: 1,
-    size: 1,
-    type: "bool",
-    range: [0, 1],
   },
   {
     command: "FINGER_FETCH",
