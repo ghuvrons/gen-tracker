@@ -383,6 +383,16 @@ const MEMS = () => {
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => (vf ? "YES" : "NO"),
     },
+    {
+      group: `mems`,
+      field: `memsDetector`,
+      title: `MEMS Detector`,
+      required: false,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "Enabled" : "Disabled"),
+    },
     ...AXIS.reduce((acc, axis) => {
       return acc.concat([
         {
