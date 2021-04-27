@@ -6,8 +6,8 @@ export default {
   },
   mqtt: {
     // host: `wss://mqtt.eclipseprojects.io:443/mqtt`,
-    // host: `wss://test.mosquitto.org:8081/mqtt`,
-    host: `ws://test.mosquitto.org:8080/mqtt`,
+    host: `wss://test.mosquitto.org:8081/mqtt`,
+    // host: `ws://test.mosquitto.org:8080/mqtt`,
     username: "",
     password: "",
   },
