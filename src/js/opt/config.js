@@ -1,12 +1,13 @@
 export default {
   app: {
-    version: "2.76",
+    version: "2.77",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
   mqtt: {
     // host: `wss://mqtt.eclipseprojects.io:443/mqtt`,
-    host: `wss://test.mosquitto.org:8081/mqtt`,
+    // host: `wss://test.mosquitto.org:8081/mqtt`,
+    host: `ws://test.mosquitto.org:8080/mqtt`,
     username: "",
     password: "",
   },
