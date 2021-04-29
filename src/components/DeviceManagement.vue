@@ -15,7 +15,7 @@
       </template>
       No unit yet
     </q-banner>
-    <q-virtual-scroll v-else :items="sortedDevices" :style="height" separator>
+    <q-virtual-scroll v-else :items="sortedDevices" :style="`height: ${height}`" separator>
       <template v-slot="{ item: dev }">
         <q-item
           :key="dev.vin"

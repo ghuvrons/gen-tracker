@@ -53,10 +53,19 @@ const COMMAND_LIST = [
     range: [0, 65535],
   },
   {
-    command: "GEN_RST_LOG",
-    desc: "Reset log buffer",
+    command: "GEN_FLUSH",
+    desc: "Flush report buffer",
     code: 0,
     subCode: 4,
+  },
+  {
+    command: "GEN_DETECTOR",
+    desc: "Set motion detector",
+    code: 0,
+    subCode: 5,
+    size: 1,
+    type: "bool",
+    range: [0, 1],
   },
   {
     command: "OVERRIDE_STATE",
