@@ -26,7 +26,7 @@ const vuexLocal = ["common", "db"].map(
 export default store(function (/* { ssrContext } */) {
   const Store = createStore({
     modules: { common, db },
-    // plugins: [...vuexLocal],
+    plugins: [...vuexLocal],
 
     // enable strict mode (adds overhead!)
     // for dev mode and --debug builds only
