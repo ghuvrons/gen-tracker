@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.80",
+    version: "2.81",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -19,7 +19,7 @@ export default {
   },
   command: {
     keypass: "4eb75b030e507117368b9b5275690684",
-    retryInterval: 10000,
+    retry: 7500,
   },
   mode: {
     drive: ["ECONOMY", "STANDARD", "SPORT"],
