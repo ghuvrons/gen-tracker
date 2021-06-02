@@ -1,6 +1,6 @@
 export default {
   app: {
-    version: "2.82",
+    version: "2.83",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
@@ -31,7 +31,7 @@ export default {
   map: {
     apiKey: "AIzaSyBE8UhrrFkz9m37oowPkHX9to8NXcHw4Ak",
     zoom: 3,
-    hdopMin: 2.5,
+    hdopMin: 3,
     centerIndonesia: {
       lat: -2.6000285,
       lng: 118.015776,
