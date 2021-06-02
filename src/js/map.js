@@ -15,7 +15,7 @@ const getPosition = (report) => {
   if (frameId(report?.frameID?.val) == "FULL") {
     pos.lat = report?.gpsLatitude?.val;
     pos.lng = report?.gpsLongitude?.val;
-    pos.valid = isIndonesia(pos) && report?.gpsHDOP?.val < 2;
+    pos.valid = isIndonesia(pos) && report?.gpsHDOP?.val <= config.map.hdopMin;
   }
 
   return pos;
