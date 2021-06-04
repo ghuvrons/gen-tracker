@@ -53,13 +53,10 @@ const COMMAND_LIST = [
     range: [0, 65535],
   },
   {
-    command: "GEN_DETECTOR",
-    desc: "Set motion detector",
+    command: "GEN_ANTITHIEF",
+    desc: "Toggle anti-thief detector",
     code: 0,
     subCode: 4,
-    size: 1,
-    type: "bool",
-    range: [0, 1],
   },
   {
     command: "GEN_RPT_FLUSH",
@@ -69,7 +66,7 @@ const COMMAND_LIST = [
   },
   {
     command: "GEN_RPT_BLOCK",
-    desc: "Blcok report buffer",
+    desc: "Block report buffer",
     code: 0,
     subCode: 6,
     size: 1,
