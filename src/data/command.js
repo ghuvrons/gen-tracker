@@ -74,7 +74,7 @@ const COMMAND_LIST = [
     range: [0, 1],
   },
   {
-    command: "OVERRIDE_STATE",
+    command: "OVD_STATE",
     desc: "Override vehicle state",
     code: 1,
     subCode: 0,
@@ -83,7 +83,7 @@ const COMMAND_LIST = [
     range: [0, 3],
   },
   {
-    command: "OVERRIDE_RPT_INTERVAL",
+    command: "OVD_RPT_INTERVAL",
     desc: "Override report interval",
     code: 1,
     subCode: 1,
@@ -92,7 +92,7 @@ const COMMAND_LIST = [
     range: [0, 65535],
   },
   {
-    command: "OVERRIDE_RPT_FRAME",
+    command: "OVD_RPT_FRAME",
     desc: "Override report frame",
     code: 1,
     subCode: 2,
@@ -101,13 +101,13 @@ const COMMAND_LIST = [
     range: [0, 2],
   },
   {
-    command: "OVERRIDE_RMT_SEAT",
+    command: "OVD_RMT_SEAT",
     desc: "Override remote seat button",
     code: 1,
     subCode: 3,
   },
   {
-    command: "OVERRIDE_RMT_ALARM",
+    command: "OVD_RMT_ALARM",
     desc: "Override remote alarm button",
     code: 1,
     subCode: 4,
