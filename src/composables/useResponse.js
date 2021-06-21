@@ -8,7 +8,7 @@ import {
   RESCODES,
 } from "src/js/response";
 import { validateFrame } from "src/js/frame";
-import config from "src/js/opt/config";
+import config from "src/data/config";
 
 import { watch, computed } from "vue";
 import { useStore } from "vuex";

@@ -8,9 +8,8 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
-    "dev": "quasar dev",
-    "build": "quasar build",
-    "build:pwa": "quasar build -m pwa",
+    "dev": "quasar dev -m pwa",
+    "build": "quasar build -m pwa",
     "build:windows": "quasar build -m electron -T win32",
     "build:linux": "quasar build -m electron -b builder",
     "icon:generate": "icongenie generate -m spa,pwa -i src/assets/logo.png --theme-color 027BE3 --splashscreen-color 6A0DAD --splashscreen-icon-ratio 80 --padding 5,5 --skip-trim",

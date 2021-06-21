@@ -3,7 +3,7 @@ import { ref, onBeforeUnmount } from "vue";
 import { notify } from "src/js/framework";
 import { log } from "src/js/utils";
 import { useQuasar } from "quasar";
-import config from "src/js/opt/config";
+import config from "src/data/config";
 
 export default function () {
   const $q = useQuasar();

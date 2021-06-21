@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import config from "src/js/opt/config"
+import config from "src/data/config"
 import dayjs from "src/js/dayjs";
 
 import { SET_REPORT } from "src/store/db/mutation-types";

@@ -1,8 +1,8 @@
 import dayjs from "src/js/dayjs";
-import config from "src/js/opt/config";
+import config from "src/data/config";
 import { startCase } from "lodash";
 import { parseDatetime } from "src/js/utils";
-import { Header } from "src/js/opt/header";
+import { Header } from "src/data/header";
 import {
   cend,
   HexToUnsignedInt,
@@ -932,7 +932,6 @@ const TASKS = () => {
     "networkTask",
     "reporterTask",
     "commandTask",
-    "gpsTask",
     "memsTask",
     "remoteTask",
     "fingerTask",
@@ -940,7 +939,6 @@ const TASKS = () => {
     "gateTask",
     "canRxTask",
     "canTxTask",
-    "hmi2PowerTask",
   ];
 
   return [

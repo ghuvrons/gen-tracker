@@ -1,4 +1,4 @@
-import config from "src/js/opt/config";
+import config from "src/data/config";
 import { frameId } from "src/js/utils";
 
 const isIndonesia = ({ lng, lat }) => {

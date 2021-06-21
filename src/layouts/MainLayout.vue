@@ -81,7 +81,7 @@ import DeviceManagement from "components/DeviceManagement";
 import ResponseLog from "components/ResponseLog";
 import CommandManagement from "components/CommandManagement";
 
-import config from "src/js/opt/config";
+import config from "src/data/config";
 
 import { SET_DARKER } from "src/store/common/mutation-types";
 

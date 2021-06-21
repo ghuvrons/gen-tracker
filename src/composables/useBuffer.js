@@ -1,7 +1,7 @@
 import { FREE_BUFFER, STOP_BUFFERING } from "src/store/db/mutation-types";
 import { INSERT_BUFFERS } from "src/store/db/action-types";
 import { validateFrame } from "src/js/frame";
-import config from "src/js/opt/config";
+import config from "src/data/config";
 
 import { onBeforeUnmount, onMounted, ref, computed } from "vue";
 import { useStore } from "vuex";

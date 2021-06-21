@@ -1,5 +1,5 @@
 import { groupBy } from "lodash";
-import { FIELD_EVENTS } from "src/js/opt/event";
+import { FIELD_EVENTS } from "src/data/event";
 import dayjs from "src/js/dayjs";
 const Long = require("long");
 

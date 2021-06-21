@@ -2,7 +2,7 @@ import { getValue, log } from "src/js/utils";
 import { notify } from "src/js/framework";
 import { INSERT_COMMAND } from "src/store/db/action-types";
 import { buildCommand, parseCommand, validateCommand } from "src/js/command";
-import config from "src/js/opt/config";
+import config from "src/data/config";
 
 import { useQuasar } from "quasar";
 import { computed } from "vue";

@@ -1,5 +1,5 @@
 import { readEvent } from "src/js/event";
-import { EVENTS_BIT } from "src/js/opt/event";
+import { EVENTS_BIT } from "src/data/event";
 import { pushNotification } from "src/js/framework";
 import { useStore } from "vuex";
 import { computed } from "vue";

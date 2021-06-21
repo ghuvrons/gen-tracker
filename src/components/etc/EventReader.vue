@@ -31,7 +31,7 @@
 
 <script>
 import { parseEvent, groupEvent } from "src/js/event";
-import { FIELD_EVENTS } from "src/js/opt/event";
+import { FIELD_EVENTS } from "src/data/event";
 
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";

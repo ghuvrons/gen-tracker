@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import config from "src/js/opt/config";
+import config from "src/data/config";
 import { nearestFullReport } from "src/js/report";
 import { getPosition, getHeading } from "src/js/map";
 import { frameId } from "src/js/utils";

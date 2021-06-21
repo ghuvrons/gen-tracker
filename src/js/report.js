@@ -1,4 +1,4 @@
-import { Report } from "src/js/opt/report";
+import { Report } from "src/data/report";
 import { getValue, getField, frameId } from "src/js/utils";
 import { parseFrame } from "src/js/frame";
 import dayjs from "src/js/dayjs";

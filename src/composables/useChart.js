@@ -1,4 +1,4 @@
-import chart from "src/js/opt/chart";
+import chart from "src/data/chart";
 import { findRangeX, findRangeY, grabDatasets } from "src/js/chart";
 
 import { cloneDeep } from "lodash";

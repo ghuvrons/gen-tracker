@@ -109,7 +109,7 @@ import EventReader from "components/etc/EventReader";
 
 import useChart from "src/composables/useChart";
 
-import { FIELD_EVENTS } from "src/js/opt/event";
+import { FIELD_EVENTS } from "src/data/event";
 import { getField } from "src/js/utils";
 import { Report } from "src/js/report";
 

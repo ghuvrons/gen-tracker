@@ -1,4 +1,4 @@
-import { CommandHeader } from "src/js/opt/header";
+import { CommandHeader } from "src/data/header";
 import { IntToHex, cend, AsciiToHex } from "src/js/formatter";
 import { buildTimestamp } from "src/js/utils";
 import dayjs from "src/js/dayjs";

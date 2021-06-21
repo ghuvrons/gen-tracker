@@ -1,5 +1,5 @@
 import dayjs from "src/js/dayjs";
-import { COMMAND_LIST, Command } from "src/js/opt/command";
+import { COMMAND_LIST, Command } from "src/data/command";
 import { parseFrame } from "./frame";
 
 const parseCommand = (hex) => {

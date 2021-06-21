@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import { Header } from "src/js/opt/header";
-import config from "src/js/opt/config"
+import { Header } from "src/data/header";
+import config from "src/data/config"
 
 import useOfflineDetector from "src/composables/useOfflineDetector";
 import useMqtt from "src/composables/useMqtt";

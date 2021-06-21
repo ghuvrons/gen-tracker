@@ -1,8 +1,8 @@
 import { getValue } from "src/js/utils";
 import { parseFrame } from "src/js/frame";
 import { notify } from "src/js/framework";
-import { VEHICLE_STATES } from "src/js/opt/report";
-import { RESCODES, RESPONSE_LIST, Response } from "src/js/opt/response";
+import { VEHICLE_STATES } from "src/data/report";
+import { RESCODES, RESPONSE_LIST, Response } from "src/data/response";
 
 const parseResponse = (hex) => {
   return parseFrame(hex, Response);

@@ -1,4 +1,4 @@
-import config from "src/js/opt/config";
+import config from "src/data/config";
 import dayjs from "src/js/dayjs";
 // import { CRC32 } from "src/js/crc32-mpeg2";
 import {
