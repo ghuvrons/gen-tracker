@@ -7,7 +7,7 @@
       filled
       dense
     ></q-input>
-    <div style="overflow-y: scroll" :style="height">
+    <div style="overflow-y: scroll" :style="`height: ${height}`">
       <q-tree
         :selected="selected"
         @update:selected="$emit('update:selected', $event)"

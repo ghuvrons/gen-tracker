@@ -41,7 +41,7 @@ export default function ({ publish, addDevices }) {
       timer: setInterval(() => {
         addDevices([{ vin, cmdStatus: "Retrying..." }]);
         publisher(vin, binCmd);
-      }, config.command.retryInterval),
+      }, config.command.retry),
     });
   };
   const checkCommand = (payload) => {

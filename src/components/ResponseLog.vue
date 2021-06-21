@@ -15,7 +15,7 @@
       </template>
       No response yet
     </q-banner>
-    <q-virtual-scroll v-else :items="devCommands" :style="height" separator>
+    <q-virtual-scroll v-else :items="devCommands" :style="`height: ${height}`" separator>
       <template v-slot="{ item: cmd, index }">
         <q-item :key="cmd.sendDatetime" @click="writeCommand(cmd.payload)" clickable>
           <q-item-section>

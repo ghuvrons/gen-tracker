@@ -1,9 +1,10 @@
 import mqtt from "mqtt";
 import { ref, onBeforeUnmount } from "vue";
 import { notify } from "src/js/framework";
-import { log } from "src/js/utils";
+import { log, isHttps } from "src/js/utils";
 import { useQuasar } from "quasar";
 import config from "src/data/config";
+const { host_ws, host_wss, username, password } = config.mqtt;
 
 export default function () {
   const $q = useQuasar();
@@ -11,8 +12,7 @@ export default function () {
   const brokerOff = ref(true);
   const listeners = ref([]);
 
-  const { host, username, password } = config.mqtt;
-  const client = mqtt.connect(host, {
+  const client = mqtt.connect(isHttps() ? host_wss : host_ws, {
     clientId: getClientId(),
     username: username,
     password: password,

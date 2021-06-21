@@ -1,5 +1,5 @@
 <template>
-  <q-virtual-scroll :items="fields" :style="height" separator>
+  <q-virtual-scroll :items="fields" :style="`height: ${height}`" separator>
     <template v-slot="{ item: field }">
       <q-item
         :key="field"

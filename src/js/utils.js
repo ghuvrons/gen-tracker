@@ -97,6 +97,11 @@ const log = (type, msg) => {
   return console[type](msg);
 };
 
+const isHttps = () => {
+  const { protocol } = window.location;
+  return protocol === "https:";
+};
+
 export {
   flowFilter,
   getField,
@@ -109,4 +114,5 @@ export {
   frameId,
   mod,
   log,
+  isHttps,
 };

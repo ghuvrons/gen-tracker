@@ -61,7 +61,7 @@
     <q-drawer side="right" v-model="drawer.right" show-if-above bordered>
       <command-management
         v-model="payload"
-        :style="hCommandManagement"
+        :style="`height: ${hCommandManagement}`"
       ></command-management>
       <response-log
         @select="payload = $event"
@@ -116,12 +116,12 @@ export default {
       payload: null
     });
 
-    const hCommandManagement = computed(() => `height: 120px`);
+    const hCommandManagement = computed(() => `120px`);
     const hResponseLog = computed(
-      () => `height: calc(100vh - ${hCommandManagement.value} - 33px)`
+      () => `calc(100vh - ${hCommandManagement.value} - 33px)`
     );
     const hDeviceManagement = computed(
-      () => `height: calc(${state.splitter}px - 32px)`
+      () => `calc(${state.splitter}px - 32px)`
     );
 
     const reload = () => window.location.reload();

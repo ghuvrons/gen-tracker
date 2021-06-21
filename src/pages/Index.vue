@@ -73,7 +73,7 @@ export default defineComponent({
     const devFingers = computed(() => store.getters[`db/devFingers`]);
 
     const selectedTab = ref("tab-1");
-    const splitter = ref(50);
+    const splitter = ref(75);
 
     const contentStyle = computed(
       () => `height: calc(100vh - ${splitter.value}vh - 95px)`

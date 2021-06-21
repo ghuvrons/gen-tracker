@@ -1,12 +1,13 @@
 export default {
   app: {
-    version: "2.71",
+    version: "2.86",
     title: "eBike Tracker",
     subTitle: "GEN Indonesia",
   },
   mqtt: {
     // host: `wss://mqtt.eclipseprojects.io:443/mqtt`,
-    host: `wss://test.mosquitto.org:8081/mqtt`,
+    host_wss: `wss://test.mosquitto.org:8081/mqtt`,
+    host_ws: `ws://test.mosquitto.org:8080/mqtt`,
     username: "",
     password: "",
   },
@@ -18,7 +19,7 @@ export default {
   },
   command: {
     keypass: "4eb75b030e507117368b9b5275690684",
-    retryInterval: 10000,
+    retry: 7500,
   },
   mode: {
     drive: ["ECONOMY", "STANDARD", "SPORT"],
@@ -30,6 +31,7 @@ export default {
   map: {
     apiKey: "AIzaSyBE8UhrrFkz9m37oowPkHX9to8NXcHw4Ak",
     zoom: 3,
+    hdopMin: 3,
     centerIndonesia: {
       lat: -2.6000285,
       lng: 118.015776,

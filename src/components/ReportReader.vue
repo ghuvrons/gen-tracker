@@ -126,8 +126,8 @@ export default defineComponent({
     watch(
       () => props.height,
       (h) => {
-        state.hList = `height: calc(100vh - ${h}px - 34px)`;
-        state.hTree = ` height: calc(100vh - ${h}px - 73px)`;
+        state.hList = `calc(100vh - ${h}px - 34px)`;
+        state.hTree = ` calc(100vh - ${h}px - 73px)`;
       },
       { immediate: true }
     );
