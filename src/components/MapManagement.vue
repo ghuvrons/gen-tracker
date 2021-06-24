@@ -91,7 +91,7 @@ export default defineComponent({
             .filter(({ gpsActive }) => gpsActive?.val)
             .forEach((report) => addPath(report));
         } else {
-          addPath(curDev?.lastFullReport);
+          addPath(curDev?.lastReport);
         }
       },
       { immediate: true, deep: true }

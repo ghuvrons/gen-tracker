@@ -40,7 +40,7 @@
                 dense
                 square
                 >
-                {{ devReport.logBuffered.val }}
+                {{ devReport.logBuffered?.val }}
               </q-chip>
               <q-chip
                 :outline="devReport.hex !== report.hex"
