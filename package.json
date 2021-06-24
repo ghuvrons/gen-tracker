@@ -1,6 +1,6 @@
 {
   "name": "gen-tracker",
-  "version": "2.0.90",
+  "version": "2.0.92",
   "description": "GEN Motorcycles Tracker",
   "productName": "eBike Tracker",
   "author": "Puja Kusuma <pujakusumae@hotmail.com>",
@@ -8,6 +8,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
+    "bump": "npm --no-git-tag-version version patch",
     "dev": "quasar dev -m spa",
     "build": "quasar build -m pwa",
     "build:windows": "quasar build -m electron -T win32",
