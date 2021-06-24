@@ -1,6 +1,10 @@
 # GEN-Tracker
 
-![gen-tracker-client](gen-tracker-2020-02-05_10.51.37.gif)
+![gen-tracker-client](docs/home.png)
+
+![gen-tracker-client](docs/driver.png)
+
+![gen-tracker-client](docs/analytics.png)
 
 ## Todo Progress
 
