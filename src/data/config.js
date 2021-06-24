@@ -1,8 +1,10 @@
+const pjson = require("../../package.json");
+
 export default {
   app: {
-    version: "2.89",
-    title: "eBike Tracker",
-    subTitle: "GEN Indonesia",
+    version: pjson.version,
+    title: pjson.productName,
+    subTitle: pjson.description,
   },
   mqtt: {
     // host: `wss://mqtt.eclipseprojects.io:443/mqtt`,
