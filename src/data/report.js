@@ -440,8 +440,8 @@ const MEMS = () => {
     }, []),
     {
       group: `mems.total`,
-      field: `memsTotalAccelerometer`,
-      title: `MEMS Total Accelerometer`,
+      field: `memsTotalAccel`,
+      title: `MEMS Total Accel`,
       required: false,
       chartable: true,
       unit: "G",
@@ -451,8 +451,8 @@ const MEMS = () => {
     },
     {
       group: `mems.total`,
-      field: `memsTotalGyroscope`,
-      title: `MEMS Total Gyroscope`,
+      field: `memsTotalGyro`,
+      title: `MEMS Total Gyro`,
       required: false,
       chartable: true,
       unit: "rad/s",
