@@ -15,7 +15,7 @@
 
 <script>
 import config from "src/data/config";
-import { nearestFullReport } from "src/js/report";
+// import { nearestFullReport } from "src/js/report";
 import { getPosition, getHeading } from "src/js/map";
 import { frameId } from "src/js/utils";
 
@@ -88,7 +88,7 @@ export default defineComponent({
         if (curDev?.vin != oldDev?.vin) {
           state.path = [];
           devReports.value
-            .filter(({ frameID }) => frameId(frameID.val) == "FULL")
+            .filter(({ gpsActive }) => gpsActive?.val)
             .forEach((report) => addPath(report));
         } else {
           addPath(curDev?.lastFullReport);
@@ -100,13 +100,13 @@ export default defineComponent({
     watch(
       () => report.value,
       (curReport) => {
-        const fullFrame = frameId(curReport?.frameID?.val) == "FULL";
-        const fullReport = fullFrame
-          ? curReport
-          : nearestFullReport(curReport, devReports.value);
+        // const fullFrame = frameId(curReport?.frameID?.val) == "FULL";
+        // const fullReport = fullFrame
+        //   ? curReport
+        //   : nearestFullReport(curReport, devReports.value);
 
-        setPosition(getPosition(fullReport));
-        state.icon.rotation = getHeading(fullReport) - 180;
+        setPosition(getPosition(curReport));
+        state.icon.rotation = getHeading(curReport) - 180;
       },
       { immediate: true }
     );

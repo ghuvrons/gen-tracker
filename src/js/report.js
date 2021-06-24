@@ -54,17 +54,17 @@ const readReport = (report) => {
   }, {});
 };
 
-const nearestFullReport = (report, reports) => {
-  if (!report) return;
+// const nearestFullReport = (report, reports) => {
+//   if (!report) return;
 
-  let idx = reports.findIndex(({ hex }) => hex === report.hex);
-  if (idx < 0) return;
+//   let idx = reports.findIndex(({ hex }) => hex === report.hex);
+//   if (idx < 0) return;
 
-  while (idx < reports.length) {
-    const prev = reports[idx++];
-    if (frameId(prev.frameID.val) == "FULL") return prev;
-  }
-};
+//   while (idx < reports.length) {
+//     const prev = reports[idx++];
+//     if (frameId(prev.frameID.val) == "FULL") return prev;
+//   }
+// };
 
 const fromNow = (sendDatetime) => {
   if (sendDatetime) return dayjs.unix(sendDatetime).endOf("second").fromNow();
@@ -75,7 +75,7 @@ export {
   Report,
   parseReport,
   parseReportData,
-  nearestFullReport,
+  // nearestFullReport,
   readReport,
   fromNow,
 };

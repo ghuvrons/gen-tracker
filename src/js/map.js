@@ -12,7 +12,7 @@ const getPosition = (report) => {
     valid: false,
   };
 
-  if (frameId(report?.frameID?.val) == "FULL") {
+  if (report?.gpsActive?.val) {
     pos.lat = report?.gpsLatitude?.val;
     pos.lng = report?.gpsLongitude?.val;
     pos.valid = isIndonesia(pos) && report?.gpsHDOP?.val <= config.map.hdopMin;
@@ -22,7 +22,7 @@ const getPosition = (report) => {
 };
 
 const getHeading = (report) => {
-  return frameId(report?.frameID?.val) == "FULL" ? report?.gpsHeading?.val : 0;
+  return report?.gpsActive?.val ? report?.gpsHeading?.val : 0;
 };
 
 export { getPosition, getHeading };
