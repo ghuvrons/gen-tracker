@@ -238,13 +238,13 @@ const HBAR = () => {
     },
     {
       group: "hbar.mode",
-      field: "modeReport",
-      title: "Mode Report",
+      field: "modePrediction",
+      title: "Mode Prediction",
       required: false,
       chartable: true,
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => `${config.mode.report[vf]} (${vf})`,
+      display: (vf) => `${config.mode.prediction[vf]} (${vf})`,
     },
     {
       group: "hbar.trip",

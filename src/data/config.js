@@ -26,7 +26,7 @@ export default {
   mode: {
     drive: ["ECONOMY", "STANDARD", "SPORT"],
     trip: ["A", "B", "ODO"],
-    report: ["RANGE", "AVERAGE"],
+    prediction: ["RANGE", "EFFICIENCY"],
   },
   frames: ["UNKNOWN", "SIMPLE", "FULL"],
   timezone: "Asia/Jakarta",
