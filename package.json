@@ -1,6 +1,6 @@
 {
   "name": "gen-tracker",
-  "version": "2.0.100",
+  "version": "2.0.101",
   "description": "GEN",
   "productName": "GPS Tracker",
   "author": "Puja Kusuma <pujakusumae@hotmail.com>",
@@ -10,7 +10,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "bump": "npm --no-git-tag-version version patch",
     "dev": "quasar dev -m spa",
-    "build": "npm run bump; quasar build -m pwa",
+    "build": "quasar build -m pwa",
     "build:windows": "quasar build -m electron -T win32",
     "build:linux": "quasar build -m electron -b builder",
     "icon:generate": "icongenie generate -m spa,pwa -i src/assets/logo.png --theme-color 027BE3 --splashscreen-color 6A0DAD --splashscreen-icon-ratio 30 --padding 5,5 --skip-trim",

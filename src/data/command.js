@@ -201,7 +201,7 @@ const COMMAND_LIST = [
   },
   {
     command: "CON_APN",
-    desc: "Set APN connection (ex: 3gprs,3gprs,3gprs)",
+    desc: "Set APN connection (ex: 3gprs;3gprs;3gprs)",
     code: CMDC.CON,
     subCode: 0,
     range: [
@@ -327,7 +327,7 @@ const validator = {
   },
   CON: (v, maxParam, maxParamChar = 30) => {
     const [min, max] = [1, maxParamChar];
-    const params = v.split(",");
+    const params = v.split(";");
 
     if (params.length != maxParam) return;
     for (let i = 0; i < params.length; i++) {
