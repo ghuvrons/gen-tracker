@@ -200,7 +200,7 @@ const COMMAND_LIST = [
     subCode: 1,
   },
   {
-    command: "NET_CON_APN",
+    command: "CON_APN",
     desc: "Set APN connection (ex: 3gprs,3gprs,3gprs)",
     code: CMDC.CON,
     subCode: 0,
@@ -215,7 +215,7 @@ const COMMAND_LIST = [
     formatCmd: (v) => AsciiToHex(v),
   },
   {
-    command: "NET_CON_FTP",
+    command: "CON_FTP",
     desc: "Set FTP connection",
     code: CMDC.CON,
     subCode: 1,
@@ -230,7 +230,7 @@ const COMMAND_LIST = [
     formatCmd: (v) => AsciiToHex(v),
   },
   {
-    command: "NET_CON_MQTT",
+    command: "CON_MQTT",
     desc: "Set MQTT connection",
     code: CMDC.CON,
     subCode: 2,
