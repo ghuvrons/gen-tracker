@@ -1,8 +1,8 @@
 {
   "name": "gen-tracker",
-  "version": "2.0.95",
-  "description": "GEN Motorcycles Tracker",
-  "productName": "eBike Tracker",
+  "version": "2.0.98",
+  "description": "GEN",
+  "productName": "GPS Tracker",
   "author": "Puja Kusuma <pujakusumae@hotmail.com>",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "bump": "npm --no-git-tag-version version patch",
     "dev": "quasar dev -m spa",
-    "build": "quasar build -m pwa",
+    "build": "npm run bump; quasar build -m pwa",
     "build:windows": "quasar build -m electron -T win32",
     "build:linux": "quasar build -m electron -b builder",
     "icon:generate": "icongenie generate -m spa,pwa -i src/assets/logo.png --theme-color 027BE3 --splashscreen-color 6A0DAD --splashscreen-icon-ratio 30 --padding 5,5 --skip-trim",
