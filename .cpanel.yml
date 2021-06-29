@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export HOSTING_PATH=/home/genmotor/tracker.garda-energi.com/
-    - /bin/rsync -vr --exclude '.git/' dist/pwa/ $HOSTING_PATH
+    - export DEPLOY_PATH=/home/genmotor/tracker.garda-energi.com/
+    - /bin/cp -R -u dist/pwa/* $DEPLOY_PATH
