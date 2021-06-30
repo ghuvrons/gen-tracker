@@ -17,6 +17,7 @@ import useEvents from "src/composables/useEvents";
 import useDevice from "src/composables/useDevice";
 
 import { onMounted, provide, defineComponent } from "vue";
+import { BinToHex } from "./js/formatter";
 
 export default defineComponent({
   // name: "App",
@@ -41,7 +42,7 @@ export default defineComponent({
     const { handleBuffer } = useBuffer({ handleReports });
 
     const handleResp = (data, topic) => {
-      const hex = data.toString("hex").toUpperCase();
+      const hex = BinToHex(data);
       if (!hex) return;
 
       const prefixHeader = Header.find(({field}) => field == 'prefix');

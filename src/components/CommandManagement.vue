@@ -22,7 +22,6 @@
         v-model="payload"
         @keyup.enter="sendCommand(payload)"
         :disable="!devDevice"
-        class="text-uppercase"
         label="Input Command:"
         hint="Press ENTER to send."
         type="text"

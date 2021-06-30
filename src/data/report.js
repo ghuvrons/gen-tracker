@@ -68,7 +68,7 @@ const VCU = () => {
       chartable: true,
       size: 2,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => IntToHex(vf, 4).toUpperCase(),
+      display: (vf) => IntToHex(vf, 4),
     },
     {
       group: "vcu",
@@ -154,7 +154,7 @@ const GPS = () => {
       title: "GPS Speed",
       required: true,
       chartable: true,
-      unit: "Km/hr",
+      unit: "Kph",
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
@@ -532,7 +532,7 @@ const FINGER = () => {
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => {
         if (vf === 0) return "NONE";
-        return IntToHex(vf, 2).toUpperCase();
+        return IntToHex(vf, 2);
       },
     },
   ];
@@ -630,7 +630,7 @@ const BMS = () => {
       chartable: true,
       size: 2,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => IntToHex(vf, 4).toUpperCase(),
+      display: (vf) => IntToHex(vf, 4),
     },
     ...["One", "Two"].reduce(
       (acc, i) =>
@@ -644,7 +644,7 @@ const BMS = () => {
             format: (v) => HexToUnsignedInt(cend(v)),
             display: (vf) => {
               if (vf === 0xffffffff) return "NONE";
-              return IntToHex(vf, 8).toUpperCase();
+              return IntToHex(vf, 8);
             },
           },
           {
@@ -655,7 +655,7 @@ const BMS = () => {
             chartable: true,
             size: 2,
             format: (v) => HexToUnsignedInt(cend(v)),
-            display: (vf) => IntToHex(vf, 4).toUpperCase(),
+            display: (vf) => IntToHex(vf, 4),
           },
           {
             group: `bms.${i}`,
@@ -755,7 +755,7 @@ const MCU = () => {
       title: `MCU Speed`,
       required: false,
       chartable: true,
-      unit: "km/hr",
+      unit: "Kph",
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),
@@ -790,7 +790,7 @@ const MCU = () => {
       chartable: true,
       size: 4,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => IntToHex(vf, 8).toUpperCase(),
+      display: (vf) => IntToHex(vf, 8),
     },
     {
       group: `mcu.fault`,
@@ -800,7 +800,7 @@ const MCU = () => {
       chartable: true,
       size: 4,
       format: (v) => HexToUnsignedInt(cend(v)),
-      display: (vf) => IntToHex(vf, 8).toUpperCase(),
+      display: (vf) => IntToHex(vf, 8),
     },
     {
       group: `mcu.torque`,
@@ -902,7 +902,7 @@ const MCU = () => {
       title: "MCU Template Max Speed",
       required: false,
       chartable: true,
-      unit: "Km/hr",
+      unit: "Kph",
       size: 1,
       format: (v) => HexToUnsignedInt(cend(v)),
       display: (vf) => Dot(vf),

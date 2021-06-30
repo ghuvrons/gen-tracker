@@ -17,6 +17,8 @@ const CMDC = {
   MCU: 9,
 };
 
+const readRequest = (v) => v.len == 1 && v === "?";
+
 const Command = [
   ...CommandHeader,
   {
@@ -326,8 +328,10 @@ const validator = {
     SEND_USSD: (v) => v.length < 20 && v.startsWith("*") && v.endsWith("#"),
   },
   CON: (v, maxParam, maxParamChar = 30) => {
+    if (readRequest(v)) return true;
+
     const [min, max] = [1, maxParamChar];
-    const params = v.split(",");
+    const params = v.split(";");
 
     if (params.length != maxParam) return;
     for (let i = 0; i < params.length; i++) {

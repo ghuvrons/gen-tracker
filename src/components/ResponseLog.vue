@@ -17,21 +17,20 @@
     </q-banner>
     <q-virtual-scroll v-else :items="devCommands" :style="`height: ${height}`" separator>
       <template v-slot="{ item: cmd, index }">
-        <q-item :key="cmd.sendDatetime" @click="writeCommand(cmd.payload)" clickable>
+        <q-item :key="cmd.sendDatetime" @click="writeCommand(cmd.payload)" dense clickable>
           <q-item-section>
             <q-item-label lines="1" caption class="text-italic">
               {{ parseDatetime(cmd.sendDatetime) }}
             </q-item-label>
-            <q-item-label lines="2">{{ cmd.payload }}</q-item-label>
-            <div class="text-caption">
+            <q-item-label lines="2" class="text-no-wrap" >{{ cmd.payload }}</q-item-label>
+            <q-item-label caption>
               {{
                 waitedCommand(index) ? devDevice.cmdStatus : parseMessage(cmd.message)
               }}
-            </div>
-            <!-- </q-item-label> -->
+            </q-item-label>
           </q-item-section>
 
-          <q-item-section side>
+          <q-item-section side top class="q-pt-xs">
             <q-icon
               v-if="waitedCommand(index)"
               @click="ignoreResponse()"

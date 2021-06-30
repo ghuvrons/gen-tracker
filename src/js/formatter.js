@@ -1,5 +1,9 @@
+const BinToHex = (bin) => {
+  return bin.toString("hex").toUpperCase();
+};
+
 const IntToHex = (num, len) => {
-  return num.toString(16).padStart(len, "0");
+  return num.toString(16).padStart(len, "0").toUpperCase();
 };
 
 const HexToUnsignedInt = (hex) => {
@@ -60,6 +64,7 @@ const cend = (string) => {
 };
 
 export {
+  BinToHex,
   IntToHex,
   HexToUnsignedInt,
   HexToSignedInt8,

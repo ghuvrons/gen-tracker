@@ -7,6 +7,7 @@ import config from "src/data/config";
 import { useQuasar } from "quasar";
 import { computed } from "vue";
 import { useStore } from "vuex";
+import { BinToHex } from "src/js/formatter";
 const md5 = require("md5");
 
 export default function ({ publish, addDevices }) {
@@ -68,7 +69,7 @@ export default function ({ publish, addDevices }) {
       return;
     }
 
-    const cmd = validateCommand(payload.toUpperCase());
+    const cmd = validateCommand(payload);
     if (!cmd) return;
     if (typeof cmd === "string") {
       notify(cmd);
@@ -106,7 +107,7 @@ export default function ({ publish, addDevices }) {
   };
   const handleCommand = (data, topic) => {
     const vin = parseInt(topic.split("/")[1]);
-    const hex = data.toString("hex").toUpperCase();
+    const hex = BinToHex(data);
 
     if (hex) log(awaitCommand.value ? "warn" : "error", `COMMAND ${hex}`);
 

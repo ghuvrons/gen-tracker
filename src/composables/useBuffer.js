@@ -6,6 +6,7 @@ import config from "src/data/config";
 import { onBeforeUnmount, onMounted, ref, computed } from "vue";
 import { useStore } from "vuex";
 import { log } from "src/js/utils";
+import { BinToHex } from "src/js/formatter";
 
 export default function ({ handleReports }) {
   const store = useStore();
@@ -24,7 +25,7 @@ export default function ({ handleReports }) {
     } else stopBuferring();
   };
   const handleBuffer = (data, topic) => {
-    const hex = data.toString("hex").toUpperCase();
+    const hex = BinToHex(data);
     if (!hex) return;
     if (!validateFrame(hex, config.prefix.report)) {
       log("error", `REPORT (CORRUPT) ${hex}`);

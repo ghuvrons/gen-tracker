@@ -32,7 +32,7 @@ const Header = [
   //   chartable: true,
   //   size: 4,
   //   format: v => HexToUnsignedInt(cend(v)),
-  //   display: vf => IntToHex(vf, 8).toUpperCase(),
+  //   display: vf => IntToHex(vf, 8),
   //   formatCmd: v => cend(CRC32(v).padStart(4 * 2, "0"))
   // },
   {
