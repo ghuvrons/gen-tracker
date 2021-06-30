@@ -17,7 +17,7 @@ const CMDC = {
   MCU: 9,
 };
 
-const readRequest = (v) => v.len == 1 && v === "?";
+const readRequest = (v) => v.length == 1 && v === "?";
 
 const Command = [
   ...CommandHeader,
