@@ -203,7 +203,7 @@ const COMMAND_LIST = [
   },
   {
     command: "CON_APN",
-    desc: "Set APN connection (ex: 3gprs,3gprs,3gprs)",
+    desc: "Set APN connection (ex: 3gprs;3gprs;3gprs)",
     code: CMDC.CON,
     subCode: 0,
     range: [
