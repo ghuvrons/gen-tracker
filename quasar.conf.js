@@ -127,8 +127,8 @@ module.exports = configure(function (/* ctx */) {
       },
 
       manifest: {
-        name: `eBike Tracker`,
-        short_name: `eBike Tracker`,
+        name: `GPS Tracker`,
+        short_name: `GPS Tracker`,
         description: `GEN Motorcycles Tracker`,
         display: "standalone",
         orientation: "portrait",

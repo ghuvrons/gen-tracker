@@ -204,6 +204,32 @@ const GPS = () => {
   ];
 };
 
+const EEPROM = () => {
+  return [
+    {
+      group: `eeprom`,
+      field: `eepromActive`,
+      title: `EEPROM Active`,
+      required: true,
+      chartable: true,
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => (vf ? "YES" : "NO"),
+    },
+    {
+      group: "eeprom",
+      field: "eepromUsed",
+      title: "EEPROM Used",
+      required: true,
+      chartable: true,
+      unit: "%",
+      size: 1,
+      format: (v) => HexToUnsignedInt(cend(v)),
+      display: (vf) => Dot(vf),
+    },
+  ];
+};
+
 const HBAR = () => {
   return [
     {
@@ -992,6 +1018,7 @@ const Report = [
   ...Header,
   ...VCU(),
   ...GPS(),
+  ...EEPROM(),
 
   ...HBAR(),
   ...NET(),
