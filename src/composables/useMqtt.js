@@ -18,7 +18,7 @@ export default function () {
     password: password,
     clean: true, //$q.platform.is.mobile,
     keepalive: 60,
-    reconnectPeriod: 1000,
+    reconnectPeriod: 10 * 1000,
     connectTimeout: 30 * 1000,
     // protocolId: "MQTT",
     // protocolVersion: 4,

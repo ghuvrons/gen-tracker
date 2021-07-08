@@ -69,7 +69,7 @@ const COMMAND_LIST = [
   },
   {
     command: "GEN_ANTITHIEF",
-    desc: "Toggle anti-thief detector",
+    desc: "Toggle anti-thief motion detector",
     code: CMDC.GEN,
     subCode: 4,
   },
