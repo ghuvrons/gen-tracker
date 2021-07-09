@@ -59,7 +59,7 @@ const COMMAND_LIST = [
     formatCmd: (v) => buildTimestamp(v),
   },
   {
-    command: "GEN_ODOM",
+    command: "GEN_ODO",
     desc: "Set odometer (km)",
     code: CMDC.GEN,
     subCode: 3,

@@ -296,8 +296,8 @@ const HBAR = () => {
     },
     {
       group: "hbar.trip",
-      field: "odometer",
-      title: "Odometer",
+      field: "odo",
+      title: "ODO",
       required: false,
       chartable: true,
       unit: "Km",
