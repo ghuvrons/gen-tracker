@@ -55,10 +55,10 @@ export default function ({ awaitCommand, flushCommand, handleFinger }) {
     if (!device) return;
 
     if (!awaitCommand.value) {
-      log("error", `RESPONSE ${hex}`);
+      log("info", `RESPONSE ${hex}`);
       return;
     }
-    log("warn", `RESPONSE ${hex}`);
+    log("info", `RESPONSE ${hex}`);
 
     const { lastCommand } = device;
     if (!validResponse(lastCommand, response)) return;
