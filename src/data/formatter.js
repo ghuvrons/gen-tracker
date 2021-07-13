@@ -9,7 +9,6 @@ export const TimeStamp = (YYMMDDHHmmss0d) => {
 };
 
 export const MCU = {
-  // TODO: replace with binary payload
   TEMPLATES: (v) => {
     let hex = "";
     const templates = v.split(";");

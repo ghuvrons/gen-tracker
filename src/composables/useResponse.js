@@ -51,7 +51,7 @@ export default function ({ awaitCommand, flushCommand, handleFinger }) {
     const response = parseResponse(hex);
     const vin = getValue(response, "vin");
 
-    const device = devices.value.find((dev) => dev.vin === vin);
+    const device = devices.value.find((dev) => dev?.vin === vin);
     if (!device) return;
 
     if (!awaitCommand.value) {

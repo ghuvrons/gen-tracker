@@ -9,6 +9,7 @@ const parseResponse = (hex) => {
 };
 
 const validResponse = (command, response) => {
+  if (!command) return;
   if (getValue(response, "vin") != command.vin) return;
   if (getValue(response, "code") != command.code) return;
   if (getValue(response, "subCode") != command.subCode) return;
