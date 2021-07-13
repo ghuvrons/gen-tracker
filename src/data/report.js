@@ -23,11 +23,6 @@ const VEHICLE_STATES = {
   RUN: 3,
 };
 
-const getVehicleState = (state) =>
-  Object.keys(VEHICLE_STATES)[
-    Object.values(VEHICLE_STATES).findIndex((v) => v === parseInt(state))
-  ];
-
 const VCU = () => {
   return [
     {
@@ -58,7 +53,14 @@ const VCU = () => {
       chartable: true,
       size: 1,
       format: (v) => HexToSignedInt8(cend(v)),
-      display: (vf) => `${getVehicleState(vf)} (${vf})`,
+      display: (vf) => {
+        const vState =
+          Object.keys(VEHICLE_STATES)[
+            Object.values(VEHICLE_STATES).findIndex((s) => s === parseInt(vf))
+          ];
+
+        return `${vState} (${vf})`;
+      },
     },
     {
       group: "vcu",

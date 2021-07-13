@@ -1,7 +1,7 @@
 import { CommandHeader } from "src/data/header";
 import { IntToHex, cend, AsciiToHex } from "src/js/formatter";
-import { buildTimestamp } from "src/js/utils";
-import dayjs from "src/js/dayjs";
+import validator from "./validator";
+import formatter, { TimeStamp } from "./formatter";
 import config from "./config";
 
 const CMDC = {
@@ -16,8 +16,6 @@ const CMDC = {
   HBAR: 8,
   MCU: 9,
 };
-
-const readRequest = (v) => v.length == 1 && v === "?";
 
 const Command = [
   ...CommandHeader,
@@ -56,7 +54,7 @@ const COMMAND_LIST = [
     type: "uint8_t",
     range: ["YYMMDDHHmmss0d"],
     validator: (v) => validator.GEN.RTC(v),
-    formatCmd: (v) => buildTimestamp(v),
+    formatCmd: (v) => TimeStamp(v),
   },
   {
     command: "GEN_ODO",
@@ -304,62 +302,8 @@ const COMMAND_LIST = [
     size: 4 * config.mode.drive.length,
     type: "[uint16_t discur, torque][3]",
     validator: (v) => validator.MCU.TEMPLATES(v),
-    formatCmd: (v) => {
-      let hex = "";
-      const templates = v.split(";");
-
-      for (let i = 0; i < templates.length; i++) {
-        const params = templates[i].split(",");
-
-        for (let j = 0; j < params.length; j++) {
-          hex += cend(IntToHex(parseInt(params[j]), 4));
-        }
-      }
-      return hex;
-    },
+    formatCmd: (v) => formatter.MCU.TEMPLATES(v),
   },
 ];
-
-const validator = {
-  GEN: {
-    RTC: (v) => dayjs(v, "YYMMDDHHmmss0d", true).isValid(),
-  },
-  NET: {
-    SEND_USSD: (v) => v.length < 20 && v.startsWith("*") && v.endsWith("#"),
-  },
-  CON: (v, maxParam, maxParamChar = 30) => {
-    if (readRequest(v)) return true;
-
-    const [min, max] = [1, maxParamChar];
-    const params = v.split(";");
-
-    if (params.length != maxParam) return;
-    for (let i = 0; i < params.length; i++) {
-      const len = params[i].length;
-      if (len < min || len > max) return;
-    }
-    return true;
-  },
-  MCU: {
-    TEMPLATES: (v) => {
-      const max = [32767, 3276];
-      const templates = v.split(";");
-
-      if (templates.length != config.mode.drive.length) return;
-      for (let i = 0; i < templates.length; i++) {
-        const params = templates[i].split(",");
-
-        if (params.length != 2) return;
-        for (let j = 0; j < params.length; j++) {
-          const val = parseInt(params[j]);
-
-          if (isNaN(val)) return;
-          if (val < 1 || val > max[j]) return;
-        }
-      }
-      return true;
-    },
-  },
-};
 
 export { COMMAND_LIST, Command };

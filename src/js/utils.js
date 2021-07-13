@@ -77,14 +77,6 @@ const parseDatetime = (hex) => {
   );
 };
 
-const buildTimestamp = (YYMMDDHHmmss0d) => {
-  const datetime = YYMMDDHHmmss0d.match(/.{1,2}/g);
-
-  return datetime
-    .reduce((acc, dt) => acc.concat(IntToHex(parseInt(dt), 2)), "")
-    .toUpperCase();
-};
-
 const frameId = (index) => {
   return config.frames[index];
 };
@@ -109,7 +101,6 @@ export {
   getOutput,
   calibrateTime,
   parseDatetime,
-  buildTimestamp,
   dilation,
   frameId,
   mod,

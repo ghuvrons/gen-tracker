@@ -9,7 +9,8 @@ import {
   HexToUnsignedInt,
   IntToHex,
 } from "src/js/formatter";
-import { buildTimestamp, parseDatetime } from "src/js/utils";
+import { parseDatetime } from "src/js/utils";
+import { TimeStamp } from "src/data/formatter";
 
 const Header = [
   {
@@ -33,7 +34,7 @@ const Header = [
   //   size: 4,
   //   format: v => HexToUnsignedInt(cend(v)),
   //   display: vf => IntToHex(vf, 8),
-  //   formatCmd: v => cend(CRC32(v).padStart(4 * 2, "0"))
+  //   formatCmd: cmd => cend(CRC32(cmd).padStart(4 * 2, "0"))
   // },
   {
     group: "packet",
@@ -46,7 +47,7 @@ const Header = [
     size: 1,
     format: (v) => HexToUnsignedInt(cend(v)),
     display: (vf) => Dot(vf),
-    formatCmd: (hex) => cend(IntToHex(hex.length / 2, 1 * 2)),
+    formatCmd: (cmd) => cend(IntToHex(cmd.length / 2, 1 * 2)),
   },
   {
     group: "packet",
@@ -57,7 +58,7 @@ const Header = [
     size: 4,
     format: (v) => HexToUnsignedInt(cend(v)),
     display: (vf) => vf,
-    formatCmd: (v) => cend(IntToHex(v, 4 * 2)),
+    formatCmd: (cmd) => cend(IntToHex(cmd, 4 * 2)),
   },
   {
     group: "packet.datetime",
@@ -69,8 +70,7 @@ const Header = [
     size: 7,
     format: (v) => Number(dayjs(parseDatetime(v), "YYMMDDHHmmss0d").unix()),
     display: (vf) => dayjs.unix(vf).format("ddd, DD-MM-YY HH:mm:ss"),
-    formatCmd: (unix) =>
-      buildTimestamp(dayjs.unix(unix).format("YYMMDDHHmmss0d")),
+    formatCmd: (cmd) => TimeStamp(dayjs.unix(cmd).format("YYMMDDHHmmss0d")),
   },
 ];
 
@@ -85,7 +85,7 @@ const CommandHeader = [
     size: 1,
     format: (v) => HexToUnsignedInt(v),
     display: (vf) => vf,
-    formatCmd: (v) => cend(IntToHex(v, 1 * 2)),
+    formatCmd: (cmd) => cend(IntToHex(cmd, 1 * 2)),
   },
   {
     group: "command",
@@ -96,7 +96,7 @@ const CommandHeader = [
     size: 1,
     format: (v) => HexToUnsignedInt(v),
     display: (vf) => vf,
-    formatCmd: (v) => cend(IntToHex(v, 1 * 2)),
+    formatCmd: (cmd) => cend(IntToHex(cmd, 1 * 2)),
   },
 ];
 
