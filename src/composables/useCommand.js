@@ -109,12 +109,14 @@ export default function ({ publish, addDevices }) {
     const vin = parseInt(topic.split("/")[1]);
     const hex = BinToHex(data);
 
-    if (hex) log(awaitCommand.value ? "warn" : "error", `COMMAND ${hex}`);
+    if (hex) log(awaitCommand.value ? "info" : "error", `COMMAND ${hex}`);
 
     const ready = !hex;
     if (ready) notify(`Device ready`, "info");
 
-    log("warn", `${ready ? "READY" : "BUSY"} ${vin}`);
+    if (ready) log("info", `READY ${vin}`);
+    else log("warn", `BUSY ${vin}`);
+
     addDevices([{ vin, ready }]);
 
     if (!awaitCommand.value) return;
@@ -127,7 +129,7 @@ export default function ({ publish, addDevices }) {
     else clearInterval(lastCommand.timer);
   };
   const handleAck = (hex) => {
-    log(awaitCommand.value ? "warn" : "error", `ACK ${hex}`);
+    log(awaitCommand.value ? "info" : "error", `ACK ${hex}`);
 
     if (!awaitCommand.value) return;
     const { vin, lastCommand } = devDevice.value;
